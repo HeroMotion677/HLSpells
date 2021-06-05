@@ -34,12 +34,12 @@ public enum Spell {
         return this.cooldown;
     }
 
-    public static Spell randomPower() {
+    public static Spell randomSpell() {
         return VALUES.get(RANDOM.nextInt(SIZE));
     }
 
-    public static String randomPowerId() {
-        return byId(randomPower());
+    public static String randomSpellId() {
+        return byId(randomSpell());
     }
 
     public static Spell byName(String p_214976841_0) {

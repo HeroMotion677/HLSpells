@@ -11,7 +11,7 @@ public class TotemOfKeeping extends Item {
         super(new Properties()
                 .stacksTo(1)
                 .rarity(Rarity.UNCOMMON)
-                .tab(ItemGroup.TAB_MISC));
+                .tab(ItemGroup.TAB_COMBAT));
     }
 
     @Override
