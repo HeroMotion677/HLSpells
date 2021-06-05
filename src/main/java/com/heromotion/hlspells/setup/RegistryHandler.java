@@ -8,5 +8,6 @@ public class RegistryHandler {
 
     public static void init() {
         EnchantmentInit.ENCHANTMENTS.register(FMLJavaModLoadingContext.get().getModEventBus());
+        ItemInit.ITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
 }
