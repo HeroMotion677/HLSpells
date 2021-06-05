@@ -6,7 +6,7 @@ import com.heromotion.hlspells.network.NetworkManager;
 import com.heromotion.hlspells.network.packets.TotemPacket;
 
 import net.minecraft.entity.player.*;
-import net.minecraft.item.ItemStack;
+import net.minecraft.item.*;
 import net.minecraft.util.Hand;
 import net.minecraft.world.Explosion;
 
@@ -27,16 +27,27 @@ public class EntityDiesEvent {
                 PlayerEntity player = (PlayerEntity) event.getEntity();
 
                 if (!(player.getMainHandItem().getItem().equals(ItemInit.TOTEM_OF_GRIEFING.get())
-                        || player.getOffhandItem().getItem().equals(ItemInit.TOTEM_OF_GRIEFING.get()))) return;
-                Hand hand = (player.getMainHandItem().getItem().equals(ItemInit.TOTEM_OF_GRIEFING.get()) ? Hand.MAIN_HAND : Hand.OFF_HAND);
+                        || player.getOffhandItem().getItem().equals(ItemInit.TOTEM_OF_GRIEFING.get())
+                        || player.getMainHandItem().getItem().equals(ItemInit.TOTEM_OF_RETURNING.get())
+                        || player.getOffhandItem().getItem().equals(ItemInit.TOTEM_OF_RETURNING.get()))) return;
 
-                player.setItemInHand(hand, ItemStack.EMPTY);
-                player.inventory.setChanged();
+                Item item = (player.getMainHandItem().getItem().equals(ItemInit.TOTEM_OF_GRIEFING.get())
+                        || player.getOffhandItem().getItem().equals(ItemInit.TOTEM_OF_GRIEFING.get()))
+                        ? ItemInit.TOTEM_OF_GRIEFING.get() : ItemInit.TOTEM_OF_RETURNING.get();
+                Hand hand = (player.getMainHandItem().getItem().equals(item) ? Hand.MAIN_HAND : Hand.OFF_HAND);
 
-                for (int i = 0; i < player.inventory.getContainerSize(); i++) {
-                    player.level.broadcastEntityEvent(player, (byte) 35);
-                    NetworkManager.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new TotemPacket(new ItemStack(ItemInit.TOTEM_OF_GRIEFING.get())));
+                if (item.equals(ItemInit.TOTEM_OF_GRIEFING.get())) {
+                    player.setItemInHand(hand, ItemStack.EMPTY);
+                    player.inventory.setChanged();
                     player.level.explode(player, player.getX(), player.getY(), player.getZ(), 10.0F, Explosion.Mode.BREAK);
+                    player.level.broadcastEntityEvent(player, (byte) 35);
+                    NetworkManager.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new TotemPacket(new ItemStack(item)));
+
+                } else if (item.equals(ItemInit.TOTEM_OF_RETURNING.get())) {
+                    player.getItemInHand(hand).getOrCreateTag().putString("registryKey", player.level.dimension().getRegistryName().getNamespace());
+                    player.getItemInHand(hand).getOrCreateTag().putDouble("dX", player.getX());
+                    player.getItemInHand(hand).getOrCreateTag().putDouble("dY", player.getY());
+                    player.getItemInHand(hand).getOrCreateTag().putDouble("dZ", player.getZ());
                 }
             }
         }

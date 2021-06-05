@@ -35,7 +35,8 @@ public class EntityDropEvent {
         }
         for (Iterator<ItemEntity> itemEntityIterator = event.getDrops().iterator(); itemEntityIterator.hasNext(); ) {
             ItemStack stack = itemEntityIterator.next().getItem();
-            if ((EnchantmentHelper.getItemEnchantmentLevel(EnchantmentInit.SOUL_BOND.get(), stack) > 0) || (flag)) {
+            if ((EnchantmentHelper.getItemEnchantmentLevel(EnchantmentInit.SOUL_BOND.get(), stack) > 0)
+                    || (flag) || stack.getItem().equals(ItemInit.TOTEM_OF_RETURNING.get())) {
                 itemEntityIterator.remove();
                 player.inventory.add(stack);
             }
