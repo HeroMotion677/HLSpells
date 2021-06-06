@@ -28,7 +28,7 @@ public class SoulBond extends Enchantment {
 
     @Override
     public boolean isTreasureOnly() {
-        return false;
+        return true;
     }
 
     @Override
