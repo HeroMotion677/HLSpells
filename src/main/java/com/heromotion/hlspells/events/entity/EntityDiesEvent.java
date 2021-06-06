@@ -44,7 +44,7 @@ public class EntityDiesEvent {
                     NetworkManager.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new TotemPacket(new ItemStack(item)));
 
                 } else if (item.equals(ItemInit.TOTEM_OF_RETURNING.get())) {
-                    player.getItemInHand(hand).getOrCreateTag().putString("registryKey", player.level.dimension().getRegistryName().getNamespace());
+                    player.getItemInHand(hand).getOrCreateTag().putString("registryKey", player.level.dimension().location().toString());
                     player.getItemInHand(hand).getOrCreateTag().putDouble("dX", player.getX());
                     player.getItemInHand(hand).getOrCreateTag().putDouble("dY", player.getY());
                     player.getItemInHand(hand).getOrCreateTag().putDouble("dZ", player.getZ());

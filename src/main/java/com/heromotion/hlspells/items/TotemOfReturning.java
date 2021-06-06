@@ -59,6 +59,8 @@ public class TotemOfReturning extends Item {
         String dimension = itemstack.getOrCreateTag().getString("registryKey");
         doReturn(worldIn, playerIn, teleportPos, dimension);
 
+        itemstack.shrink(1);
+
         return ActionResult.success(itemstack);
     }
 
@@ -74,35 +76,35 @@ public class TotemOfReturning extends Item {
         if (context.getPlayer() == null) return ActionResultType.FAIL;
         doReturn(context.getLevel(), context.getPlayer(), teleportPos, dimension);
 
+        stack.shrink(1);
+
         return action;
     }
 
     public static void doReturn(World world, PlayerEntity entity, BlockPos teleportPos, String dimension) {
-        if (world.isClientSide) return;
+        if (entity.level.isClientSide || !(entity instanceof ServerPlayerEntity)) return;
         RegistryKey<World> newKey = RegistryKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(dimension));
         ServerWorld _newWorld = ((ServerWorld) world).getServer().getLevel(newKey);
         if (world != _newWorld) {
             {
-                if (!entity.level.isClientSide && entity instanceof ServerPlayerEntity) {
-                    if (_newWorld != null) {
+                if (_newWorld != null) {
+                    ((ServerPlayerEntity) entity).connection
+                            .send(new SChangeGameStatePacket(SChangeGameStatePacket.WIN_GAME, 0));
+                    ((ServerPlayerEntity) entity).teleportTo(_newWorld, _newWorld.getSharedSpawnPos().getX(),
+                            _newWorld.getSharedSpawnPos().getY() + 1, _newWorld.getSharedSpawnPos().getZ(), entity.yRot,
+                            entity.xRot);
+                    ((ServerPlayerEntity) entity).connection
+                            .send(new SPlayerAbilitiesPacket(entity.abilities));
+                    for (EffectInstance effectinstance : entity.getActiveEffects()) {
                         ((ServerPlayerEntity) entity).connection
-                                .send(new SChangeGameStatePacket(SChangeGameStatePacket.WIN_GAME, 0));
-                        ((ServerPlayerEntity) entity).teleportTo(_newWorld, _newWorld.getSharedSpawnPos().getX(),
-                                _newWorld.getSharedSpawnPos().getY() + 1, _newWorld.getSharedSpawnPos().getZ(), entity.yRot,
-                                entity.xRot);
-                        ((ServerPlayerEntity) entity).connection
-                                .send(new SPlayerAbilitiesPacket(entity.abilities));
-                        for (EffectInstance effectinstance : entity.getActiveEffects()) {
-                            ((ServerPlayerEntity) entity).connection
-                                    .send(new SPlayEntityEffectPacket(entity.getId(), effectinstance));
-                        }
-                        ((ServerPlayerEntity) entity).connection.send(new SPlaySoundEventPacket(1032, BlockPos.ZERO, 0, false));
+                                .send(new SPlayEntityEffectPacket(entity.getId(), effectinstance));
                     }
+                    ((ServerPlayerEntity) entity).connection.send(new SPlaySoundEventPacket(1032, BlockPos.ZERO, 0, false));
                 }
             }
-            Util.teleport(_newWorld, entity.blockPosition(), teleportPos, entity);
         }
         entity.level.broadcastEntityEvent(entity, (byte) 35);
         NetworkManager.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) entity), new TotemPacket(new ItemStack(ItemInit.TOTEM_OF_RETURNING.get())));
+        Util.teleport(_newWorld, entity.blockPosition(), teleportPos, entity);
     }
 }
