@@ -35,7 +35,7 @@ public class Spells {
         boolean flag3 = playerEntity.getDeltaMovement().y < -0.2;
         if ((!flag) && (!flag1) && (!flag2) && (flag3)) {
             playerEntity.setDeltaMovement(playerEntity.getDeltaMovement().x,
-                    0.1, playerEntity.getDeltaMovement().z);
+                    -0.1, playerEntity.getDeltaMovement().z);
             playerEntity.fallDistance = 0;
         }
     }
