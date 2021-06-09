@@ -1,6 +1,7 @@
 package com.heromotion.hlspells.villages;
 
 import com.heromotion.hlspells.HLSpells;
+import com.heromotion.hlspells.init.EnchantmentInit;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 
@@ -76,17 +77,45 @@ public class VillagerTradesRegistration {
                     .build()
             );
             /**
-             * Price: 3 Uranium Ore
-             * Price2: None
-             * Sale: 5 Emeralds
-             * Max trades: 10
-             * XP: 4
+             * Price: 1 Empty Bottle
+             * Price2: 1 Lapis Lazuli
+             * Sale: 1 XP Bottle
+             * Max trades: 4
+             * XP: 3
              * Price multiplier: 0.05F
              */
-            /*
-            trades.get(2).add(new RandomTradeBuilder(10, 4, 0.05F)
-                    .setPrice(BlockInit.URANIUM_ORE.get().asItem(), 3, 3)
-                    .setForSale(Items.EMERALD, 5, 5)
+            trades.get(2).add(new RandomTradeBuilder(4, 3, 0.05F)
+                    .setPrice(Items.GLASS_BOTTLE, 1, 1)
+                    .setPrice2(Items.LAPIS_LAZULI, 1, 1)
+                    .setForSale(Items.EXPERIENCE_BOTTLE, 1, 1)
+                    .build()
+            );
+            /**
+             * Price: 10 Lapis Lazuli
+             * Price2: 1 Book
+             * Sale: 1 Soul Bond Book
+             * Max trades: 4
+             * XP: 3
+             * Price multiplier: 0.05F
+             */
+            trades.get(2).add(new RandomTradeBuilder(4, 3, 0.05F)
+                    .setPrice(Items.LAPIS_LAZULI, 10, 10)
+                    .setPrice2(Items.BOOK, 1, 1)
+                    .setForSale(EnchantedBookItem.createForEnchantment(new EnchantmentData(EnchantmentInit.SOUL_BOND.get(), 0)).getItem(), 1, 1)
+                    .build()
+            );
+            /**
+             * Price: 1 Power Book
+             * Price2: 5 Lapis Lazuli
+             * Sale: 1 Infinity Book
+             * Max trades: 4
+             * XP: 3
+             * Price multiplier: 0.05F
+             */
+            trades.get(2).add(new RandomTradeBuilder(4, 3, 0.05F)
+                    .setPrice(EnchantedBookItem.createForEnchantment(new EnchantmentData(Enchantments.POWER_ARROWS, 0)).getItem(), 1, 1)
+                    .setPrice2(Items.LAPIS_LAZULI, 5, 5)
+                    .setForSale(EnchantedBookItem.createForEnchantment(new EnchantmentData(Enchantments.INFINITY_ARROWS, 0)).getItem(), 1, 1)
                     .build()
             );
             /**
