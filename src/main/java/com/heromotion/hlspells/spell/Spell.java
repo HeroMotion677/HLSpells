@@ -1,104 +1,65 @@
 package com.heromotion.hlspells.spell;
 
-import net.minecraft.item.ItemStack;
+import com.google.common.collect.Maps;
 
-import java.util.*;
+import com.heromotion.hlspells.HLSpells;
+import com.heromotion.hlspells.init.SpellInit;
 
-public enum Spell {
+import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.util.*;
+import net.minecraft.util.text.*;
 
-    CHANNELING(0, "channeling", 0);
+import net.minecraftforge.registries.ForgeRegistryEntry;
 
-    private final int id;
-    private final String name;
-    private final int cooldown;
+import javax.annotation.Nullable;
+import javax.print.attribute.Attribute;
+import java.util.Map;
 
-    private static final List<Spell> VALUES = Collections.unmodifiableList(Arrays.asList(values()));
-    private static final int SIZE = VALUES.size();
-    private static final Random RANDOM = new Random();
+public class Spell extends ForgeRegistryEntry<Spell> {
 
-    Spell(int p_214976840_0, String p_214976840_1, int p_214976840_2) {
-        this.id = p_214976840_0;
-        this.name = p_214976840_1;
-        this.cooldown = p_214976840_2;
+    private final Map<Attribute, AttributeModifier> attributeModifiers = Maps.newHashMap();
+    private final SpellType category;
+    @Nullable
+    private String descriptionId;
+
+    public Spell(SpellType spellType) {
+        this.category = spellType;
     }
 
-    public int getId() {
-        return this.id;
+    public boolean isInstantenous() {
+        return false;
     }
 
-    public String getName() {
-        return this.name;
+    public boolean isCurse() {
+        return this.category == SpellType.CURSE;
     }
 
-    public int getCooldown() {
-        return this.cooldown;
-    }
-
-    public static Spell randomSpell() {
-        return VALUES.get(RANDOM.nextInt(SIZE));
-    }
-
-    public static String randomSpellId() {
-        return byId(randomSpell());
-    }
-
-    public static Spell byName(String p_214976841_0) {
-        return byName(p_214976841_0, CHANNELING);
-    }
-
-    public static Spell byName(String p_214976842_0, Spell p_214976842_1) {
-        for (Spell spell : values()) {
-            if (spell.name.equals(p_214976842_0)) {
-                return spell;
-            }
+    protected String getOrCreateDescriptionId() {
+        if (this.descriptionId == null) {
+            this.descriptionId = Util.makeDescriptionId("spell", SpellInit.SPELLS_REGISTRY.get().getKey(this));
         }
-        return p_214976842_1;
+
+        return this.descriptionId;
     }
 
-    public static int byCooldown(ItemStack p_214976843_0) {
-        String spell = p_214976843_0.getOrCreateTag().getString("spell");
-        return byCooldown(spell);
+    public String getDescriptionId() {
+        return this.getOrCreateDescriptionId();
     }
 
-    public static int byCooldown(String p_214976844_0) {
-        return byCooldown(p_214976844_0, 0);
+    public ITextComponent getDisplayName() {
+        return new TranslationTextComponent(this.getDescriptionId());
     }
 
-    public static int byCooldown(String p_214976845_0, int p_214976845_1) {
-        for (Spell spell : values()) {
-            if (spell.name.equals(p_214976845_0)) {
-                return spell.cooldown;
-            }
-        }
-        return p_214976845_1;
+    public SpellType getCategory() {
+        return this.category;
     }
 
-    public static String byId(Spell p_214976846_0) {
-        return byId(p_214976846_0, "channeling");
+    @Nullable
+    public static Spell byId(String id) {
+        return SpellInit.SPELLS_REGISTRY.get().getValue(new ResourceLocation(HLSpells.MODID, id));
     }
 
-    public static String byId(Spell p_214976847_0, String p_214976847_1) {
-        for (Spell spell : values()) {
-            if (spell.equalsTo(p_214976847_0)) {
-                return spell.name;
-            }
-        }
-        return p_214976847_1;
-    }
-
-    /**
-     * Compares this spell to the specified object.  The result is {@code
-     * true} if and only if the argument is not {@code null} and is a {@code
-     * Spell} object that represents the same spell as this object.
-     *
-     * @param anObject The object to compare this {@code Spell} against
-     * @return {@code true} if the given object represents a {@code Spell}
-     * equivalent to this spell, {@code false} otherwise
-     */
-    public boolean equalsTo(Object anObject) {
-        if (this == anObject) {
-            return true;
-        }
-        return anObject instanceof Spell && ((Spell) anObject).name.equals(this.name);
+    public static String getId(Spell spell) {
+        return SpellInit.SPELLS_REGISTRY.get().toString();
     }
 }
