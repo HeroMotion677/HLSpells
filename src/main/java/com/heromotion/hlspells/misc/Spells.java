@@ -21,7 +21,7 @@ public class Spells {
 
     public static void doSpell(World world, PlayerEntity playerEntity, ItemStack itemStack) {
         boolean flag = false;
-        if (SpellUtils.getSpellBook(itemStack) == SpellBookInit.SLOW_FALLING.get()) {
+        if (SpellUtils.getSpellBook(itemStack) == SpellBookInit.FEATHER_FALLING.get()) {
             slowFalling(world, playerEntity);
             flag = true;
         } else if (SpellUtils.getSpellBook(itemStack) == SpellBookInit.BLAST_PROTECTION.get()) {

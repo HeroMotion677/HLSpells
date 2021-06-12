@@ -22,7 +22,7 @@ public class SpellBookInit {
     );
 
     public static final RegistryObject<SpellBook> EMPTY = SPELL_BOOK_DEFERRED_REGISTER.register("empty", SpellBook::new);
-    public static final RegistryObject<SpellBook> SLOW_FALLING = SPELL_BOOK_DEFERRED_REGISTER.register("slow_falling", () -> new SpellBook(new SpellInstance(SpellInit.SLOW_FALLING.get())));
+    public static final RegistryObject<SpellBook> FEATHER_FALLING = SPELL_BOOK_DEFERRED_REGISTER.register("feather_falling", () -> new SpellBook(new SpellInstance(SpellInit.FEATHER_FALLING.get())));
     public static final RegistryObject<SpellBook> BLAST_PROTECTION = SPELL_BOOK_DEFERRED_REGISTER.register("blast_protection", () -> new SpellBook(new SpellInstance(SpellInit.BLAST_PROTECTION.get())));
     public static final RegistryObject<SpellBook> SOUL_SYPHON = SPELL_BOOK_DEFERRED_REGISTER.register("soul_syphon", () -> new SpellBook(new SpellInstance(SpellInit.SOUL_SYPHON.get())));
 

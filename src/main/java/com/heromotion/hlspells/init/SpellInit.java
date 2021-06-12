@@ -22,7 +22,7 @@ public class SpellInit {
     );
 
     public static final RegistryObject<Spell> EMPTY = SPELLS_DEFERRED_REGISTER.register("empty", () -> new Spell(SpellType.NORMAL));
-    public static final RegistryObject<Spell> SLOW_FALLING = SPELLS_DEFERRED_REGISTER.register("slow_falling", () -> new Spell(SpellType.NORMAL));
+    public static final RegistryObject<Spell> FEATHER_FALLING = SPELLS_DEFERRED_REGISTER.register("feather_falling", () -> new Spell(SpellType.NORMAL));
     public static final RegistryObject<Spell> BLAST_PROTECTION = SPELLS_DEFERRED_REGISTER.register("blast_protection", () -> new Spell(SpellType.NORMAL));
     public static final RegistryObject<Spell> SOUL_SYPHON = SPELLS_DEFERRED_REGISTER.register("soul_syphon", () -> new Spell(SpellType.NORMAL));
 
