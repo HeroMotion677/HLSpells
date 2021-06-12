@@ -57,6 +57,8 @@ public class TotemOfReturning extends Item {
                 itemstack.getOrCreateTag().getDouble("dY"),
                 itemstack.getOrCreateTag().getDouble("dZ"));
         String dimension = itemstack.getOrCreateTag().getString("registryKey");
+
+        if (dimension.equals("")) return ActionResult.fail(itemstack);
         doReturn(worldIn, playerIn, teleportPos, dimension);
 
         itemstack.shrink(1);
@@ -73,7 +75,7 @@ public class TotemOfReturning extends Item {
                 stack.getOrCreateTag().getDouble("dZ"));
         String dimension = stack.getOrCreateTag().getString("registryKey");
 
-        if (context.getPlayer() == null) return ActionResultType.FAIL;
+        if ((context.getPlayer() == null) || (dimension.equals(""))) return ActionResultType.FAIL;
         doReturn(context.getLevel(), context.getPlayer(), teleportPos, dimension);
 
         stack.shrink(1);
