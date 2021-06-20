@@ -5,6 +5,8 @@ import com.heromotion.hlspells.misc.Spells;
 import com.heromotion.hlspells.util.SpellUtils;
 
 import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.enchantment.IVanishable;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
 import net.minecraft.util.*;
@@ -15,17 +17,14 @@ import net.minecraftforge.api.distmarker.*;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.function.Predicate;
 
-public class SpellBook extends Item {
+public class SpellBook extends ShootableItem implements IVanishable {
 
     public SpellBook() {
         super(new Properties()
                 .stacksTo(1)
                 .tab(ItemGroup.TAB_TOOLS));
-    }
-
-    public int getUseDuration(ItemStack stack) {
-        return 32;
     }
 
     public ItemStack getDefaultInstance() {
@@ -49,17 +48,53 @@ public class SpellBook extends Item {
         }
     }
 
-    @Override
-    public ActionResult<ItemStack> use(World worldIn, PlayerEntity playerIn, Hand handIn) {
-        ItemStack itemstack = playerIn.getItemInHand(handIn);
-        Spells.doSpell(worldIn, playerIn, itemstack);
-        return ActionResult.success(itemstack);
+    public Predicate<ItemStack> getAllSupportedProjectiles() {
+        return ARROW_ONLY;
+    }
+
+    public int getDefaultProjectileRange() {
+        return 8;
+    }
+
+    public void releaseUsing(ItemStack stack, World world, LivingEntity entity, int power) {
+        if (entity instanceof PlayerEntity) {
+            PlayerEntity playerEntity = (PlayerEntity) entity;
+
+            int i = this.getUseDuration(stack) - power;
+            i = net.minecraftforge.event.ForgeEventFactory.onArrowLoose(stack, world, playerEntity, i, true);
+            float f = getPowerForTime(i);
+
+            if (!((double) f < 0.1D)) {
+                if (!world.isClientSide) {
+                    Spells.doSpell(world, playerEntity, stack);
+                }
+            }
+        }
     }
 
     @Override
-    public ActionResultType onItemUseFirst(ItemStack stack, ItemUseContext context) {
-        ActionResultType action = super.onItemUseFirst(stack, context);
-        Spells.doSpell(context.getLevel(), context.getPlayer(), stack);
-        return action;
+    public ActionResult<ItemStack> use(World worldIn, PlayerEntity playerIn, Hand handIn) {
+        ItemStack itemstack = playerIn.getItemInHand(handIn);
+        // Spells.doSpell(worldIn, playerIn, itemstack);
+        // return ActionResult.success(itemstack);
+        playerIn.startUsingItem(handIn);
+        return ActionResult.success(itemstack);
+    }
+
+    public static float getPowerForTime(int time) {
+        float f = (float) time / 20.0F;
+        f = (f * f + f * 2.0F) / 3.0F;
+        if (f > 1.0F) {
+            f = 1.0F;
+        }
+        return f;
+    }
+
+    public int getUseDuration(ItemStack stack) {
+        return 72000;
+    }
+
+    public UseAction getUseAnimation(ItemStack stack) {
+        return UseAction.CROSSBOW;
     }
 }

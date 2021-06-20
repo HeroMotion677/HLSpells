@@ -1,6 +1,7 @@
 package com.heromotion.hlspells;
 
 import com.heromotion.hlspells.setup.RegistryHandler;
+import com.heromotion.hlspells.setup.client.ClientSetup;
 import com.heromotion.hlspells.villages.*;
 
 import net.minecraftforge.common.*;
@@ -27,7 +28,7 @@ public class HLSpells {
         RegistryHandler.init();
 
         // Registers an event with the mod specific event bus. This is needed to register new stuff.
-        // FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientSetup::init);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientSetup::init);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
         registerAllDeferredRegistryObjects(FMLJavaModLoadingContext.get().getModEventBus());
 

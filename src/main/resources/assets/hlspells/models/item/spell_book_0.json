@@ -8,42 +8,6 @@
     "0": "hlspells:other/book",
     "particle": "hlspells:other/book"
   },
-  "overrides": [
-    {
-      "predicate": {
-        "using": 1
-      },
-      "model": "hlspells:item/spell_book_0"
-    },
-    {
-      "predicate": {
-        "using": 1,
-        "use": 0.2
-      },
-      "model": "hlspells:item/spell_book_1"
-    },
-    {
-      "predicate": {
-        "using": 1,
-        "use": 0.4
-      },
-      "model": "hlspells:item/spell_book_2"
-    },
-    {
-      "predicate": {
-        "using": 1,
-        "use": 0.6
-      },
-      "model": "hlspells:item/spell_book_3"
-    },
-    {
-      "predicate": {
-        "using": 1,
-        "use": 0.8
-      },
-      "model": "hlspells:item/spell_book_4"
-    }
-  ],
   "elements": [
     {
       "from": [
@@ -130,21 +94,21 @@
     },
     {
       "from": [
-        2.5,
-        1.26903,
+        2.18526,
+        0.94726,
         4
       ],
       "to": [
-        8,
-        1.76903,
+        7.68526,
+        1.44726,
         13
       ],
       "rotation": {
-        "angle": 0,
-        "axis": "y",
+        "angle": -22.5,
+        "axis": "z",
         "origin": [
-          8.71194,
-          0.32769,
+          8.3972,
+          0.00591,
           9
         ]
       },
@@ -223,8 +187,8 @@
         12.75
       ],
       "rotation": {
-        "angle": 0,
-        "axis": "y",
+        "angle": -22.5,
+        "axis": "z",
         "origin": [
           7.5,
           0.01903,
@@ -296,21 +260,21 @@
     },
     {
       "from": [
-        2.75,
-        0.76803,
+        -0.90393,
+        0.94919,
         4.25
       ],
       "to": [
-        8.5,
-        0.76803,
+        4.84607,
+        0.94919,
         12.75
       ],
       "rotation": {
-        "angle": 0,
-        "axis": "y",
+        "angle": -22.5,
+        "axis": "z",
         "origin": [
-          9.5,
-          -4.38131,
+          5.84607,
+          -9.20015,
           9.75
         ]
       },
@@ -380,12 +344,12 @@
     {
       "from": [
         2.75,
-        1.01803,
+        0.76803,
         4.25
       ],
       "to": [
         8.5,
-        1.01803,
+        0.76803,
         12.75
       ],
       "rotation": {
@@ -542,18 +506,18 @@
     {
       "name": "binding",
       "from": [
-        8,
-        0.01903,
+        7.5,
+        0.26903,
         4
       ],
       "to": [
-        9,
-        1.76903,
+        8.5,
+        2.01903,
         13
       ],
       "rotation": {
-        "angle": 0,
-        "axis": "y",
+        "angle": -22.5,
+        "axis": "z",
         "origin": [
           6.86732,
           -0.17388,
@@ -632,8 +596,8 @@
         90
       ],
       "translation": [
-        -5.25,
-        -2.25,
+        -5,
+        -1.5,
         -3
       ],
       "scale": [
@@ -646,12 +610,12 @@
       "rotation": [
         -90,
         -0.5,
-        -90
+        -109.25
       ],
       "translation": [
         5.25,
-        -2.25,
-        -3
+        -1.5,
+        -1.75
       ],
       "scale": [
         0.74,
@@ -675,10 +639,10 @@
       "rotation": [
         81,
         1,
-        -155
+        -180
       ],
       "translation": [
-        7.5,
+        3.25,
         3,
         -6.5
       ]
@@ -692,13 +656,13 @@
     },
     "gui": {
       "rotation": [
-        39,
-        -44,
-        -180
+        40,
+        -30,
+        -142
       ],
       "translation": [
-        -1.5,
-        -6,
+        3.25,
+        -7,
         0
       ],
       "scale": [
@@ -709,7 +673,7 @@
     },
     "head": {
       "translation": [
-        3,
+        2.75,
         17.5,
         -0.75
       ],
