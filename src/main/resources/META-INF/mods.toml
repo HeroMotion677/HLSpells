@@ -7,8 +7,8 @@ modId="hlspells"
 version="1.16.5-r1.0"
 displayName="HLSpells"
 credits="Credits are on mod's page."
-displayURL="https://github.com/Max094Reikeb/ScientificAlterations"
-authors="Max094_Reikeb"
+displayURL="Max094_Reikeb: https://github.com/Max094Reikeb/ScientificAlterations\nDivinity: https://github.com/Divine144/HLSpells"
+authors="Max094_Reikeb, Divinity"
 description='''
 HLSpells is a mod adding spells and more...
 '''
@@ -25,4 +25,3 @@ HLSpells is a mod adding spells and more...
     mandatory=true
     versionRange="[1.16.5,1.17)"
     ordering="NONE"
-    side="BOTH"
