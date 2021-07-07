@@ -11,39 +11,42 @@
   "overrides": [
     {
       "predicate": {
-        "using": 1
+        "using": 0
       },
       "model": "hlspells:item/spell_book_0"
     },
     {
       "predicate": {
-        "using": 1,
-        "use": 0.2
+        "using": 0.2
       },
       "model": "hlspells:item/spell_book_1"
     },
     {
       "predicate": {
-        "using": 1,
-        "use": 0.4
+        "using": 0.4
       },
       "model": "hlspells:item/spell_book_2"
     },
     {
       "predicate": {
-        "using": 1,
-        "use": 0.6
+        "using": 0.6
       },
       "model": "hlspells:item/spell_book_3"
     },
     {
       "predicate": {
-        "using": 1,
-        "use": 0.8
+        "using": 0.8
       },
       "model": "hlspells:item/spell_book_4"
+    },
+    {
+      "predicate" : {
+        "using" : 1
+      },
+      "model" : "hlspells:item/spell_book_5"
     }
   ],
+
   "elements": [
     {
       "from": [
