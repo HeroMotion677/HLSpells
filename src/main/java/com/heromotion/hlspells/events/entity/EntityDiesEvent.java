@@ -17,7 +17,7 @@ import net.minecraftforge.fml.network.PacketDistributor;
 
 @Mod.EventBusSubscriber(modid = HLSpells.MODID)
 public class EntityDiesEvent {
-
+//yes
     @SubscribeEvent
     public static void onEntityDies(LivingDeathEvent event) {
         if (event == null) return;
