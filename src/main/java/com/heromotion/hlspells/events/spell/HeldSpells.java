@@ -24,16 +24,20 @@ public class HeldSpells
     @SubscribeEvent
     public void activeSpells (TickEvent.PlayerTickEvent event)
     {
-        if (SpellBookItem.isHeldActive && event.player != null && event.player.getMainHandItem().getItem() instanceof SpellBookItem)
+        if (SpellBookItem.isHeldActive && event.player != null)
         {
-            if (SpellUtils.getSpellBook(event.player.getMainHandItem()) == SpellBookInit.ARROW_RAIN.get())
+            if (event.player.getMainHandItem().getItem() instanceof SpellBookItem || event.player.getOffhandItem().getItem() instanceof SpellBookItem)
             {
-                doArrowRain(event.player);
-            }
+                if (SpellUtils.getSpellBook(event.player.getMainHandItem()) == SpellBookInit.ARROW_RAIN.get() || SpellUtils.getSpellBook(event.player.getOffhandItem()) == SpellBookInit.ARROW_RAIN.get())
+                {
 
-            else if (SpellUtils.getSpellBook(event.player.getMainHandItem()) == SpellBookInit.FEATHER_FALLING.get())
-            {
-                doFeatherFalling(event.player);
+                    doArrowRain(event.player);
+                }
+
+                else if (SpellUtils.getSpellBook(event.player.getMainHandItem()) == SpellBookInit.FEATHER_FALLING.get() || SpellUtils.getSpellBook(event.player.getOffhandItem()) == SpellBookInit.FEATHER_FALLING.get())
+                {
+                    doFeatherFalling(event.player);
+                }
             }
         }
 

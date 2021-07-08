@@ -6,15 +6,19 @@ import com.heromotion.hlspells.init.SpellInit;
 import com.heromotion.hlspells.misc.CastSpells;
 import com.heromotion.hlspells.spell.Spell;
 import com.heromotion.hlspells.spell.SpellBookObject;
+import com.heromotion.hlspells.spell.SpellInstance;
 import com.heromotion.hlspells.spell.SpellType;
 import com.heromotion.hlspells.util.SpellUtils;
 import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
 import net.minecraft.util.*;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.event.entity.player.PlayerSetSpawnEvent;
+import net.minecraftforge.event.world.NoteBlockEvent;
 import net.minecraftforge.fml.RegistryObject;
 
 import javax.annotation.Nullable;
@@ -26,12 +30,16 @@ import java.util.function.Predicate;
 public class SpellBookItem extends ShootableItem
 {
     public static boolean isHeldActive = false;
+    private List<SpellInstance> spell;
+
+    private boolean isActive;
 
     public SpellBookItem()
     {
         super(new Properties()
                 .stacksTo(1)
                 .tab(ItemGroup.TAB_TOOLS));
+        isActive = false;
     }
 
     public ItemStack getDefaultInstance()
@@ -86,10 +94,32 @@ public class SpellBookItem extends ShootableItem
     }
 
     @Override
+    public void inventoryTick(ItemStack stack, World world, Entity entity, int p_77663_4_, boolean p_77663_5_)
+    {
+        if (entity instanceof PlayerEntity)
+        {
+            PlayerEntity playerEntity =  (PlayerEntity) entity;
+            if (isHeldActive)
+            {
+                if (playerEntity.getMainHandItem().getItem() instanceof SpellBookItem || playerEntity.getOffhandItem().getItem() instanceof SpellBookItem)
+                {
+                    if (SpellUtils.getSpellBook(playerEntity.getMainHandItem().getStack()).getSpells() == spell ||
+                        SpellUtils.getSpellBook(playerEntity.getOffhandItem().getStack()).getSpells() == spell)
+                    {
+                        return;
+                    }
+                }
+                isHeldActive = false;
+            }
+        }
+    }
+
+    @Override
     public ActionResult<ItemStack> use (World worldIn, PlayerEntity playerIn, Hand handIn)
     {
         ItemStack itemstack = playerIn.getItemInHand(handIn);
         playerIn.startUsingItem(handIn);
+        spell = SpellUtils.getSpellBook(itemstack).getSpells();
         isHeldActive = true;
         return ActionResult.success(itemstack);
     }

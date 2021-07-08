@@ -18,7 +18,6 @@ import java.util.function.Supplier;
 
 public class SpellInit
 {
-
     public static final DeferredRegister<Spell> SPELLS_DEFERRED_REGISTER = DeferredRegister.create(Spell.class, HLSpells.MODID);
     public static Supplier<IForgeRegistry<Spell>> SPELLS_REGISTRY = SPELLS_DEFERRED_REGISTER.makeRegistry("spell", () ->
             new RegistryBuilder<Spell>().setMaxID(Integer.MAX_VALUE - 1).onAdd((owner, stage, id, obj, oldObj) ->
@@ -32,17 +31,6 @@ public class SpellInit
     public static final RegistryObject<Spell> SOUL_SYPHON = SPELLS_DEFERRED_REGISTER.register("soul_syphon", () -> new Spell(SpellType.CAST));
     public static final RegistryObject<Spell> ARROW_RAIN = SPELLS_DEFERRED_REGISTER.register("arrow_rain", () -> new Spell(SpellType.HELD));
     public static final RegistryObject<Spell> BOLT = SPELLS_DEFERRED_REGISTER.register("bolt", () -> new Spell(SpellType.CAST));
-
-    public static List<RegistryObject<Spell>> getAllSpells ()
-    {
-        List<RegistryObject<Spell>> list = new ArrayList<>();
-        list.add(FEATHER_FALLING);
-        list.add(BLAST_PROTECTION);
-        list.add(SOUL_SYPHON);
-        list.add(ARROW_RAIN);
-        list.add(BOLT);
-        return list;
-    }
 
     public static <T extends IForgeRegistryEntry<?>> ResourceLocation getName(T type)
     {

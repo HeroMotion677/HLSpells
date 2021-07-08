@@ -1,6 +1,9 @@
 package com.heromotion.hlspells.util;
 
+import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
@@ -96,12 +99,12 @@ public class Util {
         AxisAlignedBB aabb = player.getBoundingBox().expandTowards(cam1.scale(range)).inflate(1.0F, 1.0F, 1.0F);
         RayTraceResult ray = findEntity(world, player, pos, cam2, aabb, null, range);
 
-        if(ray != null)
+        if (ray != null)
         {
-            if(ray.getType() == RayTraceResult.Type.ENTITY)
+            if (ray.getType() == RayTraceResult.Type.ENTITY)
             {
                 EntityRayTraceResult ray2 = (EntityRayTraceResult) ray;
-                return ray2.getEntity();
+                return ray2.getEntity() instanceof LivingEntity && !(ray2.getEntity() instanceof PlayerEntity) ? ray2.getEntity() : null;
             }
         }
         return null;
@@ -109,10 +112,10 @@ public class Util {
 
     private static EntityRayTraceResult findEntity(World world, PlayerEntity player, Vector3d pos, Vector3d look, AxisAlignedBB aabb, Predicate<Entity> filter, double range)
     {
-        for(Entity entity1 : world.getEntities(player, aabb, filter))
+        for (Entity entity1 : world.getEntities(player, aabb, filter))
         {
             AxisAlignedBB mob = entity1.getBoundingBox().inflate(1.0F);
-            if(intersect(pos, look, mob, range))
+            if (intersect(pos, look, mob, range))
             {
                 return new EntityRayTraceResult(entity1);
             }

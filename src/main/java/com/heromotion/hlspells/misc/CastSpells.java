@@ -1,13 +1,16 @@
 package com.heromotion.hlspells.misc;
 
 import com.heromotion.hlspells.entities.CustomShulkerBullet;
+import com.heromotion.hlspells.entities.DumbShulkerBullet;
 import com.heromotion.hlspells.init.SpellBookInit;
 import com.heromotion.hlspells.util.SpellUtils;
 import com.heromotion.hlspells.util.Util;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.monster.GhastEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ProjectileHelper;
 import net.minecraft.item.ItemStack;
@@ -83,7 +86,13 @@ public class CastSpells
             CustomShulkerBullet bullet = new CustomShulkerBullet(playerEntity.getCommandSenderWorld(), playerEntity, Util.rayTrace(playerEntity.getCommandSenderWorld(), playerEntity, 25D), playerEntity.getDirection().getAxis());
 
             playerEntity.getCommandSenderWorld().addFreshEntity(bullet);
+            return;
         }
+        // Dumb Bullet
+        DumbShulkerBullet arrowEntity  = new DumbShulkerBullet(EntityType.SHULKER_BULLET, playerEntity.getCommandSenderWorld(), playerEntity);
+        arrowEntity.shootFromRotation(playerEntity, playerEntity.xRot, playerEntity.yRot, 1.0F, 1.0F, 1.0F);
+        arrowEntity.setDeltaMovement(MathHelper.cos((float) Math.toRadians(playerEntity.yRot + 90)) * playerEntity.getBbWidth(), 0, MathHelper.sin((float) Math.toRadians(playerEntity.yRot + 90)) * playerEntity.getBbWidth());
+        playerEntity.getCommandSenderWorld().addFreshEntity(arrowEntity);
     }
 
     public static void doSoulSyphon(World world, PlayerEntity playerEntity)

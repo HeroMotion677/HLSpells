@@ -25,7 +25,6 @@ import org.apache.logging.log4j.Logger;
 @Mod(HLSpells.MODID)
 public class HLSpells
 {
-
     // Directly reference a log4j logger.
     public static final Logger LOGGER = LogManager.getLogger();
 
@@ -40,7 +39,6 @@ public class HLSpells
 
         // Registers an event with the mod specific event bus. This is needed to register new stuff.
         FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientSetup::init);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::spellBookModelRender);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
         registerAllDeferredRegistryObjects(FMLJavaModLoadingContext.get().getModEventBus());
 
@@ -56,45 +54,9 @@ public class HLSpells
         Villagers.PROFESSIONS.register(modBus);
     }
 
-
     /*
       Add to Village pools in FMLServerAboutToStartEvent so Mage houses shows up in Villages modified by datapacks.
      */
-
-    // Renders book model
-    public void spellBookModelRender (final FMLClientSetupEvent event)
-    {
-        event.enqueueWork(() -> {
-            ItemModelsProperties.register(ItemInit.SPELL_BOOK.get(), new ResourceLocation("using"), (stack, world, living) -> {
-
-                if (living instanceof PlayerEntity && living.isUsingItem())
-                {
-                    if ((double) living.getUseItemRemainingTicks() < 72000 && (double) living.getUseItemRemainingTicks() >= 71996) {
-                        return 0.2F;
-                    }
-
-                    else if ((double) living.getUseItemRemainingTicks()  < 71996 && (double) living.getUseItemRemainingTicks() >= 71992) {
-                        return 0.4F;
-                    }
-
-                    else if ((double) living.getUseItemRemainingTicks() < 71992 && (double) living.getUseItemRemainingTicks() >= 71988) {
-                        return 0.6F;
-                    }
-
-                    else if ((double) living.getUseItemRemainingTicks() < 71988 && (double) living.getUseItemRemainingTicks() >= 71984)
-                    {
-                        return 0.8F;
-                    }
-
-                    else if ((double) living.getUseItemRemainingTicks() < 71984)
-                    {
-                        return 1;
-                    }
-                }
-                return 0;
-            });
-        });
-    }
 
     public void setupMageHouses(final FMLServerAboutToStartEvent event)
     {
