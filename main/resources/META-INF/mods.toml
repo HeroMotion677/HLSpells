@@ -1,0 +1,27 @@
+modLoader="javafml"
+loaderVersion="[36,)"
+license="All rights reserved"
+
+[[mods]]
+modId="hlspells"
+version="1.16.5-r1.0"
+displayName="HLSpells"
+credits="Credits are on mod's page."
+displayURL="\nMax094_Reikeb: https://github.com/Max094Reikeb/ScientificAlterations\nDivinity: https://github.com/Divine144/HLSpells"
+authors="Max094_Reikeb, Divinity"
+description='''
+HLSpells is a mod adding spells and more...
+'''
+
+[[dependencies.hlspells]] #optional
+    modId="forge"
+    mandatory=true
+    versionRange="[36,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.hlspells]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.16.5,1.17)"
+    ordering="NONE"
