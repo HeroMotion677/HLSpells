@@ -10,5 +10,20 @@
   "spell.hlspells.feather_falling": "Feather Falling",
   "spell.hlspells.soul_syphon": "Soul Syphon",
   "spell.hlspells.arrow_rain" : "Arrow Rain",
-  "spell.hlspells.bolt" : "Bolt"
+  "spell.hlspells.bolt" : "Bolt",
+  "spell.hlspells.healing_circle" : "Healing Circle",
+  "spell.hlspells.soul_summon" : "Soul Summon",
+  "spell.hlspells.pull" : "Pull",
+  "spell.hlspells.bond" : "Bond",
+  "spell.hlspells.storm" : "Storm",
+  "spell.hlspells.fire_ball" : "Fire Ball",
+  "spell.hlspells.levitation" : "Levitation",
+  "spell.hlspells.lightning_bolt" : "Lightning Bolt",
+  "spell.hlspells.knockback_bolt" : "Knockback Bolt",
+  "spell.hlspells.protection_circle" : "Protection Circle",
+  "spell.hlspells.respiration" : "Respiration",
+  "spell.hlspells.speed" : "Speed",
+  "spell.hlspells.piercing_bolt" : "Piercing Bolt",
+  "spell.hlspells.absorbing" : "Absorbing",
+  "spell.hlspells.fangs" : "Fangs"
 }
