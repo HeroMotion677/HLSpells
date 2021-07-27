@@ -5,10 +5,7 @@ import com.divinity.hlspells.HLSpells;
 import com.divinity.hlspells.spell.SpellType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.RegistryObject;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.IForgeRegistry;
-import net.minecraftforge.registries.IForgeRegistryEntry;
-import net.minecraftforge.registries.RegistryBuilder;
+import net.minecraftforge.registries.*;
 
 import java.util.Objects;
 import java.util.function.Supplier;
@@ -41,8 +38,10 @@ public class SpellInit
     public static final RegistryObject<Spell> RESPIRATION = SPELLS_DEFERRED_REGISTER.register("respiration", () -> new Spell(SpellType.HELD));
     public static final RegistryObject<Spell> SPEED = SPELLS_DEFERRED_REGISTER.register("speed", () -> new Spell(SpellType.HELD));
     public static final RegistryObject<Spell> PIERCING_BOLT = SPELLS_DEFERRED_REGISTER.register("piercing_bolt", () -> new Spell(SpellType.CAST));
-    public static final RegistryObject<Spell> ABSORBING = SPELLS_DEFERRED_REGISTER.register("absorbing", () -> new Spell(SpellType.HELD));
+    public static final RegistryObject<Spell> ABSORBING = SPELLS_DEFERRED_REGISTER.register("absorbing", () -> new Spell(SpellType.CAST));
     public static final RegistryObject<Spell> FANGS = SPELLS_DEFERRED_REGISTER.register("fangs", () -> new Spell(SpellType.CAST));
+    public static final RegistryObject<Spell> FLAMING_BOLT = SPELLS_DEFERRED_REGISTER.register("flaming_bolt", () -> new Spell(SpellType.CAST));
+    public static final RegistryObject<Spell> AQUA_BOLT  = SPELLS_DEFERRED_REGISTER.register("aqua_bolt", () -> new Spell(SpellType.CAST));
 
     public static <T extends IForgeRegistryEntry<?>> ResourceLocation getName(T type)
     {

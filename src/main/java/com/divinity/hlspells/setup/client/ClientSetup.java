@@ -1,20 +1,16 @@
 package com.divinity.hlspells.setup.client;
 
 import com.divinity.hlspells.HLSpells;
-import com.divinity.hlspells.entities.StormBulletEntity;
 import com.divinity.hlspells.init.EntityInit;
 import com.divinity.hlspells.init.ItemInit;
 import com.divinity.hlspells.items.SpellBookItem;
-import com.divinity.hlspells.renderers.StormBulletEntityRenderer;
-import net.minecraft.client.renderer.entity.EntityRenderer;
-import net.minecraft.client.renderer.entity.EntityRendererManager;
-import net.minecraft.entity.EntityType;
+import com.divinity.hlspells.renderers.BaseBoltRenderer;
+import com.divinity.hlspells.renderers.StormBoltRenderer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemModelsProperties;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.client.registry.IRenderFactory;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -55,6 +51,9 @@ public class ClientSetup
                 return 0;
             });
         });
-        RenderingRegistry.registerEntityRenderingHandler(EntityInit.STORM_BULLET_ENTITY.get(), StormBulletEntityRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityInit.STORM_BULLET_ENTITY.get(), StormBoltRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityInit.PIERCING_BOLT_ENTITY.get(), (manager) -> new BaseBoltRenderer<>(manager, new ResourceLocation(HLSpells.MODID,"textures/entity/bolt/green_bolt.png")));
+        RenderingRegistry.registerEntityRenderingHandler(EntityInit.FLAMING_BOLT_ENTITY.get(), (manager) -> new BaseBoltRenderer<>(manager, new ResourceLocation(HLSpells.MODID, "textures/entity/bolt/orange_bolt.png")));
+        RenderingRegistry.registerEntityRenderingHandler(EntityInit.AQUA_BOLT_ENTITY.get(), (manager) -> new BaseBoltRenderer<>(manager, new ResourceLocation(HLSpells.MODID, "textures/entity/bolt/blue_bolt.png")));
     }
 }

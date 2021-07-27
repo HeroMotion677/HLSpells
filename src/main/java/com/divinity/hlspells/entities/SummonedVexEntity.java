@@ -198,7 +198,6 @@ public class SummonedVexEntity extends VexEntity
                 if (d0 < SummonedVexEntity.this.getBoundingBox().getSize())
                 {
                     this.operation = MovementController.Action.WAIT;
-                    // Try this for speed
                     SummonedVexEntity.this.setDeltaMovement(SummonedVexEntity.this.getDeltaMovement().scale(0.5D));
                 }
 

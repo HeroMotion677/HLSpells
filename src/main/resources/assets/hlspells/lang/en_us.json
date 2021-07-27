@@ -25,5 +25,7 @@
   "spell.hlspells.speed" : "Speed",
   "spell.hlspells.piercing_bolt" : "Piercing Bolt",
   "spell.hlspells.absorbing" : "Absorbing",
-  "spell.hlspells.fangs" : "Fangs"
+  "spell.hlspells.fangs" : "Fangs",
+  "spell.hlspells.flaming_bolt" : "Flaming Bolt",
+  "spell.hlspells.aqua_bolt" : "Aqua Bolt"
 }

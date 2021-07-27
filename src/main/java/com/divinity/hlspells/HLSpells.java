@@ -29,7 +29,6 @@ public class HLSpells
 
     public HLSpells()
     {
-
         // Init the RegistryHandler class
         RegistryHandler.init();
 

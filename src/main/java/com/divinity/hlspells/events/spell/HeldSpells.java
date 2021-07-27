@@ -10,6 +10,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.entity.ShulkerBulletRenderer;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.client.renderer.entity.model.ShulkerBulletModel;
 import net.minecraft.entity.*;
@@ -56,7 +57,6 @@ public class HeldSpells
     private int airTimer = 0;
     private boolean flag =  true;
 
-
     @SubscribeEvent
     public void activeSpells (TickEvent.PlayerTickEvent event)
     {
@@ -97,11 +97,6 @@ public class HeldSpells
                 else if (SpellUtils.getSpellBook(event.player.getMainHandItem()) == SpellBookInit.SPEED.get() || SpellUtils.getSpellBook(event.player.getOffhandItem()) == SpellBookInit.SPEED.get())
                 {
                     doSpeed(event.player);
-                }
-
-                else if (SpellUtils.getSpellBook(event.player.getMainHandItem()) == SpellBookInit.ABSORBING.get() || SpellUtils.getSpellBook(event.player.getOffhandItem()) == SpellBookInit.ABSORBING.get())
-                {
-                    doAbsorbing(event.player);
                 }
             }
         }
@@ -175,6 +170,7 @@ public class HeldSpells
             }
         }
     }
+
 
     // Arrow Rain
     private void doArrowRain(PlayerEntity player)
@@ -463,9 +459,9 @@ public class HeldSpells
     private void doSpeed (PlayerEntity player)
     {
         ModifiableAttributeInstance attribute = player.getAttributes().getInstance(Attributes.MOVEMENT_SPEED);
-
-        if (attribute != null) {
-            attribute.setBaseValue(0.10000000149011612F);
+        if (attribute != null)
+        {
+            attribute.setBaseValue(2.2F);
         }
     }
 
@@ -493,12 +489,6 @@ public class HeldSpells
         }
     }
 
-
-    // Absorbing
-    private void doAbsorbing (PlayerEntity playerEntity)
-    {}
-
-
     private void resetEffects (PlayerEntity playerEntity)
     {
         timer = 0;
@@ -510,7 +500,6 @@ public class HeldSpells
         {
             instance.setBaseValue(0.10000000149011612F);
         }
-
         playerEntity.removeEffect(Effects.SLOW_FALLING);
         playerEntity.removeEffect(Effects.LEVITATION);
     }
