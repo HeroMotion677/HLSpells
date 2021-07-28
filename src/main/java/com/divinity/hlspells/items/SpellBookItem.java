@@ -1,9 +1,10 @@
 package com.divinity.hlspells.items;
 
-import com.divinity.hlspells.misc.CastSpells;
+import com.divinity.hlspells.spells.RunSpells;
 import com.divinity.hlspells.spell.SpellBookObject;
 import com.divinity.hlspells.spell.SpellInstance;
 import com.divinity.hlspells.init.SpellBookInit;
+import com.divinity.hlspells.spells.SpellActions;
 import com.divinity.hlspells.util.SpellUtils;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.enchantment.Enchantment;
@@ -18,7 +19,6 @@ import net.minecraft.world.World;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 import java.util.function.Predicate;
 
 
@@ -88,12 +88,12 @@ public class SpellBookItem extends ShootableItem
             {
                 if (!playerEntity.getCommandSenderWorld().isClientSide())
                 {
-                    CastSpells.doCastSpell(playerEntity, world, stack);
+                    RunSpells.doCastSpell(playerEntity, world, stack);
                 }
 
                 if (playerEntity.getCommandSenderWorld().isClientSide())
                 {
-                    CastSpells.doParticles(playerEntity);
+                    SpellActions.doParticles(playerEntity);
                 }
             }
         }
