@@ -12,8 +12,8 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.function.Predicate;
 
-public class SpellBookObject extends ForgeRegistryEntry<SpellBookObject> {
-
+public class SpellBookObject extends ForgeRegistryEntry<SpellBookObject>
+{
     private final String name;
     private final ImmutableList<SpellInstance> spellInstances;
 
@@ -47,9 +47,10 @@ public class SpellBookObject extends ForgeRegistryEntry<SpellBookObject> {
     {
         if (!this.spellInstances.isEmpty())
         {
-            for (SpellInstance spellInstance : this.spellInstances) {
-
-                if (spellInstance.getSpell().isInstantenous()) {
+            for (SpellInstance spellInstance : this.spellInstances)
+            {
+                if (spellInstance.getSpell().isInstantenous())
+                {
                     return true;
                 }
             }
@@ -57,15 +58,18 @@ public class SpellBookObject extends ForgeRegistryEntry<SpellBookObject> {
         return false;
     }
 
-    public boolean containsSpell(Predicate<SpellInstance> predicate) {
+    public boolean containsSpell(Predicate<SpellInstance> predicate)
+    {
         return spellInstances.stream().anyMatch(predicate);
     }
 
-    public boolean isEmpty() {
+    public boolean isEmpty()
+    {
         return this == SpellBookInit.EMPTY.get();
     }
 
-    public void runAction(PlayerEntity entity, World world) {
+    public void runAction(PlayerEntity entity, World world)
+    {
         spellInstances.forEach(spellInstance -> spellInstance.getSpell().getSpellAction().accept(entity, world));
     }
 }

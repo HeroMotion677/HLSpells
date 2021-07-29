@@ -10,7 +10,8 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class TotemOfKeeping extends Item
 {
-    public TotemOfKeeping() {
+    public TotemOfKeeping()
+    {
         super(new Properties()
                 .stacksTo(1)
                 .rarity(Rarity.UNCOMMON)

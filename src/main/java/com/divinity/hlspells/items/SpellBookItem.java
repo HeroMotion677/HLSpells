@@ -67,12 +67,14 @@ public class SpellBookItem extends ShootableItem
     }
 
     @Override
-    public Predicate<ItemStack> getAllSupportedProjectiles() {
+    public Predicate<ItemStack> getAllSupportedProjectiles()
+    {
         return ARROW_ONLY;
     }
 
     @Override
-    public int getDefaultProjectileRange() {
+    public int getDefaultProjectileRange()
+    {
         return 8;
     }
 
@@ -83,7 +85,7 @@ public class SpellBookItem extends ShootableItem
         {
             PlayerEntity playerEntity = (PlayerEntity) entity;
             isHeldActive = false;
-            
+
             if (playerEntity.getUseItemRemainingTicks() < 71988)
             {
                 if (!playerEntity.getCommandSenderWorld().isClientSide())
@@ -119,7 +121,7 @@ public class SpellBookItem extends ShootableItem
                 {
 
                     if (SpellUtils.getSpellBook(playerEntity.getMainHandItem().getStack()).getSpells() == spell ||
-                        SpellUtils.getSpellBook(playerEntity.getOffhandItem().getStack()).getSpells() == spell)
+                            SpellUtils.getSpellBook(playerEntity.getOffhandItem().getStack()).getSpells() == spell)
                     {
                         return;
                     }

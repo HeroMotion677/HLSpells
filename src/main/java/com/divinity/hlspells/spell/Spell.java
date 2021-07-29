@@ -27,49 +27,60 @@ public class Spell extends ForgeRegistryEntry<Spell> {
     @Nullable
     private String descriptionId;
 
-    public Spell(SpellType spellType, BiConsumer<PlayerEntity, World> spellAction) {
+    public Spell(SpellType spellType, BiConsumer<PlayerEntity, World> spellAction)
+    {
         this.category = spellType;
         this.spellAction = spellAction;
     }
 
-    public boolean isInstantenous() {
+    public boolean isInstantenous()
+    {
         return false;
     }
 
-    public boolean isCurse() {
+    public boolean isCurse()
+    {
         return this.category == SpellType.CURSE;
     }
 
-    protected String getOrCreateDescriptionId() {
-        if (this.descriptionId == null) {
+    protected String getOrCreateDescriptionId()
+    {
+        if (this.descriptionId == null)
+        {
             this.descriptionId = Util.makeDescriptionId("spell", SpellInit.SPELLS_REGISTRY.get().getKey(this));
         }
 
         return this.descriptionId;
     }
 
-    public String getDescriptionId() {
+    public String getDescriptionId()
+    {
         return this.getOrCreateDescriptionId();
     }
 
-    public ITextComponent getDisplayName() {
+    public ITextComponent getDisplayName()
+    {
         return new TranslationTextComponent(this.getDescriptionId());
     }
 
-    public SpellType getCategory() {
+    public SpellType getCategory()
+    {
         return this.category;
     }
 
     @Nullable
-    public static Spell byId(String id) {
+    public static Spell byId(String id)
+    {
         return SpellInit.SPELLS_REGISTRY.get().getValue(new ResourceLocation(HLSpells.MODID, id));
     }
 
-    public static String getId(Spell spell) {
+    public static String getId(Spell spell)
+    {
         return SpellInit.SPELLS_REGISTRY.get().toString();
     }
 
-    public BiConsumer<PlayerEntity, World> getSpellAction() {
+    public BiConsumer<PlayerEntity, World> getSpellAction()
+    {
         return spellAction;
     }
 }

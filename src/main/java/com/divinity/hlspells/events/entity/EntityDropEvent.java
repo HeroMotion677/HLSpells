@@ -26,21 +26,26 @@ public class EntityDropEvent {
         if (!(event.getEntity() instanceof PlayerEntity)) return;
         PlayerEntity player = (PlayerEntity) event.getEntity();
         boolean flag = false;
-        for (Iterator<ItemEntity> itemEntityIterator = event.getDrops().iterator(); itemEntityIterator.hasNext();) {
-            if (itemEntityIterator.next().getItem().getItem() == ItemInit.TOTEM_OF_KEEPING.get()) {
+        for (Iterator<ItemEntity> itemEntityIterator = event.getDrops().iterator(); itemEntityIterator.hasNext();)
+        {
+            if (itemEntityIterator.next().getItem().getItem() == ItemInit.TOTEM_OF_KEEPING.get())
+            {
                 itemEntityIterator.remove();
                 flag = true;
                 break;
             }
         }
-        for (Iterator<ItemEntity> itemEntityIterator = event.getDrops().iterator(); itemEntityIterator.hasNext(); ) {
+        for (Iterator<ItemEntity> itemEntityIterator = event.getDrops().iterator(); itemEntityIterator.hasNext();)
+        {
             ItemStack stack = itemEntityIterator.next().getItem();
             if ((EnchantmentHelper.getItemEnchantmentLevel(EnchantmentInit.SOUL_BOND.get(), stack) > 0)
-                    || (flag) || stack.getItem().equals(ItemInit.TOTEM_OF_RETURNING.get())) {
+                    || (flag) || stack.getItem().equals(ItemInit.TOTEM_OF_RETURNING.get()))
+            {
                 itemEntityIterator.remove();
                 player.inventory.add(stack);
             }
         }
+
         if (flag)
         {
             player.level.broadcastEntityEvent(player, (byte) 35);

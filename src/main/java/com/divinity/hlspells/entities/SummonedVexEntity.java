@@ -1,9 +1,11 @@
 package com.divinity.hlspells.entities;
 
 import com.mojang.datafixers.types.templates.Sum;
+import net.minecraft.client.renderer.entity.VexRenderer;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.controller.MovementController;
 import net.minecraft.entity.ai.goal.*;
+import net.minecraft.entity.monster.EvokerEntity;
 import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.entity.monster.SlimeEntity;
 import net.minecraft.entity.monster.VexEntity;
@@ -52,7 +54,6 @@ public class SummonedVexEntity extends VexEntity
                 BlockPos ownerPos = this.owner.blockPosition().offset(-2 + this.owner.level.random.nextInt(5),
                         1, -2 + this.owner.level.random.nextInt(5));
                 this.moveControl.setWantedPosition(ownerPos.getX(), ownerPos.getY(), ownerPos.getZ(), 0.75D);
-                this.setBoundOrigin(this.owner.blockPosition());
             }
         }
     }
@@ -93,7 +94,6 @@ public class SummonedVexEntity extends VexEntity
         }
         this.setDropChance(EquipmentSlotType.MAINHAND, 0.0F);
     }
-
 
     @Override
     public IPacket<?> getAddEntityPacket()

@@ -4,6 +4,7 @@ import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.block.FireBlock;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.LightningBoltEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.*;
@@ -21,11 +22,14 @@ import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.network.NetworkHooks;
 
 import javax.annotation.Nullable;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class StormBoltEntity extends ArrowEntity
 {
     private Vector3d position3d;
+    private boolean isLightning = true;
 
     public StormBoltEntity(EntityType<? extends ArrowEntity> type, World world)
     {
@@ -71,12 +75,17 @@ public class StormBoltEntity extends ArrowEntity
     {
         super.tick();
 
-        if (position3d != null && distanceToSqr(this.position3d) >= 2500)
+        if (isLightning && position3d != null && distanceToSqr(this.position3d) >= 2500)
         {
             this.remove();
         }
 
-        if (this.level.getGameTime() % 2 == 0)
+        else if (!isLightning && position3d != null && distanceToSqr(this.position3d) >= 1500)
+        {
+            this.remove();
+        }
+
+        if (isLightning && this.level.getGameTime() % 2 == 0)
         {
             LightningBoltEntity lightning = new LightningBoltEntity(EntityType.LIGHTNING_BOLT, this.getCommandSenderWorld())
             {
@@ -144,8 +153,23 @@ public class StormBoltEntity extends ArrowEntity
             lightning.moveTo(this.getX(), this.getY(), this.getZ());
             this.level.addFreshEntity(lightning);
         }
+
+        else if (!isLightning && this.level.getGameTime() % 3 == 0)
+        {
+            EvokerFangsEntity entity = new EvokerFangsEntity(EntityType.EVOKER_FANGS, this.level);
+            if (this.getOwner() instanceof PlayerEntity)
+            {
+                entity.setPos(this.getX(), this.getY(), this.getZ());
+                entity.setOwner((LivingEntity) this.getOwner());
+                this.level.addFreshEntity(entity);
+            }
+        }
     }
 
+    public void setIsLightning (boolean isLightning)
+    {
+        this.isLightning = isLightning;
+    }
 
     @Override
     public IPacket<?> getAddEntityPacket()

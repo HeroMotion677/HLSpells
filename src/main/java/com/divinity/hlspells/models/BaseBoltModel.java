@@ -7,7 +7,7 @@ import net.minecraft.entity.projectile.ArrowEntity;
 
 public class BaseBoltModel<T extends ArrowEntity> extends SegmentedModel<T>
 {
-    private ModelRenderer model;
+    private final ModelRenderer model;
 
     public BaseBoltModel ()
     {
@@ -21,7 +21,7 @@ public class BaseBoltModel<T extends ArrowEntity> extends SegmentedModel<T>
     }
 
     @Override
-    public void setupAnim(T p_225597_1_, float p_225597_2_, float p_225597_3_, float p_225597_4_, float p_225597_5_, float p_225597_6_)
+    public void setupAnim(T Entity, float p_225597_2_, float p_225597_3_, float p_225597_4_, float p_225597_5_, float p_225597_6_)
     {
         this.model.yRot = p_225597_5_ * ((float)Math.PI / 180F);
         this.model.xRot = p_225597_6_ * ((float)Math.PI / 180F);

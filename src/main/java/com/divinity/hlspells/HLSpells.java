@@ -1,6 +1,9 @@
 package com.divinity.hlspells;
 
 import com.divinity.hlspells.setup.RegistryHandler;
+import com.divinity.hlspells.setup.client.ClientSetup;
+import com.divinity.hlspells.spells.RunSpells;
+import com.divinity.hlspells.spells.SpellActions;
 import com.divinity.hlspells.villages.POIFixup;
 import com.divinity.hlspells.villages.StructureGen;
 import com.divinity.hlspells.villages.Villagers;
@@ -35,6 +38,8 @@ public class HLSpells
 
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.addListener(this::setupMageHouses);
+        MinecraftForge.EVENT_BUS.register(new RunSpells());
+        MinecraftForge.EVENT_BUS.register(new SpellActions());
         MinecraftForge.EVENT_BUS.register(this);
     }
 

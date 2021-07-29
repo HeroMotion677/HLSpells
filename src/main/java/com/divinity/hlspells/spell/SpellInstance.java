@@ -1,11 +1,12 @@
 package com.divinity.hlspells.spell;
 
+import net.minecraft.client.renderer.entity.layers.LayerRenderer;
 import net.minecraft.nbt.CompoundNBT;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class SpellInstance {
-
+public class SpellInstance
+{
     private static final Logger LOGGER = LogManager.getLogger();
     private final Spell spell;
 
@@ -32,21 +33,26 @@ public class SpellInstance {
         return s;
     }
 
-    public boolean equals(Object obj) {
-        if (this == obj) {
+    public boolean equals(Object obj)
+    {
+        if (this == obj)
+        {
             return true;
-        } else if (!(obj instanceof SpellInstance)) {
+        } else if (!(obj instanceof SpellInstance))
+        {
             return false;
         }
         return false;
     }
 
-    public static SpellInstance load(CompoundNBT nbt) {
+    public static SpellInstance load(CompoundNBT nbt)
+    {
         Spell spell = Spell.byId(nbt.getString("Id"));
         return spell == null ? null : loadSpecifiedEffect(spell, nbt);
     }
 
-    public CompoundNBT save(CompoundNBT nbt) {
+    public CompoundNBT save(CompoundNBT nbt)
+    {
         nbt.putString("Id", Spell.getId(this.getSpell()));
         this.writeDetailsTo(nbt);
         return nbt;

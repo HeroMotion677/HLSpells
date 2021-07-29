@@ -57,8 +57,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Mod.EventBusSubscriber(modid = HLSpells.MODID)
-public class SpellActions {
-    public static void doBlastSpell(World world, PlayerEntity playerEntity) {
+public class SpellActions
+{
+    public static void doBlastSpell(World world, PlayerEntity playerEntity)
+    {
         double x = playerEntity.getX();
         double y = playerEntity.getY();
         double z = playerEntity.getZ();
@@ -85,8 +87,10 @@ public class SpellActions {
         world.addParticle(ParticleTypes.EXPLOSION_EMITTER, x, y, z, 1.0D, 0.0D, 0.0D);
     }
 
-    public static void doBoltSpell(PlayerEntity playerEntity) {
-        if (Util.rayTrace(playerEntity.level, playerEntity, 25D) != null && playerEntity.isShiftKeyDown()) {
+    public static void doBoltSpell(PlayerEntity playerEntity)
+    {
+        if (Util.rayTrace(playerEntity.level, playerEntity, 25D) != null && playerEntity.isShiftKeyDown())
+        {
             Entity entity = Util.rayTrace(playerEntity.level, playerEntity, 25D);
             ShulkerBulletEntity smartBullet = new SmartShulkerBolt(playerEntity.level, playerEntity, entity, playerEntity.getDirection().getAxis());
             smartBullet.setPos(playerEntity.getX() + playerEntity.getViewVector(1.0F).x, playerEntity.getY() + 1.35, playerEntity.getZ() + playerEntity.getViewVector(1.0F).z);
@@ -278,7 +282,8 @@ public class SpellActions {
     }
 
     // Pending change
-    public static void doStormSpell(PlayerEntity playerEntity) {
+    public static void doStormSpell(PlayerEntity playerEntity)
+    {
         StormBoltEntity stormBullet = new StormBoltEntity(EntityInit.STORM_BULLET_ENTITY.get(), playerEntity.level);
         stormBullet.setHomePosition(playerEntity.position());
         stormBullet.setOwner(playerEntity);
@@ -316,15 +321,18 @@ public class SpellActions {
         Util.teleport(world, playerEntity.blockPosition(), teleportPos, playerEntity);
     }
 
-    public static void doSummonSpell(PlayerEntity playerEntity) {
-        for (int i = 0; i < 4; ++i) {
+    public static void doSummonSpell(PlayerEntity playerEntity)
+    {
+        for (int i = 0; i < 4; ++i)
+        {
             BlockPos blockpos = playerEntity.blockPosition().offset(-2 + playerEntity.level.random.nextInt(5), 1, -2 + playerEntity.level.random.nextInt(5));
             SummonedVexEntity vexEntity = new SummonedVexEntity(EntityType.VEX, playerEntity.level);
             vexEntity.moveTo(blockpos, 0.0F, 0.0F);
             vexEntity.setSummonedOwner(playerEntity);
             vexEntity.setLimitedLife(20 * (30 + playerEntity.level.random.nextInt(90)));
 
-            if (playerEntity.level instanceof ServerWorld) {
+            if (playerEntity.level instanceof ServerWorld)
+            {
                 ServerWorld world = (ServerWorld) playerEntity.level;
                 vexEntity.finalizeSpawn(world, world.getCurrentDifficultyAt(blockpos), SpawnReason.MOB_SUMMONED, null, null);
                 world.addFreshEntityWithPassengers(vexEntity);
@@ -332,14 +340,17 @@ public class SpellActions {
         }
     }
 
-    public static void doParticles(PlayerEntity playerEntity) {
+    public static void doParticles(PlayerEntity playerEntity)
+    {
         doBookParticles(playerEntity.getCommandSenderWorld(), new BlockPos(playerEntity.getX(), (playerEntity.getY() + 1), playerEntity.getZ()), 100);
         playerEntity.getCommandSenderWorld().playSound(null, new BlockPos(playerEntity.getX(), playerEntity.getY(), playerEntity.getZ()), SoundEvents.ENCHANTMENT_TABLE_USE,
                 SoundCategory.AMBIENT, 0.6f, 1.0f);
     }
 
-    public static void doBookParticles(World world, BlockPos pos, int number) {
-        for (int l = 0; l < number; l++) {
+    public static void doBookParticles(World world, BlockPos pos, int number)
+    {
+        for (int l = 0; l < number; l++)
+        {
             double d0 = (pos.getX() + world.random.nextFloat());
             double d1 = (pos.getY() + world.random.nextFloat());
             double d2 = (pos.getZ() + world.random.nextFloat());
@@ -355,18 +366,38 @@ public class SpellActions {
     static boolean fangsSpellStaggerBoolean = false;
     static PlayerEntity fangsSpellActivator;
 
-    public static void doFangsSpell(PlayerEntity playerEntity) {
-        fangsActiveFlag = true;
-        fangsSpellActivator = playerEntity;
+    public static void doFangsSpell(PlayerEntity playerEntity)
+    {
+        if (!playerEntity.isShiftKeyDown())
+        {
+            StormBoltEntity stormBullet = new StormBoltEntity(EntityInit.STORM_BULLET_ENTITY.get(), playerEntity.level);
+            stormBullet.setHomePosition(playerEntity.position());
+            stormBullet.setIsLightning(false);
+            stormBullet.setOwner(playerEntity);
+            stormBullet.setPos(playerEntity.getX(), playerEntity.getY(), playerEntity.getZ());
+            stormBullet.shootFromRotation(playerEntity, playerEntity.xRot, playerEntity.yRot, 1.3F, 1.3F, 1.3F);
+            stormBullet.setDeltaMovement(MathHelper.cos((float) Math.toRadians(playerEntity.yRot + 90)), 0, MathHelper.sin((float) Math.toRadians(playerEntity.yRot + 90)));
+            playerEntity.level.addFreshEntity(stormBullet);
+        }
+
+        else
+        {
+            fangsActiveFlag = true;
+            fangsSpellActivator = playerEntity;
+        }
     }
 
     @SubscribeEvent
-    public void fangsSpell(TickEvent.PlayerTickEvent event) {
-        if (event.player != null && fangsSpellActivator != null) {
-            if (fangsActiveFlag && !event.player.level.isClientSide() && fangsSpellActivator == event.player) {
+    public void fangsSpell(TickEvent.PlayerTickEvent event)
+    {
+        if (event.player != null && fangsSpellActivator != null)
+        {
+            if (fangsActiveFlag && !event.player.level.isClientSide() && fangsSpellActivator == event.player)
+            {
                 List<EvokerFangsEntity> entities = new ArrayList<>();
 
-                for (int i = 0; i < 28; i++) {
+                for (int i = 0; i < 28; i++)
+                {
                     entities.add(new EvokerFangsEntity(EntityType.EVOKER_FANGS, fangsSpellActivator.level));
                     entities.get(i).setOwner(fangsSpellActivator);
                 }
@@ -381,23 +412,39 @@ public class SpellActions {
                 entities.get(7).setPosAndOldPos(fangsSpellActivator.getX() - 1, fangsSpellActivator.getY(), fangsSpellActivator.getZ() + 1);
                 entities.get(8).setPosAndOldPos(fangsSpellActivator.getX() - 3, fangsSpellActivator.getY(), fangsSpellActivator.getZ() + 2);
 
-                for (EvokerFangsEntity entity : entities) {
-                    while (!(fangsSpellActivator.level.getBlockState(entity.blockPosition()).is(Blocks.AIR))) {
-                        entity.setPos(entity.xOld, entity.yOld + 1, entity.zOld);
+                entities.get(0).moveTo(fangsSpellActivator.getX() + 1, fangsSpellActivator.getY(), fangsSpellActivator.getZ());
+                entities.get(1).moveTo(fangsSpellActivator.getX() - 1, fangsSpellActivator.getY(), fangsSpellActivator.getZ());
+                entities.get(2).moveTo(fangsSpellActivator.getX(), fangsSpellActivator.getY(), fangsSpellActivator.getZ() + 1);
+                entities.get(3).moveTo(fangsSpellActivator.getX(), fangsSpellActivator.getY(), fangsSpellActivator.getZ() - 1);
+                entities.get(4).moveTo(fangsSpellActivator.getX() + 1, fangsSpellActivator.getY(), fangsSpellActivator.getZ() + 1);
+                entities.get(5).moveTo(fangsSpellActivator.getX() - 1, fangsSpellActivator.getY(), fangsSpellActivator.getZ() - 1);
+                entities.get(6).moveTo(fangsSpellActivator.getX() + 1, fangsSpellActivator.getY(), fangsSpellActivator.getZ() - 1);
+                entities.get(7).moveTo(fangsSpellActivator.getX() - 1, fangsSpellActivator.getY(), fangsSpellActivator.getZ() + 1);
+                entities.get(8).moveTo(fangsSpellActivator.getX() - 3, fangsSpellActivator.getY(), fangsSpellActivator.getZ() + 2);
+
+                for (EvokerFangsEntity entity : entities)
+                {
+                    while (!(fangsSpellActivator.level.getBlockState(entity.blockPosition()).is(Blocks.AIR)))
+                    {
+                        entity.setPos(entity.xOld, entity.blockPosition().getY() + 1, entity.zOld);
                     }
                 }
 
-                if (fangsSpellEvokerFangSpawnTimer == 0 && !fangsSpellStaggerBoolean) {
+                if (fangsSpellEvokerFangSpawnTimer == 0 && !fangsSpellStaggerBoolean)
+                {
                     fangsSpellStaggerBoolean = true;
 
-                    for (int i = 0; i < 8; i++) {
+                    for (int i = 0; i < 8; i++)
+                    {
                         fangsSpellActivator.level.addFreshEntity(entities.get(i));
                     }
                 }
 
-                if (fangsSpellStaggerBoolean) {
+                if (fangsSpellStaggerBoolean)
+                {
                     fangsSpellEvokerFangSpawnTimer++;
-                    if (fangsSpellEvokerFangSpawnTimer == 20) {
+                    if (fangsSpellEvokerFangSpawnTimer == 20)
+                    {
                         fangsSpellActivator.level.addFreshEntity(entities.get(8));
                         fangsSpellStaggerBoolean = false;
                         fangsActiveFlag = false;
@@ -476,7 +523,6 @@ public class SpellActions {
             }
         }
     }
-
 
     // Arrow Rain
 

@@ -106,7 +106,6 @@ public class FlamingBoltEntity extends ArrowEntity
         return 1F;
     }
 
-
     @Override
     protected void onHitBlock(BlockRayTraceResult result)
     {
@@ -126,6 +125,7 @@ public class FlamingBoltEntity extends ArrowEntity
     @Override
     public void checkDespawn()
     {
+        super.checkDespawn();
         if (this.level.getDifficulty() == Difficulty.PEACEFUL)
         {
             this.remove();
@@ -147,7 +147,7 @@ public class FlamingBoltEntity extends ArrowEntity
     @Override
     public boolean hurt(DamageSource source, float amount)
     {
-        if (!this.level.isClientSide && source.isProjectile())
+        if (!this.level.isClientSide && source.isProjectile() && this.isAlive())
         {
             this.playSound(SoundEvents.SHULKER_BULLET_HURT, 1.0F, 1.0F);
             ((ServerWorld)this.level).sendParticles(ParticleTypes.CRIT, this.getX(), this.getY(), this.getZ(), 15, 0.2D, 0.2D, 0.2D, 0.0D);

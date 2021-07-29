@@ -22,9 +22,10 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.network.PacketDistributor;
 
-public class TotemOfReturning extends Item {
-
-    public TotemOfReturning() {
+public class TotemOfReturning extends Item
+{
+    public TotemOfReturning()
+    {
         super(new Properties()
                 .stacksTo(1)
                 .rarity(Rarity.UNCOMMON)

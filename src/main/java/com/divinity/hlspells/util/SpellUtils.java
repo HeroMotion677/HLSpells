@@ -20,9 +20,8 @@ import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.List;
 
-public class SpellUtils {
-
-
+public class SpellUtils
+{
     private static final IFormattableTextComponent NO_CONTENT = (new TranslationTextComponent("spell.hlspells.empty")).withStyle(TextFormatting.GRAY);
 
     public static List<SpellInstance> getSpell(ItemStack stack) {
@@ -103,12 +102,17 @@ public class SpellUtils {
     }
 
     @OnlyIn(Dist.CLIENT)
-    public static void addSpellBookTooltip(ItemStack stack, List<ITextComponent> text, float p_185182_2_) {
+    public static void addSpellBookTooltip(ItemStack stack, List<ITextComponent> text, float p_185182_2_)
+    {
         List<SpellInstance> list = getSpell(stack);
-        if (list.isEmpty()) {
+        if (list.isEmpty())
+        {
             text.add(NO_CONTENT);
-        } else {
-            for (SpellInstance spellInstance : list) {
+        }
+        else
+        {
+            for (SpellInstance spellInstance : list)
+            {
                 Spell spell = spellInstance.getSpell();
                 text.add(new TranslationTextComponent(spell.getDescriptionId()).withStyle(spell.getCategory().getTooltipFormatting()));
             }
