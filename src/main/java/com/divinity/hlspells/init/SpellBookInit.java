@@ -46,6 +46,7 @@ public class SpellBookInit {
     public static final RegistryObject<SpellBookObject> FANGS = SPELL_BOOK_DEFERRED_REGISTER.register("fangs", () -> new SpellBookObject(new SpellInstance(SpellInit.FANGS.get())));
     public static final RegistryObject<SpellBookObject> FLAMING_BOLT = SPELL_BOOK_DEFERRED_REGISTER.register("flaming_bolt", () -> new SpellBookObject(new SpellInstance(SpellInit.FLAMING_BOLT.get())));
     public static final RegistryObject<SpellBookObject> AQUA_BOLT = SPELL_BOOK_DEFERRED_REGISTER.register("aqua_bolt", () -> new SpellBookObject(new SpellInstance(SpellInit.AQUA_BOLT.get())));
+    public static final RegistryObject<SpellBookObject> LURE = SPELL_BOOK_DEFERRED_REGISTER.register("lure", () -> new SpellBookObject(new SpellInstance(SpellInit.LURE.get())));
 
     public static <T extends IForgeRegistryEntry<?>> ResourceLocation getName(T type) {
         return Objects.requireNonNull(type.getRegistryName());

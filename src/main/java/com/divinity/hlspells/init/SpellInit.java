@@ -44,6 +44,8 @@ public class SpellInit {
     public static final RegistryObject<Spell> FANGS = SPELLS_DEFERRED_REGISTER.register("fangs", () -> new Spell(SpellType.CAST, (p, w) -> doFangsSpell(p)));
     public static final RegistryObject<Spell> FLAMING_BOLT = SPELLS_DEFERRED_REGISTER.register("flaming_bolt", () -> new Spell(SpellType.CAST, (p, w) -> doFlamingBolt(p)));
     public static final RegistryObject<Spell> AQUA_BOLT  = SPELLS_DEFERRED_REGISTER.register("aqua_bolt", () -> new Spell(SpellType.CAST, (p, w) -> doAquaBolt(p)));
+    public static final RegistryObject<Spell> LURE = SPELLS_DEFERRED_REGISTER.register("lure", () -> new Spell(SpellType.HELD, (p, w) -> doLure(p)));
+
 
     public static <T extends IForgeRegistryEntry<?>> ResourceLocation getName(T type) {
         return Objects.requireNonNull(type.getRegistryName());

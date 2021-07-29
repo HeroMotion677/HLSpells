@@ -2,6 +2,7 @@ package com.divinity.hlspells.spells;
 
 import com.divinity.hlspells.HLSpells;
 import com.divinity.hlspells.entities.*;
+import com.divinity.hlspells.goal.SpellBookGoal;
 import com.divinity.hlspells.init.EntityInit;
 import com.divinity.hlspells.items.SpellBookItem;
 import com.divinity.hlspells.util.Util;
@@ -10,12 +11,10 @@ import net.minecraft.block.Blocks;
 import net.minecraft.block.IWaterLoggable;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.SpawnReason;
+import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
+import net.minecraft.entity.ai.goal.TemptGoal;
 import net.minecraft.entity.boss.WitherEntity;
 import net.minecraft.entity.effect.LightningBoltEntity;
 import net.minecraft.entity.monster.*;
@@ -32,6 +31,8 @@ import net.minecraft.fluid.Fluids;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.IPacket;
 import net.minecraft.particles.ParticleTypes;
+import net.minecraft.pathfinding.FlyingPathNavigator;
+import net.minecraft.pathfinding.GroundPathNavigator;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.state.properties.BlockStateProperties;
@@ -284,7 +285,7 @@ public class SpellActions
     // Pending change
     public static void doStormSpell(PlayerEntity playerEntity)
     {
-        StormBoltEntity stormBullet = new StormBoltEntity(EntityInit.STORM_BULLET_ENTITY.get(), playerEntity.level);
+        InvisibleBoltEntity stormBullet = new InvisibleBoltEntity(EntityInit.STORM_BULLET_ENTITY.get(), playerEntity.level);
         stormBullet.setHomePosition(playerEntity.position());
         stormBullet.setOwner(playerEntity);
         stormBullet.setPos(playerEntity.getX() + playerEntity.getViewVector(1.0F).x, playerEntity.getY() + 1.35, playerEntity.getZ() + playerEntity.getViewVector(1.0F).z);
@@ -370,12 +371,12 @@ public class SpellActions
     {
         if (!playerEntity.isShiftKeyDown())
         {
-            StormBoltEntity stormBullet = new StormBoltEntity(EntityInit.STORM_BULLET_ENTITY.get(), playerEntity.level);
+            InvisibleBoltEntity stormBullet = new InvisibleBoltEntity(EntityInit.STORM_BULLET_ENTITY.get(), playerEntity.level);
             stormBullet.setHomePosition(playerEntity.position());
             stormBullet.setIsLightning(false);
             stormBullet.setOwner(playerEntity);
             stormBullet.setPos(playerEntity.getX(), playerEntity.getY(), playerEntity.getZ());
-            stormBullet.shootFromRotation(playerEntity, playerEntity.xRot, playerEntity.yRot, 1.3F, 1.3F, 1.3F);
+            stormBullet.shootFromRotation(playerEntity, playerEntity.xRot, playerEntity.yRot, 1.2F, 1.2F, 1.2F);
             stormBullet.setDeltaMovement(MathHelper.cos((float) Math.toRadians(playerEntity.yRot + 90)), 0, MathHelper.sin((float) Math.toRadians(playerEntity.yRot + 90)));
             playerEntity.level.addFreshEntity(stormBullet);
         }
@@ -388,7 +389,7 @@ public class SpellActions
     }
 
     @SubscribeEvent
-    public void fangsSpell(TickEvent.PlayerTickEvent event)
+    public static void fangsSpell(TickEvent.PlayerTickEvent event)
     {
         if (event.player != null && fangsSpellActivator != null)
         {
@@ -411,6 +412,25 @@ public class SpellActions
                 entities.get(6).setPosAndOldPos(fangsSpellActivator.getX() + 1, fangsSpellActivator.getY(), fangsSpellActivator.getZ() - 1);
                 entities.get(7).setPosAndOldPos(fangsSpellActivator.getX() - 1, fangsSpellActivator.getY(), fangsSpellActivator.getZ() + 1);
                 entities.get(8).setPosAndOldPos(fangsSpellActivator.getX() - 3, fangsSpellActivator.getY(), fangsSpellActivator.getZ() + 2);
+                entities.get(9).setPosAndOldPos(fangsSpellActivator.getX() - 3, fangsSpellActivator.getY(), fangsSpellActivator.getZ() + 1);
+                entities.get(10).setPosAndOldPos(fangsSpellActivator.getX() - 3, fangsSpellActivator.getY(), fangsSpellActivator.getZ());
+                entities.get(11).setPosAndOldPos(fangsSpellActivator.getX() - 3, fangsSpellActivator.getY(), fangsSpellActivator.getZ() - 1);
+                entities.get(12).setPosAndOldPos(fangsSpellActivator.getX() - 3, fangsSpellActivator.getY(), fangsSpellActivator.getZ() - 2);
+                entities.get(13).setPosAndOldPos(fangsSpellActivator.getX() - 2, fangsSpellActivator.getY(), fangsSpellActivator.getZ() - 3);
+                entities.get(14).setPosAndOldPos(fangsSpellActivator.getX() - 1, fangsSpellActivator.getY(), fangsSpellActivator.getZ() - 3);
+                entities.get(15).setPosAndOldPos(fangsSpellActivator.getX(), fangsSpellActivator.getY(), fangsSpellActivator.getZ() - 3);
+                entities.get(16).setPosAndOldPos(fangsSpellActivator.getX() + 1, fangsSpellActivator.getY(), fangsSpellActivator.getZ() - 3);
+                entities.get(17).setPosAndOldPos(fangsSpellActivator.getX() + 2, fangsSpellActivator.getY(), fangsSpellActivator.getZ() - 3);
+                entities.get(18).setPosAndOldPos(fangsSpellActivator.getX() + 3, fangsSpellActivator.getY(), fangsSpellActivator.getZ() - 2);
+                entities.get(19).setPosAndOldPos(fangsSpellActivator.getX() + 3, fangsSpellActivator.getY(), fangsSpellActivator.getZ() - 1);
+                entities.get(20).setPosAndOldPos(fangsSpellActivator.getX() + 3, fangsSpellActivator.getY(), fangsSpellActivator.getZ());
+                entities.get(21).setPosAndOldPos(fangsSpellActivator.getX() + 3, fangsSpellActivator.getY(), fangsSpellActivator.getZ() + 1);
+                entities.get(22).setPosAndOldPos(fangsSpellActivator.getX() + 3, fangsSpellActivator.getY(), fangsSpellActivator.getZ() + 2);
+                entities.get(23).setPosAndOldPos(fangsSpellActivator.getX() + 2, fangsSpellActivator.getY(), fangsSpellActivator.getZ() + 3);
+                entities.get(24).setPosAndOldPos(fangsSpellActivator.getX() + 1, fangsSpellActivator.getY(), fangsSpellActivator.getZ() + 3);
+                entities.get(25).setPosAndOldPos(fangsSpellActivator.getX(), fangsSpellActivator.getY(), fangsSpellActivator.getZ() + 3);
+                entities.get(26).setPosAndOldPos(fangsSpellActivator.getX() - 1, fangsSpellActivator.getY(), fangsSpellActivator.getZ() + 3);
+                entities.get(27).setPosAndOldPos(fangsSpellActivator.getX() - 2, fangsSpellActivator.getY(), fangsSpellActivator.getZ() + 3);
 
                 entities.get(0).moveTo(fangsSpellActivator.getX() + 1, fangsSpellActivator.getY(), fangsSpellActivator.getZ());
                 entities.get(1).moveTo(fangsSpellActivator.getX() - 1, fangsSpellActivator.getY(), fangsSpellActivator.getZ());
@@ -421,12 +441,31 @@ public class SpellActions
                 entities.get(6).moveTo(fangsSpellActivator.getX() + 1, fangsSpellActivator.getY(), fangsSpellActivator.getZ() - 1);
                 entities.get(7).moveTo(fangsSpellActivator.getX() - 1, fangsSpellActivator.getY(), fangsSpellActivator.getZ() + 1);
                 entities.get(8).moveTo(fangsSpellActivator.getX() - 3, fangsSpellActivator.getY(), fangsSpellActivator.getZ() + 2);
+                entities.get(9).moveTo(fangsSpellActivator.getX() - 3, fangsSpellActivator.getY(), fangsSpellActivator.getZ() + 1);
+                entities.get(10).moveTo(fangsSpellActivator.getX() - 3, fangsSpellActivator.getY(), fangsSpellActivator.getZ());
+                entities.get(11).moveTo(fangsSpellActivator.getX() - 3, fangsSpellActivator.getY(), fangsSpellActivator.getZ() - 1);
+                entities.get(12).moveTo(fangsSpellActivator.getX() - 3, fangsSpellActivator.getY(), fangsSpellActivator.getZ() - 2);
+                entities.get(13).moveTo(fangsSpellActivator.getX() - 2, fangsSpellActivator.getY(), fangsSpellActivator.getZ() - 3);
+                entities.get(14).moveTo(fangsSpellActivator.getX() - 1, fangsSpellActivator.getY(), fangsSpellActivator.getZ() - 3);
+                entities.get(15).moveTo(fangsSpellActivator.getX(), fangsSpellActivator.getY(), fangsSpellActivator.getZ() - 3);
+                entities.get(16).moveTo(fangsSpellActivator.getX() + 1, fangsSpellActivator.getY(), fangsSpellActivator.getZ() - 3);
+                entities.get(17).moveTo(fangsSpellActivator.getX() + 2, fangsSpellActivator.getY(), fangsSpellActivator.getZ() - 3);
+                entities.get(18).moveTo(fangsSpellActivator.getX() + 3, fangsSpellActivator.getY(), fangsSpellActivator.getZ() - 2);
+                entities.get(19).moveTo(fangsSpellActivator.getX() + 3, fangsSpellActivator.getY(), fangsSpellActivator.getZ() - 1);
+                entities.get(20).moveTo(fangsSpellActivator.getX() + 3, fangsSpellActivator.getY(), fangsSpellActivator.getZ());
+                entities.get(21).moveTo(fangsSpellActivator.getX() + 3, fangsSpellActivator.getY(), fangsSpellActivator.getZ() + 1);
+                entities.get(22).moveTo(fangsSpellActivator.getX() + 3, fangsSpellActivator.getY(), fangsSpellActivator.getZ() + 2);
+                entities.get(23).moveTo(fangsSpellActivator.getX() + 2, fangsSpellActivator.getY(), fangsSpellActivator.getZ() + 3);
+                entities.get(24).moveTo(fangsSpellActivator.getX() + 1, fangsSpellActivator.getY(), fangsSpellActivator.getZ() + 3);
+                entities.get(25).moveTo(fangsSpellActivator.getX(), fangsSpellActivator.getY(), fangsSpellActivator.getZ() + 3);
+                entities.get(26).moveTo(fangsSpellActivator.getX() - 1, fangsSpellActivator.getY(), fangsSpellActivator.getZ() + 3);
+                entities.get(27).moveTo(fangsSpellActivator.getX() - 2, fangsSpellActivator.getY(), fangsSpellActivator.getZ() + 3);
 
                 for (EvokerFangsEntity entity : entities)
                 {
                     while (!(fangsSpellActivator.level.getBlockState(entity.blockPosition()).is(Blocks.AIR)))
                     {
-                        entity.setPos(entity.xOld, entity.blockPosition().getY() + 1, entity.zOld);
+                        entity.moveTo(entity.xOld, entity.blockPosition().getY() + 1, entity.zOld);
                     }
                 }
 
@@ -445,7 +484,10 @@ public class SpellActions
                     fangsSpellEvokerFangSpawnTimer++;
                     if (fangsSpellEvokerFangSpawnTimer == 20)
                     {
-                        fangsSpellActivator.level.addFreshEntity(entities.get(8));
+                        for (int i = 8; i < 28; i++)
+                        {
+                            fangsSpellActivator.level.addFreshEntity(entities.get(i));
+                        }
                         fangsSpellStaggerBoolean = false;
                         fangsActiveFlag = false;
                         fangsSpellEvokerFangSpawnTimer = 0;
@@ -462,7 +504,7 @@ public class SpellActions
 
     // For removing multiple enchants when the player hovers over the spell book after the enchanting is finished
     @SubscribeEvent
-    public void tooltipEvent (ItemTooltipEvent event)
+    public static void tooltipEvent (ItemTooltipEvent event)
     {
         if (event.getPlayer() != null && event.getToolTip() != null)
         {
@@ -490,6 +532,27 @@ public class SpellActions
             {
                 player.getCommandSenderWorld().addParticle(ParticleTypes.CLOUD, player.getX(), player.getY() - 1,
                         player.getZ(), 0, player.getDeltaMovement().y, 0);
+            }
+        }
+    }
+
+    // Lure
+    public static void doLure (PlayerEntity player)
+    {
+        List<MobEntity> mobEntities = player.getCommandSenderWorld().getEntitiesOfClass(MobEntity.class,
+                new AxisAlignedBB(player.getX() - 6, player.getY() - 6, player.getZ() - 6,
+                        player.getX() + 6, player.getY() + 6, player.getZ() + 6), null)
+                .stream().sorted(new Object() {Comparator<Entity> compareDistOf(double x, double y, double z) {return Comparator.comparing(axis -> axis.distanceToSqr(x, y, z));}}
+                        .compareDistOf(player.getX(), player.getY(), player.getZ())).collect(Collectors.toList());
+
+        for (MobEntity mob : mobEntities)
+        {
+            if (mob.getNavigation() instanceof GroundPathNavigator || mob.getNavigation() instanceof FlyingPathNavigator)
+            {
+                if (mob.goalSelector.getRunningGoals().noneMatch(p -> p.getGoal() instanceof SpellBookGoal))
+                {
+                    mob.goalSelector.addGoal(0, new SpellBookGoal(mob, 1.0D));
+                }
             }
         }
     }
@@ -779,6 +842,7 @@ public class SpellActions
         player.getCommandSenderWorld().addParticle(ParticleTypes.HAPPY_VILLAGER, player.getX() - 3, player.getY() + 1.2, player.getZ() - 4, 0, 0, 0);
         player.getCommandSenderWorld().addParticle(ParticleTypes.HAPPY_VILLAGER, player.getX() - 2, player.getY() + 1.2, player.getZ() - 5, 0, 0, 0);
     }
+
 
     public static void doRadiusParticles(Entity entities)
     {

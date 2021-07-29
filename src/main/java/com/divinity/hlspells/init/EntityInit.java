@@ -4,7 +4,7 @@ import com.divinity.hlspells.HLSpells;
 import com.divinity.hlspells.entities.AquaBoltEntity;
 import com.divinity.hlspells.entities.FlamingBoltEntity;
 import com.divinity.hlspells.entities.PiercingBoltEntity;
-import com.divinity.hlspells.entities.StormBoltEntity;
+import com.divinity.hlspells.entities.InvisibleBoltEntity;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
 import net.minecraft.util.ResourceLocation;
@@ -16,8 +16,8 @@ public class EntityInit
 {
     public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(ForgeRegistries.ENTITIES, HLSpells.MODID);
 
-    public static final RegistryObject<EntityType<StormBoltEntity>> STORM_BULLET_ENTITY = ENTITIES.register("stormbulletentity", () ->
-            EntityType.Builder.of(StormBoltEntity::new, EntityClassification.MISC).build(new ResourceLocation(HLSpells.MODID, "textures").toString()));
+    public static final RegistryObject<EntityType<InvisibleBoltEntity>> STORM_BULLET_ENTITY = ENTITIES.register("stormbulletentity", () ->
+            EntityType.Builder.of(InvisibleBoltEntity::new, EntityClassification.MISC).build(new ResourceLocation(HLSpells.MODID, "textures").toString()));
 
     public static final RegistryObject<EntityType<PiercingBoltEntity>> PIERCING_BOLT_ENTITY = ENTITIES.register("piercingboltentity", () ->
             EntityType.Builder.of(PiercingBoltEntity::new, EntityClassification.MISC).sized(0.3125F, 0.3125F).build

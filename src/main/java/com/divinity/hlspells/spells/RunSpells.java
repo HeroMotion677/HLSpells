@@ -27,7 +27,7 @@ public class RunSpells
     }
 
     @SubscribeEvent
-    public void doHeldSpell(TickEvent.PlayerTickEvent event)
+    public static void doHeldSpell(TickEvent.PlayerTickEvent event)
     {
         if (event.player == null) return;
 
