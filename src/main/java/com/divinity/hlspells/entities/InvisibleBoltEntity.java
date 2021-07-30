@@ -1,6 +1,7 @@
 package com.divinity.hlspells.entities;
 
 import net.minecraft.advancements.CriteriaTriggers;
+import net.minecraft.block.Blocks;
 import net.minecraft.block.FireBlock;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -160,8 +161,21 @@ public class InvisibleBoltEntity extends ArrowEntity
             EvokerFangsEntity entity = new EvokerFangsEntity(EntityType.EVOKER_FANGS, this.level);
             if (this.getOwner() instanceof PlayerEntity)
             {
+                entity.setPosAndOldPos(this.getX(), this.getY(), this.getZ());
                 entity.setPos(this.getX(), this.getY(), this.getZ());
                 entity.setOwner((LivingEntity) this.getOwner());
+                if (entity.getOwner() != null)
+                {
+                    while (!(entity.getOwner().level.getBlockState(entity.blockPosition()).is(Blocks.AIR)))
+                    {
+                        entity.moveTo(entity.xOld, entity.blockPosition().getY() + 1, entity.zOld);
+                    }
+
+                    while (entity.getOwner().level.getBlockState(entity.blockPosition().below()).is(Blocks.AIR))
+                    {
+                        entity.moveTo(entity.xOld, entity.blockPosition().getY() - 1, entity.zOld);
+                    }
+                }
                 this.level.addFreshEntity(entity);
             }
         }

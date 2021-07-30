@@ -22,8 +22,8 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 
 @Mod.EventBusSubscriber(modid = HLSpells.MODID)
-public class EntityDiesEvent {
-
+public class EntityDiesEvent
+{
     @SubscribeEvent
     public static void onEntityDies(LivingDeathEvent event) {
         LivingEntity player = event.getEntityLiving();

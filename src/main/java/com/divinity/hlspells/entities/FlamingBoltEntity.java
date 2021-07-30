@@ -84,7 +84,7 @@ public class FlamingBoltEntity extends ArrowEntity
             return;
         }
 
-        boolean flag = entity.hurt(DamageSource.indirectMobAttack(this, livingentity).setProjectile(), 11.0F);
+        boolean flag = entity.hurt(DamageSource.indirectMobAttack(this, livingentity).setProjectile(), 8.0F);
         if (flag && this.level instanceof ServerWorld)
         {
             for (int i = 0; i < 3; i++)
