@@ -4,6 +4,7 @@ import com.divinity.hlspells.spell.Spell;
 import com.divinity.hlspells.HLSpells;
 import com.divinity.hlspells.spell.SpellType;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.event.entity.player.AdvancementEvent;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.*;
 
@@ -45,7 +46,7 @@ public class SpellInit {
     public static final RegistryObject<Spell> FLAMING_BOLT = SPELLS_DEFERRED_REGISTER.register("flaming_bolt", () -> new Spell(SpellType.CAST, (p, w) -> doFlamingBolt(p)));
     public static final RegistryObject<Spell> AQUA_BOLT  = SPELLS_DEFERRED_REGISTER.register("aqua_bolt", () -> new Spell(SpellType.CAST, (p, w) -> doAquaBolt(p)));
     public static final RegistryObject<Spell> LURE = SPELLS_DEFERRED_REGISTER.register("lure", () -> new Spell(SpellType.HELD, (p, w) -> doLure(p)));
-
+    public static final RegistryObject<Spell> REPEL = SPELLS_DEFERRED_REGISTER.register("repel", () -> new Spell(SpellType.HELD, (p, w) -> doRepel(p)));
 
     public static <T extends IForgeRegistryEntry<?>> ResourceLocation getName(T type) {
         return Objects.requireNonNull(type.getRegistryName());

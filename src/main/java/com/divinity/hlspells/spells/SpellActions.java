@@ -2,7 +2,8 @@ package com.divinity.hlspells.spells;
 
 import com.divinity.hlspells.HLSpells;
 import com.divinity.hlspells.entities.*;
-import com.divinity.hlspells.goal.SpellBookGoal;
+import com.divinity.hlspells.goal.SpellBookLureGoal;
+import com.divinity.hlspells.goal.SpellBookRepelGoal;
 import com.divinity.hlspells.init.EntityInit;
 import com.divinity.hlspells.items.SpellBookItem;
 import com.divinity.hlspells.util.Util;
@@ -14,10 +15,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
-import net.minecraft.entity.ai.goal.TemptGoal;
 import net.minecraft.entity.boss.WitherEntity;
 import net.minecraft.entity.effect.LightningBoltEntity;
+import net.minecraft.entity.merchant.villager.AbstractVillagerEntity;
 import net.minecraft.entity.monster.*;
+import net.minecraft.entity.monster.piglin.AbstractPiglinEntity;
 import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.passive.horse.SkeletonHorseEntity;
 import net.minecraft.entity.passive.horse.ZombieHorseEntity;
@@ -31,8 +33,6 @@ import net.minecraft.fluid.Fluids;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.IPacket;
 import net.minecraft.particles.ParticleTypes;
-import net.minecraft.pathfinding.FlyingPathNavigator;
-import net.minecraft.pathfinding.GroundPathNavigator;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.state.properties.BlockStateProperties;
@@ -56,6 +56,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+import static com.divinity.hlspells.goal.SpellBookLureGoal.*;
 
 @Mod.EventBusSubscriber(modid = HLSpells.MODID)
 public class SpellActions
@@ -137,7 +138,7 @@ public class SpellActions
                     return;
                 }
 
-                boolean flag = entity.hurt(DamageSource.indirectMobAttack(this, livingentity).setProjectile(), 11.0F);
+                boolean flag = entity.hurt(DamageSource.indirectMobAttack(this, livingentity).setProjectile(), 8.0F);
                 if (flag) {
                     this.doEnchantDamageEffects(livingentity, entity);
                     this.remove();
@@ -152,14 +153,19 @@ public class SpellActions
         playerEntity.level.addFreshEntity(dumbBullet);
     }
 
-    public static void doAbsorbing(PlayerEntity playerEntity) {
+    public static void doAbsorbing(PlayerEntity playerEntity)
+    {
         for (BlockPos blockpos1 : BlockPos.betweenClosed(MathHelper.floor(playerEntity.getX() - 8.0D), MathHelper.floor(playerEntity.getY() - 8.0D), MathHelper.floor(playerEntity.getZ() - 8.0D), MathHelper.floor(playerEntity.getX() + 8.0D), MathHelper.floor(playerEntity.getY() + 8.0D), MathHelper.floor(playerEntity.getZ() + 8.0D))) {
             BlockState blockState = playerEntity.level.getBlockState(blockpos1);
             FluidState fluidState = playerEntity.level.getFluidState(blockpos1);
-            if (fluidState.is(FluidTags.WATER)) {
+            if (fluidState.is(FluidTags.WATER))
+            {
                 if (blockState.getBlock() instanceof IWaterLoggable && ((IWaterLoggable) blockState.getBlock()).takeLiquid(playerEntity.level, blockpos1, blockState) != Fluids.EMPTY) {
                     playerEntity.level.setBlock(blockpos1, blockState.setValue(BlockStateProperties.WATERLOGGED, Boolean.FALSE), 3);
-                } else {
+                }
+
+                else
+                {
                     playerEntity.level.setBlock(blockpos1, Blocks.AIR.defaultBlockState(), 3);
                 }
             }
@@ -330,7 +336,7 @@ public class SpellActions
             SummonedVexEntity vexEntity = new SummonedVexEntity(EntityType.VEX, playerEntity.level);
             vexEntity.moveTo(blockpos, 0.0F, 0.0F);
             vexEntity.setSummonedOwner(playerEntity);
-            vexEntity.setLimitedLife(20 * (30 + playerEntity.level.random.nextInt(90)));
+            vexEntity.setLimitedLife(20 * (30 + playerEntity.level.random.nextInt(50)));
 
             if (playerEntity.level instanceof ServerWorld)
             {
@@ -467,6 +473,11 @@ public class SpellActions
                     {
                         entity.moveTo(entity.xOld, entity.blockPosition().getY() + 1, entity.zOld);
                     }
+
+                    while (fangsSpellActivator.level.getBlockState(entity.blockPosition().below()).is(Blocks.AIR))
+                    {
+                        entity.moveTo(entity.xOld, entity.blockPosition().getY() - 1, entity.zOld);
+                    }
                 }
 
                 if (fangsSpellEvokerFangSpawnTimer == 0 && !fangsSpellStaggerBoolean)
@@ -539,20 +550,39 @@ public class SpellActions
     // Lure
     public static void doLure (PlayerEntity player)
     {
-        List<MobEntity> mobEntities = player.getCommandSenderWorld().getEntitiesOfClass(MobEntity.class,
-                new AxisAlignedBB(player.getX() - 6, player.getY() - 6, player.getZ() - 6,
-                        player.getX() + 6, player.getY() + 6, player.getZ() + 6), null)
+        player.addEffect(new EffectInstance(Effects.GLOWING, Integer.MAX_VALUE, 0, false, false));
+
+        List<MobEntity> mobEntities = player.level.getEntitiesOfClass(MobEntity.class,
+                new AxisAlignedBB(player.getX() - LURE_RANGE, player.getY() - LURE_RANGE, player.getZ() - LURE_RANGE,
+                        player.getX() + LURE_RANGE, player.getY() + LURE_RANGE, player.getZ() + LURE_RANGE), null)
                 .stream().sorted(new Object() {Comparator<Entity> compareDistOf(double x, double y, double z) {return Comparator.comparing(axis -> axis.distanceToSqr(x, y, z));}}
                         .compareDistOf(player.getX(), player.getY(), player.getZ())).collect(Collectors.toList());
 
         for (MobEntity mob : mobEntities)
         {
-            if (mob.getNavigation() instanceof GroundPathNavigator || mob.getNavigation() instanceof FlyingPathNavigator)
+            boolean predicate = mob instanceof AbstractVillagerEntity || mob instanceof AbstractIllagerEntity || mob instanceof AbstractPiglinEntity;
+            if (!predicate && mob.goalSelector.getRunningGoals().noneMatch(p -> p.getGoal() instanceof SpellBookLureGoal))
             {
-                if (mob.goalSelector.getRunningGoals().noneMatch(p -> p.getGoal() instanceof SpellBookGoal))
-                {
-                    mob.goalSelector.addGoal(0, new SpellBookGoal(mob, 1.0D));
-                }
+                mob.goalSelector.addGoal(0, new SpellBookLureGoal(mob, 1.0D));
+            }
+        }
+    }
+
+    // Repel
+    public static void doRepel(PlayerEntity player)
+    {
+        List<MobEntity> mobEntities = player.level.getEntitiesOfClass(MobEntity.class,
+                new AxisAlignedBB(player.getX() - 15 , player.getY() - 15, player.getZ() - 15,
+                        player.getX() + 15, player.getY() + 15, player.getZ() + 15), null)
+                .stream().sorted(new Object() {Comparator<Entity> compareDistOf(double x, double y, double z) {return Comparator.comparing(axis -> axis.distanceToSqr(x, y, z));}}
+                        .compareDistOf(player.getX(), player.getY(), player.getZ())).collect(Collectors.toList());
+
+        for (MobEntity mob : mobEntities)
+        {
+            boolean predicate = mob instanceof AbstractVillagerEntity || mob instanceof AbstractIllagerEntity || mob instanceof AbstractPiglinEntity;
+            if (!predicate && mob.goalSelector.getRunningGoals().noneMatch(p -> p.getGoal() instanceof SpellBookRepelGoal))
+            {
+                mob.goalSelector.addGoal(0, new SpellBookRepelGoal(mob, 1.2D));
             }
         }
     }
@@ -929,5 +959,6 @@ public class SpellActions
         }
         playerEntity.removeEffect(Effects.SLOW_FALLING);
         playerEntity.removeEffect(Effects.LEVITATION);
+        playerEntity.removeEffect(Effects.GLOWING);
     }
 }

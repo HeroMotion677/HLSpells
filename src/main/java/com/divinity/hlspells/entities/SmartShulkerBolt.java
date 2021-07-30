@@ -262,7 +262,7 @@ SmartShulkerBolt extends ShulkerBulletEntity
             return;
         }
 
-        boolean flag = entity.hurt(DamageSource.indirectMobAttack(this, livingentity).setProjectile(), 11.0F);
+        boolean flag = entity.hurt(DamageSource.indirectMobAttack(this, livingentity).setProjectile(), 8.0F);
         if (flag)
         {
             this.doEnchantDamageEffects(livingentity, entity);
