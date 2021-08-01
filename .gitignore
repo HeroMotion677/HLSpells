@@ -1,25 +1,38 @@
-# eclipse
-bin
-*.launch
-.settings
-.metadata
-.classpath
-.project
 
-# idea
-out
-*.ipr
-*.iws
-*.iml
-.idea
+#FILES FOR INTELLIJ IDEA AND OTHER IDEAS
+#=======================
+**/.idea/workspace.xml
+**/.idea/tasks.xml
+**/.idea/uiDesigner.xml
+**/.idea/gradle.xml
+**/.idea/modules.xml
+**/.idea/deployment.xml
+**/.idea/discord.xml
+**/.idea/shelf
+.idea/
+.settings/
 
-# gradle
-build
+#FILES FOR GRADLE
+#=======================
 .gradle
+/build/
+**/build/
+.gradle/
+build/
 
-# other
-eclipse
-run
+#FILES FOR DEV WORKSPACE
+#===============================
+/logs
+run/
 
-# Files from Forge MDK
-forge*changelog.txt
+#MACOS
+#=====================
+.DS_Store
+.AppleDouble
+.LSOverride
+
+#SYSTEM AND JAVA FILES
+#=====================
+Thumbs.db
+debug.log
+hs_err_pid*
