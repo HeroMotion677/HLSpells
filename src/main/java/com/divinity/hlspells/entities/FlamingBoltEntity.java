@@ -49,6 +49,8 @@ public class FlamingBoltEntity extends ArrowEntity
         }
     }
 
+    //yes
+
     @Override
     public IPacket<?> getAddEntityPacket()
     {
