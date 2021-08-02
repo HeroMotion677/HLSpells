@@ -10,4 +10,8 @@ public interface IWandCap
     List<String> getSpells();
 
     void addSpell(String spell);
+
+    void removeSpell(String spell);
+
+    boolean containsSpell(String spell);
 }

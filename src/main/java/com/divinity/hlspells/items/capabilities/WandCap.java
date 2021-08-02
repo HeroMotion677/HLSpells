@@ -30,11 +30,13 @@ public class WandCap implements IWandCap
         }
     }
 
+    @Override
     public void removeSpell(String spell)
     {
         this.spells.remove(spell);
     }
 
+    @Override
     public boolean containsSpell(String spell)
     {
         return this.spells.contains(spell);

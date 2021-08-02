@@ -4,6 +4,7 @@ import com.divinity.hlspells.HLSpells;
 import com.divinity.hlspells.init.EntityInit;
 import com.divinity.hlspells.init.ItemInit;
 import com.divinity.hlspells.items.SpellBookItem;
+import com.divinity.hlspells.items.WandItem;
 import com.divinity.hlspells.renderers.BaseBoltRenderer;
 import com.divinity.hlspells.renderers.StormBoltRenderer;
 import com.divinity.hlspells.spell.Spell;

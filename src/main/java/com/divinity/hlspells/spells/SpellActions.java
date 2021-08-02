@@ -6,6 +6,9 @@ import com.divinity.hlspells.goal.SpellBookLureGoal;
 import com.divinity.hlspells.goal.SpellBookRepelGoal;
 import com.divinity.hlspells.init.EntityInit;
 import com.divinity.hlspells.items.SpellBookItem;
+import com.divinity.hlspells.items.WandItem;
+import com.divinity.hlspells.items.capabilities.IWandCap;
+import com.divinity.hlspells.items.capabilities.WandItemProvider;
 import com.divinity.hlspells.util.Util;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -530,6 +533,11 @@ public class SpellActions
                         stack.getEnchantmentTags().remove(i);
                     }
                 }
+            }
+
+            else if (event.getItemStack().getItem() instanceof WandItem)
+            {
+                event.getItemStack().getCapability(WandItemProvider.WAND_CAP, null).ifPresent(p -> System.out.println(p.getSpells()));
             }
         }
     }

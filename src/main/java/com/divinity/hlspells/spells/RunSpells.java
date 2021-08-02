@@ -2,13 +2,19 @@ package com.divinity.hlspells.spells;
 
 import com.divinity.hlspells.HLSpells;
 import com.divinity.hlspells.items.SpellBookItem;
+import com.divinity.hlspells.items.WandItem;
+import com.divinity.hlspells.items.capabilities.WandItemProvider;
 import com.divinity.hlspells.spell.SpellBookObject;
 import com.divinity.hlspells.spell.SpellType;
 import com.divinity.hlspells.util.SpellUtils;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
+import net.minecraft.util.IItemProvider;
 import net.minecraft.world.World;
+import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.AnvilRepairEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -19,6 +25,28 @@ import static com.divinity.hlspells.spells.SpellActions.resetEffects;
 @Mod.EventBusSubscriber(modid = HLSpells.MODID)
 public class RunSpells
 {
+    @SubscribeEvent
+    public static void anvilUpdateEvent (AnvilUpdateEvent event)
+    {
+        if (event != null)
+        {
+            ItemStack wandItem = event.getLeft().getItem() instanceof WandItem ? event.getLeft() : null;
+            ItemStack spellBook = event.getRight().getItem() instanceof SpellBookItem ? event.getRight() : null;
+            if (wandItem != null && spellBook != null)
+            {
+                ItemStack transformedItem = wandItem.copy();
+                SpellBookObject book = SpellUtils.getSpellBook(spellBook);
+                transformedItem.getCapability(WandItemProvider.WAND_CAP, null)
+                        .ifPresent(p -> p.addSpell(book.getSpells().stream()
+                                .filter(pr -> pr.getSpell().getRegistryName() != null)
+                                .map(m -> m.getSpell().getRegistryName().toString())
+                                .findFirst()
+                                .orElse("null")));
+                event.setOutput(transformedItem);
+            }
+        }
+    }
+
     public static void doCastSpell(PlayerEntity playerEntity, World world, ItemStack itemStack)
     {
         SpellBookObject spellBook = SpellUtils.getSpellBook(itemStack);

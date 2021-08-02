@@ -14,6 +14,7 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
+import net.minecraftforge.event.AnvilUpdateEvent;
 
 import java.util.function.Predicate;
 
@@ -82,12 +83,11 @@ public class WandItem extends ShootableItem
     {
         stack.getCapability(WandItemProvider.WAND_CAP, null).ifPresent(p ->
         {
+            p.removeSpell("hlspells:bolt");
             System.out.println(p.getSpells());
-            p.addSpell("hlspells:bolta");
-            if (SpellInit.ABSORBING.get().getRegistryName() != null) p.addSpell(SpellInit.ABSORBING.get().getRegistryName().toString());
-            System.out.println(p.getSpells() + "");
         });
     }
+
 
     @Override
     public boolean isFoil(ItemStack p_77636_1_)
@@ -102,15 +102,15 @@ public class WandItem extends ShootableItem
     }
 
     @Override
-    public boolean isEnchantable(ItemStack p_77616_1_)
-    {
-        return false;
-    }
-
-    @Override
     public boolean isRepairable(ItemStack stack)
     {
         return super.isRepairable(stack);
+    }
+
+    @Override
+    public boolean isBookEnchantable(ItemStack stack, ItemStack book)
+    {
+        return book.getItem() instanceof SpellBookItem;
     }
 
     @Override
