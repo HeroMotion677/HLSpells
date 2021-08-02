@@ -31,6 +31,7 @@
   "spell.hlspells.aqua_bolt" : "Aqua Bolt",
   "spell.hlspells.lure" : "Lure",
   "spell.hlspells.repel" : "Repel",
-  "spell.hlspells.flaming_circle" : "Flaming Circle"
+  "spell.hlspells.flaming_circle" : "Flaming Circle",
+  "item.hlspells.wand" : "Wand"
 
 }

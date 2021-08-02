@@ -42,7 +42,6 @@ public class SpellBookItem extends ShootableItem
     public ItemStack getDefaultInstance()
     {
         ItemStack stack = new ItemStack(this);
-        stack.getOrCreateTag().putBoolean("Test", true);
         return SpellUtils.setSpellBook(stack, SpellBookInit.EMPTY.get());
     }
 
@@ -92,10 +91,6 @@ public class SpellBookItem extends ShootableItem
     @Override
     public void releaseUsing(ItemStack stack, World world, LivingEntity entity, int power)
     {
-
-
-
-        stack.getOrCreateTag().putString("SpellOne", "hlspells:flaming_circle");
         System.out.println(stack.getOrCreateTag());
         if (entity instanceof PlayerEntity)
         {

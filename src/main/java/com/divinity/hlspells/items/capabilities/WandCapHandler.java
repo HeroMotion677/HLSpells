@@ -19,7 +19,7 @@ public class WandCapHandler
     {
         if (event.getObject().getItem() instanceof WandItem)
         {
-            event.addCapability(new ResourceLocation(MODID, "wandCap"), new WandItemProvider());
+            event.addCapability(new ResourceLocation(MODID, "wandcap"), new WandItemProvider());
         }
     }
 }

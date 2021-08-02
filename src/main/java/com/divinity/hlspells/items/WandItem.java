@@ -1,5 +1,10 @@
 package com.divinity.hlspells.items;
 
+import com.divinity.hlspells.init.SpellBookInit;
+import com.divinity.hlspells.init.SpellInit;
+import com.divinity.hlspells.items.capabilities.WandItemProvider;
+import com.divinity.hlspells.spell.SpellBookObject;
+import com.divinity.hlspells.util.SpellUtils;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -7,6 +12,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
 
 import java.util.function.Predicate;
@@ -16,6 +22,21 @@ public class WandItem extends ShootableItem
     public WandItem (Properties properties)
     {
         super(properties);
+    }
+
+    @Override
+    public ItemStack getDefaultInstance()
+    {
+        return new ItemStack(this);
+    }
+
+    @Override
+    public void fillItemCategory(ItemGroup group, NonNullList<ItemStack> stacks)
+    {
+        if (this.allowdedIn(group))
+        {
+            stacks.add(new ItemStack(this));
+        }
     }
 
     @Override
@@ -31,15 +52,16 @@ public class WandItem extends ShootableItem
     }
 
     @Override
-    public ActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand)
+    public ActionResult<ItemStack> use(World world, PlayerEntity playerIn, Hand handIn)
     {
-        return super.use(world, player, hand);
+        ItemStack itemstack = playerIn.getItemInHand(handIn);
+        playerIn.startUsingItem(handIn);
+        return ActionResult.success(itemstack);
     }
 
     @Override
     public void inventoryTick(ItemStack stack, World world, Entity entity, int p_77663_4_, boolean p_77663_5_)
     {
-
         super.inventoryTick(stack, world, entity, p_77663_4_, p_77663_5_);
     }
 
@@ -56,9 +78,15 @@ public class WandItem extends ShootableItem
     }
 
     @Override
-    public void releaseUsing(ItemStack p_77615_1_, World p_77615_2_, LivingEntity p_77615_3_, int p_77615_4_)
+    public void releaseUsing(ItemStack stack, World world, LivingEntity entity, int p_77615_4_)
     {
-        super.releaseUsing(p_77615_1_, p_77615_2_, p_77615_3_, p_77615_4_);
+        stack.getCapability(WandItemProvider.WAND_CAP, null).ifPresent(p ->
+        {
+            System.out.println(p.getSpells());
+            p.addSpell("hlspells:bolta");
+            if (SpellInit.ABSORBING.get().getRegistryName() != null) p.addSpell(SpellInit.ABSORBING.get().getRegistryName().toString());
+            System.out.println(p.getSpells() + "");
+        });
     }
 
     @Override

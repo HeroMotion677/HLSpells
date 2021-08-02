@@ -19,7 +19,10 @@ public class WandItemStorage implements Capability.IStorage<IWandCap>
     public INBT writeNBT(Capability<IWandCap> capability, IWandCap instance, Direction side)
     {
         CompoundNBT tag = new CompoundNBT();
-        instance.getSpells().forEach(s -> tag.putString(s, s));
+        for (int i = 0; i < instance.getSpells().size(); i++)
+        {
+            tag.putString("Spell " + i, instance.getSpells().get(i));
+        }
         return tag;
     }
 
@@ -27,6 +30,12 @@ public class WandItemStorage implements Capability.IStorage<IWandCap>
     public void readNBT(Capability<IWandCap> capability, IWandCap instance, Direction side, INBT nbt)
     {
         CompoundNBT tag = (CompoundNBT) nbt;
-        instance.getSpells().forEach(s -> instance.addSpell(tag.getString(s)));
+        for (int i = 0; i < 3; i++)
+        {
+            if (!tag.getString("Spell " + i).equals(""))
+            {
+                instance.addSpell(tag.getString("Spell " + i));
+            }
+        }
     }
 }

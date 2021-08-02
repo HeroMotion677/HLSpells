@@ -24,7 +24,10 @@ public class WandCap implements IWandCap
     @Override
     public void addSpell(String spell)
     {
-        this.spells.add(spell);
+        if (!this.spells.contains(spell) && this.spells.size() < 3)
+        {
+            this.spells.add(spell);
+        }
     }
 
     public void removeSpell(String spell)

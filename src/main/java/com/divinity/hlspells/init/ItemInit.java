@@ -18,6 +18,6 @@ public class ItemInit
     public static final RegistryObject<Item> TOTEM_OF_RETURNING = ITEMS.register("totem_of_returning", ModTotemItem::new);
     public static final RegistryObject<Item> TOTEM_OF_ESCAPING = ITEMS.register("totem_of_escaping", ModTotemItem::new);
     public static final RegistryObject<Item> SPELL_BOOK = ITEMS.register("spell_book", () -> new SpellBookItem(new Item.Properties().stacksTo(1).tab(ItemGroup.TAB_TOOLS)));
-    //public static final RegistryObject<Item> WAND = ITEMS.register("wand", () -> new WandItem(new Item.Properties().stacksTo(1).tab(ItemGroup.TAB_TOOLS).defaultDurability(500)));
+    public static final RegistryObject<Item> WAND = ITEMS.register("wand", () -> new WandItem(new Item.Properties().stacksTo(1).tab(ItemGroup.TAB_TOOLS)));
 
 }

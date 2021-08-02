@@ -1,5 +1,8 @@
 package com.divinity.hlspells;
 
+import com.divinity.hlspells.items.capabilities.IWandCap;
+import com.divinity.hlspells.items.capabilities.WandCap;
+import com.divinity.hlspells.items.capabilities.WandItemStorage;
 import com.divinity.hlspells.setup.RegistryHandler;
 import com.divinity.hlspells.setup.client.ClientSetup;
 import com.divinity.hlspells.spells.RunSpells;
@@ -9,6 +12,7 @@ import com.divinity.hlspells.villages.StructureGen;
 import com.divinity.hlspells.villages.Villagers;
 
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -56,7 +60,9 @@ public class HLSpells
         StructureGen.setupVillageWorldGen(event.getServer().registryAccess());
     }
 
-    public void setup(final FMLCommonSetupEvent event) {
+    public void setup(final FMLCommonSetupEvent event)
+    {
+        CapabilityManager.INSTANCE.register(IWandCap.class, new WandItemStorage(), WandCap::new);
         POIFixup.fixup();
     }
 }

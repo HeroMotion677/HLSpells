@@ -17,6 +17,5 @@ public class RegistryHandler
         SpellInit.SPELLS_DEFERRED_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
         SpellBookInit.SPELL_BOOK_DEFERRED_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
         EntityInit.ENTITIES.register(FMLJavaModLoadingContext.get().getModEventBus());
-        //CapabilityManager.INSTANCE.register(IWandCap.class, new WandItemStorage(), WandCap::new);
     }
 }
