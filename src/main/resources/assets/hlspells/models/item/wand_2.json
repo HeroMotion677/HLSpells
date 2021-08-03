@@ -1,0 +1,6 @@
+{
+    "parent": "hlspells:item/wand",
+    "textures": {
+        "layer0": "hlspells:items/wand_2"
+    }
+}

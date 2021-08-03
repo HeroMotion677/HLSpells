@@ -23,6 +23,7 @@ public class WandItemStorage implements Capability.IStorage<IWandCap>
         {
             tag.putString("Spell " + i, instance.getSpells().get(i));
         }
+        tag.putInt("currentSpellCycle", instance.getCurrentSpellCycle());
         return tag;
     }
 
@@ -37,5 +38,6 @@ public class WandItemStorage implements Capability.IStorage<IWandCap>
                 instance.addSpell(tag.getString("Spell " + i));
             }
         }
+        instance.setCurrentSpellCycle(tag.getInt("currentSpellCycle"));
     }
 }

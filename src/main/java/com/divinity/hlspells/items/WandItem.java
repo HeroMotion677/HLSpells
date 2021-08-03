@@ -4,6 +4,8 @@ import com.divinity.hlspells.init.SpellBookInit;
 import com.divinity.hlspells.init.SpellInit;
 import com.divinity.hlspells.items.capabilities.WandItemProvider;
 import com.divinity.hlspells.spell.SpellBookObject;
+import com.divinity.hlspells.spells.RunSpells;
+import com.divinity.hlspells.spells.SpellActions;
 import com.divinity.hlspells.util.SpellUtils;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
@@ -13,6 +15,7 @@ import net.minecraft.item.*;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.world.World;
 import net.minecraftforge.event.AnvilUpdateEvent;
 
@@ -69,7 +72,7 @@ public class WandItem extends ShootableItem
     @Override
     public UseAction getUseAnimation(ItemStack p_77661_1_)
     {
-        return UseAction.CROSSBOW;
+        return UseAction.BOW;
     }
 
     @Override
@@ -83,11 +86,27 @@ public class WandItem extends ShootableItem
     {
         stack.getCapability(WandItemProvider.WAND_CAP, null).ifPresent(p ->
         {
-            p.removeSpell("hlspells:bolt");
             System.out.println(p.getSpells());
         });
-    }
 
+        if (entity instanceof PlayerEntity) {
+
+            PlayerEntity playerEntity = (PlayerEntity) entity;
+
+            if (playerEntity.getUseItemRemainingTicks() < 71988)
+            {
+                if (!playerEntity.getCommandSenderWorld().isClientSide())
+                {
+                    RunSpells.doCastSpell(playerEntity, world, stack);
+                }
+
+                if (playerEntity.getCommandSenderWorld().isClientSide())
+                {
+                    SpellActions.doParticles(playerEntity);
+                }
+            }
+        }
+    }
 
     @Override
     public boolean isFoil(ItemStack p_77636_1_)

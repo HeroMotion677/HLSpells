@@ -1,5 +1,6 @@
 package com.divinity.hlspells.enchantments;
 
+import com.divinity.hlspells.init.SpellInit;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentType;
 import net.minecraft.enchantment.Enchantments;
@@ -9,6 +10,7 @@ import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.AxeItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.SwordItem;
+import net.minecraft.util.ResourceLocation;
 
 public class SoulSyphon extends Enchantment
 {
@@ -60,5 +62,11 @@ public class SoulSyphon extends Enchantment
     @Override
     public boolean isAllowedOnBooks() {
         return true;
+    }
+
+    public String getSpellRegistryName ()
+    {
+        ResourceLocation registryName = SpellInit.FLAMING_BOLT.get().getRegistryName();
+        return registryName != null ? registryName.toString() : "null";
     }
 }

@@ -1,6 +1,7 @@
 package com.divinity.hlspells.events.entity;
 
 import com.divinity.hlspells.HLSpells;
+import com.divinity.hlspells.enchantments.SoulSyphon;
 import com.divinity.hlspells.init.EnchantmentInit;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;

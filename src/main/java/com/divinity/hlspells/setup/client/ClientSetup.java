@@ -70,6 +70,37 @@ public class ClientSetup
                 }
                 return 0;
             });
+
+            ItemModelsProperties.register(ItemInit.WAND.get(), new ResourceLocation("pull"), (stack, world, living) ->
+            {
+                if (living instanceof PlayerEntity && living.isUsingItem() && living.getUseItem().getItem() instanceof WandItem)
+                {
+                    if ((double) living.getUseItemRemainingTicks() < 72000 && (double) living.getUseItemRemainingTicks() >= 71997) {
+                        return 0.2F;
+                    }
+
+                    else if ((double) living.getUseItemRemainingTicks()  < 71997 && (double) living.getUseItemRemainingTicks() >= 71994)
+                    {
+                        return 0.4F;
+                    }
+
+                    else if ((double) living.getUseItemRemainingTicks() < 71994 && (double) living.getUseItemRemainingTicks() >= 71991)
+                    {
+                        return 0.6F;
+                    }
+
+                    else if ((double) living.getUseItemRemainingTicks() < 71991 && (double) living.getUseItemRemainingTicks() >= 71988)
+                    {
+                        return 0.8F;
+                    }
+
+                    else if ((double) living.getUseItemRemainingTicks() < 71988)
+                    {
+                        return 1;
+                    }
+                }
+                return 0;
+            });
         });
         RenderingRegistry.registerEntityRenderingHandler(EntityInit.STORM_BULLET_ENTITY.get(), StormBoltRenderer::new);
         RenderingRegistry.registerEntityRenderingHandler(EntityInit.PIERCING_BOLT_ENTITY.get(), (manager) -> new BaseBoltRenderer<>(manager, new ResourceLocation(HLSpells.MODID,"textures/entity/bolt/green_bolt.png")));

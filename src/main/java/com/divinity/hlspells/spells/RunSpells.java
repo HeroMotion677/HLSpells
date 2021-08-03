@@ -1,6 +1,7 @@
 package com.divinity.hlspells.spells;
 
 import com.divinity.hlspells.HLSpells;
+import com.divinity.hlspells.init.SpellInit;
 import com.divinity.hlspells.items.SpellBookItem;
 import com.divinity.hlspells.items.WandItem;
 import com.divinity.hlspells.items.capabilities.WandItemProvider;
@@ -37,11 +38,11 @@ public class RunSpells
                 ItemStack transformedItem = wandItem.copy();
                 SpellBookObject book = SpellUtils.getSpellBook(spellBook);
                 transformedItem.getCapability(WandItemProvider.WAND_CAP, null)
-                        .ifPresent(p -> p.addSpell(book.getSpells().stream()
-                                .filter(pr -> pr.getSpell().getRegistryName() != null)
-                                .map(m -> m.getSpell().getRegistryName().toString())
-                                .findFirst()
-                                .orElse("null")));
+                        .ifPresent(p -> p.addSpell(book.getSpells().stream().filter(pr -> pr.getSpell().getRegistryName() != null).map(m -> m.getSpell().getRegistryName().toString())
+                        .findFirst()
+                        .orElse("null")));
+                event.setCost(1);
+                event.setMaterialCost(1);
                 event.setOutput(transformedItem);
             }
         }
@@ -49,10 +50,30 @@ public class RunSpells
 
     public static void doCastSpell(PlayerEntity playerEntity, World world, ItemStack itemStack)
     {
-        SpellBookObject spellBook = SpellUtils.getSpellBook(itemStack);
-        if (spellBook.isEmpty() || spellBook.containsSpell(spellInstance -> spellInstance.getSpell().getCategory() != SpellType.CAST)) return;
-        spellBook.runAction(playerEntity, world);
+        if (!(itemStack.getItem() instanceof WandItem))
+        {
+            SpellBookObject spellBook = SpellUtils.getSpellBook(itemStack);
+            if (spellBook.isEmpty() || spellBook.containsSpell(spellInstance -> spellInstance.getSpell().getCategory() != SpellType.CAST)) return;
+            spellBook.runAction(playerEntity, world);
+        }
 
+        else if (itemStack.getItem() instanceof WandItem)
+        {
+            try {
+                itemStack.getCapability(WandItemProvider.WAND_CAP, null)
+                        .filter(iWandCap -> iWandCap.getCurrentSpellCycle() <= iWandCap.getSpells().size())
+                        .ifPresent(cap -> {
+                            SpellInit.SPELLS_DEFERRED_REGISTER.getEntries().stream()
+                                    .filter(f -> f.get().getRegistryName() != null)
+                                    .filter(f -> cap.containsSpell(f.get().getRegistryName().toString()))
+                                    .filter(f -> cap.getSpells().get(cap.getCurrentSpellCycle()).equals(f.get().getRegistryName().toString()))
+                                    .filter(f -> f.get().getCategory() == SpellType.CAST)
+                                    .forEach(p -> p.get().getSpellAction().accept(playerEntity, world));
+                        });
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @SubscribeEvent

@@ -14,4 +14,8 @@ public interface IWandCap
     void removeSpell(String spell);
 
     boolean containsSpell(String spell);
+
+    int getCurrentSpellCycle ();
+
+    void setCurrentSpellCycle(int currentSpellCycle);
 }

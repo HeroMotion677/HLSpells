@@ -11,8 +11,8 @@ import net.minecraftforge.fml.network.simple.SimpleChannel;
 
 @SuppressWarnings("unused")
 @Mod.EventBusSubscriber(modid = HLSpells.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
-public class NetworkManager {
-
+public class NetworkManager
+{
     static int index = 0;
 
     public static final String PROTOCOL_VERSION = "1";

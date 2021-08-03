@@ -50,13 +50,13 @@ public class SpellInit {
     public static final RegistryObject<Spell> REPEL = SPELLS_DEFERRED_REGISTER.register("repel", () -> new Spell(SpellType.HELD, (p, w) -> doRepel(p)));
     public static final RegistryObject<Spell> FLAMING_CIRCLE = SPELLS_DEFERRED_REGISTER.register("flaming_circle", () -> new Spell(SpellType.HELD,  (p, w) -> doFlamingCircle(p)));
 
-
-
-    public static <T extends IForgeRegistryEntry<?>> ResourceLocation getName(T type) {
+    public static <T extends IForgeRegistryEntry<?>> ResourceLocation getName(T type)
+    {
         return Objects.requireNonNull(type.getRegistryName());
     }
 
-    public static RegistryObject<Spell> register(String name, Supplier<Spell> spell) {
-        return SPELLS_DEFERRED_REGISTER.register(name,spell);
+    public static void register(String name, Supplier<Spell> spell)
+    {
+       SPELLS_DEFERRED_REGISTER.register(name,spell);
     }
 }

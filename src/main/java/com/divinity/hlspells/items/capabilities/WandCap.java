@@ -9,10 +9,12 @@ import java.util.List;
 public class WandCap implements IWandCap
 {
     private List<String> spells;
+    private int currentSpellCycle;
 
     public WandCap ()
     {
         spells = new ArrayList<>();
+        currentSpellCycle = 0;
     }
 
     @Override
@@ -40,5 +42,27 @@ public class WandCap implements IWandCap
     public boolean containsSpell(String spell)
     {
         return this.spells.contains(spell);
+    }
+
+    @Override
+    public int getCurrentSpellCycle()
+    {
+        spellCycleCheck();
+        return this.currentSpellCycle;
+    }
+
+    @Override
+    public void setCurrentSpellCycle(int currentSpellCycle)
+    {
+        this.currentSpellCycle = currentSpellCycle;
+        spellCycleCheck();
+    }
+
+    private void spellCycleCheck()
+    {
+        if (this.currentSpellCycle >= 3)
+        {
+            this.currentSpellCycle = 0;
+        }
     }
 }
