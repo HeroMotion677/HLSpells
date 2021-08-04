@@ -5,7 +5,11 @@ import com.divinity.hlspells.init.SpellInit;
 import com.divinity.hlspells.items.SpellBookItem;
 import com.divinity.hlspells.items.WandItem;
 import com.divinity.hlspells.items.capabilities.WandItemProvider;
+import com.divinity.hlspells.items.capabilities.WandItemStorage;
+import com.divinity.hlspells.network.packets.WandInputPacket;
+import com.divinity.hlspells.spell.Spell;
 import com.divinity.hlspells.spell.SpellBookObject;
+import com.divinity.hlspells.spell.SpellInstance;
 import com.divinity.hlspells.spell.SpellType;
 import com.divinity.hlspells.util.SpellUtils;
 import net.minecraft.entity.player.PlayerEntity;
@@ -14,18 +18,23 @@ import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
 import net.minecraft.util.IItemProvider;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.AnvilRepairEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.common.Mod;
 
+
 import static com.divinity.hlspells.spells.SpellActions.resetEffects;
+import static com.divinity.hlspells.items.capabilities.WandItemStorage.*;
 
 @Mod.EventBusSubscriber(modid = HLSpells.MODID)
 public class RunSpells
 {
+    // TODO: Move this to WandCapHandler.java
     @SubscribeEvent
     public static void anvilUpdateEvent (AnvilUpdateEvent event)
     {
@@ -38,10 +47,12 @@ public class RunSpells
                 ItemStack transformedItem = wandItem.copy();
                 SpellBookObject book = SpellUtils.getSpellBook(spellBook);
                 transformedItem.getCapability(WandItemProvider.WAND_CAP, null)
-                        .ifPresent(p -> p.addSpell(book.getSpells().stream().filter(pr -> pr.getSpell().getRegistryName() != null).map(m -> m.getSpell().getRegistryName().toString())
-                        .findFirst()
-                        .orElse("null")));
-                event.setCost(1);
+                        .ifPresent(p -> p.addSpell(book.getSpells().stream()
+                                .filter(pr -> pr.getSpell().getRegistryName() != null)
+                                .map(m -> m.getSpell().getRegistryName().toString())
+                                .findFirst()
+                                .orElse("null")));
+                event.setCost(15);
                 event.setMaterialCost(1);
                 event.setOutput(transformedItem);
             }
@@ -59,19 +70,20 @@ public class RunSpells
 
         else if (itemStack.getItem() instanceof WandItem)
         {
-            try {
+            for (RegistryObject<Spell> spell : SpellInit.SPELLS_DEFERRED_REGISTER.getEntries())
+            {
                 itemStack.getCapability(WandItemProvider.WAND_CAP, null)
-                        .filter(iWandCap -> iWandCap.getCurrentSpellCycle() <= iWandCap.getSpells().size())
+                        .filter(iWandCap -> iWandCap.getSpells().size() > 0)
                         .ifPresent(cap -> {
-                            SpellInit.SPELLS_DEFERRED_REGISTER.getEntries().stream()
-                                    .filter(f -> f.get().getRegistryName() != null)
-                                    .filter(f -> cap.containsSpell(f.get().getRegistryName().toString()))
-                                    .filter(f -> cap.getSpells().get(cap.getCurrentSpellCycle()).equals(f.get().getRegistryName().toString()))
-                                    .filter(f -> f.get().getCategory() == SpellType.CAST)
-                                    .forEach(p -> p.get().getSpellAction().accept(playerEntity, world));
+                            ResourceLocation spellLocation = spell.get().getRegistryName();
+                            if (spellLocation != null && cap.getSpells().get(cap.getCurrentSpellCycle()).equals(spellLocation.toString()))
+                            {
+                                if (spell.get().getCategory() == SpellType.CAST)
+                                {
+                                    spell.get().getSpellAction().accept(playerEntity, playerEntity.level);
+                                }
+                            }
                         });
-            } catch (Exception e) {
-                e.printStackTrace();
             }
         }
     }
@@ -92,8 +104,31 @@ public class RunSpells
                 SpellUtils.getSpellBook(playerItem).runAction(player, player.level);
         }
 
+
+        else if (WandItem.isWandHeldActive)
+        {
+            ItemStack playerItem = player.getItemInHand(player.getUsedItemHand());
+            for (RegistryObject<Spell> spell : SpellInit.SPELLS_DEFERRED_REGISTER.getEntries())
+            {
+                playerItem.getCapability(WandItemProvider.WAND_CAP, null)
+                        .filter(iWandCap -> iWandCap.getSpells().size() > 0)
+                        .ifPresent(cap -> {
+                            cap.setCurrentSpellCycle(CURRENT_SPELL_VALUE);
+                            ResourceLocation spellLocation = spell.get().getRegistryName();
+                            if (spellLocation != null && cap.getSpells().get(cap.getCurrentSpellCycle()).equals(spellLocation.toString()))
+                            {
+                                if (spell.get().getCategory() == SpellType.HELD)
+                                {
+                                    spell.get().getSpellAction().accept(player, player.level);
+                                }
+                            }
+                        });
+            }
+        }
+
         else
         {
+            // TODO: Create individual effect instances and clear them instead of clearing any spell instance of that type on the player
             resetEffects(player);
         }
     }

@@ -14,6 +14,8 @@ import java.util.List;
 
 public class WandItemStorage implements Capability.IStorage<IWandCap>
 {
+    public static int CURRENT_SPELL_VALUE;
+
     @Nullable
     @Override
     public INBT writeNBT(Capability<IWandCap> capability, IWandCap instance, Direction side)
@@ -39,5 +41,6 @@ public class WandItemStorage implements Capability.IStorage<IWandCap>
             }
         }
         instance.setCurrentSpellCycle(tag.getInt("currentSpellCycle"));
+        CURRENT_SPELL_VALUE = tag.getInt("currentSpellCycle");
     }
 }

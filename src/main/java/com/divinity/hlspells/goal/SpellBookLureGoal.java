@@ -2,6 +2,7 @@ package com.divinity.hlspells.goal;
 
 import com.divinity.hlspells.init.SpellInit;
 import com.divinity.hlspells.items.SpellBookItem;
+import com.divinity.hlspells.items.WandItem;
 import com.divinity.hlspells.util.SpellUtils;
 import net.minecraft.entity.EntityPredicate;
 import net.minecraft.entity.MobEntity;
@@ -111,9 +112,10 @@ public class SpellBookLureGoal extends Goal
         }
     }
 
+    // TODO: Update this to work with the wand
     private boolean canFollowItem(ItemStack stack)
     {
-        return stack.getItem() instanceof SpellBookItem && SpellUtils.getSpellBook(stack).containsSpell(p -> p.getSpell() == SpellInit.LURE.get());
+        return stack.getItem() instanceof WandItem || stack.getItem() instanceof SpellBookItem && SpellUtils.getSpellBook(stack).containsSpell(p -> p.getSpell() == SpellInit.LURE.get());
     }
 
     public boolean isRunning () { return this.isRunning; }

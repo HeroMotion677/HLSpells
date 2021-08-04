@@ -7,22 +7,25 @@ import com.divinity.hlspells.spell.SpellBookObject;
 import com.divinity.hlspells.spells.RunSpells;
 import com.divinity.hlspells.spells.SpellActions;
 import com.divinity.hlspells.util.SpellUtils;
+import net.minecraft.block.GrindstoneBlock;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.container.GrindstoneContainer;
 import net.minecraft.item.*;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.SoundCategory;
+import net.minecraft.util.*;
 import net.minecraft.world.World;
 import net.minecraftforge.event.AnvilUpdateEvent;
+import net.minecraftforge.registries.IForgeRegistryEntry;
 
 import java.util.function.Predicate;
 
+
 public class WandItem extends ShootableItem
 {
+    public static boolean isWandHeldActive = false;
+
     public WandItem (Properties properties)
     {
         super(properties);
@@ -59,14 +62,26 @@ public class WandItem extends ShootableItem
     public ActionResult<ItemStack> use(World world, PlayerEntity playerIn, Hand handIn)
     {
         ItemStack itemstack = playerIn.getItemInHand(handIn);
-        playerIn.startUsingItem(handIn);
+        playerIn.startUsingItem(handIn);;
+        isWandHeldActive = true;
         return ActionResult.success(itemstack);
     }
 
     @Override
     public void inventoryTick(ItemStack stack, World world, Entity entity, int p_77663_4_, boolean p_77663_5_)
     {
-        super.inventoryTick(stack, world, entity, p_77663_4_, p_77663_5_);
+        if (entity instanceof PlayerEntity)
+        {
+            PlayerEntity playerEntity =  (PlayerEntity) entity;
+            if (isWandHeldActive)
+            {
+                if (playerEntity.getMainHandItem().getItem() instanceof WandItem || playerEntity.getOffhandItem().getItem() instanceof WandItem)
+                {
+                    return;
+                }
+                isWandHeldActive = false;
+            }
+        }
     }
 
     @Override
@@ -84,14 +99,14 @@ public class WandItem extends ShootableItem
     @Override
     public void releaseUsing(ItemStack stack, World world, LivingEntity entity, int p_77615_4_)
     {
-        stack.getCapability(WandItemProvider.WAND_CAP, null).ifPresent(p ->
-        {
+        stack.getCapability(WandItemProvider.WAND_CAP, null).ifPresent(p -> {
             System.out.println(p.getSpells());
         });
 
-        if (entity instanceof PlayerEntity) {
-
+        if (entity instanceof PlayerEntity)
+        {
             PlayerEntity playerEntity = (PlayerEntity) entity;
+            isWandHeldActive = false;
 
             if (playerEntity.getUseItemRemainingTicks() < 71988)
             {
@@ -129,7 +144,7 @@ public class WandItem extends ShootableItem
     @Override
     public boolean isBookEnchantable(ItemStack stack, ItemStack book)
     {
-        return book.getItem() instanceof SpellBookItem;
+        return false;
     }
 
     @Override
@@ -137,4 +152,5 @@ public class WandItem extends ShootableItem
     {
         return false;
     }
+
 }

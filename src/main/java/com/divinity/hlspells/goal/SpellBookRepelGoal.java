@@ -2,6 +2,11 @@ package com.divinity.hlspells.goal;
 
 import com.divinity.hlspells.init.SpellInit;
 import com.divinity.hlspells.items.SpellBookItem;
+import com.divinity.hlspells.items.WandItem;
+import com.divinity.hlspells.items.capabilities.IWandCap;
+import com.divinity.hlspells.items.capabilities.WandItemProvider;
+import com.divinity.hlspells.network.packets.WandInputPacket;
+import com.divinity.hlspells.spell.Spell;
 import com.divinity.hlspells.util.SpellUtils;
 import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.EntityPredicate;
@@ -19,6 +24,7 @@ import net.minecraft.util.math.vector.Vector3d;
 
 import javax.annotation.Nullable;
 import java.util.EnumSet;
+import java.util.Optional;
 import java.util.Random;
 import java.util.function.Predicate;
 import java.util.function.ToDoubleFunction;
@@ -224,8 +230,9 @@ public class SpellBookRepelGoal extends Goal
         return flag1 ? Vector3d.atBottomCenterOf(blockpos) : null;
     }
 
+    // TODO: Update this to work with the wand
     private boolean canRepelItem(ItemStack stack)
     {
-        return stack.getItem() instanceof SpellBookItem && SpellUtils.getSpellBook(stack).containsSpell(p -> p.getSpell() == SpellInit.REPEL.get());
+        return stack.getItem() instanceof WandItem || stack.getItem() instanceof SpellBookItem && SpellUtils.getSpellBook(stack).containsSpell(p -> p.getSpell() == SpellInit.REPEL.get());
     }
 }

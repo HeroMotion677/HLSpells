@@ -1,6 +1,9 @@
 package com.divinity.hlspells.items.capabilities;
 
+import com.divinity.hlspells.init.SpellInit;
 import com.divinity.hlspells.spell.Spell;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.RegistryObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -47,7 +50,6 @@ public class WandCap implements IWandCap
     @Override
     public int getCurrentSpellCycle()
     {
-        spellCycleCheck();
         return this.currentSpellCycle;
     }
 
@@ -60,7 +62,7 @@ public class WandCap implements IWandCap
 
     private void spellCycleCheck()
     {
-        if (this.currentSpellCycle >= 3)
+        if (this.currentSpellCycle > this.getSpells().size() - 1)
         {
             this.currentSpellCycle = 0;
         }
