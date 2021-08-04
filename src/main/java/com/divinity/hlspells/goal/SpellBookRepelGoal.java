@@ -18,6 +18,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.pathfinding.*;
 import net.minecraft.tags.FluidTags;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
@@ -230,9 +231,30 @@ public class SpellBookRepelGoal extends Goal
         return flag1 ? Vector3d.atBottomCenterOf(blockpos) : null;
     }
 
-    // TODO: Update this to work with the wand
     private boolean canRepelItem(ItemStack stack)
     {
-        return stack.getItem() instanceof WandItem || stack.getItem() instanceof SpellBookItem && SpellUtils.getSpellBook(stack).containsSpell(p -> p.getSpell() == SpellInit.REPEL.get());
+        boolean[] canDo = new boolean[1];
+        if (stack.getItem() instanceof WandItem)
+        {
+            stack.getCapability(WandItemProvider.WAND_CAP, null).ifPresent(cap ->
+            {
+                ResourceLocation location = SpellInit.REPEL.get().getRegistryName();
+                if (location != null && cap.getSpells().get(cap.getCurrentSpellCycle()).equals(location.toString()))
+                {
+                    canDo[0] = true;
+                }
+
+                else if (location != null && !(cap.getSpells().get(cap.getCurrentSpellCycle()).equals(location.toString())))
+                {
+                    canDo[0] = false;
+                }
+            });
+
+            if (canDo[0])
+            {
+                return true;
+            }
+        }
+        return stack.getItem() instanceof SpellBookItem && SpellUtils.getSpellBook(stack).containsSpell(p -> p.getSpell() == SpellInit.REPEL.get());
     }
 }

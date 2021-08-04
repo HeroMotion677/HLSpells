@@ -3,6 +3,7 @@ package com.divinity.hlspells.goal;
 import com.divinity.hlspells.init.SpellInit;
 import com.divinity.hlspells.items.SpellBookItem;
 import com.divinity.hlspells.items.WandItem;
+import com.divinity.hlspells.items.capabilities.WandItemProvider;
 import com.divinity.hlspells.util.SpellUtils;
 import net.minecraft.entity.EntityPredicate;
 import net.minecraft.entity.MobEntity;
@@ -14,6 +15,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.pathfinding.FlyingPathNavigator;
 import net.minecraft.pathfinding.GroundPathNavigator;
+import net.minecraft.util.ResourceLocation;
 
 import java.util.EnumSet;
 
@@ -112,10 +114,31 @@ public class SpellBookLureGoal extends Goal
         }
     }
 
-    // TODO: Update this to work with the wand
     private boolean canFollowItem(ItemStack stack)
     {
-        return stack.getItem() instanceof WandItem || stack.getItem() instanceof SpellBookItem && SpellUtils.getSpellBook(stack).containsSpell(p -> p.getSpell() == SpellInit.LURE.get());
+        boolean[] canDo = new boolean[1];
+        if (stack.getItem() instanceof WandItem)
+        {
+            stack.getCapability(WandItemProvider.WAND_CAP, null).ifPresent(cap ->
+            {
+                ResourceLocation location = SpellInit.LURE.get().getRegistryName();
+                if (location != null && cap.getSpells().get(cap.getCurrentSpellCycle()).equals(location.toString()))
+                {
+                    canDo[0] = true;
+                }
+
+                else if (location != null && !(cap.getSpells().get(cap.getCurrentSpellCycle()).equals(location.toString())))
+                {
+                    canDo[0] = false;
+                }
+            });
+
+            if (canDo[0])
+            {
+                return true;
+            }
+        }
+        return stack.getItem() instanceof SpellBookItem && SpellUtils.getSpellBook(stack).containsSpell(p -> p.getSpell() == SpellInit.LURE.get());
     }
 
     public boolean isRunning () { return this.isRunning; }
