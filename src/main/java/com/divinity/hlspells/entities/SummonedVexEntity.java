@@ -9,10 +9,12 @@ import net.minecraft.entity.monster.EvokerEntity;
 import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.entity.monster.SlimeEntity;
 import net.minecraft.entity.monster.VexEntity;
+import net.minecraft.entity.passive.WolfEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.IPacket;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
@@ -55,6 +57,26 @@ public class SummonedVexEntity extends VexEntity
                         1, -2 + this.owner.level.random.nextInt(5));
                 this.moveControl.setWantedPosition(ownerPos.getX(), ownerPos.getY(), ownerPos.getZ(), 0.75D);
             }
+        }
+    }
+
+    @Override
+    public void readAdditionalSaveData(CompoundNBT nbt) // This method isn't called for some reason, no idea why
+    {
+        super.readAdditionalSaveData(nbt);
+        if (nbt.contains("Owner"))
+        {
+            this.setSummonedOwner(this.level.getPlayerByUUID(nbt.getUUID("Owner")));
+        }
+    }
+
+    @Override
+    public void addAdditionalSaveData(CompoundNBT nbt)
+    {
+        super.addAdditionalSaveData(nbt);
+        if (this.getSummonedOwner() != null)
+        {
+            nbt.putUUID("Owner", this.getSummonedOwner().getUUID());
         }
     }
 

@@ -12,6 +12,7 @@ import com.divinity.hlspells.spell.SpellBookObject;
 import com.divinity.hlspells.spell.SpellInstance;
 import com.divinity.hlspells.spell.SpellType;
 import com.divinity.hlspells.util.SpellUtils;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
@@ -20,6 +21,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.IItemProvider;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.AnvilRepairEvent;
@@ -73,17 +75,18 @@ public class RunSpells
             for (RegistryObject<Spell> spell : SpellInit.SPELLS_DEFERRED_REGISTER.getEntries())
             {
                 itemStack.getCapability(WandItemProvider.WAND_CAP, null)
-                        .filter(iWandCap -> iWandCap.getSpells().size() > 0)
-                        .ifPresent(cap -> {
-                            ResourceLocation spellLocation = spell.get().getRegistryName();
-                            if (spellLocation != null && cap.getSpells().get(cap.getCurrentSpellCycle()).equals(spellLocation.toString()))
-                            {
-                                if (spell.get().getCategory() == SpellType.CAST)
-                                {
-                                    spell.get().getSpellAction().accept(playerEntity, playerEntity.level);
-                                }
-                            }
-                        });
+                .filter(iWandCap -> iWandCap.getSpells().size() > 0)
+                .ifPresent(cap -> {
+                    cap.setCurrentSpellCycle(CURRENT_SPELL_VALUE); // Ensures Sync (Temp solution for now, will probably need server -> client packet)
+                    ResourceLocation spellLocation = spell.get().getRegistryName();
+                    if (spellLocation != null && cap.getSpells().get(cap.getCurrentSpellCycle()).equals(spellLocation.toString()))
+                    {
+                        if (spell.get().getCategory() == SpellType.CAST)
+                        {
+                            spell.get().getSpellAction().accept(playerEntity, playerEntity.level);
+                        }
+                    }
+                });
             }
         }
     }
@@ -111,18 +114,18 @@ public class RunSpells
             for (RegistryObject<Spell> spell : SpellInit.SPELLS_DEFERRED_REGISTER.getEntries())
             {
                 playerItem.getCapability(WandItemProvider.WAND_CAP, null)
-                        .filter(iWandCap -> iWandCap.getSpells().size() > 0)
-                        .ifPresent(cap -> {
-                            cap.setCurrentSpellCycle(CURRENT_SPELL_VALUE);
-                            ResourceLocation spellLocation = spell.get().getRegistryName();
-                            if (spellLocation != null && cap.getSpells().get(cap.getCurrentSpellCycle()).equals(spellLocation.toString()))
-                            {
-                                if (spell.get().getCategory() == SpellType.HELD)
-                                {
-                                    spell.get().getSpellAction().accept(player, player.level);
-                                }
-                            }
-                        });
+                .filter(iWandCap -> iWandCap.getSpells().size() > 0)
+                .ifPresent(cap -> {
+                    cap.setCurrentSpellCycle(CURRENT_SPELL_VALUE); // Ensures Sync (Temp solution for now, will probably need server -> client packet)
+                    ResourceLocation spellLocation = spell.get().getRegistryName();
+                    if (spellLocation != null && cap.getSpells().get(cap.getCurrentSpellCycle()).equals(spellLocation.toString()))
+                    {
+                        if (spell.get().getCategory() == SpellType.HELD)
+                        {
+                            spell.get().getSpellAction().accept(player, player.level);
+                        }
+                    }
+                });
             }
         }
 

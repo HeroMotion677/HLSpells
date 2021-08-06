@@ -23,14 +23,16 @@ public class Spell extends ForgeRegistryEntry<Spell> {
     private final Map<Attribute, AttributeModifier> attributeModifiers = Maps.newHashMap();
     private final SpellType category;
     private final BiConsumer<PlayerEntity, World> spellAction;
+    private String displayName;
 
     @Nullable
     private String descriptionId;
 
-    public Spell(SpellType spellType, BiConsumer<PlayerEntity, World> spellAction)
+    public Spell(SpellType spellType, BiConsumer<PlayerEntity, World> spellAction, String displayName)
     {
         this.category = spellType;
         this.spellAction = spellAction;
+        this.displayName = displayName;
     }
 
     public boolean isInstantenous()
@@ -51,6 +53,11 @@ public class Spell extends ForgeRegistryEntry<Spell> {
         }
 
         return this.descriptionId;
+    }
+
+    public String getTrueDisplayName()
+    {
+        return this.displayName;
     }
 
     public String getDescriptionId()

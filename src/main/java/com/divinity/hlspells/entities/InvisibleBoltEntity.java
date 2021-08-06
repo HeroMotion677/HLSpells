@@ -57,6 +57,12 @@ public class InvisibleBoltEntity extends ArrowEntity
     }
 
     @Override
+    protected float getWaterInertia()
+    {
+        return 1F;
+    }
+
+    @Override
     protected void onHit(RayTraceResult result)
     {
         RayTraceResult.Type raytraceresult$type = result.getType();

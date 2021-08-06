@@ -22,6 +22,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.Collections;
 import java.util.function.Predicate;
+import static com.divinity.hlspells.items.capabilities.WandCapHandler.*;
 
 public class Util
 {
@@ -33,6 +34,7 @@ public class Util
      * @param teleportPos The arrival position
      * @param entity      The entity that is teleported
      */
+
 
     public static void teleport(World world, BlockPos pos, BlockPos teleportPos, Entity entity) {
         double teleportXCo = teleportPos.getX();
@@ -178,5 +180,32 @@ public class Util
             return true;
         }
         return false;
+    }
+
+    public static int selectNextColor ()
+    {
+        switch (hudTime)
+        {
+            case 19: return 0x95ffcccb;
+            case 18: return 0x90ffcccb;
+            case 17: return 0x85ffcccb;
+            case 16: return 0x80ffcccb;
+            case 15: return 0x75ffcccb;
+            case 14: return 0x70ffcccb;
+            case 13: return 0x65ffcccb;
+            case 12: return 0x60ffcccb;
+            case 11: return 0x55ffcccb;
+            case 10: return 0x50ffcccb;
+            case 9: return 0x45ffcccb;
+            case 8: return 0x40ffcccb;
+            case 7: return 0x35ffcccb;
+            case 6: return 0x30ffcccb;
+            case 5: return 0x25ffcccb;
+            case 4: return 0x20ffcccb;
+            case 3: return 0x15ffcccb;
+            case 2: return 0x10ffcccb;
+            case 1: return 0x05ffcccb;
+        }
+        return 0xffcccb;
     }
 }

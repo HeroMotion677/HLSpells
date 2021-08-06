@@ -67,4 +67,5 @@ public class WandCap implements IWandCap
             this.currentSpellCycle = 0;
         }
     }
+
 }
