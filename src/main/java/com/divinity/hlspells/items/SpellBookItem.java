@@ -37,7 +37,6 @@ public class SpellBookItem extends ShootableItem
     public SpellBookItem(Properties properties)
     {
         super(properties);
-
     }
 
     @Override

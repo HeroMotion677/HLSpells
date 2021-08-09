@@ -1,8 +1,10 @@
 package com.divinity.hlspells.enchantments.spells;
 
 import com.divinity.hlspells.enchantments.ISpell;
+import com.divinity.hlspells.init.SpellBookInit;
 import com.divinity.hlspells.init.SpellInit;
 import com.divinity.hlspells.items.SpellBookItem;
+import com.divinity.hlspells.util.SpellUtils;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentType;
 import net.minecraft.inventory.EquipmentSlotType;
@@ -29,7 +31,31 @@ public class Pull extends Enchantment implements ISpell
     @Override
     public boolean canApplyAtEnchantingTable(ItemStack stack)
     {
-        return stack.getItem() instanceof SpellBookItem;
+        return SpellUtils.getSpellBook(stack) == SpellBookInit.EMPTY.get();
+    }
+
+    @Override
+    public boolean canEnchant(ItemStack stack)
+    {
+        return stack.getItem() instanceof SpellBookItem || super.canEnchant(stack);
+    }
+
+    @Override
+    public int getMinCost(int value)
+    {
+        return 1;
+    }
+
+    @Override
+    public int getMaxCost(int value)
+    {
+        return 30;
+    }
+
+    @Override
+    protected boolean checkCompatibility(Enchantment enchantment)
+    {
+        return !(enchantment instanceof ISpell);
     }
 
     @Override
