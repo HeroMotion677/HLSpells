@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "package": "com.divinity.hlspells.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "MixinEnchantmentContainer",
+    "MixinGrindstoneContainer"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "refmap": "hlspells.mixin-refmap.json",
+  "minVersion": "0.8"
+}
