@@ -15,6 +15,7 @@ import net.minecraft.block.Blocks;
 import net.minecraft.block.IWaterLoggable;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
@@ -34,6 +35,7 @@ import net.minecraft.entity.projectile.ShulkerBulletEntity;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.SwordItem;
 import net.minecraft.network.IPacket;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.particles.ParticleTypes;
@@ -523,22 +525,19 @@ public class SpellActions
     {
         if (event.getPlayer() != null && event.getToolTip() != null)
         {
-            if (event.getItemStack().getItem() instanceof SpellBookItem)
-            {
-                ItemStack stack = event.getItemStack();
-                if (stack.getEnchantmentTags().size() > 1)
-                {
-                    for (int i = 0; i < stack.getEnchantmentTags().size() && stack.getEnchantmentTags().size() > 1; i++)
-                    {
-                        stack.getEnchantmentTags().remove(i);
-                    }
-                }
-            }
-
-            else if (event.getItemStack().getItem() instanceof WandItem)
-            {
-                event.getItemStack().getCapability(WandItemProvider.WAND_CAP, null).ifPresent(p -> System.out.println(p.getSpells()));
-            }
+//            if (event.getItemStack().getItem() instanceof SpellBookItem)
+//            {
+//                ItemStack stack = event.getItemStack();
+//                if (stack.getEnchantmentTags().size() > 1)
+//                {
+//                    for (int i = 0; i < stack.getEnchantmentTags().size() && stack.getEnchantmentTags().size() > 1; i++)
+//                    {
+//                        stack.getEnchantmentTags().remove(i);
+//                    }
+//                }
+//            }
+            
+            // Iterate through all enchantments in enchantinit and check if their associated registry name matches whatever in spell init
         }
     }
 

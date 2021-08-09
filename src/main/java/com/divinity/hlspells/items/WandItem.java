@@ -3,11 +3,13 @@ package com.divinity.hlspells.items;
 import com.divinity.hlspells.init.SpellBookInit;
 import com.divinity.hlspells.init.SpellInit;
 import com.divinity.hlspells.items.capabilities.WandItemProvider;
+import com.divinity.hlspells.spell.Spell;
 import com.divinity.hlspells.spell.SpellBookObject;
 import com.divinity.hlspells.spells.RunSpells;
 import com.divinity.hlspells.spells.SpellActions;
 import com.divinity.hlspells.util.SpellUtils;
 import net.minecraft.block.GrindstoneBlock;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -15,10 +17,17 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.container.GrindstoneContainer;
 import net.minecraft.item.*;
 import net.minecraft.util.*;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.event.AnvilUpdateEvent;
+import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 
+import javax.annotation.Nullable;
+import java.util.List;
 import java.util.function.Predicate;
 
 
@@ -56,6 +65,40 @@ public class WandItem extends ShootableItem
     public int getDefaultProjectileRange()
     {
         return 8;
+    }
+
+    @Override
+    public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> text, ITooltipFlag flag)
+    {
+        text.add(1, new StringTextComponent(TextFormatting.GOLD + "Spells: "));
+        stack.getCapability(WandItemProvider.WAND_CAP,  null).ifPresent(cap ->
+        {
+            if (cap.getSpells().size() == 0)
+            {
+                text.add(new StringTextComponent(TextFormatting.GRAY + "   Empty"));
+            }
+            else
+            {
+                cap.getSpells().forEach(c ->
+                {
+                    for (RegistryObject<Spell> spell : SpellInit.SPELLS_DEFERRED_REGISTER.getEntries())
+                    {
+                        ResourceLocation location = spell.get().getRegistryName();
+                        if (location != null && location.toString().equals(c))
+                        {
+                            if (cap.getSpells().get(cap.getCurrentSpellCycle()).equals(c))
+                            {
+                                text.add(new StringTextComponent(TextFormatting.BLUE + "   " + spell.get().getTrueDisplayName()));
+                            }
+                            else
+                            {
+                                text.add(new StringTextComponent(TextFormatting.GRAY + "   " + spell.get().getTrueDisplayName()));
+                            }
+                        }
+                    }
+                });
+            }
+        });
     }
 
     @Override

@@ -26,7 +26,7 @@ public class SpellInit {
     public static final RegistryObject<Spell> EMPTY = SPELLS_DEFERRED_REGISTER.register("empty", () -> new Spell(SpellType.CAST, (p, w) -> {}, "No Spell"));
     public static final RegistryObject<Spell> FEATHER_FALLING = SPELLS_DEFERRED_REGISTER.register("feather_falling", () -> new Spell(SpellType.HELD, (p, w) -> doFeatherFalling(p),"Feather Falling"));
     public static final RegistryObject<Spell> BLAST_PROTECTION = SPELLS_DEFERRED_REGISTER.register("blast_protection", () -> new Spell(SpellType.CAST, (p, w) -> doBlastSpell(w, p), "Blast Protection"));
-    public static final RegistryObject<Spell> SOUL_SYPHON = SPELLS_DEFERRED_REGISTER.register("soul_syphon", () -> new Spell(SpellType.CAST, (p, w) -> doSoulSyphon(w, p),"Soul Syphon"));
+    public static final RegistryObject<Spell> SOUL_SYPHON = SPELLS_DEFERRED_REGISTER.register("soul_syphon", () -> new Spell(SpellType.CAST, (p, w) -> doSoulSyphon(w, p),"Teleport"));
     public static final RegistryObject<Spell> ARROW_RAIN = SPELLS_DEFERRED_REGISTER.register("arrow_rain", () -> new Spell(SpellType.HELD, (p, w) -> doArrowRain(p), "Arrow Rain"));
     public static final RegistryObject<Spell> BOLT = SPELLS_DEFERRED_REGISTER.register("bolt", () -> new Spell(SpellType.CAST, (p, w) -> doBoltSpell(p), "Bolt"));
     public static final RegistryObject<Spell> HEALING_CIRCLE = SPELLS_DEFERRED_REGISTER.register("healing_circle", () -> new Spell(SpellType.HELD, (p, w) -> doHealingCircle(p), "Healing Circle"));

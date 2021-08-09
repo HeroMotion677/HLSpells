@@ -63,10 +63,4 @@ public class SoulSyphon extends Enchantment
     public boolean isAllowedOnBooks() {
         return true;
     }
-
-    public String getSpellRegistryName ()
-    {
-        ResourceLocation registryName = SpellInit.FLAMING_BOLT.get().getRegistryName();
-        return registryName != null ? registryName.toString() : "null";
-    }
 }

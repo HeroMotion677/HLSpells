@@ -1,6 +1,7 @@
 package com.divinity.hlspells.items;
 
-import com.divinity.hlspells.init.SpellInit;
+import com.divinity.hlspells.enchantments.ISpell;
+import com.divinity.hlspells.init.EnchantmentInit;
 import com.divinity.hlspells.spell.SpellType;
 import com.divinity.hlspells.spells.RunSpells;
 import com.divinity.hlspells.spell.SpellBookObject;
@@ -10,6 +11,7 @@ import com.divinity.hlspells.spells.SpellActions;
 import com.divinity.hlspells.util.SpellUtils;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -17,6 +19,7 @@ import net.minecraft.item.*;
 import net.minecraft.util.*;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.event.enchanting.EnchantmentLevelSetEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 import static com.divinity.hlspells.setup.client.ClientSetup.*;
 
@@ -24,7 +27,6 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
-import java.util.stream.Stream;
 
 
 public class SpellBookItem extends ShootableItem
@@ -48,7 +50,7 @@ public class SpellBookItem extends ShootableItem
     @Override
     public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment)
     {
-        return true;
+        return SpellUtils.getSpellBook(stack) == SpellBookInit.EMPTY.get() && enchantment instanceof ISpell;
     }
 
     @Override
@@ -58,8 +60,9 @@ public class SpellBookItem extends ShootableItem
     }
 
     @Override
-    public boolean isFoil(ItemStack stack) {
-        return super.isFoil(stack) || !SpellUtils.getSpell(stack).isEmpty();
+    public boolean isFoil(ItemStack stack)
+    {
+        return super.isFoil(stack) || SpellUtils.getSpellBook(stack) != SpellBookInit.EMPTY.get();
     }
 
     @Override

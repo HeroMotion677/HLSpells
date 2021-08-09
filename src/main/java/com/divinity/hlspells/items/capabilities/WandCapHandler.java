@@ -6,19 +6,11 @@ import com.divinity.hlspells.network.NetworkManager;
 import com.divinity.hlspells.network.packets.WandInputPacket;
 import com.divinity.hlspells.spell.Spell;
 import com.divinity.hlspells.util.Util;
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.player.AbstractClientPlayerEntity;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.entity.projectile.ArrowEntity;
-import net.minecraft.entity.projectile.SnowballEntity;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
@@ -28,11 +20,10 @@ import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.common.Mod;
 import org.lwjgl.opengl.GL11;
 
-import javax.annotation.Nullable;
-
 import static com.divinity.hlspells.HLSpells.*;
 import static com.divinity.hlspells.items.capabilities.WandItemStorage.CURRENT_SPELL_VALUE;
 
+// Lemon before you witness this disgusting code I would like to apologize
 @Mod.EventBusSubscriber(modid = MODID)
 public class WandCapHandler
 {
@@ -42,12 +33,23 @@ public class WandCapHandler
     private static ItemStack playerMainItem = ItemStack.EMPTY;
     private static ItemStack playerOffItem = ItemStack.EMPTY;
 
+    private static boolean isActive1;
+    private static boolean isActive2;
+    private static boolean isActive3;
+
     public static int hudTime;
 
     @SubscribeEvent
     public static void onScreenRender (RenderGameOverlayEvent.Post event)
     {
-        if (event.getType() != RenderGameOverlayEvent.ElementType.EXPERIENCE || hudTime == 0) return;
+        if (event.getType() != RenderGameOverlayEvent.ElementType.EXPERIENCE) return;
+        if (hudTime == 0)
+        {
+            isActive1 = false;
+            isActive2 = false;
+            isActive3 = false;
+            return;
+        }
 
         ClientPlayerEntity player = Minecraft.getInstance().player;
 
@@ -55,24 +57,35 @@ public class WandCapHandler
         {
             boolean playerMainItemCheck = player.getMainHandItem().getItem() instanceof WandItem;
             boolean playerOffItemCheck = player.getOffhandItem().getItem() instanceof WandItem;
-
             ItemStack main = player.getMainHandItem();
             ItemStack off = player.getOffhandItem();
 
             if (playerMainItemCheck && playerOffItemCheck)
             {
-                // TODO: Fix bug where if the player swaps to another item with their main hand while having two wands it displays the offhand spell and increases the cycle
-                if (playerMainItem == main) doRenderFunc(player.getMainHandItem(), event);
+                if (playerMainItem == main)
+                {
+                    if (!isActive2 && !isActive3) isActive1 = true;
+                    if (isActive1 && !isActive2 && !isActive3) doRenderFunc(player, player.getMainHandItem(), event); //Problem
+                }
             }
 
             else if (playerMainItemCheck)
             {
-                if (playerMainItem == main) doRenderFunc(player.getMainHandItem(), event);
+                if (playerMainItem == main)
+                {
+                    if (!isActive1 && !isActive3) isActive2 = true;
+                    if (isActive2 && !isActive1 && !isActive3) doRenderFunc(player, player.getMainHandItem(), event); //Problem (maybe)
+
+                }
             }
 
             else if (playerOffItemCheck)
             {
-                if (playerOffItem == off) doRenderFunc(player.getOffhandItem(), event);
+                if (playerOffItem == off)
+                {
+                    if (!isActive1 && !isActive2) isActive3 = true;
+                    if (isActive3 && !isActive1 && !isActive2) doRenderFunc(player, player.getOffhandItem(), event); //Problem
+                }
             }
         }
     }
@@ -103,11 +116,14 @@ public class WandCapHandler
             if (WAND_BINDING.isDown() && !buttonPressedFlag)
             {
                 hudTime = (int) TOTAL_TIME;
-                NetworkManager.INSTANCE.sendToServer(new WandInputPacket(WAND_BINDING.getKey().getValue()));
                 if (player != null)
                 {
-                    playerMainItem = player.getMainHandItem();
-                    playerOffItem = player.getOffhandItem();
+                    if (!player.isUsingItem())
+                    {
+                        NetworkManager.INSTANCE.sendToServer(new WandInputPacket(WAND_BINDING.getKey().getValue()));
+                        if (player.getMainHandItem().getItem() instanceof WandItem) playerMainItem = player.getMainHandItem();
+                        if (player.getOffhandItem().getItem() instanceof WandItem) playerOffItem = player.getOffhandItem();
+                    }
                 }
                 buttonPressedFlag = true;
             }
@@ -119,15 +135,20 @@ public class WandCapHandler
         }
     }
 
-    private static void doRenderFunc (ItemStack stack, RenderGameOverlayEvent.Post event)
+    private static void doRenderFunc (PlayerEntity player, ItemStack stack, RenderGameOverlayEvent.Post event)
     {
+        if (player.isUsingItem())
+        {
+            hudTime = 0;
+            return;
+        }
+
         stack.getCapability(WandItemProvider.WAND_CAP, null).ifPresent(cap ->
         {
             int windowWidth = event.getWindow().getGuiScaledWidth();
             int windowHeight = event.getWindow().getGuiScaledHeight();
             float alpha = (hudTime + event.getPartialTicks()) / FADE_TIME;
             cap.setCurrentSpellCycle(CURRENT_SPELL_VALUE); // Ensures Sync (Temp solution for now, will probably need server -> client packet)
-            int cycle = cap.getCurrentSpellCycle() + 1;
 
             if (cap.getSpells().size() > 0)
             {
@@ -140,17 +161,11 @@ public class WandCapHandler
                         RenderSystem.enableBlend();
                         RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
                         RenderSystem.blendColor(1F, 1F, 1F, alpha);
-                        Minecraft.getInstance().font.draw(event.getMatrixStack(), "Spell: " + spell.get().getTrueDisplayName(), (windowWidth / 2F) - 23, (windowHeight / 2F) + 45F, Util.selectNextColor());
+                        Minecraft.getInstance().font.draw(event.getMatrixStack(), "Spell: " + spell.get().getTrueDisplayName(), (windowWidth / 2F) - 23, (windowHeight / 2F) + 55F, Util.selectNextColor());
                         RenderSystem.popMatrix();
                         break;
                     }
                 }
-                RenderSystem.pushMatrix();
-                RenderSystem.enableBlend();
-                RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-                RenderSystem.blendColor(1F, 1F, 1F, alpha);
-                Minecraft.getInstance().font.draw(event.getMatrixStack(), "Cycle: " + cycle + "/3", (windowWidth / 2F) - 23, (windowHeight / 2F) + 55F, Util.selectNextColor());
-                RenderSystem.popMatrix();
             }
         });
     }
