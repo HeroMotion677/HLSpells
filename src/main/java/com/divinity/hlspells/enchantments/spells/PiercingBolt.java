@@ -49,7 +49,7 @@ public class PiercingBolt extends Enchantment implements ISpell
     @Override
     public int getMaxCost(int value)
     {
-        return 30;
+        return 33;
     }
 
     @Override

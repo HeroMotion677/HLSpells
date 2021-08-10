@@ -3,8 +3,8 @@
   "package": "com.divinity.hlspells.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "MixinEnchantmentContainer",
-    "MixinGrindstoneContainer"
+    "MixinGrindstoneContainer",
+    "MixinGrindstoneContainerConstructor"
   ],
   "injectors": {
     "defaultRequire": 1
