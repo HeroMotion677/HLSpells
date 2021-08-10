@@ -8,9 +8,7 @@ import com.divinity.hlspells.util.SpellUtils;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentType;
 import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.AxeItem;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.SwordItem;
 import net.minecraft.util.ResourceLocation;
 
 public class AquaBolt extends Enchantment implements ISpell
@@ -51,7 +49,7 @@ public class AquaBolt extends Enchantment implements ISpell
     @Override
     public int getMaxCost(int value)
     {
-        return 30;
+        return 33;
     }
 
     @Override
