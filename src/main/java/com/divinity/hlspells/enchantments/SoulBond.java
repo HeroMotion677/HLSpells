@@ -3,7 +3,10 @@ package com.divinity.hlspells.enchantments;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentType;
 import net.minecraft.enchantment.Enchantments;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.item.EnderPearlItem;
+import net.minecraft.item.ShieldItem;
 
 public class SoulBond extends Enchantment
 {
@@ -25,6 +28,7 @@ public class SoulBond extends Enchantment
     @Override
     protected boolean checkCompatibility(Enchantment ench)
     {
+
         if (ench == Enchantments.BINDING_CURSE)
             return false;
         return ench != Enchantments.VANISHING_CURSE;

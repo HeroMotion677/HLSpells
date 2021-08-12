@@ -52,20 +52,6 @@ public class RunSpells
                                     .findFirst()
                                     .orElse("null")));
                 }
-
-                else
-                {
-                    transformedItem.getCapability(WandItemProvider.WAND_CAP, null).ifPresent(cap ->
-                       {
-                           for (RegistryObject<Enchantment> ench : EnchantmentInit.ENCHANTMENTS.getEntries())
-                           {
-                               if (EnchantmentHelper.getItemEnchantmentLevel(ench.get(), spellBook) > 0 && ench.get() instanceof ISpell)
-                               {
-                                   cap.addSpell(((ISpell) ench.get()).getSpellRegistryName());
-                               }
-                           }
-                       });
-                }
                 event.setCost(15);
                 event.setMaterialCost(1);
                 event.setOutput(transformedItem);

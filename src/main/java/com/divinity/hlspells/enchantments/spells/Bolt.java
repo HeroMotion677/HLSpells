@@ -41,12 +41,6 @@ public class Bolt extends Enchantment implements ISpell
     }
 
     @Override
-    protected boolean checkCompatibility(Enchantment enchantment)
-    {
-        return !(enchantment instanceof ISpell);
-    }
-
-    @Override
     public int getMinCost(int value)
     {
         return 1;
@@ -55,7 +49,13 @@ public class Bolt extends Enchantment implements ISpell
     @Override
     public int getMaxCost(int value)
     {
-        return 30;
+        return 33;
+    }
+
+    @Override
+    protected boolean checkCompatibility(Enchantment enchantment)
+    {
+        return !(enchantment instanceof ISpell);
     }
 
     @Override

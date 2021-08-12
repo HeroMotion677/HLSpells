@@ -14,14 +14,10 @@ import java.util.function.Predicate;
 
 public class SpellBookObject extends ForgeRegistryEntry<SpellBookObject>
 {
-    private final String name;
+    private String name;
     private final ImmutableList<SpellInstance> spellInstances;
 
-    public SpellBookObject(SpellInstance... spellInstances) {
-        this(null, spellInstances);
-    }
-
-    public SpellBookObject(@Nullable String name, SpellInstance... spellInstances) {
+    public SpellBookObject(String name, SpellInstance... spellInstances) {
         this.name = name;
         this.spellInstances = ImmutableList.copyOf(spellInstances);
     }
@@ -34,9 +30,9 @@ public class SpellBookObject extends ForgeRegistryEntry<SpellBookObject>
         return tag.contains(this);
     }
 
-    public String getName(String name) {
-        if (SpellBookInit.SPELL_BOOK_REGISTRY.get().getKey(this) == null) return "";
-        return name + (this.name == null ? SpellBookInit.SPELL_BOOK_REGISTRY.get().getKey(this).getPath() : this.name);
+    public String getName()
+    {
+        return this.name;
     }
 
     public List<SpellInstance> getSpells() {

@@ -47,15 +47,15 @@ public class ProtectionCircle extends Enchantment implements ISpell
     }
 
     @Override
-    public int getMaxCost(int value)
-    {
-        return 30;
-    }
-
-    @Override
     protected boolean checkCompatibility(Enchantment enchantment)
     {
         return !(enchantment instanceof ISpell);
+    }
+
+    @Override
+    public int getMaxCost(int value)
+    {
+        return 33;
     }
 
     @Override

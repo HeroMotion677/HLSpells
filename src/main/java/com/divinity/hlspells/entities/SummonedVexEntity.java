@@ -63,21 +63,21 @@ public class SummonedVexEntity extends VexEntity
     @Override
     public void readAdditionalSaveData(CompoundNBT nbt) // This method isn't called for some reason, no idea why
     {
-        super.readAdditionalSaveData(nbt);
         if (nbt.contains("Owner"))
         {
             this.setSummonedOwner(this.level.getPlayerByUUID(nbt.getUUID("Owner")));
         }
+        super.readAdditionalSaveData(nbt);
     }
 
     @Override
     public void addAdditionalSaveData(CompoundNBT nbt)
     {
-        super.addAdditionalSaveData(nbt);
         if (this.getSummonedOwner() != null)
         {
             nbt.putUUID("Owner", this.getSummonedOwner().getUUID());
         }
+        super.addAdditionalSaveData(nbt);
     }
 
     @Override
