@@ -22,7 +22,7 @@ public class MixinGrindstoneExperience
        {
 
            int spellSize = stack.getCapability(WandItemProvider.WAND_CAP, null).map(m -> m.getSpells().size()).orElse(0);
-           cir.setReturnValue(5 * spellSize);
+           cir.setReturnValue(5 * spellSize); //
        }
     }
 }

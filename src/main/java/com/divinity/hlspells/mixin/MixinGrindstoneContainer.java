@@ -1,16 +1,13 @@
 package com.divinity.hlspells.mixin;
-
-<<<<<<< HEAD
 import com.divinity.hlspells.items.SpellBookItem;
 import com.divinity.hlspells.items.WandItem;
 import com.divinity.hlspells.items.capabilities.WandItemProvider;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.container.EnchantmentContainer;
-=======
+
 import com.divinity.hlspells.items.WandItem;
 import com.divinity.hlspells.items.capabilities.WandItemProvider;
 import net.minecraft.inventory.IInventory;
->>>>>>> origin/master
 import net.minecraft.inventory.container.GrindstoneContainer;
 import net.minecraft.item.ItemStack;
 import org.spongepowered.asm.mixin.Final;
@@ -21,17 +18,14 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-<<<<<<< HEAD
 import java.util.List;
 
-=======
 /**
  * Mixin to remove spells in the wand item
  */
->>>>>>> origin/master
+
 @Mixin(GrindstoneContainer.class)
-public class MixinGrindstoneContainer
-{
+public class MixinGrindstoneContainer {
     @Shadow
     @Final
     private IInventory repairSlots;
@@ -41,28 +35,21 @@ public class MixinGrindstoneContainer
      */
     @ModifyVariable(method = "createResult()V",
             at = @At(value = "STORE", target = "Lnet/minecraft/item/ItemStack;isEnchanted()Z"), ordinal = 2)
-    private boolean canBeUsedInGrindstone(boolean original)
-    {
+    private boolean canBeUsedInGrindstone(boolean original) {
         ItemStack stack = repairSlots.getItem(0);
         ItemStack stack1 = repairSlots.getItem(1);
         boolean condition = original;
-        if ((!stack.isEmpty() && stack.getItem() instanceof WandItem) || (!stack1.isEmpty() && stack1.getItem() instanceof WandItem))
-        {
+        if ((!stack.isEmpty() && stack.getItem() instanceof WandItem) || (!stack1.isEmpty() && stack1.getItem() instanceof WandItem)) {
             condition = false;
         }
         return condition;
     }
 
-<<<<<<< HEAD
+
     @Inject(method = "removeNonCurses(Lnet/minecraft/item/ItemStack;II)Lnet/minecraft/item/ItemStack;", at = @At(value = "RETURN"), cancellable = true)
-=======
-    @Inject(method = "removeNonCurses", at = @At(value = "RETURN"), cancellable = true)
->>>>>>> origin/master
-    public void removeSpells(ItemStack p_217007_1_, int p_217007_2_, int p_217007_3_, CallbackInfoReturnable<ItemStack> cir)
-    {
+    public void removeSpells(ItemStack p_217007_1_, int p_217007_2_, int p_217007_3_, CallbackInfoReturnable<ItemStack> cir) {
         ItemStack output = cir.getReturnValue();
-        if (output.getItem() instanceof WandItem)
-        {
+        if (output.getItem() instanceof WandItem) {
             output.getCapability(WandItemProvider.WAND_CAP, null).ifPresent(iWandCap ->
             {
                 //get all the spells present and remove them all
@@ -72,8 +59,5 @@ public class MixinGrindstoneContainer
         }
         cir.setReturnValue(output);
     }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> origin/master
+

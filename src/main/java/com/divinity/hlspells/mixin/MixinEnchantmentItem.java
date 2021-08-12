@@ -60,7 +60,7 @@ public class MixinEnchantmentItem
                                {
                                    if (spellBook.get().getName().equals(spellName))
                                    {
-                                       SpellUtils.setSpellBook(stack, spellBook.get());
+                                       SpellUtils.setSpellBook(stack, spellBook.get()); //
                                        stack.getEnchantmentTags().remove(stack.getEnchantmentTags().size() > 0 ? stack.getEnchantmentTags().size() - 1 : 0);
                                        break outerLoop;
                                    }
