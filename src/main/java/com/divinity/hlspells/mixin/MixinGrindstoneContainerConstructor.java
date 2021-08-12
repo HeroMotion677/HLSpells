@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 })
 public class MixinGrindstoneContainerConstructor
 {
-    @Inject(method = "mayPlace", at = @At(value = "HEAD"), cancellable = true)
+    @Inject(method = "mayPlace(Lnet/minecraft/item/ItemStack;)Z", at = @At(value = "HEAD"), cancellable = true)
     private void mayPlace(ItemStack p_75214_1_, CallbackInfoReturnable<Boolean> cir)
     {
         if (p_75214_1_.isDamageableItem() || p_75214_1_.getItem() == Items.ENCHANTED_BOOK
