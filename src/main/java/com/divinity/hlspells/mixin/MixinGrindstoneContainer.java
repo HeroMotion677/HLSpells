@@ -1,10 +1,16 @@
 package com.divinity.hlspells.mixin;
 
+<<<<<<< HEAD
 import com.divinity.hlspells.items.SpellBookItem;
 import com.divinity.hlspells.items.WandItem;
 import com.divinity.hlspells.items.capabilities.WandItemProvider;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.container.EnchantmentContainer;
+=======
+import com.divinity.hlspells.items.WandItem;
+import com.divinity.hlspells.items.capabilities.WandItemProvider;
+import net.minecraft.inventory.IInventory;
+>>>>>>> origin/master
 import net.minecraft.inventory.container.GrindstoneContainer;
 import net.minecraft.item.ItemStack;
 import org.spongepowered.asm.mixin.Final;
@@ -15,8 +21,14 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+<<<<<<< HEAD
 import java.util.List;
 
+=======
+/**
+ * Mixin to remove spells in the wand item
+ */
+>>>>>>> origin/master
 @Mixin(GrindstoneContainer.class)
 public class MixinGrindstoneContainer
 {
@@ -41,7 +53,11 @@ public class MixinGrindstoneContainer
         return condition;
     }
 
+<<<<<<< HEAD
     @Inject(method = "removeNonCurses(Lnet/minecraft/item/ItemStack;II)Lnet/minecraft/item/ItemStack;", at = @At(value = "RETURN"), cancellable = true)
+=======
+    @Inject(method = "removeNonCurses", at = @At(value = "RETURN"), cancellable = true)
+>>>>>>> origin/master
     public void removeSpells(ItemStack p_217007_1_, int p_217007_2_, int p_217007_3_, CallbackInfoReturnable<ItemStack> cir)
     {
         ItemStack output = cir.getReturnValue();
@@ -56,4 +72,8 @@ public class MixinGrindstoneContainer
         }
         cir.setReturnValue(output);
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> origin/master

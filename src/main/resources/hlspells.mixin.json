@@ -2,6 +2,7 @@
   "required": true,
   "package": "com.divinity.hlspells.mixin",
   "compatibilityLevel": "JAVA_8",
+<<<<<<< HEAD
   "refmap": "hlspells.refmap.json",
   "mixins": [
     "MixinEnchantmentItem",
@@ -13,4 +14,15 @@
   "injectors": {
     "defaultRequire": 1
   }
+=======
+  "mixins": [
+    "MixinGrindstoneContainer",
+    "MixinGrindstoneContainerConstructor"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "refmap": "hlspells.mixin-refmap.json",
+  "minVersion": "0.8"
+>>>>>>> origin/master
 }

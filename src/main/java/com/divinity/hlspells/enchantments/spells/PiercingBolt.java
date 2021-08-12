@@ -47,15 +47,15 @@ public class PiercingBolt extends Enchantment implements ISpell
     }
 
     @Override
-    protected boolean checkCompatibility(Enchantment enchantment)
+    public int getMaxCost(int value)
     {
-        return !(enchantment instanceof ISpell);
+        return 30;
     }
 
     @Override
-    public int getMaxCost(int value)
+    protected boolean checkCompatibility(Enchantment enchantment)
     {
-        return 33;
+        return !(enchantment instanceof ISpell);
     }
 
     @Override

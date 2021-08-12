@@ -1,6 +1,7 @@
 package com.divinity.hlspells.mixin;
 
 import com.divinity.hlspells.items.WandItem;
+<<<<<<< HEAD
 import com.divinity.hlspells.items.capabilities.IWandCap;
 import com.divinity.hlspells.items.capabilities.WandItemProvider;
 import net.minecraft.enchantment.Enchantment;
@@ -13,12 +14,20 @@ import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+=======
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import org.spongepowered.asm.mixin.Mixin;
+>>>>>>> origin/master
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+<<<<<<< HEAD
 import java.util.Map;
 
+=======
+>>>>>>> origin/master
 /**
  * Mixin to allow wand to be inserted into grindstone
  */
@@ -34,4 +43,8 @@ public class MixinGrindstoneContainerConstructor
                 || p_75214_1_.isEnchanted() || p_75214_1_.getItem() instanceof WandItem)
             cir.setReturnValue(true);
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> origin/master
