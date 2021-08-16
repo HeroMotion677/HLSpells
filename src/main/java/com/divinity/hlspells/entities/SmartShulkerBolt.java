@@ -25,8 +25,7 @@ import net.minecraftforge.fml.network.NetworkHooks;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class
-SmartShulkerBolt extends ShulkerBulletEntity
+public class SmartShulkerBolt extends ShulkerBulletEntity
 {
     private World world;
     private LivingEntity entity;

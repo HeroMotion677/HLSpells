@@ -8,6 +8,7 @@ import com.divinity.hlspells.util.SpellUtils;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentType;
 import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.item.Food;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
@@ -15,17 +16,7 @@ public class Storm extends Enchantment implements ISpell
 {
     public Storm(EquipmentSlotType... slots)
     {
-        super(Enchantment.Rarity.UNCOMMON, EnchantmentType.BREAKABLE, slots);
-    }
-
-    @Override
-    public int getMinLevel() {
-        return 1;
-    }
-
-    @Override
-    public int getMaxLevel() {
-        return 1;
+        super(Rarity.VERY_RARE, EnchantmentType.BREAKABLE, slots);
     }
 
     @Override
@@ -43,19 +34,7 @@ public class Storm extends Enchantment implements ISpell
     @Override
     public int getMinCost(int value)
     {
-        return 1;
-    }
-
-    @Override
-    public int getMaxCost(int value)
-    {
         return 30;
-    }
-
-    @Override
-    protected boolean checkCompatibility(Enchantment enchantment)
-    {
-        return !(enchantment instanceof ISpell);
     }
 
     @Override

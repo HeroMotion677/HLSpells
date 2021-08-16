@@ -34,6 +34,7 @@ public class ClientSetup
 
     public static boolean frameTwo = false;
     public static boolean frameThree = false;
+    public static boolean wandFrameThree = false;
 
     @SubscribeEvent
     public static void init (final FMLClientSetupEvent event)
@@ -87,6 +88,7 @@ public class ClientSetup
 
                     else if ((double) living.getUseItemRemainingTicks() < 71994 && (double) living.getUseItemRemainingTicks() >= 71991)
                     {
+                        wandFrameThree = true;
                         return 0.6F;
                     }
 

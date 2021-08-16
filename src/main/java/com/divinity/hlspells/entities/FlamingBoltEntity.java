@@ -27,6 +27,7 @@ import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.event.enchanting.EnchantmentLevelSetEvent;
 import net.minecraftforge.fml.network.NetworkHooks;
 
 public class FlamingBoltEntity extends ArrowEntity
@@ -50,8 +51,6 @@ public class FlamingBoltEntity extends ArrowEntity
             this.onHitBlock((BlockRayTraceResult) result);
         }
     }
-
-    //yes
 
     @Override
     public IPacket<?> getAddEntityPacket()
@@ -103,6 +102,8 @@ public class FlamingBoltEntity extends ArrowEntity
             this.remove();
         }
     }
+
+
 
     @Override
     protected float getWaterInertia()

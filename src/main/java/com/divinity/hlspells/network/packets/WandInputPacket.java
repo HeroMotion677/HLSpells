@@ -1,14 +1,10 @@
 package com.divinity.hlspells.network.packets;
 
 import com.divinity.hlspells.items.WandItem;
-import com.divinity.hlspells.items.capabilities.WandItemProvider;
-import com.mojang.blaze3d.platform.GlStateManager;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.player.ClientPlayerEntity;
+import com.divinity.hlspells.items.capabilities.wandcap.WandItemProvider;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.function.Supplier;

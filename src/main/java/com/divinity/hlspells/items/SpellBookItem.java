@@ -93,7 +93,6 @@ public class SpellBookItem extends ShootableItem
     @Override
     public void releaseUsing(ItemStack stack, World world, LivingEntity entity, int power)
     {
-        System.out.println(stack.getOrCreateTag());
         if (entity instanceof PlayerEntity)
         {
             PlayerEntity playerEntity = (PlayerEntity) entity;
@@ -159,8 +158,8 @@ public class SpellBookItem extends ShootableItem
         playerIn.startUsingItem(handIn);
         this.spell = SpellUtils.getSpellBook(itemstack).getSpells();
         isHeldActive = true;
-        
-        if (!playerIn.level.isClientSide()) 
+
+        if (!playerIn.level.isClientSide())
         {
             if (frameTwo)
             {
@@ -169,15 +168,15 @@ public class SpellBookItem extends ShootableItem
                 frameTwo = false;
             }
 
-            if (frameThree) 
+            if (frameThree)
             {
                 if (SpellUtils.getSpellBook(itemstack).containsSpell(p -> p.getSpell().getCategory() == SpellType.HELD))
                 {
                     if (evokerPrepareAttack != null && playerIn.level != null)
                         playerIn.level.playSound(null, playerIn.blockPosition(), evokerPrepareAttack, SoundCategory.NEUTRAL, 0.6F, 1.0F);
-                } 
-                
-                else if (SpellUtils.getSpellBook(itemstack).containsSpell(p -> p.getSpell().getCategory() == SpellType.CAST)) 
+                }
+
+                else if (SpellUtils.getSpellBook(itemstack).containsSpell(p -> p.getSpell().getCategory() == SpellType.CAST))
                 {
                     if (evokerPrepareSummon != null && playerIn.level != null)
                         playerIn.level.playSound(null, playerIn.blockPosition(), evokerPrepareSummon, SoundCategory.NEUTRAL, 0.6F, 1.0F);

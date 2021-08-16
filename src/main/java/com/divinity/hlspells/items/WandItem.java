@@ -1,34 +1,30 @@
 package com.divinity.hlspells.items;
 
-import com.divinity.hlspells.init.SpellBookInit;
 import com.divinity.hlspells.init.SpellInit;
-import com.divinity.hlspells.items.capabilities.WandItemProvider;
+import com.divinity.hlspells.items.capabilities.wandcap.WandItemProvider;
 import com.divinity.hlspells.spell.Spell;
-import com.divinity.hlspells.spell.SpellBookObject;
+import com.divinity.hlspells.spell.SpellType;
 import com.divinity.hlspells.spells.RunSpells;
 import com.divinity.hlspells.spells.SpellActions;
-import com.divinity.hlspells.util.SpellUtils;
-import net.minecraft.block.GrindstoneBlock;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.container.GrindstoneContainer;
 import net.minecraft.item.*;
 import net.minecraft.util.*;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
-import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.fml.RegistryObject;
-import net.minecraftforge.registries.IForgeRegistryEntry;
 
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.function.Predicate;
+
+import static com.divinity.hlspells.items.SpellBookItem.evokerCastSpell;
+import static com.divinity.hlspells.setup.client.ClientSetup.*;
 
 
 public class WandItem extends ShootableItem
@@ -107,6 +103,36 @@ public class WandItem extends ShootableItem
         ItemStack itemstack = playerIn.getItemInHand(handIn);
         playerIn.startUsingItem(handIn);;
         isWandHeldActive = true;
+
+        itemstack.getCapability(WandItemProvider.WAND_CAP, null).filter(p -> p.getSpells().size() > 0).ifPresent(cap ->
+        {
+            for (RegistryObject<Spell> spell : SpellInit.SPELLS_DEFERRED_REGISTER.getEntries())
+            {
+                ResourceLocation location = spell.get().getRegistryName();
+                if (location != null && cap.getSpells().get(cap.getCurrentSpellCycle()).equals(location.toString()))
+                {
+                    if (!playerIn.level.isClientSide())
+                    {
+                        if (wandFrameThree)
+                        {
+                            if (spell.get().getCategory() == SpellType.CAST)
+                            {
+                                if (evokerPrepareAttack != null && playerIn.level != null)
+                                    playerIn.level.playSound(null, playerIn.blockPosition(), evokerPrepareAttack, SoundCategory.NEUTRAL, 0.6F, 1.0F);
+                            }
+
+                            else if (spell.get().getCategory() == SpellType.HELD)
+                            {
+                                if (evokerPrepareSummon != null && playerIn.level != null)
+                                    playerIn.level.playSound(null, playerIn.blockPosition(), evokerPrepareSummon, SoundCategory.NEUTRAL, 0.6F, 1.0F);
+                            }
+                            wandFrameThree = false;
+                            break;
+                        }
+                    }
+                }
+            }
+        });
         return ActionResult.success(itemstack);
     }
 
@@ -149,6 +175,7 @@ public class WandItem extends ShootableItem
         if (entity instanceof PlayerEntity)
         {
             PlayerEntity playerEntity = (PlayerEntity) entity;
+            if (evokerCastSpell != null) playerEntity.level.playSound(null, playerEntity.blockPosition(), evokerCastSpell, SoundCategory.NEUTRAL, 0.6F, 1.0F);
             isWandHeldActive = false;
 
             if (playerEntity.getUseItemRemainingTicks() < 71988)
@@ -195,5 +222,4 @@ public class WandItem extends ShootableItem
     {
         return false;
     }
-
 }

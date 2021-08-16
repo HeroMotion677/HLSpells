@@ -1,12 +1,6 @@
-package com.divinity.hlspells.items.capabilities;
-
-import com.divinity.hlspells.init.SpellInit;
-import com.divinity.hlspells.spell.Spell;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.RegistryObject;
+package com.divinity.hlspells.items.capabilities.wandcap;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class WandCap implements IWandCap

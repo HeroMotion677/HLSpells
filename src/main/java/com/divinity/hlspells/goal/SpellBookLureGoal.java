@@ -3,14 +3,11 @@ package com.divinity.hlspells.goal;
 import com.divinity.hlspells.init.SpellInit;
 import com.divinity.hlspells.items.SpellBookItem;
 import com.divinity.hlspells.items.WandItem;
-import com.divinity.hlspells.items.capabilities.WandItemProvider;
+import com.divinity.hlspells.items.capabilities.wandcap.WandItemProvider;
 import com.divinity.hlspells.util.SpellUtils;
 import net.minecraft.entity.EntityPredicate;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.ai.goal.Goal;
-import net.minecraft.entity.merchant.villager.VillagerEntity;
-import net.minecraft.entity.monster.SlimeEntity;
-import net.minecraft.entity.monster.piglin.PiglinEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.pathfinding.FlyingPathNavigator;
@@ -48,7 +45,7 @@ public class SpellBookLureGoal extends Goal
             if (entity != null)
             {
                 this.player = this.entity.level.getNearestPlayer(TEMP_TARGETING, this.entity);
-                return player != null && player.isUsingItem() && this.canFollowItem(player.getItemInHand(player.getUsedItemHand())) && this.entity.distanceTo(player) >= 1;
+                return player != null && player.isUsingItem() && this.canFollowItem(player, player.getItemInHand(player.getUsedItemHand())) && this.entity.distanceTo(player) >= 1;
             }
        }
        return false;
@@ -114,9 +111,9 @@ public class SpellBookLureGoal extends Goal
         }
     }
 
-    private boolean canFollowItem(ItemStack stack)
+    private boolean canFollowItem(PlayerEntity player, ItemStack stack)
     {
-        boolean[] canDo = new boolean[1];
+        boolean[] canDo = new boolean[2];
         if (stack.getItem() instanceof WandItem)
         {
             stack.getCapability(WandItemProvider.WAND_CAP, null).ifPresent(cap ->
@@ -130,10 +127,24 @@ public class SpellBookLureGoal extends Goal
                 else if (location != null && !(cap.getSpells().get(cap.getCurrentSpellCycle()).equals(location.toString())))
                 {
                     canDo[0] = false;
+
                 }
+                if (canDo[0])
+                {
+                    if (player.totalExperience >= SpellInit.LURE.get().getXpCost() && SpellInit.LURE.get().hasCost())
+                    {
+                        canDo[1] = true;
+                    }
+                }
+
+                else
+                {
+                    canDo[1] = false;
+                }
+
             });
 
-            if (canDo[0])
+            if (canDo[0] && canDo[1])
             {
                 return true;
             }

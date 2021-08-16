@@ -9,7 +9,9 @@ import com.divinity.hlspells.items.WandItem;
 import com.divinity.hlspells.spell.Spell;
 import com.divinity.hlspells.spell.SpellBookObject;
 import com.divinity.hlspells.util.SpellUtils;
+import com.google.common.collect.Lists;
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnchantmentData;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.IInventory;
@@ -30,7 +32,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Mixin(EnchantmentContainer.class)
-public class MixinEnchantmentItem
+public class MixinEnchantmentTable
 {
     @Shadow
     @Final
@@ -60,7 +62,7 @@ public class MixinEnchantmentItem
                                {
                                    if (spellBook.get().getName().equals(spellName))
                                    {
-                                       SpellUtils.setSpellBook(stack, spellBook.get()); //
+                                       SpellUtils.setSpellBook(stack, spellBook.get());
                                        stack.getEnchantmentTags().remove(stack.getEnchantmentTags().size() > 0 ? stack.getEnchantmentTags().size() - 1 : 0);
                                        break outerLoop;
                                    }
@@ -70,6 +72,16 @@ public class MixinEnchantmentItem
                     }
                 }
             }
+        }
+    }
+
+    @Inject(method = "getEnchantmentList(Lnet/minecraft/item/ItemStack;II)Ljava/util/List;", at= @At(value = "RETURN"), cancellable = true)
+    public void removeMultipleEnchants(ItemStack stack, int p_178148_2_, int p_178148_3_, CallbackInfoReturnable<List<EnchantmentData>> cir)
+    {
+        List<EnchantmentData> oldList = cir.getReturnValue();
+        if (stack.getItem() instanceof SpellBookItem && oldList.size() > 1)
+        {
+            cir.setReturnValue(Lists.newArrayList(oldList.get(0)));
         }
     }
 }

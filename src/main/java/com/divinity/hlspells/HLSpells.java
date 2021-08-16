@@ -1,12 +1,12 @@
 package com.divinity.hlspells;
 
-import com.divinity.hlspells.items.capabilities.IWandCap;
-import com.divinity.hlspells.items.capabilities.WandCap;
-import com.divinity.hlspells.items.capabilities.WandItemStorage;
+import com.divinity.hlspells.items.capabilities.totemcap.ITotemCap;
+import com.divinity.hlspells.items.capabilities.totemcap.TotemCap;
+import com.divinity.hlspells.items.capabilities.totemcap.TotemItemStorage;
+import com.divinity.hlspells.items.capabilities.wandcap.IWandCap;
+import com.divinity.hlspells.items.capabilities.wandcap.WandCap;
+import com.divinity.hlspells.items.capabilities.wandcap.WandItemStorage;
 import com.divinity.hlspells.setup.RegistryHandler;
-import com.divinity.hlspells.setup.client.ClientSetup;
-import com.divinity.hlspells.spells.RunSpells;
-import com.divinity.hlspells.spells.SpellActions;
 import com.divinity.hlspells.villages.POIFixup;
 import com.divinity.hlspells.villages.StructureGen;
 import com.divinity.hlspells.villages.Villagers;
@@ -69,6 +69,7 @@ public class HLSpells
     public void setup(final FMLCommonSetupEvent event)
     {
         CapabilityManager.INSTANCE.register(IWandCap.class, new WandItemStorage(), WandCap::new);
+        CapabilityManager.INSTANCE.register(ITotemCap.class, new TotemItemStorage(), TotemCap::new);
         POIFixup.fixup();
     }
 }

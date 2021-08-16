@@ -3,16 +3,10 @@ package com.divinity.hlspells.goal;
 import com.divinity.hlspells.init.SpellInit;
 import com.divinity.hlspells.items.SpellBookItem;
 import com.divinity.hlspells.items.WandItem;
-import com.divinity.hlspells.items.capabilities.IWandCap;
-import com.divinity.hlspells.items.capabilities.WandItemProvider;
-import com.divinity.hlspells.network.packets.WandInputPacket;
-import com.divinity.hlspells.spell.Spell;
+import com.divinity.hlspells.items.capabilities.wandcap.WandItemProvider;
 import com.divinity.hlspells.util.SpellUtils;
-import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.EntityPredicate;
 import net.minecraft.entity.MobEntity;
-import net.minecraft.entity.ai.RandomPositionGenerator;
-import net.minecraft.entity.ai.goal.AvoidEntityGoal;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -25,7 +19,6 @@ import net.minecraft.util.math.vector.Vector3d;
 
 import javax.annotation.Nullable;
 import java.util.EnumSet;
-import java.util.Optional;
 import java.util.Random;
 import java.util.function.Predicate;
 import java.util.function.ToDoubleFunction;
@@ -60,7 +53,7 @@ public class SpellBookRepelGoal extends Goal
                 return false;
             }
 
-            else if (this.toAvoid.isUsingItem() && canRepelItem(toAvoid.getItemInHand(toAvoid.getUsedItemHand())) && this.entity.distanceTo(this.toAvoid) <= 15)
+            else if (this.toAvoid.isUsingItem() && canRepelItem(toAvoid, toAvoid.getItemInHand(toAvoid.getUsedItemHand())) && this.entity.distanceTo(this.toAvoid) <= 15)
             {
                 Vector3d vector3d = getPosAvoid(this.entity, 16, 7, this.toAvoid.position());
                 if (vector3d == null)
@@ -231,9 +224,9 @@ public class SpellBookRepelGoal extends Goal
         return flag1 ? Vector3d.atBottomCenterOf(blockpos) : null;
     }
 
-    private boolean canRepelItem(ItemStack stack)
+    private boolean canRepelItem(PlayerEntity player, ItemStack stack)
     {
-        boolean[] canDo = new boolean[1];
+        boolean[] canDo = new boolean[2];
         if (stack.getItem() instanceof WandItem)
         {
             stack.getCapability(WandItemProvider.WAND_CAP, null).ifPresent(cap ->
@@ -247,10 +240,24 @@ public class SpellBookRepelGoal extends Goal
                 else if (location != null && !(cap.getSpells().get(cap.getCurrentSpellCycle()).equals(location.toString())))
                 {
                     canDo[0] = false;
+
                 }
+                if (canDo[0])
+                {
+                    if (player.totalExperience >= SpellInit.REPEL.get().getXpCost() && SpellInit.REPEL.get().hasCost())
+                    {
+                        canDo[1] = true;
+                    }
+                }
+
+                else
+                {
+                    canDo[1] = false;
+                }
+
             });
 
-            if (canDo[0])
+            if (canDo[0] && canDo[1])
             {
                 return true;
             }

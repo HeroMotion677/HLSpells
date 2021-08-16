@@ -19,16 +19,6 @@ public class AquaBolt extends Enchantment implements ISpell
     }
 
     @Override
-    public int getMinLevel() {
-        return 1;
-    }
-
-    @Override
-    public int getMaxLevel() {
-        return 1;
-    }
-
-    @Override
     public boolean canApplyAtEnchantingTable(ItemStack stack)
     {
         return SpellUtils.getSpellBook(stack) == SpellBookInit.EMPTY.get();
@@ -44,18 +34,6 @@ public class AquaBolt extends Enchantment implements ISpell
     public int getMinCost(int value)
     {
         return 1;
-    }
-
-    @Override
-    public int getMaxCost(int value)
-    {
-        return 33;
-    }
-
-    @Override
-    protected boolean checkCompatibility(Enchantment enchantment)
-    {
-        return !(enchantment instanceof ISpell);
     }
 
     @Override

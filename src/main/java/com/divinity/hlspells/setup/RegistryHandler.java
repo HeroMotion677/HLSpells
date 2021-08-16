@@ -1,11 +1,6 @@
 package com.divinity.hlspells.setup;
 
 import com.divinity.hlspells.init.*;
-import com.divinity.hlspells.items.WandItem;
-import com.divinity.hlspells.items.capabilities.IWandCap;
-import com.divinity.hlspells.items.capabilities.WandCap;
-import com.divinity.hlspells.items.capabilities.WandItemStorage;
-import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 public class RegistryHandler

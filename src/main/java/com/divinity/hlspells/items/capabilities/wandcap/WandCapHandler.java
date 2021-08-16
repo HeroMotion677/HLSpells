@@ -1,4 +1,4 @@
-package com.divinity.hlspells.items.capabilities;
+package com.divinity.hlspells.items.capabilities.wandcap;
 
 import com.divinity.hlspells.init.SpellInit;
 import com.divinity.hlspells.items.WandItem;
@@ -21,7 +21,7 @@ import net.minecraftforge.fml.common.Mod;
 import org.lwjgl.opengl.GL11;
 
 import static com.divinity.hlspells.HLSpells.*;
-import static com.divinity.hlspells.items.capabilities.WandItemStorage.CURRENT_SPELL_VALUE;
+import static com.divinity.hlspells.items.capabilities.wandcap.WandItemStorage.CURRENT_SPELL_VALUE;
 
 // Lemon before you witness this disgusting code I would like to apologize
 @Mod.EventBusSubscriber(modid = MODID)

@@ -1,4 +1,4 @@
-package com.divinity.hlspells.items.capabilities;
+package com.divinity.hlspells.items.capabilities.wandcap;
 
 import net.minecraft.nbt.INBT;
 import net.minecraft.util.Direction;

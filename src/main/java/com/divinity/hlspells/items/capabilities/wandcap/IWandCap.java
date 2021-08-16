@@ -1,8 +1,5 @@
-package com.divinity.hlspells.items.capabilities;
+package com.divinity.hlspells.items.capabilities.wandcap;
 
-import com.divinity.hlspells.spell.Spell;
-
-import java.util.Arrays;
 import java.util.List;
 
 public interface IWandCap

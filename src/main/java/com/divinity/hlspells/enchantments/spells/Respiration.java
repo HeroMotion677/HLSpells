@@ -15,17 +15,7 @@ public class Respiration extends Enchantment implements ISpell
 {
     public Respiration(EquipmentSlotType... slots)
     {
-        super(Enchantment.Rarity.UNCOMMON, EnchantmentType.BREAKABLE, slots);
-    }
-
-    @Override
-    public int getMinLevel() {
-        return 1;
-    }
-
-    @Override
-    public int getMaxLevel() {
-        return 1;
+        super(Rarity.COMMON, EnchantmentType.BREAKABLE, slots);
     }
 
     @Override
@@ -44,18 +34,6 @@ public class Respiration extends Enchantment implements ISpell
     public int getMinCost(int value)
     {
         return 1;
-    }
-
-    @Override
-    public int getMaxCost(int value)
-    {
-        return 30;
-    }
-
-    @Override
-    protected boolean checkCompatibility(Enchantment enchantment)
-    {
-        return !(enchantment instanceof ISpell);
     }
 
     @Override

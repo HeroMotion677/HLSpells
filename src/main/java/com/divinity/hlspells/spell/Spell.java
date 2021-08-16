@@ -18,12 +18,13 @@ import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-public class Spell extends ForgeRegistryEntry<Spell> {
-
-    private final Map<Attribute, AttributeModifier> attributeModifiers = Maps.newHashMap();
+public class Spell extends ForgeRegistryEntry<Spell>
+{
     private final SpellType category;
     private final BiConsumer<PlayerEntity, World> spellAction;
     private String displayName;
+    private int xpCost;
+    private int tickDelay;
 
     @Nullable
     private String descriptionId;
@@ -33,6 +34,23 @@ public class Spell extends ForgeRegistryEntry<Spell> {
         this.category = spellType;
         this.spellAction = spellAction;
         this.displayName = displayName;
+    }
+
+    public Spell (SpellType spellType, BiConsumer<PlayerEntity, World> spellAction, String displayName, int xpCost)
+    {
+        this.category = spellType;
+        this.spellAction = spellAction;
+        this.displayName = displayName;
+        this.xpCost = xpCost;
+    }
+
+    public Spell (SpellType spellType, BiConsumer<PlayerEntity, World> spellAction, String displayName, int xpCost, int tickDelay)
+    {
+        this.category = spellType;
+        this.spellAction = spellAction;
+        this.displayName = displayName;
+        this.xpCost = xpCost;
+        this.tickDelay = tickDelay;
     }
 
     public boolean isInstantenous()
@@ -53,6 +71,21 @@ public class Spell extends ForgeRegistryEntry<Spell> {
         }
 
         return this.descriptionId;
+    }
+
+    public boolean hasCost ()
+    {
+        return this.xpCost > 0;
+    }
+
+    public int getXpCost ()
+    {
+        return this.xpCost;
+    }
+
+    public int getTickDelay ()
+    {
+        return this.tickDelay;
     }
 
     public String getTrueDisplayName()

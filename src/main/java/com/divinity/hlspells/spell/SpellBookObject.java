@@ -54,6 +54,12 @@ public class SpellBookObject extends ForgeRegistryEntry<SpellBookObject>
         return false;
     }
 
+    @Nullable
+    public Spell getSingletonSpell ()
+    {
+        return !spellInstances.isEmpty() ? spellInstances.get(0).getSpell() : null;
+    }
+
     public boolean containsSpell(Predicate<SpellInstance> predicate)
     {
         return spellInstances.stream().anyMatch(predicate);

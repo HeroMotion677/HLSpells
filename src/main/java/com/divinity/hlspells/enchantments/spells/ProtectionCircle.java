@@ -19,16 +19,6 @@ public class ProtectionCircle extends Enchantment implements ISpell
     }
 
     @Override
-    public int getMinLevel() {
-        return 1;
-    }
-
-    @Override
-    public int getMaxLevel() {
-        return 1;
-    }
-
-    @Override
     public boolean canApplyAtEnchantingTable(ItemStack stack)
     {
         return SpellUtils.getSpellBook(stack) == SpellBookInit.EMPTY.get();
@@ -43,19 +33,7 @@ public class ProtectionCircle extends Enchantment implements ISpell
     @Override
     public int getMinCost(int value)
     {
-        return 1;
-    }
-
-    @Override
-    public int getMaxCost(int value)
-    {
-        return 30;
-    }
-
-    @Override
-    protected boolean checkCompatibility(Enchantment enchantment)
-    {
-        return !(enchantment instanceof ISpell);
+        return 20;
     }
 
     @Override
