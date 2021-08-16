@@ -12,6 +12,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.world.GameRules;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -29,24 +30,15 @@ public class EntityDropEvent
     {
         if (event == null) return;
         if (!(event.getEntity() instanceof PlayerEntity)) return;
+
         PlayerEntity player = (PlayerEntity) event.getEntity();
-        boolean flag = false;
-        for (Iterator<ItemEntity> itemEntityIterator = event.getDrops().iterator(); itemEntityIterator.hasNext();)
-        {
-            if (itemEntityIterator.next().getItem().getItem() == ItemInit.TOTEM_OF_KEEPING.get())
-            {
-                itemEntityIterator.remove();
-                flag = true;
-                break;
-            }
-        }
+
+        // TOTEM OF RETURNING
         for (Iterator<ItemEntity> itemEntityIterator = event.getDrops().iterator(); itemEntityIterator.hasNext();)
         {
             ItemStack stack = itemEntityIterator.next().getItem();
-            if ((EnchantmentHelper.getItemEnchantmentLevel(EnchantmentInit.SOUL_BOND.get(), stack) > 0)
-                    || (flag) || stack.getItem().equals(ItemInit.TOTEM_OF_RETURNING.get()))
+            if (stack.getItem().equals(ItemInit.TOTEM_OF_RETURNING.get()))
             {
-                // TOTEM OF RETURNING
                 if (EntityDiesEvent.totemActivationFlag)
                 {
                     itemEntityIterator.remove();
