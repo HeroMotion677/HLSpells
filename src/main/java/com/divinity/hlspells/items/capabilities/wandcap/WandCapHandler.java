@@ -52,6 +52,7 @@ public class WandCapHandler {
                             // Ensures Sync (Temp solution for now, will probably need server -> client packet)
                             cap.setCurrentSpellCycle(CURRENT_SPELL_VALUE);
                             if (!cap.getSpells().isEmpty()) {
+                                cap.setCurrentSpellCycle(cap.getCurrentSpellCycle() + 1);
                                 Spell spell = Spell.byId(cap.getCurrentSpell());
                                 if (spell != null) {
                                     player.displayClientMessage(new StringTextComponent("Spell : " + spell.getTrueDisplayName()).withStyle(TextFormatting.GOLD), true);
