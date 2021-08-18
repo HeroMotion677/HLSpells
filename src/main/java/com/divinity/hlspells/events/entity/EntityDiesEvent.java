@@ -98,51 +98,6 @@ public class EntityDiesEvent {
         }
     }
 
-    @SubscribeEvent
-    public static void onEntityDrops(LivingDropsEvent event)
-    {
-        if (event == null) return;
-        if (!(event.getEntity() instanceof PlayerEntity)) return;
-
-        PlayerEntity player = (PlayerEntity) event.getEntity();
-
-        // TOTEM OF RETURNING
-        for (Iterator<ItemEntity> itemEntityIterator = event.getDrops().iterator(); itemEntityIterator.hasNext();)
-        {
-            ItemStack stack = itemEntityIterator.next().getItem();
-            if (stack.getItem().equals(ItemInit.TOTEM_OF_RETURNING.get()))
-            {
-                if (EntityDiesEvent.totemActivationFlag)
-                {
-                    itemEntityIterator.remove();
-                    stack.getCapability(TotemItemProvider.TOTEM_CAP, null).ifPresent(cap ->
-                    {
-                        cap.setXPos(player.getX());
-                        cap.setYPos(player.getY());
-                        cap.setZPos(player.getZ());
-                        cap.hasDied(true);
-                    });
-                    player.inventory.add(player.inventory.selected, stack);
-                    EntityDiesEvent.totemActivationFlag = false;
-                }
-
-                else if (EntityDiesEvent.totemActivationFlagOff)
-                {
-                    itemEntityIterator.remove();
-                    stack.getCapability(TotemItemProvider.TOTEM_CAP, null).ifPresent(cap ->
-                    {
-                        cap.setXPos(player.getX());
-                        cap.setYPos(player.getY());
-                        cap.setZPos(player.getZ());
-                        cap.hasDied(true);
-                    });
-                    player.inventory.offhand.set(0, stack);
-                    EntityDiesEvent.totemActivationFlagOff = false;
-                }
-            }
-        }
-    }
-
     // TOTEM OF RETURNING
     @SubscribeEvent
     public static void onEntityCloned(PlayerEvent.Clone event) {
