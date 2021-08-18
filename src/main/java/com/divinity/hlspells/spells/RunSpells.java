@@ -78,10 +78,9 @@ public class RunSpells {
 
     @SubscribeEvent
     public static void doHeldSpell(TickEvent.PlayerTickEvent event) {
-        if (event.player == null || !event.player.isAlive()) return;
+        if (!event.player.isAlive()) return;
 
         PlayerEntity player = event.player;
-
         if (SpellBookItem.isHeldActive) {
             Hand playerHand = player.getUsedItemHand();
             if (playerHand == Hand.MAIN_HAND || playerHand == Hand.OFF_HAND) {

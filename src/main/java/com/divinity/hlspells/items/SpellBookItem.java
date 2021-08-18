@@ -26,9 +26,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
-import static com.divinity.hlspells.setup.client.ClientSetup.frameThree;
-import static com.divinity.hlspells.setup.client.ClientSetup.frameTwo;
-
 
 public class SpellBookItem extends ShootableItem {
     public static boolean isHeldActive = false;
@@ -78,22 +75,18 @@ public class SpellBookItem extends ShootableItem {
         return 8;
     }
 
-    @SuppressWarnings("all")
     @Override
     public void releaseUsing(ItemStack stack, World world, LivingEntity entity, int power) {
         if (entity instanceof PlayerEntity) {
             PlayerEntity playerEntity = (PlayerEntity) entity;
             isHeldActive = false;
-
             if (playerEntity.getUseItemRemainingTicks() < 71988) {
                 if (!playerEntity.getCommandSenderWorld().isClientSide()) {
                     RunSpells.doCastSpell(playerEntity, world, stack);
                     playerEntity.level.playSound(null, playerEntity.blockPosition(), SoundEvents.EVOKER_CAST_SPELL, SoundCategory.NEUTRAL, 0.6F, 1.0F);
                 }
-
                 if (playerEntity.getCommandSenderWorld().isClientSide()) {
                     SpellActions.doParticles(playerEntity);
-
                 }
             }
         }
@@ -127,26 +120,23 @@ public class SpellBookItem extends ShootableItem {
     }
 
     @Override
-    public ActionResult<ItemStack> use(World worldIn, PlayerEntity playerIn, Hand handIn) {
-        ItemStack itemstack = playerIn.getItemInHand(handIn);
-        playerIn.startUsingItem(handIn);
+    public ActionResult<ItemStack> use(World world, PlayerEntity player, Hand handIn) {
+        ItemStack itemstack = player.getItemInHand(handIn);
+        player.startUsingItem(handIn);
         this.spell = SpellUtils.getSpellBook(itemstack).getSpells();
         isHeldActive = true;
 
-        if (!worldIn.isClientSide()) {
-            if (frameTwo) {
-                if (playerIn.level != null)
-                    playerIn.level.playSound(null, playerIn.blockPosition(), SoundEvents.BOOK_PAGE_TURN, SoundCategory.NEUTRAL, 0.6F, 1.0F);
-                frameTwo = false;
+        if (!world.isClientSide()) {
+            if (player.getUseItemRemainingTicks() < 71997 && player.getUseItemRemainingTicks() >= 71994) {
+                world.playSound(null, player.blockPosition(), SoundEvents.BOOK_PAGE_TURN, SoundCategory.NEUTRAL, 0.6F, 1.0F);
             }
 
-            if (frameThree) {
+            if (player.getUseItemRemainingTicks() < 71994 && player.getUseItemRemainingTicks() >= 71991) {
                 if (SpellUtils.getSpellBook(itemstack).containsSpell(p -> p.getSpell().getType() == SpellType.HELD)) {
-                    playerIn.level.playSound(null, playerIn.blockPosition(), SoundEvents.EVOKER_PREPARE_ATTACK, SoundCategory.NEUTRAL, 0.6F, 1.0F);
+                    world.playSound(null, player.blockPosition(), SoundEvents.EVOKER_PREPARE_ATTACK, SoundCategory.NEUTRAL, 0.6F, 1.0F);
                 } else if (SpellUtils.getSpellBook(itemstack).containsSpell(p -> p.getSpell().getType() == SpellType.CAST)) {
-                    playerIn.level.playSound(null, playerIn.blockPosition(), SoundEvents.EVOKER_PREPARE_SUMMON, SoundCategory.NEUTRAL, 0.6F, 1.0F);
+                    world.playSound(null, player.blockPosition(), SoundEvents.EVOKER_PREPARE_SUMMON, SoundCategory.NEUTRAL, 0.6F, 1.0F);
                 }
-                frameThree = false;
             }
         }
         return ActionResult.success(itemstack);

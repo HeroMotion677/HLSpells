@@ -10,6 +10,7 @@ import javax.annotation.Nullable;
 public class WandItemStorage implements Capability.IStorage<IWandCap> {
     public static final String CURRENT_SPELL_CYCLE_NBT = "currentSpellCycle";
     public static final String SPELL_NBT = "Spell ";
+    //TODO Ensures Sync (Temp solution for now, will probably need server -> client packet)
     public static int CURRENT_SPELL_VALUE;
 
     @Nullable

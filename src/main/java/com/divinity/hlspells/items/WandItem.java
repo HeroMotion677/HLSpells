@@ -24,8 +24,6 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.function.Predicate;
 
-import static com.divinity.hlspells.setup.client.ClientSetup.wandFrameThree;
-
 
 public class WandItem extends ShootableItem {
     public static boolean isWandHeldActive = false;
@@ -88,13 +86,12 @@ public class WandItem extends ShootableItem {
         itemstack.getCapability(WandItemProvider.WAND_CAP, null).filter(p -> !p.getSpells().isEmpty()).ifPresent(cap -> {
             Spell spell = Spell.byId(cap.getCurrentSpell());
             if (spell != null && !world.isClientSide()) {
-                if (wandFrameThree) {
+                if (playerIn.getUseItemRemainingTicks() < 71994 && (double) playerIn.getUseItemRemainingTicks() >= 71991) {
                     if (spell.getType() == SpellType.CAST) {
                         world.playSound(null, playerIn.blockPosition(), SoundEvents.EVOKER_PREPARE_ATTACK, SoundCategory.NEUTRAL, 0.6F, 1.0F);
                     } else if (spell.getType() == SpellType.HELD) {
                         world.playSound(null, playerIn.blockPosition(), SoundEvents.EVOKER_PREPARE_SUMMON, SoundCategory.NEUTRAL, 0.6F, 1.0F);
                     }
-                    wandFrameThree = false;
                 }
             }
         });
@@ -126,7 +123,6 @@ public class WandItem extends ShootableItem {
 
     @Override
     public void releaseUsing(ItemStack stack, World world, LivingEntity entity, int pTimeLeft) {
-        stack.getCapability(WandItemProvider.WAND_CAP, null).ifPresent(p -> System.out.println(p.getSpells()));
         if (entity instanceof PlayerEntity) {
             PlayerEntity player = (PlayerEntity) entity;
             world.playSound(null, player.blockPosition(), SoundEvents.EVOKER_CAST_SPELL, SoundCategory.NEUTRAL, 0.6F, 1.0F);

@@ -39,48 +39,48 @@ public class SpellBookRepelGoal extends Goal {
         this.setFlags(EnumSet.of(Goal.Flag.MOVE));
     }
 
-    public static Vector3d getPosAvoid(MobEntity p_75461_0_, int p_75461_1_, int p_75461_2_, Vector3d p_75461_3_) {
-        Vector3d vector3d = p_75461_0_.position().subtract(p_75461_3_);
-        return generateRandomPos(p_75461_0_, p_75461_1_, p_75461_2_, 0, vector3d, true, (float) Math.PI / 2F, value -> 0, false, 0, 0, true);
+    public static Vector3d getPosAvoid(MobEntity entity, int horizontalRange, int verticalRange, Vector3d direction) {
+        Vector3d vector3d = entity.position().subtract(direction);
+        return generateRandomPos(entity, horizontalRange, verticalRange, 0, vector3d, true, (float) Math.PI / 2F, value -> 0, false, 0, 0, true);
     }
 
     @Nullable
-    private static BlockPos getRandomDelta(Random p_226343_0_, int p_226343_1_, int p_226343_2_, int p_226343_3_, @Nullable Vector3d p_226343_4_, double p_226343_5_) {
-        if (p_226343_4_ != null && p_226343_5_ < Math.PI) {
-            double d3 = MathHelper.atan2(p_226343_4_.z, p_226343_4_.x) - ((float) Math.PI / 2F);
-            double d4 = d3 + (2.0F * p_226343_0_.nextFloat() - 1.0F) * p_226343_5_;
-            double d0 = Math.sqrt(p_226343_0_.nextDouble()) * MathHelper.SQRT_OF_TWO * p_226343_1_;
+    private static BlockPos getRandomDelta(Random random, int horizontalRange, int verticalRange, int startHeight, @Nullable Vector3d direction, double angleRange) {
+        if (direction != null && angleRange < Math.PI) {
+            double d3 = MathHelper.atan2(direction.z, direction.x) - ((float) Math.PI / 2F);
+            double d4 = d3 + (2.0F * random.nextFloat() - 1.0F) * angleRange;
+            double d0 = Math.sqrt(random.nextDouble()) * MathHelper.SQRT_OF_TWO * horizontalRange;
             double d1 = -d0 * Math.sin(d4);
             double d2 = d0 * Math.cos(d4);
-            if (Math.abs(d1) <= p_226343_1_ && Math.abs(d2) <= p_226343_1_) {
-                int l = p_226343_0_.nextInt(2 * p_226343_2_ + 1) - p_226343_2_ + p_226343_3_;
+            if (Math.abs(d1) <= horizontalRange && Math.abs(d2) <= horizontalRange) {
+                int l = random.nextInt(2 * verticalRange + 1) - verticalRange + startHeight;
                 return new BlockPos(d1, l, d2);
             } else {
                 return null;
             }
         } else {
-            int i = p_226343_0_.nextInt(2 * p_226343_1_ + 1) - p_226343_1_;
-            int j = p_226343_0_.nextInt(2 * p_226343_2_ + 1) - p_226343_2_ + p_226343_3_;
-            int k = p_226343_0_.nextInt(2 * p_226343_1_ + 1) - p_226343_1_;
+            int i = random.nextInt(2 * horizontalRange + 1) - horizontalRange;
+            int j = random.nextInt(2 * verticalRange + 1) - verticalRange + startHeight;
+            int k = random.nextInt(2 * horizontalRange + 1) - horizontalRange;
             return new BlockPos(i, j, k);
         }
     }
 
-    static BlockPos moveUpToAboveSolid(BlockPos p_226342_0_, int p_226342_1_, int p_226342_2_, Predicate<BlockPos> p_226342_3_) {
-        if (p_226342_1_ < 0) {
-            throw new IllegalArgumentException("aboveSolidAmount was " + p_226342_1_ + ", expected >= 0");
-        } else if (!p_226342_3_.test(p_226342_0_)) {
-            return p_226342_0_;
+    static BlockPos moveUpToAboveSolid(BlockPos pos, int extraAbove, int max, Predicate<BlockPos> condition) {
+        if (extraAbove < 0) {
+            throw new IllegalArgumentException("aboveSolidAmount was " + extraAbove + ", expected >= 0");
+        } else if (!condition.test(pos)) {
+            return pos;
         } else {
             BlockPos blockpos;
-            for (blockpos = p_226342_0_.above(); blockpos.getY() < p_226342_2_ && p_226342_3_.test(blockpos); blockpos = blockpos.above()) {
+            for (blockpos = pos.above(); blockpos.getY() < max && condition.test(blockpos); blockpos = blockpos.above()) {
             }
 
             BlockPos blockpos1;
             BlockPos blockpos2;
-            for (blockpos1 = blockpos; blockpos1.getY() < p_226342_2_ && blockpos1.getY() - blockpos.getY() < p_226342_1_; blockpos1 = blockpos2) {
+            for (blockpos1 = blockpos; blockpos1.getY() < max && blockpos1.getY() - blockpos.getY() < extraAbove; blockpos1 = blockpos2) {
                 blockpos2 = blockpos1.above();
-                if (p_226342_3_.test(blockpos2)) {
+                if (condition.test(blockpos2)) {
                     break;
                 }
             }
@@ -90,53 +90,51 @@ public class SpellBookRepelGoal extends Goal {
     }
 
     @Nullable
-    private static Vector3d generateRandomPos(MobEntity p_226339_0_, int p_226339_1_, int p_226339_2_, int p_226339_3_, @Nullable Vector3d p_226339_4_, boolean p_226339_5_, double p_226339_6_, ToDoubleFunction<BlockPos> p_226339_8_, boolean p_226339_9_, int p_226339_10_, int p_226339_11_, boolean p_226339_12_) {
-        PathNavigator pathnavigator = p_226339_0_.getNavigation();
-        Random random = p_226339_0_.getRandom();
+    private static Vector3d generateRandomPos(MobEntity entity, int horizontalRange, int maxVerticalDistance, int preferredYDifference, @Nullable Vector3d preferredAngle, boolean notInWater, double angleRange, ToDoubleFunction<BlockPos> scorer, boolean aboveGround, int distanceAboveGroundRange, int minDistanceAboveGround, boolean validPositionsOnly) {
+        PathNavigator pathnavigator = entity.getNavigation();
+        Random random = entity.getRandom();
         boolean flag;
-        if (p_226339_0_.hasRestriction()) {
-            flag = p_226339_0_.getRestrictCenter().closerThan(p_226339_0_.position(), (p_226339_0_.getRestrictRadius() + p_226339_1_) + 1.0D);
+        if (entity.hasRestriction()) {
+            flag = entity.getRestrictCenter().closerThan(entity.position(), (entity.getRestrictRadius() + horizontalRange) + 1.0D);
         } else {
             flag = false;
         }
 
         boolean flag1 = false;
         double d0 = Double.NEGATIVE_INFINITY;
-        BlockPos blockpos = p_226339_0_.blockPosition();
+        BlockPos blockpos = entity.blockPosition();
 
         for (int i = 0; i < 10; ++i) {
-            BlockPos blockpos1 = getRandomDelta(random, p_226339_1_, p_226339_2_, p_226339_3_, p_226339_4_, p_226339_6_);
+            BlockPos blockpos1 = getRandomDelta(random, horizontalRange, maxVerticalDistance, preferredYDifference, preferredAngle, angleRange);
             if (blockpos1 != null) {
                 int j = blockpos1.getX();
                 int k = blockpos1.getY();
                 int l = blockpos1.getZ();
-                if (p_226339_0_.hasRestriction() && p_226339_1_ > 1) {
-                    BlockPos blockpos2 = p_226339_0_.getRestrictCenter();
-                    if (p_226339_0_.getX() > blockpos2.getX()) {
-                        j -= random.nextInt(p_226339_1_ / 2);
+                if (entity.hasRestriction() && horizontalRange > 1) {
+                    BlockPos blockpos2 = entity.getRestrictCenter();
+                    if (entity.getX() > blockpos2.getX()) {
+                        j -= random.nextInt(horizontalRange / 2);
                     } else {
-                        j += random.nextInt(p_226339_1_ / 2);
+                        j += random.nextInt(horizontalRange / 2);
                     }
 
-                    if (p_226339_0_.getZ() > blockpos2.getZ()) {
-                        l -= random.nextInt(p_226339_1_ / 2);
+                    if (entity.getZ() > blockpos2.getZ()) {
+                        l -= random.nextInt(horizontalRange / 2);
                     } else {
-                        l += random.nextInt(p_226339_1_ / 2);
+                        l += random.nextInt(horizontalRange / 2);
                     }
                 }
 
-                BlockPos blockpos3 = new BlockPos(j + p_226339_0_.getX(), k + p_226339_0_.getY(), l + p_226339_0_.getZ());
-                if (blockpos3.getY() >= 0 && blockpos3.getY() <= p_226339_0_.level.getMaxBuildHeight() && (!flag || p_226339_0_.isWithinRestriction(blockpos3)) && (!p_226339_12_ || pathnavigator.isStableDestination(blockpos3))) {
-                    if (p_226339_9_) {
-                        blockpos3 = moveUpToAboveSolid(blockpos3, random.nextInt(p_226339_10_ + 1) + p_226339_11_, p_226339_0_.level.getMaxBuildHeight(), (p_226341_1_) -> {
-                            return p_226339_0_.level.getBlockState(p_226341_1_).getMaterial().isSolid();
-                        });
+                BlockPos blockpos3 = new BlockPos(j + entity.getX(), k + entity.getY(), l + entity.getZ());
+                if (blockpos3.getY() >= 0 && blockpos3.getY() <= entity.level.getMaxBuildHeight() && (!flag || entity.isWithinRestriction(blockpos3)) && (!validPositionsOnly || pathnavigator.isStableDestination(blockpos3))) {
+                    if (aboveGround) {
+                        blockpos3 = moveUpToAboveSolid(blockpos3, random.nextInt(distanceAboveGroundRange + 1) + minDistanceAboveGround, entity.level.getMaxBuildHeight(), blockPosx -> entity.level.getBlockState(blockPosx).getMaterial().isSolid());
                     }
 
-                    if (p_226339_5_ || !p_226339_0_.level.getFluidState(blockpos3).is(FluidTags.WATER)) {
-                        PathNodeType pathnodetype = WalkNodeProcessor.getBlockPathTypeStatic(p_226339_0_.level, blockpos3.mutable());
-                        if (p_226339_0_.getPathfindingMalus(pathnodetype) == 0.0F) {
-                            double d1 = p_226339_8_.applyAsDouble(blockpos3);
+                    if (notInWater || !entity.level.getFluidState(blockpos3).is(FluidTags.WATER)) {
+                        PathNodeType pathnodetype = WalkNodeProcessor.getBlockPathTypeStatic(entity.level, blockpos3.mutable());
+                        if (entity.getPathfindingMalus(pathnodetype) == 0.0F) {
+                            double d1 = scorer.applyAsDouble(blockpos3);
                             if (d1 > d0) {
                                 d0 = d1;
                                 blockpos = blockpos3;

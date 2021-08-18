@@ -19,24 +19,16 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
 @Mod.EventBusSubscriber(modid = HLSpells.MODID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ClientSetup {
-
-    public static boolean frameTwo = false;
-    public static boolean frameThree = false;
-    public static boolean wandFrameThree = false;
-
     @SubscribeEvent
     public static void init(final FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
             ItemModelsProperties.register(ItemInit.SPELL_BOOK.get(), new ResourceLocation("using"), (stack, world, living) -> {
-
                 if (living instanceof PlayerEntity && living.isUsingItem() && living.getUseItem().getItem() instanceof SpellBookItem) {
                     if ((double) living.getUseItemRemainingTicks() < 72000 && (double) living.getUseItemRemainingTicks() >= 71997) {
                         return 0.2F;
                     } else if ((double) living.getUseItemRemainingTicks() < 71997 && (double) living.getUseItemRemainingTicks() >= 71994) {
-                        frameTwo = true;
                         return 0.4F;
                     } else if ((double) living.getUseItemRemainingTicks() < 71994 && (double) living.getUseItemRemainingTicks() >= 71991) {
-                        frameThree = true;
                         return 0.6F;
                     } else if ((double) living.getUseItemRemainingTicks() < 71991 && (double) living.getUseItemRemainingTicks() >= 71988) {
                         return 0.8F;
@@ -46,16 +38,13 @@ public class ClientSetup {
                 }
                 return 0;
             });
-
-            ItemModelsProperties.register(ItemInit.WAND.get(), new ResourceLocation("pull"), (stack, world, living) ->
-            {
+            ItemModelsProperties.register(ItemInit.WAND.get(), new ResourceLocation("pull"), (stack, world, living) -> {
                 if (living instanceof PlayerEntity && living.isUsingItem() && living.getUseItem().getItem() instanceof WandItem) {
                     if ((double) living.getUseItemRemainingTicks() < 72000 && (double) living.getUseItemRemainingTicks() >= 71997) {
                         return 0.2F;
                     } else if ((double) living.getUseItemRemainingTicks() < 71997 && (double) living.getUseItemRemainingTicks() >= 71994) {
                         return 0.4F;
                     } else if ((double) living.getUseItemRemainingTicks() < 71994 && (double) living.getUseItemRemainingTicks() >= 71991) {
-                        wandFrameThree = true;
                         return 0.6F;
                     } else if ((double) living.getUseItemRemainingTicks() < 71991 && (double) living.getUseItemRemainingTicks() >= 71988) {
                         return 0.8F;

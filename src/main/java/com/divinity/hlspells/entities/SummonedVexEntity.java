@@ -151,8 +151,8 @@ public class SummonedVexEntity extends VexEntity {
     class CopyOwnerTargetGoal extends TargetGoal {
         private final EntityPredicate copyOwnerTargeting = (new EntityPredicate()).allowUnseeable().ignoreInvisibilityTesting();
 
-        public CopyOwnerTargetGoal(CreatureEntity p_i47231_2_) {
-            super(p_i47231_2_, false);
+        public CopyOwnerTargetGoal(CreatureEntity mob) {
+            super(mob, false);
         }
 
         @Override
@@ -168,8 +168,8 @@ public class SummonedVexEntity extends VexEntity {
     }
 
     class MoveHelperController extends MovementController {
-        public MoveHelperController(VexEntity p_i47230_2_) {
-            super(p_i47230_2_);
+        public MoveHelperController(VexEntity vexEntity) {
+            super(vexEntity);
         }
 
         @Override
