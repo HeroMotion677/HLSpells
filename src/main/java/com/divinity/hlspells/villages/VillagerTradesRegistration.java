@@ -21,7 +21,7 @@ public class VillagerTradesRegistration {
     public static void registerTrades(VillagerTradesEvent event) {
         Int2ObjectMap<List<VillagerTrades.ITrade>> trades = event.getTrades();
         if (event.getType() == Villagers.MAGE.get()) {
-            /**
+            /*
              * Price: 3 Emeralds
              * Price2: None
              * Sale: 2 Lapis Lazuli
@@ -34,7 +34,7 @@ public class VillagerTradesRegistration {
                     .setForSale(Items.LAPIS_LAZULI, 2, 2)
                     .build()
             );
-            /**
+            /*
              * Price: 1 Lapis Lazuli
              * Price2: None
              * Sale: 2 Emeralds
@@ -47,7 +47,7 @@ public class VillagerTradesRegistration {
                     .setForSale(Items.EMERALD, 2, 2)
                     .build()
             );
-            /**
+            /*
              * Price: 1 Book
              * Price2: 1 Lapis Lazuli
              * Sale: 1 Fire Aspect Book
@@ -61,7 +61,7 @@ public class VillagerTradesRegistration {
                     .setForSale(EnchantedBookItem.createForEnchantment(new EnchantmentData(Enchantments.FIRE_ASPECT, 0)).getItem(), 1, 1)
                     .build()
             );
-            /**
+            /*
              * Price: 1 Emerald
              * Price2: None
              * Sale: 1 Book
@@ -74,7 +74,7 @@ public class VillagerTradesRegistration {
                     .setForSale(Items.BOOK, 1, 1)
                     .build()
             );
-            /**
+            /*
              * Price: 1 Empty Bottle
              * Price2: 1 Lapis Lazuli
              * Sale: 1 XP Bottle
@@ -88,7 +88,7 @@ public class VillagerTradesRegistration {
                     .setForSale(Items.EXPERIENCE_BOTTLE, 1, 1)
                     .build()
             );
-            /**
+            /*
              * Price: 10 Lapis Lazuli
              * Price2: 1 Book
              * Sale: 1 Soul Bond Book
@@ -102,7 +102,7 @@ public class VillagerTradesRegistration {
                     .setForSale(EnchantedBookItem.createForEnchantment(new EnchantmentData(EnchantmentInit.SOUL_BOND.get(), 0)).getItem(), 1, 1)
                     .build()
             );
-            /**
+            /*
              * Price: 1 Power Book
              * Price2: 5 Lapis Lazuli
              * Sale: 1 Infinity Book
@@ -116,7 +116,7 @@ public class VillagerTradesRegistration {
                     .setForSale(EnchantedBookItem.createForEnchantment(new EnchantmentData(Enchantments.INFINITY_ARROWS, 0)).getItem(), 1, 1)
                     .build()
             );
-            /**
+            /*
              * Price: 20 Emeralds
              * Price2: None
              * Sale: 1 Conveyor

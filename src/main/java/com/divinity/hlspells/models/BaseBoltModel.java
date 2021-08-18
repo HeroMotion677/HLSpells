@@ -5,12 +5,10 @@ import net.minecraft.client.renderer.entity.model.SegmentedModel;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.entity.projectile.ArrowEntity;
 
-public class BaseBoltModel<T extends ArrowEntity> extends SegmentedModel<T>
-{
+public class BaseBoltModel<T extends ArrowEntity> extends SegmentedModel<T> {
     private final ModelRenderer model;
 
-    public BaseBoltModel ()
-    {
+    public BaseBoltModel() {
         this.texWidth = 42;
         this.texHeight = 20;
         this.model = new ModelRenderer(this);
@@ -21,15 +19,13 @@ public class BaseBoltModel<T extends ArrowEntity> extends SegmentedModel<T>
     }
 
     @Override
-    public void setupAnim(T Entity, float p_225597_2_, float p_225597_3_, float p_225597_4_, float p_225597_5_, float p_225597_6_)
-    {
-        this.model.yRot = p_225597_5_ * ((float)Math.PI / 180F);
-        this.model.xRot = p_225597_6_ * ((float)Math.PI / 180F);
+    public void setupAnim(T pEntity, float pLimbSwing, float pLimbSwingAmount, float pAgeInTicks, float pNetHeadYaw, float pHeadPitch) {
+        this.model.yRot = pNetHeadYaw * ((float) Math.PI / 180F);
+        this.model.xRot = pHeadPitch * ((float) Math.PI / 180F);
     }
 
     @Override
-    public Iterable<ModelRenderer> parts()
-    {
+    public Iterable<ModelRenderer> parts() {
         return ImmutableList.of(this.model);
     }
 }

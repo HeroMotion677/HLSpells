@@ -141,7 +141,8 @@
       "name": "everything",
       "origin": [8.94134, -0.36039, 8.75],
       "color": 0,
-      "children": [0, 1, 2, 3,
+      "children": [
+        0, 1, 2, 3,
         {
           "name": "group",
           "origin": [7.90119, -0.14728, 9],

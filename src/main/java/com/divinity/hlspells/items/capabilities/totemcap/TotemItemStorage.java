@@ -7,12 +7,10 @@ import net.minecraftforge.common.capabilities.Capability;
 
 import javax.annotation.Nullable;
 
-public class TotemItemStorage implements Capability.IStorage<ITotemCap>
-{
+public class TotemItemStorage implements Capability.IStorage<ITotemCap> {
     @Nullable
     @Override
-    public INBT writeNBT(Capability<ITotemCap> capability, ITotemCap instance, Direction side)
-    {
+    public INBT writeNBT(Capability<ITotemCap> capability, ITotemCap instance, Direction side) {
         CompoundNBT tag = new CompoundNBT();
         tag.putDouble("xPos", instance.getXPos());
         tag.putDouble("yPos", instance.getYPos());
@@ -22,8 +20,7 @@ public class TotemItemStorage implements Capability.IStorage<ITotemCap>
     }
 
     @Override
-    public void readNBT(Capability<ITotemCap> capability, ITotemCap instance, Direction side, INBT nbt)
-    {
+    public void readNBT(Capability<ITotemCap> capability, ITotemCap instance, Direction side, INBT nbt) {
         CompoundNBT tag = (CompoundNBT) nbt;
         instance.setXPos(tag.getDouble("xPos"));
         instance.setYPos(tag.getDouble("yPos"));

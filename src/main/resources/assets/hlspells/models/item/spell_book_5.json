@@ -145,16 +145,19 @@
     {
       "name": "Pages",
       "origin": [8, 8, 8],
-      "children": [2,
+      "children": [
+        2,
         {
           "name": "group",
           "origin": [7.90119, -0.14728, 9],
           "children": [3, 4]
-        }, 5]
+        }, 5
+      ]
     },
     {
       "name": "group",
       "origin": [4, 0, 11.75],
       "children": []
-    }, 6]
+    }, 6
+  ]
 }

@@ -14,11 +14,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(targets = {"net/minecraft/inventory/container/GrindstoneContainer$2",
         "net/minecraft/inventory/container/GrindstoneContainer$3"
 })
-public class MixinGrindstoneContainerConstructor
-{
+public class MixinGrindstoneContainerConstructor {
     @Inject(method = "mayPlace(Lnet/minecraft/item/ItemStack;)Z", at = @At(value = "HEAD"), cancellable = true)
-    private void mayPlace(ItemStack stack, CallbackInfoReturnable<Boolean> cir)
-    {
+    private void mayPlace(ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
         if (stack.isDamageableItem() || stack.getItem() == Items.ENCHANTED_BOOK
                 || stack.isEnchanted() || stack.getItem() instanceof WandItem)
             cir.setReturnValue(true);

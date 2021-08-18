@@ -1,6 +1,5 @@
 package com.divinity.hlspells.enchantments;
 
-public interface ISpell
-{
+public interface ISpell {
     String getSpellRegistryName();
 }

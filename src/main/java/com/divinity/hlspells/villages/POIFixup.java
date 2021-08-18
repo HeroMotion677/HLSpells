@@ -11,7 +11,7 @@ public class POIFixup {
     private static final Method blockStatesInjector = ObfuscationReflectionHelper.findMethod(PointOfInterestType.class, "func_221052_a",
             PointOfInterestType.class);
 
-    public static void fixup() {
+    public static void registerPOI() {
         try {
             blockStatesInjector.invoke(null, Villagers.MAGE_POI.get());
         } catch (IllegalAccessException | InvocationTargetException e) {

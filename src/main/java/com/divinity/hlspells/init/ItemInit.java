@@ -1,15 +1,16 @@
 package com.divinity.hlspells.init;
 
-import com.divinity.hlspells.items.*;
 import com.divinity.hlspells.HLSpells;
+import com.divinity.hlspells.items.ModTotemItem;
+import com.divinity.hlspells.items.SpellBookItem;
+import com.divinity.hlspells.items.WandItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
-public class ItemInit
-{
+public class ItemInit {
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS,
             HLSpells.MODID);
 

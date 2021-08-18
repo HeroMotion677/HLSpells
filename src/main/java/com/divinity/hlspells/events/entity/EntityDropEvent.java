@@ -1,46 +1,31 @@
 package com.divinity.hlspells.events.entity;
 
-import com.divinity.hlspells.items.capabilities.totemcap.TotemItemProvider;
-import com.divinity.hlspells.network.NetworkManager;
 import com.divinity.hlspells.HLSpells;
-import com.divinity.hlspells.init.EnchantmentInit;
 import com.divinity.hlspells.init.ItemInit;
-import com.divinity.hlspells.network.packets.TotemPacket;
-import net.minecraft.enchantment.EnchantmentHelper;
+import com.divinity.hlspells.items.capabilities.totemcap.TotemItemProvider;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.world.GameRules;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.network.PacketDistributor;
 
 import java.util.Iterator;
 
 @Mod.EventBusSubscriber(modid = HLSpells.MODID)
-public class EntityDropEvent
-{
-    static int slotNumber;
+public class EntityDropEvent {
 
     @SubscribeEvent
-    public static void onEntityDrops(LivingDropsEvent event)
-    {
-        if (event == null) return;
+    public static void onEntityDrops(LivingDropsEvent event) {
         if (!(event.getEntity() instanceof PlayerEntity)) return;
 
         PlayerEntity player = (PlayerEntity) event.getEntity();
 
         // TOTEM OF RETURNING
-        for (Iterator<ItemEntity> itemEntityIterator = event.getDrops().iterator(); itemEntityIterator.hasNext();)
-        {
+        for (Iterator<ItemEntity> itemEntityIterator = event.getDrops().iterator(); itemEntityIterator.hasNext(); ) {
             ItemStack stack = itemEntityIterator.next().getItem();
-            if (stack.getItem().equals(ItemInit.TOTEM_OF_RETURNING.get()))
-            {
-                if (EntityDiesEvent.totemActivationFlag)
-                {
+            if (stack.getItem().equals(ItemInit.TOTEM_OF_RETURNING.get())) {
+                if (EntityDiesEvent.totemActivationFlag) {
                     itemEntityIterator.remove();
                     stack.getCapability(TotemItemProvider.TOTEM_CAP, null).ifPresent(cap ->
                     {
@@ -51,10 +36,7 @@ public class EntityDropEvent
                     });
                     player.inventory.add(player.inventory.selected, stack);
                     EntityDiesEvent.totemActivationFlag = false;
-                }
-
-                else if (EntityDiesEvent.totemActivationFlagOff)
-                {
+                } else if (EntityDiesEvent.totemActivationFlagOff) {
                     itemEntityIterator.remove();
                     stack.getCapability(TotemItemProvider.TOTEM_CAP, null).ifPresent(cap ->
                     {

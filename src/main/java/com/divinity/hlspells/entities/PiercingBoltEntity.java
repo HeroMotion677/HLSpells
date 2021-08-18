@@ -5,94 +5,67 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.projectile.ArrowEntity;
 import net.minecraft.network.IPacket;
-import net.minecraft.particles.IParticleData;
 import net.minecraft.particles.ParticleTypes;
-import net.minecraft.util.*;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.EntityRayTraceResult;
-import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.network.NetworkHooks;
 
-public class PiercingBoltEntity extends ArrowEntity
-{
-    public PiercingBoltEntity(EntityType<? extends PiercingBoltEntity> type, World world)
-    {
+public class PiercingBoltEntity extends ArrowEntity {
+    public PiercingBoltEntity(EntityType<? extends PiercingBoltEntity> type, World world) {
         super(type, world);
     }
 
     @Override
-    protected void onHit(RayTraceResult result)
-    {
-        RayTraceResult.Type raytraceresult$type = result.getType();
-        if (raytraceresult$type == RayTraceResult.Type.ENTITY)
-        {
-            this.onHitEntity((EntityRayTraceResult) result);
-        }
-
-        else if (raytraceresult$type == RayTraceResult.Type.BLOCK)
-        {
-            this.onHitBlock((BlockRayTraceResult) result);
-        }
-    }
-
-    @Override
-    public IPacket<?> getAddEntityPacket()
-    {
+    public IPacket<?> getAddEntityPacket() {
         return NetworkHooks.getEntitySpawningPacket(this);
     }
 
     @Override
-    public void tick()
-    {
+    public void tick() {
         super.tick();
-        if (this.getOwner() != null && this.distanceTo(this.getOwner()) > 40)
-        {
+        if (this.getOwner() != null && this.distanceTo(this.getOwner()) > 40) {
             this.remove();
         }
         Vector3d vector3d1 = this.getDeltaMovement();
-        if (this.level.isClientSide)
-        {
+        if (this.level.isClientSide) {
             this.level.addParticle(ParticleTypes.ENCHANTED_HIT, this.getX() - vector3d1.x, this.getY() - vector3d1.y + 0.15D, this.getZ() - vector3d1.z, 0.0D, 0.0D, 0.0D);
             this.level.addParticle(ParticleTypes.ENCHANTED_HIT, this.getX() - vector3d1.x, this.getY() - vector3d1.y + 0.16D, this.getZ() - vector3d1.z, 0.0D, 0.0D, 0.0D);
         }
     }
 
     @Override
-    protected float getWaterInertia()
-    {
+    protected float getWaterInertia() {
         return 1F;
     }
 
     @Override
-    protected void onHitEntity(EntityRayTraceResult result)
-    {
+    protected void onHitEntity(EntityRayTraceResult result) {
         Entity entity = result.getEntity();
         Entity entity1 = this.getOwner();
         LivingEntity livingentity = entity1 instanceof LivingEntity ? (LivingEntity) entity1 : null;
 
-        if (result.getEntity() == this.getOwner())
-        {
+        if (result.getEntity() == this.getOwner()) {
             return;
         }
 
         boolean flag = entity.hurt(DamageSource.indirectMobAttack(this, livingentity).setProjectile().bypassArmor(), 4.0F);
-        if (flag && this.level instanceof ServerWorld)
-        {
-            ((ServerWorld)this.level).sendParticles(ParticleTypes.EXPLOSION, this.getX(), this.getY(), this.getZ(), 2, 0.2D, 0.2D, 0.2D, 0.0D);
+        if (flag && this.level instanceof ServerWorld) {
+            ((ServerWorld) this.level).sendParticles(ParticleTypes.EXPLOSION, this.getX(), this.getY(), this.getZ(), 2, 0.2D, 0.2D, 0.2D, 0.0D);
             this.doEnchantDamageEffects(livingentity, entity);
             this.remove();
         }
     }
 
     @Override
-    protected void onHitBlock(BlockRayTraceResult p_230299_1_)
-    {
-        if (this.level instanceof ServerWorld)
-        {
+    protected void onHitBlock(BlockRayTraceResult blockRayTraceResult) {
+        if (this.level instanceof ServerWorld) {
             ((ServerWorld) this.level).sendParticles(ParticleTypes.EXPLOSION, this.getX(), this.getY(), this.getZ(), 2, 0.2D, 0.2D, 0.2D, 0.0D);
             this.playSound(SoundEvents.SHULKER_BULLET_HIT, 1.0F, 1.0F);
             this.remove();
@@ -100,34 +73,28 @@ public class PiercingBoltEntity extends ArrowEntity
     }
 
     @Override
-    public void checkDespawn()
-    {
+    public void checkDespawn() {
         super.checkDespawn();
-        if (this.level.getDifficulty() == Difficulty.PEACEFUL)
-        {
+        if (this.level.getDifficulty() == Difficulty.PEACEFUL) {
             this.remove();
         }
     }
 
     @Override
-    protected SoundEvent getDefaultHitGroundSoundEvent()
-    {
+    protected SoundEvent getDefaultHitGroundSoundEvent() {
         return SoundEvents.SHULKER_BULLET_HIT;
     }
 
     @Override
-    public boolean isPickable()
-    {
+    public boolean isPickable() {
         return false;
     }
 
     @Override
-    public boolean hurt(DamageSource source, float amount)
-    {
-        if (!this.level.isClientSide && source.isProjectile() && this.isAlive())
-        {
+    public boolean hurt(DamageSource source, float amount) {
+        if (!this.level.isClientSide && source.isProjectile() && this.isAlive()) {
             this.playSound(SoundEvents.SHULKER_BULLET_HURT, 1.0F, 1.0F);
-            ((ServerWorld)this.level).sendParticles(ParticleTypes.CRIT, this.getX(), this.getY(), this.getZ(), 15, 0.2D, 0.2D, 0.2D, 0.0D);
+            ((ServerWorld) this.level).sendParticles(ParticleTypes.CRIT, this.getX(), this.getY(), this.getZ(), 15, 0.2D, 0.2D, 0.2D, 0.0D);
             this.remove();
             return true;
         }
@@ -135,14 +102,12 @@ public class PiercingBoltEntity extends ArrowEntity
     }
 
     @Override
-    protected boolean canHitEntity(Entity p_230298_1_)
-    {
-        return super.canHitEntity(p_230298_1_) && !p_230298_1_.noPhysics;
+    protected boolean canHitEntity(Entity entity) {
+        return super.canHitEntity(entity) && !entity.noPhysics;
     }
 
     @Override
-    public boolean isOnFire()
-    {
+    public boolean isOnFire() {
         return false;
     }
 }

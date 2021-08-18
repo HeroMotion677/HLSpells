@@ -25,9 +25,7 @@ public class TotemPacket {
 
     public void whenThisPacketIsReceived(Supplier<NetworkEvent.Context> context) {
         context.get().enqueueWork(() ->
-        {
-            Minecraft.getInstance().gameRenderer.displayItemActivation(itemStack);
-        });
+                Minecraft.getInstance().gameRenderer.displayItemActivation(itemStack));
         context.get().setPacketHandled(true);
     }
 }

@@ -1,9 +1,9 @@
 package com.divinity.hlspells.util;
 
+import com.divinity.hlspells.init.SpellBookInit;
 import com.divinity.hlspells.spell.Spell;
 import com.divinity.hlspells.spell.SpellBookObject;
 import com.divinity.hlspells.spell.SpellInstance;
-import com.divinity.hlspells.init.SpellBookInit;
 import com.google.common.collect.Lists;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -20,8 +20,7 @@ import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.List;
 
-public class SpellUtils
-{
+public class SpellUtils {
     private static final IFormattableTextComponent NO_CONTENT = (new TranslationTextComponent("spell.hlspells.empty")).withStyle(TextFormatting.GRAY);
 
     public static List<SpellInstance> getSpell(ItemStack stack) {
@@ -53,7 +52,6 @@ public class SpellUtils
     }
 
 
-
     public static void getCustomSpells(@Nullable CompoundNBT nbt, List<SpellInstance> spellInstances) {
         if (nbt != null && nbt.contains("CustomSpellEffects", 9)) {
             ListNBT listNBT = nbt.getList("CustomSpellEffects", 10);
@@ -83,7 +81,6 @@ public class SpellUtils
         } else {
             stack.getOrCreateTag().putString("SpellBook", resourcelocation.toString());
         }
-
         return stack;
     }
 
@@ -102,19 +99,14 @@ public class SpellUtils
     }
 
     @OnlyIn(Dist.CLIENT)
-    public static void addSpellBookTooltip(ItemStack stack, List<ITextComponent> text, float p_185182_2_)
-    {
+    public static void addSpellBookTooltip(ItemStack stack, List<ITextComponent> text) {
         List<SpellInstance> list = getSpell(stack);
-        if (list.isEmpty())
-        {
+        if (list.isEmpty()) {
             text.add(NO_CONTENT);
-        }
-        else
-        {
-            for (SpellInstance spellInstance : list)
-            {
+        } else {
+            for (SpellInstance spellInstance : list) {
                 Spell spell = spellInstance.getSpell();
-                text.add(new TranslationTextComponent(spell.getDescriptionId()).withStyle(spell.getCategory().getTooltipFormatting()));
+                text.add(new TranslationTextComponent(spell.getDescriptionId()).withStyle(spell.getType().getTooltipFormatting()));
             }
         }
     }

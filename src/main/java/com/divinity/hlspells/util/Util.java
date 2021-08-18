@@ -5,63 +5,47 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.particles.ParticleTypes;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
-
-import net.minecraft.util.SoundEvent;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.*;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.Collections;
 import java.util.function.Predicate;
-import static com.divinity.hlspells.items.capabilities.wandcap.WandCapHandler.*;
 
-public class Util
-{
+public class Util {
+
     /**
-     * Method that teleports an entity
+     * Teleport the specified entity to specified block position
      *
      * @param world       The departure world
      * @param pos         The departure position
      * @param teleportPos The arrival position
      * @param entity      The entity that is teleported
      */
-
-
     public static void teleport(World world, BlockPos pos, BlockPos teleportPos, Entity entity) {
         double teleportXCo = teleportPos.getX();
         double teleportYCo = teleportPos.getY();
         double teleportZCo = teleportPos.getZ();
-        {
-            entity.teleportTo(teleportXCo, teleportYCo, teleportZCo);
-            if (entity instanceof ServerPlayerEntity) {
-                ((ServerPlayerEntity) entity).connection.teleport(teleportXCo, teleportYCo, teleportZCo, entity.yRot,
-                        entity.xRot, Collections.emptySet());
-            }
+        entity.teleportTo(teleportXCo, teleportYCo, teleportZCo);
+        if (entity instanceof ServerPlayerEntity) {
+            ((ServerPlayerEntity) entity).connection.teleport(teleportXCo, teleportYCo, teleportZCo, entity.yRot,
+                    entity.xRot, Collections.emptySet());
         }
-        SoundEvent teleportSound = ForgeRegistries.SOUND_EVENTS.getValue(new ResourceLocation("entity.enderman.teleport"));
         teleportParticles(world, pos, 300);
         teleportParticles(world, teleportPos, 300);
-        if (teleportSound == null) return;
-        world.playSound(null, pos, teleportSound, SoundCategory.NEUTRAL,
+        world.playSound(null, pos, SoundEvents.ENDERMAN_TELEPORT, SoundCategory.NEUTRAL,
                 0.6F, 1.0F);
-        world.playSound(null, teleportPos, teleportSound, SoundCategory.NEUTRAL,
+        world.playSound(null, teleportPos, SoundEvents.ENDERMAN_TELEPORT, SoundCategory.NEUTRAL,
                 0.6F, 1.0F);
     }
 
 
     /**
-     * Method that handles particle spawning
-     *
-     * @param world  The world of the teleport
-     * @param pos    The position where to spawn particles
-     * @param number The number of particles to spawn
+     * Spawns teleport particles at the given location
      */
-
-    public static void teleportParticles(World world, BlockPos pos, int number)
-    {
+    public static void teleportParticles(World world, BlockPos pos, int number) {
         for (int l = 0; l < number; l++) {
             double d0 = (pos.getX() + world.random.nextFloat());
             double d1 = (pos.getY() + world.random.nextFloat());
@@ -82,50 +66,43 @@ public class Util
      * @param includeFluids Defines if fluids count
      * @return The RayTraceResult
      */
-
-
-    public static RayTraceResult lookAt(Entity entity, double range, float height, boolean includeFluids)
-    {
+    public static RayTraceResult lookAt(Entity entity, double range, float height, boolean includeFluids) {
         Vector3d vector3d = entity.getEyePosition(height);
         Vector3d vector3d1 = entity.getViewVector(height);
         Vector3d vector3d2 = vector3d.add(vector3d1.x * range, vector3d1.y * range, vector3d1.z * range);
         return entity.level.clip(new RayTraceContext(vector3d, vector3d2, RayTraceContext.BlockMode.OUTLINE, includeFluids ? RayTraceContext.FluidMode.ANY : RayTraceContext.FluidMode.NONE, entity));
     }
 
-    public static Entity rayTrace(World world, PlayerEntity player, double range)
-    {
+    /**
+     * Raytrace the player look vector to return what entity is looked at. Returns null if not found
+     */
+    public static Entity rayTrace(World world, PlayerEntity player, double range) {
         Vector3d pos = player.getPosition(0f);
         Vector3d cam1 = player.getLookAngle();
         Vector3d cam2 = cam1.add(cam1.x * range, cam1.y * range, cam1.z * range);
         AxisAlignedBB aabb = player.getBoundingBox().expandTowards(cam1.scale(range)).inflate(1.0F, 1.0F, 1.0F);
-        RayTraceResult ray = findEntity(world, player, pos, cam2, aabb, null, range);
+        EntityRayTraceResult ray = findEntity(world, player, pos, cam2, aabb, null, range);
 
-        if (ray != null)
-        {
-            if (ray.getType() == RayTraceResult.Type.ENTITY)
-            {
-                EntityRayTraceResult ray2 = (EntityRayTraceResult) ray;
-                return ray2.getEntity() instanceof LivingEntity && !(ray2.getEntity() instanceof PlayerEntity) ? ray2.getEntity() : null;
-            }
+        if (ray != null && ray.getType() == RayTraceResult.Type.ENTITY) {
+            return ray.getEntity() instanceof LivingEntity && !(ray.getEntity() instanceof PlayerEntity) ? ray.getEntity() : null;
         }
         return null;
     }
 
-    private static EntityRayTraceResult findEntity(World world, PlayerEntity player, Vector3d pos, Vector3d look, AxisAlignedBB aabb, Predicate<Entity> filter, double range)
-    {
-        for (Entity entity1 : world.getEntities(player, aabb, filter))
-        {
+    /**
+     * Raytrace the player look vector to return EntityRayTraceResult
+     */
+    private static EntityRayTraceResult findEntity(World world, PlayerEntity player, Vector3d pos, Vector3d look, AxisAlignedBB aabb, Predicate<Entity> filter, double range) {
+        for (Entity entity1 : world.getEntities(player, aabb, filter)) {
             AxisAlignedBB mob = entity1.getBoundingBox().inflate(1.0F);
-            if (intersect(pos, look, mob, range))
-            {
+            if (intersect(pos, look, mob, range)) {
                 return new EntityRayTraceResult(entity1);
             }
         }
         return null;
     }
 
-    private static boolean intersect(Vector3d pos, Vector3d look, AxisAlignedBB mob, double range)
-    {
+    private static boolean intersect(Vector3d pos, Vector3d look, AxisAlignedBB mob, double range) {
         Vector3d invDir = new Vector3d(1f / look.x, 1f / look.y, 1f / look.z);
 
         boolean signDirX = invDir.x < 0;
@@ -170,36 +147,6 @@ public class Util
         if (tzmax < tmax) {
             tmax = tzmax;
         }
-        if ((tmin < range) && (tmax > 0)) {
-            return true;
-        }
-        return false;
-    }
-
-    public static int selectNextColor ()
-    {
-        switch (hudTime)
-        {
-            case 19: return 0x95ffcccb;
-            case 18: return 0x90ffcccb;
-            case 17: return 0x85ffcccb;
-            case 16: return 0x80ffcccb;
-            case 15: return 0x75ffcccb;
-            case 14: return 0x70ffcccb;
-            case 13: return 0x65ffcccb;
-            case 12: return 0x60ffcccb;
-            case 11: return 0x55ffcccb;
-            case 10: return 0x50ffcccb;
-            case 9: return 0x45ffcccb;
-            case 8: return 0x40ffcccb;
-            case 7: return 0x35ffcccb;
-            case 6: return 0x30ffcccb;
-            case 5: return 0x25ffcccb;
-            case 4: return 0x20ffcccb;
-            case 3: return 0x15ffcccb;
-            case 2: return 0x10ffcccb;
-            case 1: return 0x05ffcccb;
-        }
-        return 0xffcccb;
+        return (tmin < range) && (tmax > 0);
     }
 }
