@@ -29,24 +29,22 @@ public class RunSpells {
     // TODO: Move this to WandCapHandler.java
     @SubscribeEvent
     public static void anvilUpdateEvent(AnvilUpdateEvent event) {
-        if (event != null) {
-            ItemStack wandItem = event.getLeft().getItem() instanceof WandItem ? event.getLeft() : null;
-            ItemStack spellBook = event.getRight().getItem() instanceof SpellBookItem ? event.getRight() : null;
-            if (wandItem != null && spellBook != null) {
-                ItemStack transformedItem = wandItem.copy();
-                if (SpellUtils.getSpellBook(spellBook) != SpellBookInit.EMPTY.get()) {
-                    SpellBookObject book = SpellUtils.getSpellBook(spellBook);
-                    transformedItem.getCapability(WandItemProvider.WAND_CAP, null)
-                            .ifPresent(p -> p.addSpell(book.getSpells().stream()
-                                    .filter(pr -> pr.getSpell().getRegistryName() != null)
-                                    .map(m -> m.getSpell().getRegistryName().toString())
-                                    .findFirst()
-                                    .orElse("null")));
-                }
-                event.setCost(15);
-                event.setMaterialCost(1);
-                event.setOutput(transformedItem);
+        ItemStack wandItem = event.getLeft().getItem() instanceof WandItem ? event.getLeft() : null;
+        ItemStack spellBook = event.getRight().getItem() instanceof SpellBookItem ? event.getRight() : null;
+        if (wandItem != null && spellBook != null) {
+            ItemStack transformedItem = wandItem.copy();
+            if (SpellUtils.getSpellBook(spellBook) != SpellBookInit.EMPTY.get()) {
+                SpellBookObject book = SpellUtils.getSpellBook(spellBook);
+                transformedItem.getCapability(WandItemProvider.WAND_CAP, null)
+                        .ifPresent(p -> p.addSpell(book.getSpells().stream()
+                                .filter(pr -> pr.getSpell().getRegistryName() != null)
+                                .map(m -> m.getSpell().getRegistryName().toString())
+                                .findFirst()
+                                .orElse("null")));
             }
+            event.setCost(15);
+            event.setMaterialCost(1);
+            event.setOutput(transformedItem);
         }
     }
 
@@ -69,67 +67,68 @@ public class RunSpells {
             SpellBookObject spellBook = SpellUtils.getSpellBook(itemStack);
             if (spellBook.isEmpty() || spellBook.containsSpell(spellInstance -> spellInstance.getSpell().getType() != SpellType.CAST))
                 return;
-            if (spellBook.getSingletonSpell() != null && (player.isCreative() || (spellBook.getSingletonSpell().hasCost() && player.totalExperience >= spellBook.getSingletonSpell().getXpCost()))) {
+            if (spellBook.getSpell() != null && (player.isCreative() || (spellBook.getSpell().hasCost() && player.totalExperience >= spellBook.getSpell().getXpCost()))) {
                 spellBook.runAction(player, world);
-                player.giveExperiencePoints(-spellBook.getSingletonSpell().getXpCost());
+                player.giveExperiencePoints(-spellBook.getSpell().getXpCost());
             }
         }
     }
 
     @SubscribeEvent
     public static void doHeldSpell(TickEvent.PlayerTickEvent event) {
-        if (!event.player.isAlive()) return;
+        if (event.player.isAlive()) {
+            PlayerEntity player = event.player;
+            if (SpellBookItem.isHeldActive) {
+                Hand playerHand = player.getUsedItemHand();
+                if (playerHand == Hand.MAIN_HAND || playerHand == Hand.OFF_HAND) {
+                    ItemStack playerItem = player.getItemInHand(playerHand);
+                    SpellBookObject spellBook = SpellUtils.getSpellBook(playerItem);
+                    boolean mainPredicate = spellBook.containsSpell(sI -> sI.getSpell().getType() == SpellType.HELD);
 
-        PlayerEntity player = event.player;
-        if (SpellBookItem.isHeldActive) {
-            Hand playerHand = player.getUsedItemHand();
-            if (playerHand == Hand.MAIN_HAND || playerHand == Hand.OFF_HAND) {
-                ItemStack playerItem = player.getItemInHand(playerHand);
-                SpellBookObject spellBook = SpellUtils.getSpellBook(playerItem);
-                boolean mainPredicate = spellBook.containsSpell(sI -> sI.getSpell().getType() == SpellType.HELD);
-
-                if (mainPredicate && spellBook.getSingletonSpell() != null && spellBook.getSingletonSpell().hasCost()) {
-                    if (player.isCreative() || (spellBook.getSingletonSpell().hasCost() && player.totalExperience >= spellBook.getSingletonSpell().getXpCost())) {
-                        spellBook.runAction(player, player.level);
-                        placeHolder++;
-                        if (placeHolder == spellBook.getSingletonSpell().getTickDelay()) {
-                            player.giveExperiencePoints(-spellBook.getSingletonSpell().getXpCost());
-                            placeHolder = 0;
-                        }
-                    }
-                }
-            } else {
-                SpellBookItem.isHeldActive = false;
-                placeHolder = 0;
-            }
-        } else if (WandItem.isWandHeldActive) {
-            Hand playerHand = player.getUsedItemHand();
-            if (playerHand == Hand.MAIN_HAND || playerHand == Hand.OFF_HAND) {
-                ItemStack playerItem = player.getItemInHand(playerHand);
-                playerItem.getCapability(WandItemProvider.WAND_CAP, null)
-                        .filter(iWandCap -> !iWandCap.getSpells().isEmpty()).ifPresent(cap -> {
-                    Spell spell = Spell.byId(cap.getCurrentSpell());
-                    cap.setCurrentSpellCycle(CURRENT_SPELL_VALUE); // Ensures Sync (Temp solution for now, will probably need server -> client packet)
-                    if (spell != null && spell.getType() == SpellType.HELD && spell.hasCost()) {
-                        if (player.totalExperience >= spell.getXpCost() || player.isCreative()) {
-                            spell.getSpellAction().accept(player, player.level);
-                            placeHolderWand++;
-                            if (placeHolderWand == spell.getTickDelay()) {
-                                player.giveExperiencePoints(-spell.getXpCost());
-                                placeHolderWand = 0;
+                    if (mainPredicate && spellBook.getSpell() != null && spellBook.getSpell().hasCost()) {
+                        if (player.isCreative() || (spellBook.getSpell().hasCost() && player.totalExperience >= spellBook.getSpell().getXpCost())) {
+                            spellBook.runAction(player, player.level);
+                            placeHolder++;
+                            if (placeHolder == spellBook.getSpell().getTickDelay()) {
+                                player.giveExperiencePoints(-spellBook.getSpell().getXpCost());
+                                placeHolder = 0;
                             }
                         }
                     }
-                });
+                } else {
+                    SpellBookItem.isHeldActive = false;
+                    placeHolder = 0;
+                }
+            } else if (WandItem.isWandHeldActive) {
+                Hand playerHand = player.getUsedItemHand();
+                if (playerHand == Hand.MAIN_HAND || playerHand == Hand.OFF_HAND) {
+                    ItemStack playerItem = player.getItemInHand(playerHand);
+                    playerItem.getCapability(WandItemProvider.WAND_CAP, null)
+                            .filter(iWandCap -> !iWandCap.getSpells().isEmpty()).ifPresent(cap -> {
+                        Spell spell = Spell.byId(cap.getCurrentSpell());
+                        cap.setCurrentSpellCycle(CURRENT_SPELL_VALUE); // Ensures Sync (Temp solution for now, will probably need server -> client packet)
+                        if (spell != null && spell.getType() == SpellType.HELD && spell.hasCost()) {
+                            if (player.totalExperience >= spell.getXpCost() || player.isCreative()) {
+                                spell.getSpellAction().accept(player, player.level);
+                                placeHolderWand++;
+                                if (placeHolderWand == spell.getTickDelay()) {
+                                    player.giveExperiencePoints(-spell.getXpCost());
+                                    placeHolderWand = 0;
+                                }
+                            }
+                        }
+                    });
+                } else {
+                    WandItem.isWandHeldActive = false;
+                    placeHolderWand = 0;
+                }
             } else {
-                WandItem.isWandHeldActive = false;
+                // TODO: Create individual effect instances and clear them instead of clearing any spell instance of that type on the player
+                resetEffects(player);
                 placeHolderWand = 0;
+                placeHolder = 0;
             }
-        } else {
-            // TODO: Create individual effect instances and clear them instead of clearing any spell instance of that type on the player
-            resetEffects(player);
-            placeHolderWand = 0;
-            placeHolder = 0;
         }
+
     }
 }

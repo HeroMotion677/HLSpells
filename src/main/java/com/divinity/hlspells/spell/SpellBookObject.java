@@ -59,7 +59,7 @@ public class SpellBookObject extends ForgeRegistryEntry<SpellBookObject> {
     }
 
     @Nullable
-    public Spell getSingletonSpell() {
+    public Spell getSpell() {
         return !spellInstances.isEmpty() ? spellInstances.get(0).getSpell() : null;
     }
 
