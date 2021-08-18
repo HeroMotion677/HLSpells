@@ -1,6 +1,7 @@
 package com.divinity.hlspells.items;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
@@ -15,12 +16,16 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 
-public class ModTotemItem extends Item {
-    public ModTotemItem() {
+public class ModTotemItem extends Item
+{
+    public ModTotemItem()
+    {
         super(new Item.Properties().tab(ItemGroup.TAB_COMBAT).stacksTo(1).rarity(Rarity.UNCOMMON));
     }
 
+
     public static void vanillaTotemBehavior(LivingDeathEvent event, LivingEntity entity, ItemStack heldItem, Item animationItem) {
+
         event.setCanceled(true);
         heldItem.shrink(1);
         entity.setHealth(1.0F);

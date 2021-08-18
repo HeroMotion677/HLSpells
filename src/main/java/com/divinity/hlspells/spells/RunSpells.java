@@ -48,6 +48,7 @@ public class RunSpells {
         }
     }
 
+
     public static void doCastSpell(PlayerEntity player, World world, ItemStack itemStack) {
         if (itemStack.getItem() instanceof WandItem) {
             itemStack.getCapability(WandItemProvider.WAND_CAP, null)
@@ -129,6 +130,5 @@ public class RunSpells {
                 placeHolder = 0;
             }
         }
-
     }
 }
