@@ -1,13 +1,8 @@
 package com.divinity.hlspells.spell;
 
-import net.minecraft.client.renderer.entity.layers.LayerRenderer;
 import net.minecraft.nbt.CompoundNBT;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
-public class SpellInstance
-{
-    private static final Logger LOGGER = LogManager.getLogger();
+public class SpellInstance {
     private final Spell spell;
 
     public SpellInstance(Spell spell) {
@@ -18,6 +13,15 @@ public class SpellInstance
         this.spell = spellInstance.spell;
     }
 
+    public static SpellInstance load(CompoundNBT nbt) {
+        Spell spell = Spell.byId(nbt.getString("Id"));
+        return spell == null ? null : loadSpecifiedEffect(spell, nbt);
+    }
+
+    private static SpellInstance loadSpecifiedEffect(Spell spell, CompoundNBT nbt) {
+        return new SpellInstance(spell);
+    }
+
     public Spell getSpell() {
         return this.spell == null ? null : this.spell.delegate.get();
     }
@@ -26,43 +30,27 @@ public class SpellInstance
         return this.spell.getDescriptionId();
     }
 
-    public String toString()
-    {
+    public String toString() {
         String s;
         s = this.getDescriptionId();
         return s;
     }
 
-    public boolean equals(Object obj)
-    {
-        if (this == obj)
-        {
+    public boolean equals(Object obj) {
+        if (this == obj) {
             return true;
-        } else if (!(obj instanceof SpellInstance))
-        {
+        } else if (!(obj instanceof SpellInstance)) {
             return false;
         }
         return false;
     }
 
-    public static SpellInstance load(CompoundNBT nbt)
-    {
-        Spell spell = Spell.byId(nbt.getString("Id"));
-        return spell == null ? null : loadSpecifiedEffect(spell, nbt);
-    }
-
-    public CompoundNBT save(CompoundNBT nbt)
-    {
-        nbt.putString("Id", Spell.getId(this.getSpell()));
+    public CompoundNBT save(CompoundNBT nbt) {
+        nbt.putString("Id", spell.getRegistryName().toString());
         this.writeDetailsTo(nbt);
         return nbt;
     }
 
     private void writeDetailsTo(CompoundNBT nbt) {
-        CompoundNBT compoundnbt = new CompoundNBT();
-    }
-
-    private static SpellInstance loadSpecifiedEffect(Spell spell, CompoundNBT nbt) {
-        return new SpellInstance(spell);
     }
 }

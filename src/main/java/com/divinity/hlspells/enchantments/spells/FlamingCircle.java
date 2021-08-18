@@ -11,29 +11,34 @@ import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
-public class FlamingCircle extends Enchantment implements ISpell
-{
-    public FlamingCircle(EquipmentSlotType... slots)
-    {
+public class FlamingCircle extends Enchantment implements ISpell {
+    public FlamingCircle(EquipmentSlotType... slots) {
         super(Rarity.RARE, EnchantmentType.BREAKABLE, slots);
     }
 
     @Override
-    public boolean canApplyAtEnchantingTable(ItemStack stack)
-    {
+    public boolean canApplyAtEnchantingTable(ItemStack stack) {
         return SpellUtils.getSpellBook(stack) == SpellBookInit.EMPTY.get();
     }
 
     @Override
-    public boolean canEnchant(ItemStack stack)
-    {
+    public boolean canEnchant(ItemStack stack) {
         return stack.getItem() instanceof SpellBookItem || super.canEnchant(stack);
     }
 
     @Override
-    public int getMinCost(int value)
-    {
-        return 30;
+    public int getMinCost(int value) {
+        return 1;
+    }
+
+    @Override
+    public int getMaxCost(int value) {
+        return 33;
+    }
+
+    @Override
+    protected boolean checkCompatibility(Enchantment enchantment) {
+        return !(enchantment instanceof ISpell);
     }
 
     @Override
@@ -52,8 +57,7 @@ public class FlamingCircle extends Enchantment implements ISpell
     }
 
     @Override
-    public String getSpellRegistryName ()
-    {
+    public String getSpellRegistryName() {
         ResourceLocation registryName = SpellInit.FLAMING_CIRCLE.get().getRegistryName();
         return registryName != null ? registryName.toString() : "null";
     }

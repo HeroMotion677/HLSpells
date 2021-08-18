@@ -11,29 +11,34 @@ import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
-public class AquaBolt extends Enchantment implements ISpell
-{
-    public AquaBolt(EquipmentSlotType... slots)
-    {
+public class AquaBolt extends Enchantment implements ISpell {
+    public AquaBolt(EquipmentSlotType... slots) {
         super(Rarity.COMMON, EnchantmentType.BREAKABLE, slots);
     }
 
     @Override
-    public boolean canApplyAtEnchantingTable(ItemStack stack)
-    {
+    public boolean canApplyAtEnchantingTable(ItemStack stack) {
         return SpellUtils.getSpellBook(stack) == SpellBookInit.EMPTY.get();
     }
 
     @Override
-    public boolean canEnchant(ItemStack stack)
-    {
+    public boolean canEnchant(ItemStack stack) {
         return stack.getItem() instanceof SpellBookItem || super.canEnchant(stack);
     }
 
     @Override
-    public int getMinCost(int value)
-    {
+    public int getMinCost(int value) {
         return 1;
+    }
+
+    @Override
+    public int getMaxCost(int value) {
+        return 33;
+    }
+
+    @Override
+    protected boolean checkCompatibility(Enchantment enchantment) {
+        return !(enchantment instanceof ISpell);
     }
 
     @Override
@@ -52,8 +57,7 @@ public class AquaBolt extends Enchantment implements ISpell
     }
 
     @Override
-    public String getSpellRegistryName ()
-    {
+    public String getSpellRegistryName() {
         ResourceLocation registryName = SpellInit.AQUA_BOLT.get().getRegistryName();
         return registryName != null ? registryName.toString() : "null";
     }

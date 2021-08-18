@@ -12,18 +12,15 @@ import net.minecraftforge.fml.network.simple.SimpleChannel;
 
 @SuppressWarnings("unused")
 @Mod.EventBusSubscriber(modid = HLSpells.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
-public class NetworkManager
-{
-    static int index = 0;
-
+public class NetworkManager {
     public static final String PROTOCOL_VERSION = "1";
     public static SimpleChannel INSTANCE = NetworkRegistry.newSimpleChannel(
             new ResourceLocation(HLSpells.MODID, "main"), () -> NetworkManager.PROTOCOL_VERSION,
             NetworkManager.PROTOCOL_VERSION::equals, NetworkManager.PROTOCOL_VERSION::equals);
+    static int index = 0;
 
     @SubscribeEvent
-    public static void registerNetworkStuff(FMLCommonSetupEvent event)
-    {
+    public static void registerNetworkStuff(FMLCommonSetupEvent event) {
         INSTANCE.registerMessage(index++, TotemPacket.class, TotemPacket::encode, TotemPacket::decode, TotemPacket::whenThisPacketIsReceived);
         INSTANCE.registerMessage(index++, WandInputPacket.class, WandInputPacket::encode, WandInputPacket::decode, WandInputPacket::handle);
     }

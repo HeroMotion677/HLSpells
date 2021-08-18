@@ -1,11 +1,7 @@
 package com.divinity.hlspells.mixin;
 
 import com.divinity.hlspells.enchantments.ISpell;
-import com.divinity.hlspells.init.EnchantmentInit;
-import com.divinity.hlspells.init.SpellBookInit;
-import com.divinity.hlspells.init.SpellInit;
 import com.divinity.hlspells.items.SpellBookItem;
-import com.divinity.hlspells.items.WandItem;
 import com.divinity.hlspells.spell.Spell;
 import com.divinity.hlspells.spell.SpellBookObject;
 import com.divinity.hlspells.util.SpellUtils;
@@ -17,71 +13,53 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.container.EnchantmentContainer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.datafix.fixes.ItemSpawnEggSplit;
-import net.minecraftforge.fml.RegistryObject;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
+
+
 
 @Mixin(EnchantmentContainer.class)
-public class MixinEnchantmentTable
-{
+public class MixinEnchantmentTable {
     @Shadow
     @Final
     private IInventory enchantSlots;
 
-    @Inject(method = "clickMenuButton(Lnet/minecraft/entity/player/PlayerEntity;I)Z", at= @At(value = "TAIL"), cancellable = true)
-    public void clickMenuButton(PlayerEntity player, int value, CallbackInfoReturnable<Boolean> cir)
-    {
+    /**
+     * Converts spell enchants to SpellBookObject NBT
+     */
+    @Inject(method = "clickMenuButton(Lnet/minecraft/entity/player/PlayerEntity;I)Z", at = @At(value = "TAIL"), cancellable = true)
+    public void clickMenuButton(PlayerEntity player, int value, CallbackInfoReturnable<Boolean> cir) {
         ItemStack stack = enchantSlots.getItem(0);
-        if (stack.getItem() instanceof SpellBookItem)
-        {
-            if (!player.level.isClientSide())
-            {
-                outerLoop:
-                for (RegistryObject<Enchantment> ench : EnchantmentInit.ENCHANTMENTS.getEntries())
-                {
-                    if (EnchantmentHelper.getItemEnchantmentLevel(ench.get(), stack) > 0 && ench.get() instanceof ISpell)
-                    {
-                       ISpell spell = (ISpell) ench.get();
-                       for (RegistryObject<Spell> spellObj : SpellInit.SPELLS_DEFERRED_REGISTER.getEntries())
-                       {
-                           ResourceLocation location = spellObj.get().getRegistryName();
-                           if (location != null  && location.toString().equals(spell.getSpellRegistryName()))
-                           {
-                               String spellName = spellObj.get().getTrueDisplayName();
-                               for (RegistryObject<SpellBookObject> spellBook : SpellBookInit.SPELL_BOOK_DEFERRED_REGISTER.getEntries())
-                               {
-                                   if (spellBook.get().getName().equals(spellName))
-                                   {
-                                       SpellUtils.setSpellBook(stack, spellBook.get());
-                                       stack.getEnchantmentTags().remove(stack.getEnchantmentTags().size() > 0 ? stack.getEnchantmentTags().size() - 1 : 0);
-                                       break outerLoop;
-                                   }
-                               }
-                           }
-                       }
+        if (stack.getItem() instanceof SpellBookItem && !player.level.isClientSide()) {
+            Map<Enchantment, Integer> enchantmentMap = EnchantmentHelper.getEnchantments(stack);
+            for (Map.Entry<Enchantment, Integer> entry : enchantmentMap.entrySet()) {
+                Enchantment enchantment = entry.getKey();
+                if (enchantment instanceof ISpell) {
+                    Spell spell = Spell.byId(((ISpell) enchantment).getSpellRegistryName());
+                    if (spell != null) {
+                        SpellBookObject spellBookObject = SpellBookObject.byId(spell.getRegistryName());
+                        SpellUtils.setSpellBook(stack, spellBookObject);
+                        stack.getEnchantmentTags().remove(!stack.getEnchantmentTags().isEmpty() ? stack.getEnchantmentTags().size() - 1 : 0);
                     }
                 }
             }
         }
     }
 
-    @Inject(method = "getEnchantmentList(Lnet/minecraft/item/ItemStack;II)Ljava/util/List;", at= @At(value = "RETURN"), cancellable = true)
-    public void removeMultipleEnchants(ItemStack stack, int p_178148_2_, int p_178148_3_, CallbackInfoReturnable<List<EnchantmentData>> cir)
-    {
+    /**
+     * Sets the possible enchantments to be only one for spell book
+     */
+    @Inject(method = "getEnchantmentList(Lnet/minecraft/item/ItemStack;II)Ljava/util/List;", at = @At(value = "RETURN"), cancellable = true)
+    public void removeMultipleEnchants(ItemStack stack, int pEnchantSlot, int pLevel, CallbackInfoReturnable<List<EnchantmentData>> cir) {
         List<EnchantmentData> oldList = cir.getReturnValue();
-        if (stack.getItem() instanceof SpellBookItem && oldList.size() > 1)
-        {
+        if (stack.getItem() instanceof SpellBookItem && !oldList.isEmpty()) {
             cir.setReturnValue(Lists.newArrayList(oldList.get(0)));
         }
     }

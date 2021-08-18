@@ -2,8 +2,7 @@ package com.divinity.hlspells.items.capabilities.wandcap;
 
 import java.util.List;
 
-public interface IWandCap
-{
+public interface IWandCap {
     List<String> getSpells();
 
     void addSpell(String spell);
@@ -12,7 +11,9 @@ public interface IWandCap
 
     boolean containsSpell(String spell);
 
-    int getCurrentSpellCycle ();
+    int getCurrentSpellCycle();
 
     void setCurrentSpellCycle(int currentSpellCycle);
+
+    String getCurrentSpell();
 }

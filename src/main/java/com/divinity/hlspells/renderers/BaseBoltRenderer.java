@@ -14,32 +14,28 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3f;
 
-public class BaseBoltRenderer<T extends ArrowEntity> extends EntityRenderer<T>
-{
+public class BaseBoltRenderer<T extends ArrowEntity> extends EntityRenderer<T> {
     private final ResourceLocation TEXTURE_LOCATION;
     private final RenderType RENDER_TYPE;
     private final BaseBoltModel<T> model = new BaseBoltModel<>();
 
-    public BaseBoltRenderer (EntityRendererManager manager, ResourceLocation location)
-    {
+    public BaseBoltRenderer(EntityRendererManager manager, ResourceLocation location) {
         super(manager);
         this.TEXTURE_LOCATION = location;
         this.RENDER_TYPE = RenderType.entityTranslucent(location);
     }
 
     @Override
-    protected int getBlockLightLevel(T entity, BlockPos blockPos)
-    {
+    protected int getBlockLightLevel(T entity, BlockPos blockPos) {
         return 15;
     }
 
     @Override
-    public void render(T entity, float v1, float v2, MatrixStack stack, IRenderTypeBuffer buffer, int v3)
-    {
+    public void render(T entity, float v1, float v2, MatrixStack stack, IRenderTypeBuffer buffer, int v3) {
         stack.pushPose();
         float f = MathHelper.rotLerp(entity.yRotO, entity.yRot, v2);
         float f1 = MathHelper.lerp(v2, entity.xRotO, entity.xRot);
-        float f2 = (float) entity.tickCount + v2;
+        float f2 = entity.tickCount + v2;
         stack.translate(0.0D, 0.15F, 0.0D);
         stack.mulPose(Vector3f.YP.rotationDegrees(MathHelper.sin(f2 * 0.1F) * 180.0F));
         stack.mulPose(Vector3f.XP.rotationDegrees(MathHelper.cos(f2 * 0.1F) * 180.0F));
@@ -56,8 +52,7 @@ public class BaseBoltRenderer<T extends ArrowEntity> extends EntityRenderer<T>
     }
 
     @Override
-    public ResourceLocation getTextureLocation(T entity)
-    {
+    public ResourceLocation getTextureLocation(T entity) {
         return TEXTURE_LOCATION;
     }
 }

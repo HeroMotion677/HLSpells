@@ -40,13 +40,12 @@
       "model": "hlspells:item/spell_book_4"
     },
     {
-      "predicate" : {
-        "using" : 1
+      "predicate": {
+        "using": 1
       },
-      "model" : "hlspells:item/spell_book_5"
+      "model": "hlspells:item/spell_book_5"
     }
   ],
-
   "elements": [
     {
       "from": [
