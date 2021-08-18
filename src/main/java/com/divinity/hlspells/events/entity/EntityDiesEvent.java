@@ -30,8 +30,6 @@ import java.util.Iterator;
 
 @Mod.EventBusSubscriber(modid = HLSpells.MODID)
 public class EntityDiesEvent {
-    static boolean totemActivationFlag = false;
-    static boolean totemActivationFlagOff = false;
 
     @SubscribeEvent
     public static void onEntityDies(LivingDeathEvent event) {
@@ -60,50 +58,39 @@ public class EntityDiesEvent {
                     }
                 }
 
-                // TOTEM OF RETURNING
-                if (heldItem.getItem() == ItemInit.TOTEM_OF_RETURNING.get() && hand == Hand.MAIN_HAND) {
-                    totemActivationFlag = true;
-                } else if (heldItem.getItem() == ItemInit.TOTEM_OF_RETURNING.get() && hand == Hand.OFF_HAND) {
-                    totemActivationFlagOff = true;
-                }
+                if (heldItem.getItem() == ItemInit.TOTEM_OF_RETURNING.get())
+                    heldItem.getCapability(TotemItemProvider.TOTEM_CAP).ifPresent(cap -> {
+                        cap.hasDied(true);
+                        if (hand == Hand.MAIN_HAND)
+                            cap.setTotemInHand(Hand.MAIN_HAND);
+                        else if (hand == Hand.OFF_HAND)
+                            cap.setTotemInHand(Hand.OFF_HAND);
+                    });
             }
         }
     }
 
     @SubscribeEvent
     public static void onEntityDrops(LivingDropsEvent event) {
-        if (event == null) return;
         if (!(event.getEntity() instanceof PlayerEntity)) return;
-
         PlayerEntity player = (PlayerEntity) event.getEntity();
 
         // TOTEM OF RETURNING
         for (Iterator<ItemEntity> itemEntityIterator = event.getDrops().iterator(); itemEntityIterator.hasNext(); ) {
             ItemStack stack = itemEntityIterator.next().getItem();
-            if (stack.getItem().equals(ItemInit.TOTEM_OF_RETURNING.get())) {
-                if (EntityDiesEvent.totemActivationFlag) {
+            if (stack.getItem() == ItemInit.TOTEM_OF_RETURNING.get()) {
+                stack.getCapability(TotemItemProvider.TOTEM_CAP).filter(ITotemCap::getHasDied).ifPresent(cap ->
+                {
                     itemEntityIterator.remove();
-                    stack.getCapability(TotemItemProvider.TOTEM_CAP, null).ifPresent(cap ->
-                    {
-                        cap.setXPos(player.getX());
-                        cap.setYPos(player.getY());
-                        cap.setZPos(player.getZ());
-                        cap.hasDied(true);
-                    });
-                    player.inventory.add(player.inventory.selected, stack);
-                    EntityDiesEvent.totemActivationFlag = false;
-                } else if (EntityDiesEvent.totemActivationFlagOff) {
-                    itemEntityIterator.remove();
-                    stack.getCapability(TotemItemProvider.TOTEM_CAP, null).ifPresent(cap ->
-                    {
-                        cap.setXPos(player.getX());
-                        cap.setYPos(player.getY());
-                        cap.setZPos(player.getZ());
-                        cap.hasDied(true);
-                    });
-                    player.inventory.offhand.set(0, stack);
-                    EntityDiesEvent.totemActivationFlagOff = false;
-                }
+                    cap.setXPos(player.getX());
+                    cap.setYPos(player.getY());
+                    cap.setZPos(player.getZ());
+                    Hand hand = cap.getTotemInHand();
+                    if (hand == Hand.MAIN_HAND)
+                        player.inventory.add(player.inventory.selected, stack);
+                    else if (hand == Hand.OFF_HAND)
+                        player.inventory.offhand.set(0, stack);
+                });
             }
         }
     }
@@ -111,20 +98,18 @@ public class EntityDiesEvent {
     // TOTEM OF RETURNING
     @SubscribeEvent
     public static void onEntityCloned(PlayerEvent.Clone event) {
-        if (event == null) return;
-        if (!event.isWasDeath()) return;
+        if (event.isWasDeath()) {
+            PlayerEntity original = event.getOriginal();
+            PlayerEntity current = event.getPlayer();
+            if (original.getMainHandItem().getItem() == ItemInit.TOTEM_OF_RETURNING.get()) {
+                current.inventory.setItem(original.inventory.selected, original.inventory.getSelected());
+            }
 
-        PlayerEntity original = event.getOriginal();
-        PlayerEntity current = event.getPlayer();
-
-        // TOTEM OF RETURNING
-        if (original.getMainHandItem().getItem() == ItemInit.TOTEM_OF_RETURNING.get()) {
-            current.inventory.setItem(original.inventory.selected, original.inventory.getSelected());
+            if (original.getOffhandItem().getItem() == ItemInit.TOTEM_OF_RETURNING.get()) {
+                current.inventory.offhand.set(0, original.inventory.offhand.get(0));
+            }
         }
 
-        if (original.getOffhandItem().getItem() == ItemInit.TOTEM_OF_RETURNING.get()) {
-            current.inventory.offhand.set(0, original.inventory.offhand.get(0));
-        }
     }
 
     // TOTEM OF RETURNING

@@ -1,16 +1,22 @@
 package com.divinity.hlspells.items.capabilities.totemcap;
 
+import net.minecraft.util.Hand;
+
+import javax.annotation.Nullable;
+
 public class TotemCap implements ITotemCap {
     private double xPos;
     private double yPos;
     private double zPos;
     private boolean hasDied;
+    private Hand hand;
 
     public TotemCap() {
         xPos = 0.0D;
         yPos = 0.0D;
         zPos = 0.0D;
         hasDied = false;
+        hand = null;
     }
 
     @Override
@@ -51,5 +57,16 @@ public class TotemCap implements ITotemCap {
     @Override
     public void hasDied(boolean hasDied) {
         this.hasDied = hasDied;
+    }
+
+    @Override
+    @Nullable
+    public Hand getTotemInHand() {
+        return hand;
+    }
+
+    @Override
+    public void setTotemInHand(@Nullable Hand hand) {
+        this.hand = hand;
     }
 }

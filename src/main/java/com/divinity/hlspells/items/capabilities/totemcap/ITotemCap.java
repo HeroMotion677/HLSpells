@@ -1,5 +1,7 @@
 package com.divinity.hlspells.items.capabilities.totemcap;
 
+import net.minecraft.util.Hand;
+
 public interface ITotemCap {
     double getXPos();
 
@@ -16,4 +18,8 @@ public interface ITotemCap {
     boolean getHasDied();
 
     void hasDied(boolean value);
+
+    Hand getTotemInHand();
+
+    void setTotemInHand(Hand hand);
 }
