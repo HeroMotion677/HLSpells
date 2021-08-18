@@ -62,10 +62,10 @@ public class RunSpells
         {
             SpellBookObject spellBook = SpellUtils.getSpellBook(itemStack);
             if (spellBook.isEmpty() || spellBook.containsSpell(spellInstance -> spellInstance.getSpell().getCategory() != SpellType.CAST)) return;
-            if (spellBook.getSingletonSpell() != null && spellBook.getSingletonSpell().hasCost() && playerEntity.totalExperience >= spellBook.getSingletonSpell().getXpCost())
+            if (spellBook.getSpell() != null && spellBook.getSpell().hasCost() && playerEntity.totalExperience >= spellBook.getSpell().getXpCost())
             {
                 spellBook.runAction(playerEntity, world);
-                playerEntity.giveExperiencePoints(-(spellBook.getSingletonSpell().getXpCost()));
+                playerEntity.giveExperiencePoints(-(spellBook.getSpell().getXpCost()));
             }
         }
 
@@ -113,15 +113,15 @@ public class RunSpells
                 SpellBookObject spellBook = SpellUtils.getSpellBook(playerItem);
                 boolean mainPredicate = spellBook.containsSpell(sI -> sI.getSpell().getCategory() == SpellType.HELD);
 
-                if (mainPredicate && spellBook.getSingletonSpell() != null && spellBook.getSingletonSpell().hasCost())
+                if (mainPredicate && spellBook.getSpell() != null && spellBook.getSpell().hasCost())
                 {
-                    if (player.totalExperience >= spellBook.getSingletonSpell().getXpCost())
+                    if (player.totalExperience >= spellBook.getSpell().getXpCost())
                     {
                         spellBook.runAction(player, player.level);
                         placeHolder++;
-                        if (placeHolder == spellBook.getSingletonSpell().getTickDelay())
+                        if (placeHolder == spellBook.getSpell().getTickDelay())
                         {
-                            player.giveExperiencePoints(-(spellBook.getSingletonSpell().getXpCost()));
+                            player.giveExperiencePoints(-(spellBook.getSpell().getXpCost()));
                             System.out.println(player.totalExperience);
                             placeHolder = 0;
                         }

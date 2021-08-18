@@ -22,7 +22,8 @@ public class SpellBookObject extends ForgeRegistryEntry<SpellBookObject>
         this.spellInstances = ImmutableList.copyOf(spellInstances);
     }
 
-    public static SpellBookObject byName(String name) {
+    public static SpellBookObject byName(String name)
+    {
         return SpellBookInit.SPELL_BOOK_REGISTRY.get().getValue(ResourceLocation.tryParse(name));
     }
 
@@ -55,7 +56,7 @@ public class SpellBookObject extends ForgeRegistryEntry<SpellBookObject>
     }
 
     @Nullable
-    public Spell getSingletonSpell ()
+    public Spell getSpell()
     {
         return !spellInstances.isEmpty() ? spellInstances.get(0).getSpell() : null;
     }

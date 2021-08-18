@@ -2,6 +2,7 @@ package com.divinity.hlspells.items.capabilities.wandcap;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class WandCap implements IWandCap
 {
@@ -12,6 +13,7 @@ public class WandCap implements IWandCap
     {
         spells = new ArrayList<>();
         currentSpellCycle = 0;
+
     }
 
     @Override
@@ -61,5 +63,4 @@ public class WandCap implements IWandCap
             this.currentSpellCycle = 0;
         }
     }
-
 }

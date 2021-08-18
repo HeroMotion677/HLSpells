@@ -6,7 +6,9 @@ import com.divinity.hlspells.HLSpells;
 import com.divinity.hlspells.items.capabilities.totemcap.ITotemCap;
 import com.divinity.hlspells.items.capabilities.totemcap.TotemItemProvider;
 import com.divinity.hlspells.util.Util;
+import com.google.common.collect.ImmutableList;
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
@@ -20,12 +22,12 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-
-import static com.divinity.hlspells.events.entity.EntityDropEvent.slotNumber;
+import java.util.Iterator;
 
 @Mod.EventBusSubscriber(modid = HLSpells.MODID)
 public class EntityDiesEvent
@@ -80,6 +82,51 @@ public class EntityDiesEvent
         }
     }
 
+    @SubscribeEvent
+    public static void onEntityDrops(LivingDropsEvent event)
+    {
+        if (event == null) return;
+        if (!(event.getEntity() instanceof PlayerEntity)) return;
+
+        PlayerEntity player = (PlayerEntity) event.getEntity();
+
+        // TOTEM OF RETURNING
+        for (Iterator<ItemEntity> itemEntityIterator = event.getDrops().iterator(); itemEntityIterator.hasNext();)
+        {
+            ItemStack stack = itemEntityIterator.next().getItem();
+            if (stack.getItem().equals(ItemInit.TOTEM_OF_RETURNING.get()))
+            {
+                if (EntityDiesEvent.totemActivationFlag)
+                {
+                    itemEntityIterator.remove();
+                    stack.getCapability(TotemItemProvider.TOTEM_CAP, null).ifPresent(cap ->
+                    {
+                        cap.setXPos(player.getX());
+                        cap.setYPos(player.getY());
+                        cap.setZPos(player.getZ());
+                        cap.hasDied(true);
+                    });
+                    player.inventory.add(player.inventory.selected, stack);
+                    EntityDiesEvent.totemActivationFlag = false;
+                }
+
+                else if (EntityDiesEvent.totemActivationFlagOff)
+                {
+                    itemEntityIterator.remove();
+                    stack.getCapability(TotemItemProvider.TOTEM_CAP, null).ifPresent(cap ->
+                    {
+                        cap.setXPos(player.getX());
+                        cap.setYPos(player.getY());
+                        cap.setZPos(player.getZ());
+                        cap.hasDied(true);
+                    });
+                    player.inventory.offhand.set(0, stack);
+                    EntityDiesEvent.totemActivationFlagOff = false;
+                }
+            }
+        }
+    }
+
     // TOTEM OF RETURNING
     @SubscribeEvent
     public static void onEntityCloned(PlayerEvent.Clone event)
@@ -96,7 +143,7 @@ public class EntityDiesEvent
             current.inventory.setItem(original.inventory.selected, original.inventory.getSelected());
         }
 
-        else if (original.getOffhandItem().getItem() == ItemInit.TOTEM_OF_RETURNING.get())
+        if (original.getOffhandItem().getItem() == ItemInit.TOTEM_OF_RETURNING.get())
         {
             current.inventory.offhand.set(0, original.inventory.offhand.get(0));
         }
@@ -110,20 +157,25 @@ public class EntityDiesEvent
         {
             PlayerEntity player = event.getPlayer();
             World world = player.level;
-            for (Hand hand : Hand.values())
+
+            if (!player.level.isClientSide())
             {
-                if (player.getItemInHand(hand).getItem() == ItemInit.TOTEM_OF_RETURNING.get())
+                for (Hand hand : Hand.values())
                 {
-                    player.getItemInHand(hand).getCapability(TotemItemProvider.TOTEM_CAP, null).filter(ITotemCap::getHasDied).ifPresent(cap ->
+                    if (player.getItemInHand(hand).getItem() == ItemInit.TOTEM_OF_RETURNING.get())
                     {
-                        player.teleportTo(cap.getXPos(), cap.getYPos(), cap.getZPos());
-                        cap.hasDied(false);
-                        Util.teleportParticles(world, new BlockPos(cap.getXPos(), cap.getYPos(), cap.getZPos()), 200);
-                        player.setItemInHand(hand, ItemStack.EMPTY);
-                        world.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.TOTEM_USE, SoundCategory.PLAYERS, 0.3F, 0.3F);
-                        Minecraft.getInstance().gameRenderer.displayItemActivation(new ItemStack(ItemInit.TOTEM_OF_RETURNING.get()));
-                        world.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ENDERMAN_TELEPORT, SoundCategory.PLAYERS, 0.7F, 0.7F);
-                    });
+                        player.getItemInHand(hand).getCapability(TotemItemProvider.TOTEM_CAP, null).filter(ITotemCap::getHasDied).ifPresent(cap ->
+                        {
+                            player.teleportTo(cap.getXPos(), cap.getYPos(), cap.getZPos());
+                            cap.hasDied(false);
+                            Util.teleportParticles(world, new BlockPos(cap.getXPos(), cap.getYPos(), cap.getZPos()), 200);
+                            player.getItemInHand(hand).shrink(1);
+                            world.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.TOTEM_USE, SoundCategory.PLAYERS, 0.3F, 0.3F);
+                            Minecraft.getInstance().gameRenderer.displayItemActivation(new ItemStack(ItemInit.TOTEM_OF_RETURNING.get()));
+                            world.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ENDERMAN_TELEPORT, SoundCategory.PLAYERS, 0.7F, 0.7F);
+                        });
+                        break;
+                    }
                 }
             }
         }
