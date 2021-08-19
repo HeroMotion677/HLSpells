@@ -69,7 +69,7 @@ public class EntityDiesEvent {
                     returnTotem = false;
                 }
 
-                // TOTEM OF KEEPING
+                // TOTEM OF KEEPING (wip)
                 if (heldItem.getItem() == ItemInit.TOTEM_OF_KEEPING.get()) {
                     heldItem.getCapability(TotemItemProvider.TOTEM_CAP).ifPresent(cap -> {
                         cap.hasDied(true);
