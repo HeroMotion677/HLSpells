@@ -16,9 +16,7 @@ import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
 import net.minecraft.entity.boss.WitherEntity;
 import net.minecraft.entity.effect.LightningBoltEntity;
-import net.minecraft.entity.merchant.villager.AbstractVillagerEntity;
 import net.minecraft.entity.monster.*;
-import net.minecraft.entity.monster.piglin.AbstractPiglinEntity;
 import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.passive.horse.SkeletonHorseEntity;
 import net.minecraft.entity.passive.horse.ZombieHorseEntity;
@@ -56,6 +54,9 @@ import java.util.stream.Collectors;
 
 import static com.divinity.hlspells.goal.SpellBookLureGoal.LURE_RANGE;
 
+/**
+ * This class is responsible for doing specific spell actions
+ */
 @Mod.EventBusSubscriber(modid = HLSpells.MODID)
 public class SpellActions {
     static int fangsSpellEvokerFangSpawnTimer = 0;
@@ -493,7 +494,13 @@ public class SpellActions {
                 .stream().sorted(getEntityComparator(player)).collect(Collectors.toList());
 
         for (MobEntity mob : mobEntities) {
-            boolean predicate = mob instanceof AbstractVillagerEntity || mob instanceof AbstractIllagerEntity || mob instanceof AbstractPiglinEntity;
+            List<? extends String> blacklistedMobs = HLSpells.CONFIG.sapientMobsList.get();
+            boolean predicate = false;
+            for (String id : blacklistedMobs) {
+                if (id.equals(mob.getType().getRegistryName().toString())) {
+                    predicate = true;
+                }
+            }
             if (!predicate && mob.goalSelector.getRunningGoals().noneMatch(p -> p.getGoal() instanceof SpellBookLureGoal)) {
                 mob.goalSelector.addGoal(0, new SpellBookLureGoal(mob, 1.0D));
             }
@@ -508,14 +515,18 @@ public class SpellActions {
                 .stream().sorted(getEntityComparator(player)).collect(Collectors.toList());
 
         for (MobEntity mob : mobEntities) {
-            boolean predicate = mob instanceof AbstractVillagerEntity || mob instanceof AbstractIllagerEntity || mob instanceof AbstractPiglinEntity;
+            List<? extends String> blacklistedMobs = HLSpells.CONFIG.sapientMobsList.get();
+            boolean predicate = false;
+            for (String id : blacklistedMobs) {
+                if (id.equals(mob.getType().getRegistryName().toString())) {
+                    predicate = true;
+                }
+            }
             if (!predicate && mob.goalSelector.getRunningGoals().noneMatch(p -> p.getGoal() instanceof SpellBookRepelGoal)) {
                 mob.goalSelector.addGoal(0, new SpellBookRepelGoal(mob, 1.2D));
             }
         }
     }
-
-    // Arrow Rain
 
     // Flaming Circle
     public static void doFlamingCircle(PlayerEntity player) {
@@ -548,9 +559,7 @@ public class SpellActions {
         }
     }
 
-    /**
-     * Adds flaming particles in a circle around the player
-     */
+    // Adds flaming particles in a circle around the player
     private static void doFlamingRadiusParticles(PlayerEntity player) {
         player.level.addParticle(ParticleTypes.FLAME, player.getX() - 1, player.getY() + 1.2, player.getZ() - 6, 0, 0, 0);
         player.level.addParticle(ParticleTypes.FLAME, player.getX(), player.getY() + 1.2, player.getZ() - 6, 0, 0, 0);
@@ -627,6 +636,7 @@ public class SpellActions {
         }
     }
 
+    // Arrow Rain
     public static void doArrowRain(PlayerEntity player) {
         if (player.getCommandSenderWorld().isClientSide()) {
             if (arrowRainCloudSpawnBoolean)
@@ -648,8 +658,6 @@ public class SpellActions {
             }
         }
     }
-
-    // Healing Circle
 
     public static void doArrowSpawn(PlayerEntity player) {
         ArrowEntity arrowEntity = new ArrowEntity(player.getCommandSenderWorld(),
@@ -675,6 +683,7 @@ public class SpellActions {
         }
     }
 
+    // Healing Circle
     public static void doHealingCircle(PlayerEntity player) {
         List<LivingEntity> livingEntities = player.getCommandSenderWorld().getEntitiesOfClass(LivingEntity.class,
                 new AxisAlignedBB(player.getX() - 6, player.getY() - 6, player.getZ() - 6,
@@ -767,16 +776,16 @@ public class SpellActions {
         }
     }
 
-    // Respiration
-
     // Speed
     public static void doSpeed(PlayerEntity player) {
+
         ModifiableAttributeInstance attribute = player.getAttributes().getInstance(Attributes.MOVEMENT_SPEED);
         if (attribute != null) {
             attribute.setBaseValue(2.2F);
         }
     }
 
+    // Respiration
     public static void doRespiration(PlayerEntity player) {
         List<PlayerEntity> players = player.getCommandSenderWorld().getEntitiesOfClass(PlayerEntity.class,
                 new AxisAlignedBB(player.getX() - 10, player.getY() - 4, player.getZ() - 10,
