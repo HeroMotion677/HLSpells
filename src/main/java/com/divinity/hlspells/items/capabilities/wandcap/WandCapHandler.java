@@ -1,15 +1,20 @@
 package com.divinity.hlspells.items.capabilities.wandcap;
 
+import com.divinity.hlspells.init.SpellBookInit;
+import com.divinity.hlspells.items.SpellBookItem;
 import com.divinity.hlspells.items.WandItem;
 import com.divinity.hlspells.network.NetworkManager;
 import com.divinity.hlspells.network.packets.WandInputPacket;
 import com.divinity.hlspells.spell.Spell;
+import com.divinity.hlspells.spell.SpellBookObject;
+import com.divinity.hlspells.util.SpellUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -66,6 +71,27 @@ public class WandCapHandler {
             if (!WAND_BINDING.isDown() && buttonPressedFlag) {
                 buttonPressedFlag = false;
             }
+        }
+    }
+
+    @SubscribeEvent
+    public static void anvilUpdateEvent(AnvilUpdateEvent event) {
+        ItemStack wandItem = event.getLeft().getItem() instanceof WandItem ? event.getLeft() : null;
+        ItemStack spellBook = event.getRight().getItem() instanceof SpellBookItem ? event.getRight() : null;
+        if (wandItem != null && spellBook != null) {
+            ItemStack transformedItem = wandItem.copy();
+            if (SpellUtils.getSpellBook(spellBook) != SpellBookInit.EMPTY.get()) {
+                SpellBookObject book = SpellUtils.getSpellBook(spellBook);
+                transformedItem.getCapability(WandItemProvider.WAND_CAP, null)
+                        .ifPresent(p -> p.addSpell(book.getSpells().stream()
+                                .filter(pr -> pr.getSpell().getRegistryName() != null)
+                                .map(m -> m.getSpell().getRegistryName().toString())
+                                .findFirst()
+                                .orElse("null")));
+            }
+            event.setCost(15);
+            event.setMaterialCost(1);
+            event.setOutput(transformedItem);
         }
     }
 }

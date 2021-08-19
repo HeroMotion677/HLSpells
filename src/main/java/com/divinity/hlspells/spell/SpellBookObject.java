@@ -21,8 +21,7 @@ public class SpellBookObject extends ForgeRegistryEntry<SpellBookObject> {
         this.spellInstances = ImmutableList.copyOf(spellInstances);
     }
 
-    public static SpellBookObject byName(String name)
-    {
+    public static SpellBookObject byName(String name) {
         return SpellBookInit.SPELL_BOOK_REGISTRY.get().getValue(ResourceLocation.tryParse(name));
     }
 

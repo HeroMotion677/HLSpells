@@ -1,7 +1,6 @@
 package com.divinity.hlspells.spells;
 
 import com.divinity.hlspells.HLSpells;
-import com.divinity.hlspells.init.SpellBookInit;
 import com.divinity.hlspells.items.SpellBookItem;
 import com.divinity.hlspells.items.WandItem;
 import com.divinity.hlspells.items.capabilities.wandcap.WandItemProvider;
@@ -13,7 +12,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
 import net.minecraft.world.World;
-import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -21,33 +19,13 @@ import net.minecraftforge.fml.common.Mod;
 import static com.divinity.hlspells.items.capabilities.wandcap.WandItemStorage.CURRENT_SPELL_VALUE;
 import static com.divinity.hlspells.spells.SpellActions.resetEffects;
 
+/**
+ * This class is responsible for firing spell actions
+ */
 @Mod.EventBusSubscriber(modid = HLSpells.MODID)
 public class RunSpells {
     static int placeHolder;
     static int placeHolderWand;
-
-    // TODO: Move this to WandCapHandler.java
-    @SubscribeEvent
-    public static void anvilUpdateEvent(AnvilUpdateEvent event) {
-        ItemStack wandItem = event.getLeft().getItem() instanceof WandItem ? event.getLeft() : null;
-        ItemStack spellBook = event.getRight().getItem() instanceof SpellBookItem ? event.getRight() : null;
-        if (wandItem != null && spellBook != null) {
-            ItemStack transformedItem = wandItem.copy();
-            if (SpellUtils.getSpellBook(spellBook) != SpellBookInit.EMPTY.get()) {
-                SpellBookObject book = SpellUtils.getSpellBook(spellBook);
-                transformedItem.getCapability(WandItemProvider.WAND_CAP, null)
-                        .ifPresent(p -> p.addSpell(book.getSpells().stream()
-                                .filter(pr -> pr.getSpell().getRegistryName() != null)
-                                .map(m -> m.getSpell().getRegistryName().toString())
-                                .findFirst()
-                                .orElse("null")));
-            }
-            event.setCost(15);
-            event.setMaterialCost(1);
-            event.setOutput(transformedItem);
-        }
-    }
-
 
     public static void doCastSpell(PlayerEntity player, World world, ItemStack itemStack) {
         if (itemStack.getItem() instanceof WandItem) {

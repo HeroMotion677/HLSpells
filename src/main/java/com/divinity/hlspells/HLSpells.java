@@ -1,5 +1,6 @@
 package com.divinity.hlspells;
 
+import com.divinity.hlspells.init.ConfigData;
 import com.divinity.hlspells.items.capabilities.totemcap.ITotemCap;
 import com.divinity.hlspells.items.capabilities.totemcap.TotemCap;
 import com.divinity.hlspells.items.capabilities.totemcap.TotemItemStorage;
@@ -13,25 +14,34 @@ import com.divinity.hlspells.villages.Villagers;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.client.util.InputMappings;
 import net.minecraftforge.client.settings.KeyConflictContext;
+import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.glfw.GLFW;
 
-// The value here should match an entry in the META-INF/mods.toml file
 @Mod(HLSpells.MODID)
 public class HLSpells {
-    // Directly reference a log4j logger.
     public static final Logger LOGGER = LogManager.getLogger();
-    // Register the modid
     public static final String MODID = "hlspells";
     public static final KeyBinding WAND_BINDING = new KeyBinding("Wand Cycle", KeyConflictContext.UNIVERSAL, InputMappings.Type.KEYSYM, GLFW.GLFW_KEY_G, "HLSpells");
+    public static final ConfigData CONFIG;
+    private static final ForgeConfigSpec CONFIG_SPEC;
+
+    static {
+        final Pair<ConfigData, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(ConfigData::new);
+        CONFIG = specPair.getLeft();
+        CONFIG_SPEC = specPair.getRight();
+    }
 
     public HLSpells() {
         // Init the RegistryHandler class
@@ -44,6 +54,7 @@ public class HLSpells {
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.addListener(this::setupMageHouses);
         MinecraftForge.EVENT_BUS.register(this);
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, CONFIG_SPEC);
     }
 
     private void registerAllDeferredRegistryObjects(IEventBus modBus) {

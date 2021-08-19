@@ -1,12 +1,11 @@
 package com.divinity.hlspells.entities;
 
+import com.divinity.hlspells.HLSpells;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.monster.BlazeEntity;
-import net.minecraft.entity.monster.MagmaCubeEntity;
 import net.minecraft.entity.projectile.ArrowEntity;
 import net.minecraft.network.IPacket;
 import net.minecraft.particles.ParticleTypes;
@@ -21,6 +20,8 @@ import net.minecraft.world.Difficulty;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.network.NetworkHooks;
+
+import java.util.List;
 
 public class AquaBoltEntity extends ArrowEntity {
     public AquaBoltEntity(EntityType<? extends AquaBoltEntity> type, World world) {
@@ -60,17 +61,25 @@ public class AquaBoltEntity extends ArrowEntity {
         if (result.getEntity() == this.getOwner()) {
             return;
         }
-        if (!this.isUnderWater()) {
-            boolean flag = entity.hurt(DamageSource.indirectMobAttack(this, livingentity).setProjectile(), 3.0F);
+        List<? extends String> fireMobsList = HLSpells.CONFIG.fireMobsList.get();
+        boolean predicate = false;
+        for (String id : fireMobsList) {
+            if (id.equals(entity.getType().getRegistryName().toString())) {
+                predicate = true;
+            }
+        }
+        if (this.isUnderWater() || predicate) {
+            boolean flag = entity.hurt(DamageSource.indirectMobAttack(this, livingentity).setProjectile(), 7.0F);
             if (flag && this.level instanceof ServerWorld) {
                 ((ServerWorld) this.level).sendParticles(ParticleTypes.BUBBLE_POP, this.getX() - this.random.nextInt(2), this.getY(), this.getZ() - this.random.nextFloat(), 12, 0.2D, 0.2D, 0.2D, 0.0D);
                 entity.clearFire();
                 this.doEnchantDamageEffects(livingentity, entity);
                 this.remove();
             }
-        } else if (this.isUnderWater() || entity instanceof BlazeEntity || entity instanceof MagmaCubeEntity) {
-            boolean flag = entity.hurt(DamageSource.indirectMobAttack(this, livingentity).setProjectile(), 7.0F);
+        } else {
+            boolean flag = entity.hurt(DamageSource.indirectMobAttack(this, livingentity).setProjectile(), 3.0F);
             if (flag && this.level instanceof ServerWorld) {
+                System.out.println("Hurt 3");
                 ((ServerWorld) this.level).sendParticles(ParticleTypes.BUBBLE_POP, this.getX() - this.random.nextInt(2), this.getY(), this.getZ() - this.random.nextFloat(), 12, 0.2D, 0.2D, 0.2D, 0.0D);
                 entity.clearFire();
                 this.doEnchantDamageEffects(livingentity, entity);
