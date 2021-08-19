@@ -6,7 +6,6 @@ import com.divinity.hlspells.items.ModTotemItem;
 import com.divinity.hlspells.items.capabilities.totemcap.ITotemCap;
 import com.divinity.hlspells.items.capabilities.totemcap.TotemItemProvider;
 import com.divinity.hlspells.util.Util;
-import com.google.common.collect.ImmutableList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -27,8 +26,6 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-
-
 import java.util.Iterator;
 
 @Mod.EventBusSubscriber(modid = HLSpells.MODID)
@@ -39,6 +36,7 @@ public class EntityDiesEvent {
         if (event.getEntityLiving() instanceof PlayerEntity) {
             PlayerEntity player = (PlayerEntity) event.getEntityLiving();
             World world = player.level;
+            boolean returnTotem = true;
             for (Hand hand : Hand.values()) {
                 ItemStack heldItem = player.getItemInHand(hand);
                 // TOTEM OF GRIEFING
@@ -61,14 +59,24 @@ public class EntityDiesEvent {
                     }
                 }
 
-                if (heldItem.getItem() == ItemInit.TOTEM_OF_RETURNING.get())
+                // TOTEM OF RETURNING
+                if (heldItem.getItem() == ItemInit.TOTEM_OF_RETURNING.get() && returnTotem) {
                     heldItem.getCapability(TotemItemProvider.TOTEM_CAP).ifPresent(cap -> {
                         cap.hasDied(true);
-                        if (hand == Hand.MAIN_HAND)
-                            cap.setTotemInHand(Hand.MAIN_HAND);
-                        else if (hand == Hand.OFF_HAND)
-                            cap.setTotemInHand(Hand.OFF_HAND);
+                        if (hand == Hand.MAIN_HAND) cap.setTotemInHand(Hand.MAIN_HAND);
+                        else if (hand == Hand.OFF_HAND) cap.setTotemInHand(Hand.OFF_HAND);
                     });
+                    returnTotem = false;
+                }
+
+                // TOTEM OF KEEPING
+                if (heldItem.getItem() == ItemInit.TOTEM_OF_KEEPING.get()) {
+                    heldItem.getCapability(TotemItemProvider.TOTEM_CAP).ifPresent(cap -> {
+                        cap.hasDied(true);
+                        if (hand == Hand.MAIN_HAND) cap.setTotemInHand(Hand.MAIN_HAND);
+                        else if (hand == Hand.OFF_HAND) cap.setTotemInHand(Hand.OFF_HAND);
+                    });
+                }
             }
         }
     }
@@ -89,56 +97,25 @@ public class EntityDiesEvent {
                     cap.setYPos(player.getY());
                     cap.setZPos(player.getZ());
                     Hand hand = cap.getTotemInHand();
-                    if (hand == Hand.MAIN_HAND)
-                        player.inventory.add(player.inventory.selected, stack);
-                    else if (hand == Hand.OFF_HAND)
-                        player.inventory.offhand.set(0, stack);
+                    if (hand == Hand.MAIN_HAND) player.inventory.add(player.inventory.selected, stack);
+                    else if (hand == Hand.OFF_HAND) player.inventory.offhand.set(0, stack);
                 });
             }
-        }
-    }
-
-    @SubscribeEvent
-    public static void onEntityDrops(LivingDropsEvent event)
-    {
-        if (event == null) return;
-        if (!(event.getEntity() instanceof PlayerEntity)) return;
-
-        PlayerEntity player = (PlayerEntity) event.getEntity();
-
-        // TOTEM OF RETURNING
-        for (Iterator<ItemEntity> itemEntityIterator = event.getDrops().iterator(); itemEntityIterator.hasNext();)
-        {
-            ItemStack stack = itemEntityIterator.next().getItem();
-            if (stack.getItem().equals(ItemInit.TOTEM_OF_RETURNING.get()))
-            {
-                if (EntityDiesEvent.totemActivationFlag)
-                {
-                    itemEntityIterator.remove();
-                    stack.getCapability(TotemItemProvider.TOTEM_CAP, null).ifPresent(cap ->
-                    {
-                        cap.setXPos(player.getX());
-                        cap.setYPos(player.getY());
-                        cap.setZPos(player.getZ());
-                        cap.hasDied(true);
-                    });
-                    player.inventory.add(player.inventory.selected, stack);
-                    EntityDiesEvent.totemActivationFlag = false;
-                }
-
-                else if (EntityDiesEvent.totemActivationFlagOff)
-                {
-                    itemEntityIterator.remove();
-                    stack.getCapability(TotemItemProvider.TOTEM_CAP, null).ifPresent(cap ->
-                    {
-                        cap.setXPos(player.getX());
-                        cap.setYPos(player.getY());
-                        cap.setZPos(player.getZ());
-                        cap.hasDied(true);
-                    });
-                    player.inventory.offhand.set(0, stack);
-                    EntityDiesEvent.totemActivationFlagOff = false;
-                }
+            // TOTEM OF KEEPING  (wip)
+            else if (stack.getItem() == ItemInit.TOTEM_OF_KEEPING.get()) {
+                stack.getCapability(TotemItemProvider.TOTEM_CAP).filter(ITotemCap::getHasDied).ifPresent(cap -> {
+                    Hand hand = cap.getTotemInHand();
+                    if (hand != null) {
+                        event.setCanceled(true);
+                        if (hand == Hand.MAIN_HAND) player.inventory.add(player.inventory.selected, stack);
+                        else if (hand == Hand.OFF_HAND) player.inventory.offhand.set(0, stack);
+                        for (ItemEntity entity : event.getDrops()) {
+                            if (entity.getItem().getItem() != ItemInit.TOTEM_OF_KEEPING.get()) {
+                                player.inventory.add(entity.getItem());
+                            }
+                        }
+                    }
+                });
             }
         }
     }
@@ -156,6 +133,13 @@ public class EntityDiesEvent {
             if (original.getOffhandItem().getItem() == ItemInit.TOTEM_OF_RETURNING.get()) {
                 current.inventory.offhand.set(0, original.inventory.offhand.get(0));
             }
+
+            // TOTEM OF KEEPING (wip)
+            if (original.getMainHandItem().getItem() == ItemInit.TOTEM_OF_KEEPING.get()) {
+                int mainSlot = original.inventory.findSlotMatchingItem(original.getMainHandItem());
+                original.inventory.getItem(mainSlot != -1 ? mainSlot : 0).shrink(mainSlot != -1 ? 1 : 0);
+                current.inventory.replaceWith(original.inventory);
+            }
         }
     }
 
@@ -165,24 +149,28 @@ public class EntityDiesEvent {
         if (event.getPlayer() != null) {
             PlayerEntity player = event.getPlayer();
             World world = player.level;
-         
-            if (!player.level.isClientSide()) {
+            if (!world.isClientSide()) {
                 for (Hand hand : Hand.values()) {
                     if (player.getItemInHand(hand).getItem() == ItemInit.TOTEM_OF_RETURNING.get()) {
-                        player.getItemInHand(hand).getCapability(TotemItemProvider.TOTEM_CAP, null).filter(ITotemCap::getHasDied).ifPresent(cap ->
-                        {
-                            player.teleportTo(cap.getXPos(), cap.getYPos(), cap.getZPos());
-                            cap.hasDied(false);
-                            Util.teleportParticles(world, new BlockPos(cap.getXPos(), cap.getYPos(), cap.getZPos()), 200);
-                            player.getItemInHand(hand).shrink(1);
-                            world.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.TOTEM_USE, SoundCategory.PLAYERS, 0.3F, 0.3F);
-                            Minecraft.getInstance().gameRenderer.displayItemActivation(new ItemStack(ItemInit.TOTEM_OF_RETURNING.get()));
-                            world.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ENDERMAN_TELEPORT, SoundCategory.PLAYERS, 0.7F, 0.7F);
-                        });
-                        break;
+                        doTotemOfReturning(player, world, player.getItemInHand(hand), hand);
                     }
                 }
             }
         }
+    }
+
+    private static void doTotemOfReturning(PlayerEntity player, World world, ItemStack stack, Hand hand)
+    {
+        stack.getCapability(TotemItemProvider.TOTEM_CAP).filter(ITotemCap::getHasDied).ifPresent(cap -> {
+            if (cap.getTotemInHand() == hand) {
+                player.teleportTo(cap.getXPos(), cap.getYPos(), cap.getZPos());
+                cap.hasDied(false);
+                Util.teleportParticles(world, new BlockPos(cap.getXPos(), cap.getYPos(), cap.getZPos()), 200);
+                player.getItemInHand(hand).shrink(1);
+                world.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.TOTEM_USE, SoundCategory.PLAYERS, 0.3F, 0.3F);
+                Minecraft.getInstance().gameRenderer.displayItemActivation(new ItemStack(ItemInit.TOTEM_OF_RETURNING.get()));
+                world.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ENDERMAN_TELEPORT, SoundCategory.PLAYERS, 0.7F, 0.7F);
+            }
+        });
     }
 }
