@@ -9,6 +9,7 @@ import com.divinity.hlspells.spell.Spell;
 import com.divinity.hlspells.util.SpellUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.StringTextComponent;
@@ -21,16 +22,18 @@ import net.minecraftforge.fml.common.Mod;
 
 import static com.divinity.hlspells.HLSpells.MODID;
 import static com.divinity.hlspells.HLSpells.WAND_BINDING;
-import static com.divinity.hlspells.items.capabilities.wandcap.WandItemStorage.CURRENT_SPELL_VALUE;
+import static com.divinity.hlspells.items.capabilities.wandcap.SpellHolderStorage.CURRENT_SPELL_VALUE;
 
 @Mod.EventBusSubscriber(modid = MODID)
-public class WandCapHandler {
+public class SpellHolderHandler {
     static boolean buttonPressedFlag;
+    static ResourceLocation WAND_CAP_ID = new ResourceLocation(MODID, "spell_holder");
 
     @SubscribeEvent
     public static void onAttachCapabilities(AttachCapabilitiesEvent<ItemStack> event) {
-        if (event.getObject().getItem() instanceof WandItem) {
-            event.addCapability(new ResourceLocation(MODID, "wandcap"), new WandItemProvider());
+        Item item = event.getObject().getItem();
+        if (item instanceof WandItem || item instanceof SpellBookItem) {
+            event.addCapability(WAND_CAP_ID, new SpellHolderProvider());
         }
     }
 
@@ -51,7 +54,7 @@ public class WandCapHandler {
                     else if (offHandWand)
                         stack = offHand;
                     if (!stack.isEmpty()) {
-                        stack.getCapability(WandItemProvider.WAND_CAP, null).ifPresent(cap ->
+                        stack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP, null).ifPresent(cap ->
                         {
                             // Ensures Sync (Temp solution for now, will probably need server -> client packet)
                             cap.setCurrentSpellCycle(CURRENT_SPELL_VALUE);
@@ -81,11 +84,10 @@ public class WandCapHandler {
             ItemStack transformedItem = wandItem.copy();
             Spell spell = SpellUtils.getSpell(spellBook);
             if (spell != SpellInit.EMPTY.get()) {
-                transformedItem.getCapability(WandItemProvider.WAND_CAP)
+                transformedItem.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP)
                         .ifPresent(wandCap -> {
-                            ResourceLocation rl = spell.getRegistryName();
-                            if (rl != null)
-                                wandCap.addSpell(rl.toString());
+                            if (SpellUtils.canAddSpell(transformedItem.getItem(), wandCap.getSpells()))
+                                wandCap.addSpell(spell.getRegistryName().toString());
                         });
             }
             event.setCost(15);
@@ -93,4 +95,5 @@ public class WandCapHandler {
             event.setOutput(transformedItem);
         }
     }
+
 }

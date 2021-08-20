@@ -1,16 +1,19 @@
 package com.divinity.hlspells.items.capabilities.wandcap;
 
+import com.divinity.hlspells.init.SpellInit;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class WandCap implements IWandCap {
+public class SpellHolder implements ISpellHolder {
     private final List<String> spells;
     private int currentSpellCycle;
+    private boolean isHeld;
 
-    public WandCap() {
+    public SpellHolder() {
         spells = new ArrayList<>();
         currentSpellCycle = 0;
-
+        isHeld = false;
     }
 
     @Override
@@ -18,12 +21,9 @@ public class WandCap implements IWandCap {
         return this.spells;
     }
 
-    /**
-     * Allows maximum of 3 spells in a spell book
-     */
     @Override
     public void addSpell(String spell) {
-        if (!this.spells.contains(spell) && this.spells.size() < 3) {
+        if (!this.spells.contains(spell)) {
             this.spells.add(spell);
         }
     }
@@ -46,10 +46,10 @@ public class WandCap implements IWandCap {
     @Override
     public void setCurrentSpellCycle(int currentSpellCycle) {
         this.currentSpellCycle = currentSpellCycle;
-        spellCycleCheck();
+        cycleSpellCheck();
     }
 
-    private void spellCycleCheck() {
+    private void cycleSpellCheck() {
         if (this.currentSpellCycle > this.getSpells().size() - 1) {
             this.currentSpellCycle = 0;
         }
@@ -57,6 +57,16 @@ public class WandCap implements IWandCap {
 
     @Override
     public String getCurrentSpell() {
-        return spells.get(getCurrentSpellCycle());
+        return getCurrentSpellCycle() < spells.size() ? spells.get(getCurrentSpellCycle()) : SpellInit.EMPTY.get().getRegistryName().toString();
+    }
+
+    @Override
+    public boolean isHeldActive() {
+        return isHeld;
+    }
+
+    @Override
+    public void setHeldActive(boolean held) {
+        this.isHeld = held;
     }
 }

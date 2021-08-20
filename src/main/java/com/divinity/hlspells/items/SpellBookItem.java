@@ -2,6 +2,7 @@ package com.divinity.hlspells.items;
 
 import com.divinity.hlspells.enchantments.ISpell;
 import com.divinity.hlspells.init.SpellInit;
+import com.divinity.hlspells.items.capabilities.wandcap.SpellHolderProvider;
 import com.divinity.hlspells.spell.Spell;
 import com.divinity.hlspells.spell.SpellType;
 import com.divinity.hlspells.spells.RunSpells;
@@ -18,18 +19,13 @@ import net.minecraft.item.ShootableItem;
 import net.minecraft.item.UseAction;
 import net.minecraft.util.*;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.function.Predicate;
 
-
 public class SpellBookItem extends ShootableItem {
-    public static boolean isHeldActive = false;
-    private Spell storedSpell = null;
 
     public SpellBookItem(Properties properties) {
         super(properties);
@@ -37,8 +33,7 @@ public class SpellBookItem extends ShootableItem {
 
     @Override
     public ItemStack getDefaultInstance() {
-        ItemStack stack = new ItemStack(this);
-        return SpellUtils.setSpell(stack, SpellInit.EMPTY.get());
+        return new ItemStack(this);
     }
 
     @Override
@@ -49,11 +44,7 @@ public class SpellBookItem extends ShootableItem {
     @Override
     public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> text, ITooltipFlag flag) {
         Spell spell = SpellUtils.getSpell(stack);
-        if (spell.isEmpty()) {
-            text.add(new TranslationTextComponent("spell.hlspells.empty").withStyle(TextFormatting.GRAY));
-        } else {
-            text.add(spell.getDisplayName().withStyle(spell.getType().getTooltipFormatting()));
-        }
+        text.add(spell.getDisplayName().withStyle(spell.getType().getTooltipFormatting()));
     }
 
     @Override
@@ -64,8 +55,11 @@ public class SpellBookItem extends ShootableItem {
     @Override
     public void fillItemCategory(ItemGroup group, NonNullList<ItemStack> stacks) {
         if (this.allowdedIn(group)) {
+            //TODO fix the spell books in creative inventory having no spells at all
             for (Spell spell : SpellInit.SPELLS_REGISTRY.get()) {
-                stacks.add(SpellUtils.setSpell(new ItemStack(this), spell));
+                ItemStack stack = new ItemStack(this);
+                stack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP).ifPresent(cap -> cap.addSpell(spell.getRegistryName().toString()));
+                stacks.add(stack);
             }
         }
     }
@@ -83,16 +77,14 @@ public class SpellBookItem extends ShootableItem {
     @Override
     public void releaseUsing(ItemStack stack, World world, LivingEntity entity, int power) {
         if (entity instanceof PlayerEntity) {
-            PlayerEntity playerEntity = (PlayerEntity) entity;
-            isHeldActive = false;
-            if (playerEntity.getUseItemRemainingTicks() < 71988) {
-                if (!playerEntity.getCommandSenderWorld().isClientSide()) {
-                    RunSpells.doCastSpell(playerEntity, world, stack);
-                    playerEntity.level.playSound(null, playerEntity.blockPosition(), SoundEvents.EVOKER_CAST_SPELL, SoundCategory.NEUTRAL, 0.6F, 1.0F);
+            PlayerEntity player = (PlayerEntity) entity;
+            stack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP).ifPresent(cap -> cap.setHeldActive(false));
+            if (player.getUseItemRemainingTicks() < 71988) {
+                if (!player.getCommandSenderWorld().isClientSide()) {
+                    RunSpells.doCastSpell(player, world, stack);
+                    world.playSound(null, player.blockPosition(), SoundEvents.EVOKER_CAST_SPELL, SoundCategory.NEUTRAL, 0.6F, 1.0F);
                 }
-                if (playerEntity.getCommandSenderWorld().isClientSide()) {
-                    SpellActions.doParticles(playerEntity);
-                }
+                SpellActions.doParticles(player);
             }
         }
     }
@@ -104,16 +96,14 @@ public class SpellBookItem extends ShootableItem {
                 stack.getEnchantmentTags().remove(i);
             }
         }
-
-        if (entity instanceof PlayerEntity) {
-            PlayerEntity playerEntity = (PlayerEntity) entity;
-            if (isHeldActive) {
-                for (Hand hand : Hand.values())
-                    if (playerEntity.getItemInHand(hand).getItem() instanceof SpellBookItem && SpellUtils.getSpell(playerEntity.getItemInHand(hand)) == storedSpell) {
-                        return;
-                    }
-                isHeldActive = false;
-            }
+        if (entity instanceof PlayerEntity && stack.getItem() instanceof WandItem) {
+            PlayerEntity player = (PlayerEntity) entity;
+            Predicate<ItemStack> isSpellBook = itemStack -> itemStack.getItem() instanceof SpellBookItem;
+            stack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP).ifPresent(cap -> {
+                if (cap.isHeldActive() && !isSpellBook.test(player.getMainHandItem()) && !isSpellBook.test(player.getOffhandItem())) {
+                    cap.setHeldActive(false);
+                }
+            });
         }
     }
 
@@ -126,8 +116,7 @@ public class SpellBookItem extends ShootableItem {
     public ActionResult<ItemStack> use(World world, PlayerEntity player, Hand handIn) {
         ItemStack itemstack = player.getItemInHand(handIn);
         player.startUsingItem(handIn);
-        this.storedSpell = SpellUtils.getSpell(itemstack);
-        isHeldActive = true;
+        itemstack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP).ifPresent(cap -> cap.setHeldActive(true));
 
         if (!world.isClientSide()) {
             if (player.getUseItemRemainingTicks() < 71997 && player.getUseItemRemainingTicks() >= 71994) {

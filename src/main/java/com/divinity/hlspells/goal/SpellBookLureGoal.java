@@ -3,7 +3,7 @@ package com.divinity.hlspells.goal;
 import com.divinity.hlspells.init.SpellInit;
 import com.divinity.hlspells.items.SpellBookItem;
 import com.divinity.hlspells.items.WandItem;
-import com.divinity.hlspells.items.capabilities.wandcap.WandItemProvider;
+import com.divinity.hlspells.items.capabilities.wandcap.SpellHolderProvider;
 import com.divinity.hlspells.util.SpellUtils;
 import net.minecraft.entity.EntityPredicate;
 import net.minecraft.entity.MobEntity;
@@ -93,7 +93,7 @@ public class SpellBookLureGoal extends Goal {
     private boolean canFollowItem(PlayerEntity player, ItemStack stack) {
         boolean[] canDo = new boolean[2];
         if (stack.getItem() instanceof WandItem) {
-            stack.getCapability(WandItemProvider.WAND_CAP, null).ifPresent(cap ->
+            stack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP, null).ifPresent(cap ->
             {
                 ResourceLocation location = SpellInit.LURE.get().getRegistryName();
                 if (location != null && cap.getSpells().get(cap.getCurrentSpellCycle()).equals(location.toString())) {

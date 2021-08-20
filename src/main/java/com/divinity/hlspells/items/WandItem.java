@@ -1,6 +1,6 @@
 package com.divinity.hlspells.items;
 
-import com.divinity.hlspells.items.capabilities.wandcap.WandItemProvider;
+import com.divinity.hlspells.items.capabilities.wandcap.SpellHolderProvider;
 import com.divinity.hlspells.spell.Spell;
 import com.divinity.hlspells.spell.SpellType;
 import com.divinity.hlspells.spells.RunSpells;
@@ -11,11 +11,13 @@ import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ShootableItem;
 import net.minecraft.item.UseAction;
-import net.minecraft.util.*;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.Hand;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
@@ -27,7 +29,6 @@ import java.util.function.Predicate;
 
 
 public class WandItem extends ShootableItem {
-    public static boolean isWandHeldActive = false;
 
     public WandItem(Properties properties) {
         super(properties);
@@ -36,13 +37,6 @@ public class WandItem extends ShootableItem {
     @Override
     public ItemStack getDefaultInstance() {
         return new ItemStack(this);
-    }
-
-    @Override
-    public void fillItemCategory(ItemGroup group, NonNullList<ItemStack> stacks) {
-        if (this.allowdedIn(group)) {
-            stacks.add(new ItemStack(this));
-        }
     }
 
     @Override
@@ -57,7 +51,7 @@ public class WandItem extends ShootableItem {
 
     @Override
     public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> text, ITooltipFlag flag) {
-        stack.getCapability(WandItemProvider.WAND_CAP, null).ifPresent(cap ->
+        stack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP, null).ifPresent(cap ->
         {
             text.add(1, new StringTextComponent(TextFormatting.GOLD + "Spells: "));
             if (cap.getSpells().isEmpty()) {
@@ -82,9 +76,8 @@ public class WandItem extends ShootableItem {
     public ActionResult<ItemStack> use(World world, PlayerEntity playerIn, Hand handIn) {
         ItemStack itemstack = playerIn.getItemInHand(handIn);
         playerIn.startUsingItem(handIn);
-        isWandHeldActive = true;
-
-        itemstack.getCapability(WandItemProvider.WAND_CAP, null).filter(p -> !p.getSpells().isEmpty()).ifPresent(cap -> {
+        itemstack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP).ifPresent(cap -> cap.setHeldActive(true));
+        itemstack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP, null).filter(p -> !p.getSpells().isEmpty()).ifPresent(cap -> {
             Spell spell = SpellUtils.getSpellByID(cap.getCurrentSpell());
             if (spell != null && !world.isClientSide()) {
                 if (playerIn.getUseItemRemainingTicks() < 71994 && (double) playerIn.getUseItemRemainingTicks() >= 71991) {
@@ -101,14 +94,14 @@ public class WandItem extends ShootableItem {
 
     @Override
     public void inventoryTick(ItemStack stack, World world, Entity entity, int pItemSlot, boolean pIsSelected) {
-        if (entity instanceof PlayerEntity) {
+        if (entity instanceof PlayerEntity && stack.getItem() instanceof WandItem) {
             PlayerEntity player = (PlayerEntity) entity;
-            if (isWandHeldActive) {
-                if (player.getMainHandItem().getItem() instanceof WandItem || player.getOffhandItem().getItem() instanceof WandItem) {
-                    return;
+            Predicate<ItemStack> isSpellBook = itemStack -> itemStack.getItem() instanceof WandItem;
+            stack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP).ifPresent(cap -> {
+                if (cap.isHeldActive() && !isSpellBook.test(player.getMainHandItem()) && !isSpellBook.test(player.getOffhandItem())) {
+                    cap.setHeldActive(false);
                 }
-                isWandHeldActive = false;
-            }
+            });
         }
     }
 
@@ -127,16 +120,12 @@ public class WandItem extends ShootableItem {
         if (entity instanceof PlayerEntity) {
             PlayerEntity player = (PlayerEntity) entity;
             world.playSound(null, player.blockPosition(), SoundEvents.EVOKER_CAST_SPELL, SoundCategory.NEUTRAL, 0.6F, 1.0F);
-            isWandHeldActive = false;
-
+            stack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP).ifPresent(cap -> cap.setHeldActive(false));
             if (player.getUseItemRemainingTicks() < 71988) {
                 if (!player.getCommandSenderWorld().isClientSide()) {
                     RunSpells.doCastSpell(player, world, stack);
                 }
-
-                if (player.getCommandSenderWorld().isClientSide()) {
-                    SpellActions.doParticles(player);
-                }
+                SpellActions.doParticles(player);
             }
         }
     }
