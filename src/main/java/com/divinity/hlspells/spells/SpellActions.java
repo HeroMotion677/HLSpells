@@ -613,14 +613,14 @@ public class SpellActions {
 
     // Protection Circle
     public static void doProtectionCircle(PlayerEntity player) {
-        List<LivingEntity> livingEntities = player.getCommandSenderWorld().getEntitiesOfClass(LivingEntity.class,
+        List<Entity> entities = player.getCommandSenderWorld().getEntitiesOfClass(Entity.class,
                 new AxisAlignedBB(player.getX() - 6, player.getY() - 6, player.getZ() - 6,
                         player.getX() + 6, player.getY() + 6, player.getZ() + 6), null)
                 .stream().sorted(getEntityComparator(player)).collect(Collectors.toList());
-
-        for (LivingEntity entity : livingEntities) {
-            if (!(entity instanceof PlayerEntity))
-                entity.setDeltaMovement(entity.getLookAngle().reverse().multiply(0.3D, 0, 0.3D));
+        for (Entity entity : entities) {
+            if (!(entity instanceof PlayerEntity)) {
+                entity.setDeltaMovement(entity.getLookAngle().reverse().multiply(0.3D, 0D, 0.3D));
+            }
         }
     }
 
@@ -691,7 +691,6 @@ public class SpellActions {
                 .stream().sorted(getEntityComparator(player)).collect(Collectors.toList());
 
         World world = player.getCommandSenderWorld();
-
         healingTimer++;
 
         if (healingTimer % 10 == 0) {

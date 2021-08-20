@@ -65,7 +65,7 @@ public class RunSpells {
                     boolean mainPredicate = spellBook.containsSpell(sI -> sI.getSpell().getType() == SpellType.HELD);
 
                     if (mainPredicate && spellBook.getSpell() != null && spellBook.getSpell().hasCost()) {
-                        if (player.isCreative() || (spellBook.getSpell().hasCost() && player.totalExperience >= spellBook.getSpell().getXpCost())) {
+                        if (player.isCreative() || player.totalExperience >= spellBook.getSpell().getXpCost()) {
                             spellBook.runAction(player, player.level);
                             placeHolder++;
                             if (placeHolder == spellBook.getSpell().getTickDelay()) {
@@ -85,7 +85,8 @@ public class RunSpells {
                     playerItem.getCapability(WandItemProvider.WAND_CAP, null)
                             .filter(iWandCap -> !iWandCap.getSpells().isEmpty()).ifPresent(cap -> {
                         Spell spell = Spell.byId(cap.getCurrentSpell());
-                        cap.setCurrentSpellCycle(CURRENT_SPELL_VALUE); // Ensures Sync (Temp solution for now, will probably need server -> client packet)
+                        // Ensures Sync (Temp solution for now, will probably need server -> client packet)
+                        cap.setCurrentSpellCycle(CURRENT_SPELL_VALUE);
                         if (spell != null && spell.getType() == SpellType.HELD && spell.hasCost()) {
                             if (player.totalExperience >= spell.getXpCost() || player.isCreative()) {
                                 spell.getSpellAction().accept(player, player.level);
