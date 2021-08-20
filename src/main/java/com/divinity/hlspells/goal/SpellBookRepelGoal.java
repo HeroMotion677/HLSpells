@@ -39,7 +39,7 @@ public class SpellBookRepelGoal extends Goal {
         this.setFlags(EnumSet.of(Goal.Flag.MOVE));
     }
 
-    public static Vector3d getPosAvoid(MobEntity entity, int horizontalRange, int verticalRange, Vector3d direction) {
+    private static Vector3d getPosAvoid(MobEntity entity, int horizontalRange, int verticalRange, Vector3d direction) {
         Vector3d vector3d = entity.position().subtract(direction);
         return generateRandomPos(entity, horizontalRange, verticalRange, 0, vector3d, true, (float) Math.PI / 2F, value -> 0, false, 0, 0, true);
     }
@@ -66,7 +66,7 @@ public class SpellBookRepelGoal extends Goal {
         }
     }
 
-    static BlockPos moveUpToAboveSolid(BlockPos pos, int extraAbove, int max, Predicate<BlockPos> condition) {
+    private static BlockPos moveUpToAboveSolid(BlockPos pos, int extraAbove, int max, Predicate<BlockPos> condition) {
         if (extraAbove < 0) {
             throw new IllegalArgumentException("aboveSolidAmount was " + extraAbove + ", expected >= 0");
         } else if (!condition.test(pos)) {

@@ -32,6 +32,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.network.PacketDistributor;
 
 import java.util.Iterator;
+import java.util.function.Supplier;
 
 @Mod.EventBusSubscriber(modid = HLSpells.MODID)
 public class EntityDiesEvent {
@@ -52,6 +53,16 @@ public class EntityDiesEvent {
                 ItemStack heldItem = player.getItemInHand(hand);
                 if (heldItem.getItem() == Items.TOTEM_OF_UNDYING) {
                     escapingTotem = false;
+                }
+
+                // TOTEM OF KEEPING (Saves player inventory and updates the totem the player has died)
+                if (heldItem.getItem() == ItemInit.TOTEM_OF_KEEPING.get() && keepingTotem) {
+                    heldItem.getCapability(TotemItemProvider.TOTEM_CAP).ifPresent(cap -> {
+                        cap.hasDied(true);
+                        cap.setInventoryNBT(player.inventory.save(new ListNBT()));
+                    });
+                    keepingTotem = false;
+                    griefingTotem = false;
                 }
 
                 // TOTEM OF GRIEFING (Explodes if the totem is held)
@@ -77,6 +88,7 @@ public class EntityDiesEvent {
                         player.playSound(SoundEvents.CHORUS_FRUIT_TELEPORT, 1.0F, 1.0F);
                     }
                     escapingTotem = false;
+                    returnTotem = false;
                 }
 
                 // TOTEM OF RETURNING (Saves the hand the totem is in and updates the totem the player has died)
@@ -88,19 +100,9 @@ public class EntityDiesEvent {
                     });
                     returnTotem = false;
                 }
-
-                // TOTEM OF KEEPING (Saves player inventory and updates the totem the player has died)
-                if (heldItem.getItem() == ItemInit.TOTEM_OF_KEEPING.get() && keepingTotem) {
-                    heldItem.getCapability(TotemItemProvider.TOTEM_CAP).ifPresent(cap -> {
-                        cap.hasDied(true);
-                        cap.setInventoryNBT(player.inventory.save(new ListNBT()));
-                    });
-                    keepingTotem = false;
-                }
             }
         }
     }
-
 
     @SubscribeEvent
     public static void onEntityDrops(LivingDropsEvent event) {
@@ -164,7 +166,7 @@ public class EntityDiesEvent {
         }
     }
 
-    // TOTEM OF RETURNING (Teleports the player to last died pos when right clicked)a
+    // TOTEM OF RETURNING (Teleports the player to last died pos when right clicked)
     @SubscribeEvent
     public static void onPlayerRightClick(PlayerInteractEvent.RightClickItem event) {
         if (event.getPlayer() != null) {
@@ -191,7 +193,7 @@ public class EntityDiesEvent {
     }
 
     /**
-     * Sends packet to server to show totem activation
+     * Sends a packet to the server to show totem activation and/or particles
      */
     private static void displayActivation(PlayerEntity playerEntity, Item item, boolean particleIn) {
         NetworkManager.INSTANCE.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> playerEntity), new TotemPacket(new ItemStack(item), particleIn));
