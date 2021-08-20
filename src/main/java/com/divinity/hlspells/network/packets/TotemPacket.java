@@ -31,7 +31,7 @@ public class TotemPacket {
     public static void whenThisPacketIsReceived(TotemPacket message, Supplier<NetworkEvent.Context> context) {
         context.get().enqueueWork(() -> {
             Minecraft.getInstance().gameRenderer.displayItemActivation(message.itemStack);
-            ServerPlayerEntity player = context.get().getSender();
+            ClientPlayerEntity player = Minecraft.getInstance().player;
             if (player != null  && message.particleIn) {
                 Minecraft.getInstance().particleEngine.createTrackingEmitter(player, ParticleTypes.TOTEM_OF_UNDYING, 30);
             }
