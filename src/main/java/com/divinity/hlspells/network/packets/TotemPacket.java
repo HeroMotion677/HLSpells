@@ -12,7 +12,7 @@ import java.util.function.Supplier;
 public class TotemPacket {
 
     private final ItemStack itemStack;
-    private boolean particleIn;
+    private final boolean particleIn;
 
     public TotemPacket(ItemStack itemStack, boolean particleIn) {
         this.itemStack = itemStack;
