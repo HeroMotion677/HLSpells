@@ -9,6 +9,8 @@ import com.divinity.hlspells.util.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
@@ -81,6 +83,7 @@ public class EntityDiesEvent {
         }
     }
 
+
     @SubscribeEvent
     public static void onEntityDrops(LivingDropsEvent event) {
         if (!(event.getEntity() instanceof PlayerEntity)) return;
@@ -99,22 +102,6 @@ public class EntityDiesEvent {
                     Hand hand = cap.getTotemInHand();
                     if (hand == Hand.MAIN_HAND) player.inventory.add(player.inventory.selected, stack);
                     else if (hand == Hand.OFF_HAND) player.inventory.offhand.set(0, stack);
-                });
-            }
-            // TOTEM OF KEEPING  (wip)
-            else if (stack.getItem() == ItemInit.TOTEM_OF_KEEPING.get()) {
-                stack.getCapability(TotemItemProvider.TOTEM_CAP).filter(ITotemCap::getHasDied).ifPresent(cap -> {
-                    Hand hand = cap.getTotemInHand();
-                    if (hand != null) {
-                        event.setCanceled(true);
-                        if (hand == Hand.MAIN_HAND) player.inventory.add(player.inventory.selected, stack);
-                        else if (hand == Hand.OFF_HAND) player.inventory.offhand.set(0, stack);
-                        for (ItemEntity entity : event.getDrops()) {
-                            if (entity.getItem().getItem() != ItemInit.TOTEM_OF_KEEPING.get()) {
-                                player.inventory.add(entity.getItem());
-                            }
-                        }
-                    }
                 });
             }
         }
@@ -139,6 +126,13 @@ public class EntityDiesEvent {
                 int mainSlot = original.inventory.findSlotMatchingItem(original.getMainHandItem());
                 original.inventory.getItem(mainSlot != -1 ? mainSlot : 0).shrink(mainSlot != -1 ? 1 : 0);
                 current.inventory.replaceWith(original.inventory);
+                displayActivation(ItemInit.TOTEM_OF_KEEPING.get());
+            }
+
+            else if (original.getOffhandItem().getItem() == ItemInit.TOTEM_OF_KEEPING.get()) {
+                original.inventory.offhand.get(0).shrink(1);
+                current.inventory.replaceWith(original.inventory);
+                displayActivation(ItemInit.TOTEM_OF_KEEPING.get());
             }
         }
     }
@@ -168,9 +162,13 @@ public class EntityDiesEvent {
                 Util.teleportParticles(world, new BlockPos(cap.getXPos(), cap.getYPos(), cap.getZPos()), 200);
                 player.getItemInHand(hand).shrink(1);
                 world.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.TOTEM_USE, SoundCategory.PLAYERS, 0.3F, 0.3F);
-                Minecraft.getInstance().gameRenderer.displayItemActivation(new ItemStack(ItemInit.TOTEM_OF_RETURNING.get()));
+                displayActivation(ItemInit.TOTEM_OF_RETURNING.get());
                 world.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ENDERMAN_TELEPORT, SoundCategory.PLAYERS, 0.7F, 0.7F);
             }
         });
+    }
+
+    private static void displayActivation (Item item) {
+        Minecraft.getInstance().gameRenderer.displayItemActivation(new ItemStack(item));
     }
 }
