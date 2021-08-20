@@ -187,6 +187,6 @@ public class EntityDiesEvent {
      * Sends packet to server to show totem activation
      */
     private static void displayActivation(PlayerEntity playerEntity, Item item) {
-        NetworkManager.INSTANCE.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> playerEntity), new TotemPacket(new ItemStack(item)));
+        NetworkManager.INSTANCE.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> playerEntity), new TotemPacket(new ItemStack(item), true));
     }
 }
