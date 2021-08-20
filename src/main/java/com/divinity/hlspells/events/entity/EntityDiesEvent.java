@@ -12,6 +12,7 @@ import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
@@ -35,6 +36,7 @@ import java.util.Iterator;
 @Mod.EventBusSubscriber(modid = HLSpells.MODID)
 public class EntityDiesEvent {
 
+    //Prioritize Death totem savers
     @SubscribeEvent
     public static void onEntityDies(LivingDeathEvent event) {
         if (event.getEntityLiving() instanceof PlayerEntity) {
@@ -45,8 +47,13 @@ public class EntityDiesEvent {
             boolean escapingTotem = true;
             boolean returnTotem = true;
             boolean keepingTotem = true;
+
             for (Hand hand : Hand.values()) {
                 ItemStack heldItem = player.getItemInHand(hand);
+                if (heldItem.getItem() == Items.TOTEM_OF_UNDYING) {
+                    escapingTotem = false;
+                }
+
                 // TOTEM OF GRIEFING (Explodes if the totem is held)
                 if (heldItem.getItem() == ItemInit.TOTEM_OF_GRIEFING.get() && griefingTotem) {
                     world.explode(player, player.getX(), player.getY(), player.getZ(), 5.0F, Explosion.Mode.BREAK);
@@ -148,11 +155,11 @@ public class EntityDiesEvent {
                 int mainSlot = original.inventory.findSlotMatchingItem(original.getMainHandItem());
                 original.inventory.getItem(mainSlot != -1 ? mainSlot : 0).shrink(mainSlot != -1 ? 1 : 0);
                 current.inventory.replaceWith(original.inventory);
-                displayActivation(current, ItemInit.TOTEM_OF_KEEPING.get());
+                displayActivation(current, ItemInit.TOTEM_OF_KEEPING.get(), true);
             } else if (original.getOffhandItem().getItem() == ItemInit.TOTEM_OF_KEEPING.get()) {
                 original.inventory.offhand.get(0).shrink(1);
                 current.inventory.replaceWith(original.inventory);
-                displayActivation(current, ItemInit.TOTEM_OF_KEEPING.get());
+                displayActivation(current, ItemInit.TOTEM_OF_KEEPING.get(), true);
             }
         }
     }
@@ -169,7 +176,7 @@ public class EntityDiesEvent {
                     if (stack.getItem() == ItemInit.TOTEM_OF_RETURNING.get()) {
                         stack.getCapability(TotemItemProvider.TOTEM_CAP).filter(ITotemCap::getHasDied).ifPresent(cap -> {
                             BlockPos pos = cap.getBlockPos();
-                            displayActivation(player, ItemInit.TOTEM_OF_RETURNING.get());
+                            displayActivation(player, ItemInit.TOTEM_OF_RETURNING.get(), true);
                             world.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.TOTEM_USE, SoundCategory.PLAYERS, 0.3F, 0.3F);
                             player.teleportTo(pos.getX(), pos.getY(), pos.getZ());
                             player.setItemInHand(hand, ItemStack.EMPTY);
@@ -186,7 +193,7 @@ public class EntityDiesEvent {
     /**
      * Sends packet to server to show totem activation
      */
-    private static void displayActivation(PlayerEntity playerEntity, Item item) {
-        NetworkManager.INSTANCE.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> playerEntity), new TotemPacket(new ItemStack(item)));
+    private static void displayActivation(PlayerEntity playerEntity, Item item, boolean particleIn) {
+        NetworkManager.INSTANCE.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> playerEntity), new TotemPacket(new ItemStack(item), particleIn));
     }
 }
