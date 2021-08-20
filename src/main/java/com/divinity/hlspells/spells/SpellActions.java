@@ -10,6 +10,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.IWaterLoggable;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
@@ -67,8 +68,13 @@ public class SpellActions {
     static int healingTimer = 0;
     static int airTimer = 0;
 
+    static EffectInstance GLOWING = new EffectInstance(Effects.GLOWING, Integer.MAX_VALUE, 0, false, false);
+    static EffectInstance LEVITATION = new EffectInstance(Effects.LEVITATION, Integer.MAX_VALUE, 2, false, false);
+    static EffectInstance SLOW_FALLING = new EffectInstance(Effects.SLOW_FALLING,  Integer.MAX_VALUE, 2, false, false);
+    static EffectInstance SPEED = new EffectInstance(Effects.MOVEMENT_SPEED, Integer.MAX_VALUE, 4, false, false);
+
     /**
-     * Returns an comparator which compares entities distance to given player
+     * Returns a comparator which compares entities' distances to given player
      */
     public static Comparator<Entity> getEntityComparator(PlayerEntity player) {
         return new Object() {
@@ -473,7 +479,7 @@ public class SpellActions {
     // Feather Falling
     public static void doFeatherFalling(PlayerEntity player, World world) {
         if (player.getDeltaMovement().y <= 0) {
-            player.addEffect(new EffectInstance(Effects.SLOW_FALLING, Integer.MAX_VALUE, 2, false, false));
+            player.addEffect(SLOW_FALLING);
             for (int i = 0; i < 3; i++) {
                 world.addParticle(ParticleTypes.CLOUD, player.getX(), player.getY() - 1,
                         player.getZ(), 0, player.getDeltaMovement().y, 0);
@@ -483,7 +489,7 @@ public class SpellActions {
 
     // Lure
     public static void doLure(PlayerEntity player, World world) {
-        player.addEffect(new EffectInstance(Effects.GLOWING, Integer.MAX_VALUE, 0, false, false));
+        player.addEffect(GLOWING);
 
         List<MobEntity> mobEntities = world.getEntitiesOfClass(MobEntity.class,
                 new AxisAlignedBB(player.getX() - LURE_RANGE, player.getY() - LURE_RANGE, player.getZ() - LURE_RANGE,
@@ -627,7 +633,7 @@ public class SpellActions {
     // Levitation
     public static void doLevitation(PlayerEntity player, World world) {
         if (player.getDeltaMovement().y >= 0) {
-            player.addEffect(new EffectInstance(Effects.LEVITATION, Integer.MAX_VALUE, 2, false, false));
+            player.addEffect(LEVITATION);
 
             for (int a = 0; a < 1; a++) {
                 world.addParticle(ParticleTypes.END_ROD, player.getX(), player.getY() - 1,
@@ -729,12 +735,10 @@ public class SpellActions {
         }
     }
 
-    // Speed
+    // Speed (WIP)
     public static void doSpeed(PlayerEntity player, World world) {
-        ModifiableAttributeInstance attribute = player.getAttributes().getInstance(Attributes.MOVEMENT_SPEED);
-        if (attribute != null) {
-            attribute.setBaseValue(2.2F);
-        }
+        // WIP
+        player.addEffect(SPEED);
     }
 
     // Respiration
@@ -761,12 +765,9 @@ public class SpellActions {
         healingTimer = 0;
         protectionCircleTimer = 0;
         airTimer = 0;
-        ModifiableAttributeInstance instance = playerEntity.getAttributes().getInstance(Attributes.MOVEMENT_SPEED);
-        if (instance != null) {
-            instance.setBaseValue(0.10000000149011612F);
-        }
-        playerEntity.removeEffect(Effects.SLOW_FALLING);
-        playerEntity.removeEffect(Effects.LEVITATION);
-        playerEntity.removeEffect(Effects.GLOWING);
+        playerEntity.removeEffect(SPEED.getEffect());
+        playerEntity.removeEffect(SLOW_FALLING.getEffect());
+        playerEntity.removeEffect(LEVITATION.getEffect());
+        playerEntity.removeEffect(GLOWING.getEffect());
     }
 }
