@@ -45,7 +45,9 @@ public class SpellInit {
     public static final RegistryObject<Spell> REPEL = register("repel", () -> new Spell(SpellType.HELD, SpellActions::doRepel, "Repel", 1, 3));
     public static final RegistryObject<Spell> FLAMING_CIRCLE = register("flaming_circle", () -> new Spell(SpellType.HELD, SpellActions::doFlamingCircle, "Flaming Circle", 1, 6));
     public static Supplier<IForgeRegistry<Spell>> SPELLS_REGISTRY = SPELLS_DEFERRED_REGISTER.makeRegistry("spell", () ->
-            new RegistryBuilder<Spell>().setMaxID(Integer.MAX_VALUE - 1)
+            new RegistryBuilder<Spell>().setMaxID(Integer.MAX_VALUE - 1).onAdd((owner, stage, id, obj, oldObj) -> {
+
+            })
                     .setDefaultKey(new ResourceLocation(HLSpells.MODID, "empty"))
     );
 
@@ -55,7 +57,7 @@ public class SpellInit {
 
     public static RegistryObject<Spell> register(String name, Supplier<Spell> spell) {
         RegistryObject<Spell> registryObject = SPELLS_DEFERRED_REGISTER.register(name, spell);
-        HLSpells.LOGGER.info("Spell added : " + registryObject.get().getTrueDisplayName() + " ");
+        HLSpells.LOGGER.info("Spell added : " + spell.get().getTrueDisplayName() + " ");
         return registryObject;
     }
 }
