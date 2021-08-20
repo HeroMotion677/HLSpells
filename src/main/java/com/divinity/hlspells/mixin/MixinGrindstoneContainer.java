@@ -1,7 +1,7 @@
 package com.divinity.hlspells.mixin;
 
 import com.divinity.hlspells.items.WandItem;
-import com.divinity.hlspells.items.capabilities.wandcap.WandItemProvider;
+import com.divinity.hlspells.items.capabilities.wandcap.SpellHolderProvider;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.container.GrindstoneContainer;
 import net.minecraft.item.ItemStack;
@@ -43,7 +43,7 @@ public class MixinGrindstoneContainer {
     public void removeSpells(ItemStack stack, int pDamage, int pCount, CallbackInfoReturnable<ItemStack> cir) {
         ItemStack output = cir.getReturnValue();
         if (output.getItem() instanceof WandItem) {
-            output.getCapability(WandItemProvider.WAND_CAP, null).ifPresent(iWandCap ->
+            output.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP, null).ifPresent(iWandCap ->
             {
                 //get all the spells present and remove them all
                 if (!iWandCap.getSpells().isEmpty())

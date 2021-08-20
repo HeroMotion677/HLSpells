@@ -1,7 +1,7 @@
 package com.divinity.hlspells.network.packets;
 
 import com.divinity.hlspells.items.WandItem;
-import com.divinity.hlspells.items.capabilities.wandcap.WandItemProvider;
+import com.divinity.hlspells.items.capabilities.wandcap.SpellHolderProvider;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
@@ -36,10 +36,10 @@ public class WandInputPacket {
                 boolean offHandWand = player.getOffhandItem().getItem() instanceof WandItem;
                 if (mainHandWand) {
                     ItemStack wandItem = player.getMainHandItem();
-                    wandItem.getCapability(WandItemProvider.WAND_CAP, null).ifPresent(p -> p.setCurrentSpellCycle(p.getCurrentSpellCycle() + 1));
+                    wandItem.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP, null).ifPresent(p -> p.setCurrentSpellCycle(p.getCurrentSpellCycle() + 1));
                 } else if (offHandWand) {
                     ItemStack wandItem = player.getOffhandItem();
-                    wandItem.getCapability(WandItemProvider.WAND_CAP, null).ifPresent(p -> p.setCurrentSpellCycle(p.getCurrentSpellCycle() + 1));
+                    wandItem.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP, null).ifPresent(p -> p.setCurrentSpellCycle(p.getCurrentSpellCycle() + 1));
                 }
             }
         });

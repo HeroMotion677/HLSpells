@@ -4,9 +4,9 @@ import com.divinity.hlspells.init.ConfigData;
 import com.divinity.hlspells.items.capabilities.totemcap.ITotemCap;
 import com.divinity.hlspells.items.capabilities.totemcap.TotemCap;
 import com.divinity.hlspells.items.capabilities.totemcap.TotemItemStorage;
-import com.divinity.hlspells.items.capabilities.wandcap.IWandCap;
-import com.divinity.hlspells.items.capabilities.wandcap.WandCap;
-import com.divinity.hlspells.items.capabilities.wandcap.WandItemStorage;
+import com.divinity.hlspells.items.capabilities.wandcap.ISpellHolder;
+import com.divinity.hlspells.items.capabilities.wandcap.SpellHolder;
+import com.divinity.hlspells.items.capabilities.wandcap.SpellHolderStorage;
 import com.divinity.hlspells.setup.RegistryHandler;
 import com.divinity.hlspells.villages.POIFixup;
 import com.divinity.hlspells.villages.StructureGen;
@@ -70,7 +70,7 @@ public class HLSpells {
     }
 
     public void setup(final FMLCommonSetupEvent event) {
-        CapabilityManager.INSTANCE.register(IWandCap.class, new WandItemStorage(), WandCap::new);
+        CapabilityManager.INSTANCE.register(ISpellHolder.class, new SpellHolderStorage(), SpellHolder::new);
         CapabilityManager.INSTANCE.register(ITotemCap.class, new TotemItemStorage(), TotemCap::new);
         POIFixup.registerPOI();
     }

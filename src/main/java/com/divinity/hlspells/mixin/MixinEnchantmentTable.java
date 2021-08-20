@@ -2,6 +2,7 @@ package com.divinity.hlspells.mixin;
 
 import com.divinity.hlspells.enchantments.ISpell;
 import com.divinity.hlspells.items.SpellBookItem;
+import com.divinity.hlspells.items.capabilities.wandcap.SpellHolderProvider;
 import com.divinity.hlspells.spell.Spell;
 import com.divinity.hlspells.util.SpellUtils;
 import com.google.common.collect.Lists;
@@ -42,7 +43,7 @@ public class MixinEnchantmentTable {
                 if (enchantment instanceof ISpell) {
                     Spell spell = SpellUtils.getSpellByID(((ISpell) enchantment).getSpellRegistryName());
                     if (spell != null) {
-                        SpellUtils.setSpell(stack, spell);
+                        stack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP).ifPresent(cap -> cap.addSpell(spell.getRegistryName().toString()));
                         stack.getEnchantmentTags().remove(!stack.getEnchantmentTags().isEmpty() ? stack.getEnchantmentTags().size() - 1 : 0);
                     }
                 }
