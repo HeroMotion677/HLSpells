@@ -10,16 +10,11 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.IWaterLoggable;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
-import net.minecraft.entity.boss.WitherEntity;
 import net.minecraft.entity.effect.LightningBoltEntity;
-import net.minecraft.entity.monster.*;
 import net.minecraft.entity.passive.TameableEntity;
-import net.minecraft.entity.passive.horse.SkeletonHorseEntity;
-import net.minecraft.entity.passive.horse.ZombieHorseEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ArrowEntity;
 import net.minecraft.entity.projectile.EvokerFangsEntity;
@@ -28,6 +23,7 @@ import net.minecraft.entity.projectile.ShulkerBulletEntity;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.network.IPacket;
+import net.minecraft.particles.BasicParticleType;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
@@ -66,6 +62,7 @@ public class SpellActions {
     static int flameTimer = 0;
     static int arrowRainArrowSpawnTimer = 0;
     static int arrowRainCloudSpawnTimer = 0;
+    static int protectionCircleTimer = 0;
     static boolean arrowRainCloudSpawnBoolean = true;
     static int healingTimer = 0;
     static int airTimer = 0;
@@ -81,7 +78,7 @@ public class SpellActions {
         }.compareDistOf(player.getX(), player.getY(), player.getZ());
     }
 
-    public static void doBlastSpell(World world, PlayerEntity player) {
+    public static void doBlastSpell(PlayerEntity player, World world) {
         double x = player.getX();
         double y = player.getY();
         double z = player.getZ();
@@ -102,16 +99,16 @@ public class SpellActions {
         world.addParticle(ParticleTypes.EXPLOSION_EMITTER, x, y, z, 1.0D, 0.0D, 0.0D);
     }
 
-    public static void doBoltSpell(PlayerEntity playerEntity) {
-        if (Util.rayTrace(playerEntity.level, playerEntity, 25D) != null && playerEntity.isShiftKeyDown()) {
-            Entity entity = Util.rayTrace(playerEntity.level, playerEntity, 25D);
-            ShulkerBulletEntity smartBullet = new SmartShulkerBolt(playerEntity.level, playerEntity, entity, playerEntity.getDirection().getAxis());
-            smartBullet.setPos(playerEntity.getX() + playerEntity.getViewVector(1.0F).x, playerEntity.getY() + 1.35, playerEntity.getZ() + playerEntity.getViewVector(1.0F).z);
-            playerEntity.level.addFreshEntity(smartBullet);
+    public static void doBoltSpell(PlayerEntity player, World world) {
+        if (Util.rayTrace(world, player, 25D) != null && player.isShiftKeyDown()) {
+            Entity entity = Util.rayTrace(world, player, 25D);
+            ShulkerBulletEntity smartBullet = new SmartShulkerBolt(world, player, entity, player.getDirection().getAxis());
+            smartBullet.setPos(player.getX() + player.getViewVector(1.0F).x, player.getY() + 1.35, player.getZ() + player.getViewVector(1.0F).z);
+            world.addFreshEntity(smartBullet);
             return;
         }
 
-        ShulkerBulletEntity dumbBullet = new ShulkerBulletEntity(EntityType.SHULKER_BULLET, playerEntity.level) {
+        ShulkerBulletEntity dumbBullet = new ShulkerBulletEntity(EntityType.SHULKER_BULLET, world) {
             @Override
             public void selectNextMoveDirection(@Nullable Direction.Axis axis) {
             }
@@ -158,63 +155,63 @@ public class SpellActions {
         };
 
         dumbBullet.setNoGravity(true);
-        dumbBullet.setOwner(playerEntity);
-        dumbBullet.setPos(playerEntity.getX() + playerEntity.getViewVector(1.0F).x, playerEntity.getY() + 1.35, playerEntity.getZ() + playerEntity.getViewVector(1.0F).z);
-        dumbBullet.shootFromRotation(playerEntity, playerEntity.xRot, playerEntity.yRot, 1.3F, 1.3F, 1.3F);
-        playerEntity.level.addFreshEntity(dumbBullet);
+        dumbBullet.setOwner(player);
+        dumbBullet.setPos(player.getX() + player.getViewVector(1.0F).x, player.getY() + 1.35, player.getZ() + player.getViewVector(1.0F).z);
+        dumbBullet.shootFromRotation(player, player.xRot, player.yRot, 1.3F, 1.3F, 1.3F);
+        world.addFreshEntity(dumbBullet);
     }
 
-    public static void doAbsorbing(PlayerEntity playerEntity) {
-        for (BlockPos blockPos : BlockPos.betweenClosed(MathHelper.floor(playerEntity.getX() - 8.0D), MathHelper.floor(playerEntity.getY() - 8.0D), MathHelper.floor(playerEntity.getZ() - 8.0D), MathHelper.floor(playerEntity.getX() + 8.0D), MathHelper.floor(playerEntity.getY() + 8.0D), MathHelper.floor(playerEntity.getZ() + 8.0D))) {
-            BlockState blockState = playerEntity.level.getBlockState(blockPos);
-            FluidState fluidState = playerEntity.level.getFluidState(blockPos);
+    public static void doAbsorbing(PlayerEntity player, World world) {
+        for (BlockPos blockPos : BlockPos.betweenClosed(MathHelper.floor(player.getX() - 8.0D), MathHelper.floor(player.getY() - 8.0D), MathHelper.floor(player.getZ() - 8.0D), MathHelper.floor(player.getX() + 8.0D), MathHelper.floor(player.getY() + 8.0D), MathHelper.floor(player.getZ() + 8.0D))) {
+            BlockState blockState = world.getBlockState(blockPos);
+            FluidState fluidState = world.getFluidState(blockPos);
             if (fluidState.is(FluidTags.WATER)) {
-                if (blockState.getBlock() instanceof IWaterLoggable && ((IWaterLoggable) blockState.getBlock()).takeLiquid(playerEntity.level, blockPos, blockState) != Fluids.EMPTY) {
-                    playerEntity.level.setBlock(blockPos, blockState.setValue(BlockStateProperties.WATERLOGGED, Boolean.FALSE), 3);
+                if (blockState.getBlock() instanceof IWaterLoggable && ((IWaterLoggable) blockState.getBlock()).takeLiquid(world, blockPos, blockState) != Fluids.EMPTY) {
+                    world.setBlock(blockPos, blockState.setValue(BlockStateProperties.WATERLOGGED, Boolean.FALSE), 3);
                 } else {
-                    playerEntity.level.setBlock(blockPos, Blocks.AIR.defaultBlockState(), 3);
+                    world.setBlock(blockPos, Blocks.AIR.defaultBlockState(), 3);
                 }
             }
         }
     }
 
-    public static void doFlamingBolt(PlayerEntity playerEntity) {
-        FlamingBoltEntity flamingBolt = new FlamingBoltEntity(EntityInit.FLAMING_BOLT_ENTITY.get(), playerEntity.level);
+    public static void doFlamingBolt(PlayerEntity player, World world) {
+        FlamingBoltEntity flamingBolt = new FlamingBoltEntity(EntityInit.FLAMING_BOLT_ENTITY.get(), world);
         flamingBolt.setNoGravity(true);
-        flamingBolt.setOwner(playerEntity);
-        flamingBolt.setPos(playerEntity.getX() + playerEntity.getViewVector(1.0F).x, playerEntity.getY() + 1.35, playerEntity.getZ() + playerEntity.getViewVector(1.0F).z);
-        flamingBolt.shootFromRotation(playerEntity, playerEntity.xRot, playerEntity.yRot, 1.3F, 1.3F, 1.3F);
-        playerEntity.level.addFreshEntity(flamingBolt);
+        flamingBolt.setOwner(player);
+        flamingBolt.setPos(player.getX() + player.getViewVector(1.0F).x, player.getY() + 1.35, player.getZ() + player.getViewVector(1.0F).z);
+        flamingBolt.shootFromRotation(player, player.xRot, player.yRot, 1.3F, 1.3F, 1.3F);
+        world.addFreshEntity(flamingBolt);
     }
 
-    public static void doAquaBolt(PlayerEntity playerEntity) {
-        AquaBoltEntity aquaBolt = new AquaBoltEntity(EntityInit.AQUA_BOLT_ENTITY.get(), playerEntity.level);
+    public static void doAquaBolt(PlayerEntity player, World world) {
+        AquaBoltEntity aquaBolt = new AquaBoltEntity(EntityInit.AQUA_BOLT_ENTITY.get(), world);
         aquaBolt.setNoGravity(true);
-        aquaBolt.setOwner(playerEntity);
-        aquaBolt.setPos(playerEntity.getX() + playerEntity.getViewVector(1.0F).x, playerEntity.getY() + 1.35, playerEntity.getZ() + playerEntity.getViewVector(1.0F).z);
-        aquaBolt.shootFromRotation(playerEntity, playerEntity.xRot, playerEntity.yRot, 1.3F, 1.3F, 1.3F);
-        playerEntity.level.addFreshEntity(aquaBolt);
+        aquaBolt.setOwner(player);
+        aquaBolt.setPos(player.getX() + player.getViewVector(1.0F).x, player.getY() + 1.35, player.getZ() + player.getViewVector(1.0F).z);
+        aquaBolt.shootFromRotation(player, player.xRot, player.yRot, 1.3F, 1.3F, 1.3F);
+        world.addFreshEntity(aquaBolt);
     }
 
-    public static void doPiercingBolt(PlayerEntity playerEntity) {
-        PiercingBoltEntity piercingBullet = new PiercingBoltEntity(EntityInit.PIERCING_BOLT_ENTITY.get(), playerEntity.level);
+    public static void doPiercingBolt(PlayerEntity player, World world) {
+        PiercingBoltEntity piercingBullet = new PiercingBoltEntity(EntityInit.PIERCING_BOLT_ENTITY.get(), world);
         piercingBullet.setNoGravity(true);
-        piercingBullet.setOwner(playerEntity);
-        piercingBullet.setPos(playerEntity.getX() + playerEntity.getViewVector(1.0F).x, playerEntity.getY() + 1.35, playerEntity.getZ() + playerEntity.getViewVector(1.0F).z);
-        piercingBullet.shootFromRotation(playerEntity, playerEntity.xRot, playerEntity.yRot, 1.3F, 1.3F, 1.3F);
-        playerEntity.level.addFreshEntity(piercingBullet);
+        piercingBullet.setOwner(player);
+        piercingBullet.setPos(player.getX() + player.getViewVector(1.0F).x, player.getY() + 1.35, player.getZ() + player.getViewVector(1.0F).z);
+        piercingBullet.shootFromRotation(player, player.xRot, player.yRot, 1.3F, 1.3F, 1.3F);
+        world.addFreshEntity(piercingBullet);
     }
 
-    public static void doFireBallSpell(PlayerEntity playerEntity) {
-        Vector3d vector3d = playerEntity.getViewVector(1.0F);
-        FireballEntity fireballEntity = new FireballEntity(playerEntity.level, playerEntity, vector3d.x, vector3d.y, vector3d.z);
-        fireballEntity.setPos(playerEntity.getX() + vector3d.x * 1.5D, playerEntity.getY() + 0.5, playerEntity.getZ() + vector3d.z * 1.5D);
-        fireballEntity.setOwner(playerEntity);
-        playerEntity.level.addFreshEntity(fireballEntity);
+    public static void doFireBallSpell(PlayerEntity player, World world) {
+        Vector3d vector3d = player.getViewVector(1.0F);
+        FireballEntity fireballEntity = new FireballEntity(world, player, vector3d.x, vector3d.y, vector3d.z);
+        fireballEntity.setPos(player.getX() + vector3d.x * 1.5D, player.getY() + 0.5, player.getZ() + vector3d.z * 1.5D);
+        fireballEntity.setOwner(player);
+        world.addFreshEntity(fireballEntity);
     }
 
-    public static void doKnockBackBolt(PlayerEntity playerEntity) {
-        ShulkerBulletEntity entity = new ShulkerBulletEntity(EntityType.SHULKER_BULLET, playerEntity.level) {
+    public static void doKnockBackBolt(PlayerEntity player, World world) {
+        ShulkerBulletEntity entity = new ShulkerBulletEntity(EntityType.SHULKER_BULLET, world) {
             @Override
             public void selectNextMoveDirection(@Nullable Direction.Axis axis) {
             }
@@ -246,13 +243,13 @@ public class SpellActions {
         };
 
         entity.setNoGravity(true);
-        entity.setPos(playerEntity.getX() + playerEntity.getViewVector(1.0F).x, playerEntity.getY() + 1.35, playerEntity.getZ() + playerEntity.getViewVector(1.0F).z);
-        entity.shootFromRotation(playerEntity, playerEntity.xRot, playerEntity.yRot, 1.3F, 1.3F, 1.3F);
-        playerEntity.level.addFreshEntity(entity);
+        entity.setPos(player.getX() + player.getViewVector(1.0F).x, player.getY() + 1.35, player.getZ() + player.getViewVector(1.0F).z);
+        entity.shootFromRotation(player, player.xRot, player.yRot, 1.3F, 1.3F, 1.3F);
+        world.addFreshEntity(entity);
     }
 
-    public static void doLightningBolt(PlayerEntity playerEntity) {
-        RayTraceResult rayTraceResult = Util.lookAt(playerEntity, 25D, 1F, false);
+    public static void doLightningBolt(PlayerEntity player, World world) {
+        RayTraceResult rayTraceResult = Util.lookAt(player, 25D, 1F, false);
         Vector3d location = rayTraceResult.getLocation();
         int stepX = 0;
         int stepY = 0;
@@ -268,40 +265,40 @@ public class SpellActions {
         double dy = location.y() + stepY - 1;
         double dz = location.z() + stepZ;
 
-        LightningBoltEntity lightning = new LightningBoltEntity(EntityType.LIGHTNING_BOLT, playerEntity.getCommandSenderWorld());
+        LightningBoltEntity lightning = new LightningBoltEntity(EntityType.LIGHTNING_BOLT, world);
         lightning.moveTo(dx, dy, dz);
-        playerEntity.level.addFreshEntity(lightning);
+        world.addFreshEntity(lightning);
     }
 
     // Add config option for this
-    public static void doBondSpell(PlayerEntity playerEntity) {
-        Entity targetEntity = Util.rayTrace(playerEntity.getCommandSenderWorld(), playerEntity, 20D);
+    public static void doBondSpell(PlayerEntity player, World world) {
+        Entity targetEntity = Util.rayTrace(world, player, 20D);
         if (targetEntity instanceof TameableEntity) {
             TameableEntity entity = (TameableEntity) targetEntity;
-            entity.tame(playerEntity);
+            entity.tame(player);
         }
     }
 
     // Pending change
-    public static void doStormSpell(PlayerEntity playerEntity) {
-        InvisibleTargetingEntity stormBullet = new InvisibleTargetingEntity(EntityInit.STORM_BULLET_ENTITY.get(), playerEntity.level);
-        stormBullet.setHomePosition(playerEntity.position());
-        stormBullet.setOwner(playerEntity);
-        stormBullet.setPos(playerEntity.getX() + playerEntity.getViewVector(1.0F).x, playerEntity.getY() + 1.35, playerEntity.getZ() + playerEntity.getViewVector(1.0F).z);
-        stormBullet.shootFromRotation(playerEntity, playerEntity.xRot, playerEntity.yRot, 1.3F, 1.3F, 1.3F);
-        playerEntity.level.addFreshEntity(stormBullet);
+    public static void doStormSpell(PlayerEntity player, World world) {
+        InvisibleTargetingEntity stormBullet = new InvisibleTargetingEntity(EntityInit.STORM_BULLET_ENTITY.get(), world);
+        stormBullet.setHomePosition(player.position());
+        stormBullet.setOwner(player);
+        stormBullet.setPos(player.getX() + player.getViewVector(1.0F).x, player.getY() + 1.35, player.getZ() + player.getViewVector(1.0F).z);
+        stormBullet.shootFromRotation(player, player.xRot, player.yRot, 1.3F, 1.3F, 1.3F);
+        world.addFreshEntity(stormBullet);
     }
 
-    public static void doPullSpell(PlayerEntity playerEntity) {
-        if (Util.rayTrace(playerEntity.level, playerEntity, 35D) != null) {
-            Entity targetEntity = Util.rayTrace(playerEntity.level, playerEntity, 35D);
-            if (targetEntity != null && targetEntity.distanceTo(playerEntity) > 5)
-                targetEntity.setDeltaMovement(playerEntity.getLookAngle().reverse().multiply(5, 5, 5));
+    public static void doPullSpell(PlayerEntity player, World world) {
+        if (Util.rayTrace(world, player, 35D) != null) {
+            Entity targetEntity = Util.rayTrace(world, player, 35D);
+            if (targetEntity != null && targetEntity.distanceTo(player) > 5)
+                targetEntity.setDeltaMovement(player.getLookAngle().reverse().multiply(5, 5, 5));
         }
     }
 
-    public static void doSoulSyphon(World world, PlayerEntity playerEntity) {
-        RayTraceResult rayTraceResult = Util.lookAt(playerEntity, 150D, 1F, false);
+    public static void doSoulSyphon(PlayerEntity player, World world) {
+        RayTraceResult rayTraceResult = Util.lookAt(player, 150D, 1F, false);
         Vector3d location = rayTraceResult.getLocation();
         int stepX = 0;
         int stepY = 1;
@@ -317,29 +314,29 @@ public class SpellActions {
         double ty = location.y() + stepY;
         double tz = location.z() + stepZ;
         BlockPos teleportPos = new BlockPos(tx, ty, tz);
-        playerEntity.fallDistance = 0;
-        Util.teleport(world, playerEntity.blockPosition(), teleportPos, playerEntity);
+        player.fallDistance = 0;
+        Util.teleport(world, player.blockPosition(), teleportPos, player);
     }
 
-    public static void doSummonSpell(PlayerEntity playerEntity) {
+    public static void doSummonSpell(PlayerEntity player, World world) {
         for (int i = 0; i < 4; ++i) {
-            BlockPos blockpos = playerEntity.blockPosition().offset(-2 + playerEntity.level.random.nextInt(5), 1, -2 + playerEntity.level.random.nextInt(5));
-            SummonedVexEntity vexEntity = new SummonedVexEntity(EntityType.VEX, playerEntity.level);
+            BlockPos blockpos = player.blockPosition().offset(-2 + world.random.nextInt(5), 1, -2 + world.random.nextInt(5));
+            SummonedVexEntity vexEntity = new SummonedVexEntity(EntityType.VEX, world);
             vexEntity.moveTo(blockpos, 0.0F, 0.0F);
-            vexEntity.setSummonedOwner(playerEntity);
-            vexEntity.setLimitedLife(20 * (30 + playerEntity.level.random.nextInt(50)));
+            vexEntity.setSummonedOwner(player);
+            vexEntity.setLimitedLife(20 * (30 + world.random.nextInt(50)));
 
-            if (playerEntity.level instanceof ServerWorld) {
-                ServerWorld world = (ServerWorld) playerEntity.level;
-                vexEntity.finalizeSpawn(world, world.getCurrentDifficultyAt(blockpos), SpawnReason.MOB_SUMMONED, null, null);
-                world.addFreshEntityWithPassengers(vexEntity);
+            if (world instanceof ServerWorld) {
+                ServerWorld serverWorld = (ServerWorld) world;
+                vexEntity.finalizeSpawn(serverWorld, serverWorld.getCurrentDifficultyAt(blockpos), SpawnReason.MOB_SUMMONED, null, null);
+                serverWorld.addFreshEntityWithPassengers(vexEntity);
             }
         }
     }
 
-    public static void doParticles(PlayerEntity playerEntity) {
-        doBookParticles(playerEntity.getCommandSenderWorld(), new BlockPos(playerEntity.getX(), (playerEntity.getY() + 1), playerEntity.getZ()), 100);
-        playerEntity.getCommandSenderWorld().playSound(null, new BlockPos(playerEntity.getX(), playerEntity.getY(), playerEntity.getZ()), SoundEvents.ENCHANTMENT_TABLE_USE,
+    public static void doParticles(PlayerEntity player) {
+        doBookParticles(player.level, new BlockPos(player.getX(), (player.getY() + 1), player.getZ()), 100);
+        player.level.playSound(null, new BlockPos(player.getX(), player.getY(), player.getZ()), SoundEvents.ENCHANTMENT_TABLE_USE,
                 SoundCategory.AMBIENT, 0.6f, 1.0f);
     }
 
@@ -355,26 +352,26 @@ public class SpellActions {
         }
     }
 
-    public static void doFangsSpell(PlayerEntity playerEntity) {
-        if (!playerEntity.isShiftKeyDown()) {
-            InvisibleTargetingEntity stormBullet = new InvisibleTargetingEntity(EntityInit.STORM_BULLET_ENTITY.get(), playerEntity.level);
-            stormBullet.setHomePosition(playerEntity.position());
+    public static void doFangsSpell(PlayerEntity player, World world) {
+        if (!player.isShiftKeyDown()) {
+            InvisibleTargetingEntity stormBullet = new InvisibleTargetingEntity(EntityInit.STORM_BULLET_ENTITY.get(), world);
+            stormBullet.setHomePosition(player.position());
             stormBullet.setIsLightning(false);
-            stormBullet.setOwner(playerEntity);
-            stormBullet.setPos(playerEntity.getX(), playerEntity.getY(), playerEntity.getZ());
-            stormBullet.shootFromRotation(playerEntity, playerEntity.xRot, playerEntity.yRot, 1.2F, 1.2F, 1.2F);
-            stormBullet.setDeltaMovement(MathHelper.cos((float) Math.toRadians(playerEntity.yRot + 90)), 0, MathHelper.sin((float) Math.toRadians(playerEntity.yRot + 90)));
-            playerEntity.level.addFreshEntity(stormBullet);
+            stormBullet.setOwner(player);
+            stormBullet.setPos(player.getX(), player.getY(), player.getZ());
+            stormBullet.shootFromRotation(player, player.xRot, player.yRot, 1.2F, 1.2F, 1.2F);
+            stormBullet.setDeltaMovement(MathHelper.cos((float) Math.toRadians(player.yRot + 90)), 0, MathHelper.sin((float) Math.toRadians(player.yRot + 90)));
+            world.addFreshEntity(stormBullet);
         } else {
             fangsActiveFlag = true;
-            fangsSpellActivator = playerEntity;
+            fangsSpellActivator = player;
         }
     }
 
     @SubscribeEvent
     public static void fangsSpell(TickEvent.PlayerTickEvent event) {
         if (event.player != null && fangsSpellActivator != null) {
-            if (fangsActiveFlag && !event.player.level.isClientSide() && fangsSpellActivator == event.player) {
+            if (fangsActiveFlag && !event.player.getCommandSenderWorld().isClientSide() && fangsSpellActivator == event.player) {
                 List<EvokerFangsEntity> entities = new ArrayList<>();
 
                 for (int i = 0; i < 28; i++) {
@@ -474,21 +471,21 @@ public class SpellActions {
     }
 
     // Feather Falling
-    public static void doFeatherFalling(PlayerEntity player) {
+    public static void doFeatherFalling(PlayerEntity player, World world) {
         if (player.getDeltaMovement().y <= 0) {
             player.addEffect(new EffectInstance(Effects.SLOW_FALLING, Integer.MAX_VALUE, 2, false, false));
             for (int i = 0; i < 3; i++) {
-                player.getCommandSenderWorld().addParticle(ParticleTypes.CLOUD, player.getX(), player.getY() - 1,
+                world.addParticle(ParticleTypes.CLOUD, player.getX(), player.getY() - 1,
                         player.getZ(), 0, player.getDeltaMovement().y, 0);
             }
         }
     }
 
     // Lure
-    public static void doLure(PlayerEntity player) {
+    public static void doLure(PlayerEntity player, World world) {
         player.addEffect(new EffectInstance(Effects.GLOWING, Integer.MAX_VALUE, 0, false, false));
 
-        List<MobEntity> mobEntities = player.level.getEntitiesOfClass(MobEntity.class,
+        List<MobEntity> mobEntities = world.getEntitiesOfClass(MobEntity.class,
                 new AxisAlignedBB(player.getX() - LURE_RANGE, player.getY() - LURE_RANGE, player.getZ() - LURE_RANGE,
                         player.getX() + LURE_RANGE, player.getY() + LURE_RANGE, player.getZ() + LURE_RANGE), null)
                 .stream().sorted(getEntityComparator(player)).collect(Collectors.toList());
@@ -508,8 +505,8 @@ public class SpellActions {
     }
 
     // Repel
-    public static void doRepel(PlayerEntity player) {
-        List<MobEntity> mobEntities = player.level.getEntitiesOfClass(MobEntity.class,
+    public static void doRepel(PlayerEntity player, World world) {
+        List<MobEntity> mobEntities = world.getEntitiesOfClass(MobEntity.class,
                 new AxisAlignedBB(player.getX() - 15, player.getY() - 15, player.getZ() - 15,
                         player.getX() + 15, player.getY() + 15, player.getZ() + 15), null)
                 .stream().sorted(getEntityComparator(player)).collect(Collectors.toList());
@@ -529,21 +526,20 @@ public class SpellActions {
     }
 
     // Flaming Circle
-    public static void doFlamingCircle(PlayerEntity player) {
-        List<LivingEntity> livingEntities = player.getCommandSenderWorld().getEntitiesOfClass(LivingEntity.class,
+    public static void doFlamingCircle(PlayerEntity player, World world) {
+        List<LivingEntity> livingEntities = world.getEntitiesOfClass(LivingEntity.class,
                 new AxisAlignedBB(player.getX() - 6, player.getY() + 1, player.getZ() - 6,
                         player.getX() + 6, player.getY() - 1, player.getZ() + 6), null)
                 .stream().sorted(getEntityComparator(player)).collect(Collectors.toList());
 
-        doEnchantParticleInterior(player, player.level);
         flameTimer++;
 
+        if (flameTimer % 10 == 0) {
+            doEnchantParticleInterior(player, world);
+            doOuterRingParticles(ParticleTypes.FLAME, player, world);
+            flameTimer = 0;
+        }
         for (LivingEntity entity : livingEntities) {
-            if (flameTimer % 10 == 0) {
-                doFlamingRadiusParticles(player);
-                flameTimer = 0;
-            }
-
             if (entity != null && entity != player) {
                 entity.setLastHurtByPlayer(player);
                 entity.setSecondsOnFire(1);
@@ -559,61 +555,61 @@ public class SpellActions {
         }
     }
 
-    // Adds flaming particles in a circle around the player
-    private static void doFlamingRadiusParticles(PlayerEntity player) {
-        player.level.addParticle(ParticleTypes.FLAME, player.getX() - 1, player.getY() + 1.2, player.getZ() - 6, 0, 0, 0);
-        player.level.addParticle(ParticleTypes.FLAME, player.getX(), player.getY() + 1.2, player.getZ() - 6, 0, 0, 0);
-        player.level.addParticle(ParticleTypes.FLAME, player.getX() + 1, player.getY() + 1.2, player.getZ() - 6, 0, 0, 0);
-        player.level.addParticle(ParticleTypes.FLAME, player.getX() + 1.5, player.getY() + 1.2, player.getZ() - 5.5, 0, 0, 0);
-        player.level.addParticle(ParticleTypes.FLAME, player.getX() + 2, player.getY() + 1.2, player.getZ() - 5, 0, 0, 0);
-        player.level.addParticle(ParticleTypes.FLAME, player.getX() + 2.5, player.getY() + 1.2, player.getZ() - 4.5, 0, 0, 0);
-        player.level.addParticle(ParticleTypes.FLAME, player.getX() + 3, player.getY() + 1.2, player.getZ() - 4, 0, 0, 0);
-        player.level.addParticle(ParticleTypes.FLAME, player.getX() + 3.5, player.getY() + 1.2, player.getZ() - 3.5, 0, 0, 0);
-        player.level.addParticle(ParticleTypes.FLAME, player.getX() + 4, player.getY() + 1.2, player.getZ() - 3, 0, 0, 0);
-        player.level.addParticle(ParticleTypes.FLAME, player.getX() + 4.5, player.getY() + 1.2, player.getZ() - 2.5, 0, 0, 0);
-        player.level.addParticle(ParticleTypes.FLAME, player.getX() + 5, player.getY() + 1.2, player.getZ() - 2, 0, 0, 0);
-        player.level.addParticle(ParticleTypes.FLAME, player.getX() + 5.5, player.getY() + 1.2, player.getZ() - 1.5, 0, 0, 0);
-        player.level.addParticle(ParticleTypes.FLAME, player.getX() + 6, player.getY() + 1.2, player.getZ() - 1, 0, 0, 0);
-        player.level.addParticle(ParticleTypes.FLAME, player.getX() + 6, player.getY() + 1.2, player.getZ(), 0, 0, 0);
-        player.level.addParticle(ParticleTypes.FLAME, player.getX() + 6, player.getY() + 1.2, player.getZ() + 1, 0, 0, 0);
-        player.level.addParticle(ParticleTypes.FLAME, player.getX() + 5.5, player.getY() + 1.2, player.getZ() + 1.5, 0, 0, 0);
-        player.level.addParticle(ParticleTypes.FLAME, player.getX() + 5, player.getY() + 1.2, player.getZ() + 2, 0, 0, 0);
-        player.level.addParticle(ParticleTypes.FLAME, player.getX() + 4.5, player.getY() + 1.2, player.getZ() + 2.5, 0, 0, 0);
-        player.level.addParticle(ParticleTypes.FLAME, player.getX() + 4, player.getY() + 1.2, player.getZ() + 3, 0, 0, 0);
-        player.level.addParticle(ParticleTypes.FLAME, player.getX() + 3.5, player.getY() + 1.2, player.getZ() + 3.5, 0, 0, 0);
-        player.level.addParticle(ParticleTypes.FLAME, player.getX() + 3, player.getY() + 1.2, player.getZ() + 4, 0, 0, 0);
-        player.level.addParticle(ParticleTypes.FLAME, player.getX() + 2.5, player.getY() + 1.2, player.getZ() + 4.5, 0, 0, 0);
-        player.level.addParticle(ParticleTypes.FLAME, player.getX() + 2, player.getY() + 1.2, player.getZ() + 5, 0, 0, 0);
-        player.level.addParticle(ParticleTypes.FLAME, player.getX() + 1.5, player.getY() + 1.2, player.getZ() + 5.5, 0, 0, 0);
-        player.level.addParticle(ParticleTypes.FLAME, player.getX() + 1, player.getY() + 1.2, player.getZ() + 6, 0, 0, 0);
-        player.level.addParticle(ParticleTypes.FLAME, player.getX(), player.getY() + 1.2, player.getZ() + 6, 0, 0, 0);
-        player.level.addParticle(ParticleTypes.FLAME, player.getX() - 1, player.getY() + 1.2, player.getZ() + 6, 0, 0, 0);
-        player.level.addParticle(ParticleTypes.FLAME, player.getX() - 1.5, player.getY() + 1.2, player.getZ() + 5.5, 0, 0, 0);
-        player.level.addParticle(ParticleTypes.FLAME, player.getX() - 2, player.getY() + 1.2, player.getZ() + 5, 0, 0, 0);
-        player.level.addParticle(ParticleTypes.FLAME, player.getX() - 2.5, player.getY() + 1.2, player.getZ() + 4.5, 0, 0, 0);
-        player.level.addParticle(ParticleTypes.FLAME, player.getX() - 3, player.getY() + 1.2, player.getZ() + 4, 0, 0, 0);
-        player.level.addParticle(ParticleTypes.FLAME, player.getX() - 3.5, player.getY() + 1.2, player.getZ() + 3.5, 0, 0, 0);
-        player.level.addParticle(ParticleTypes.FLAME, player.getX() - 4, player.getY() + 1.2, player.getZ() + 3, 0, 0, 0);
-        player.level.addParticle(ParticleTypes.FLAME, player.getX() - 4.5, player.getY() + 1.2, player.getZ() + 2.5, 0, 0, 0);
-        player.level.addParticle(ParticleTypes.FLAME, player.getX() - 5, player.getY() + 1.2, player.getZ() + 2, 0, 0, 0);
-        player.level.addParticle(ParticleTypes.FLAME, player.getX() - 5.5, player.getY() + 1.2, player.getZ() + 1.5, 0, 0, 0);
-        player.level.addParticle(ParticleTypes.FLAME, player.getX() - 6, player.getY() + 1.2, player.getZ() + 1, 0, 0, 0);
-        player.level.addParticle(ParticleTypes.FLAME, player.getX() - 6, player.getY() + 1.2, player.getZ(), 0, 0, 0);
-        player.level.addParticle(ParticleTypes.FLAME, player.getX() - 6, player.getY() + 1.2, player.getZ() - 1, 0, 0, 0);
-        player.level.addParticle(ParticleTypes.FLAME, player.getX() - 5.5, player.getY() + 1.2, player.getZ() - 1.5, 0, 0, 0);
-        player.level.addParticle(ParticleTypes.FLAME, player.getX() - 5, player.getY() + 1.2, player.getZ() - 2, 0, 0, 0);
-        player.level.addParticle(ParticleTypes.FLAME, player.getX() - 4.5, player.getY() + 1.2, player.getZ() + -2.5, 0, 0, 0);
-        player.level.addParticle(ParticleTypes.FLAME, player.getX() - 4, player.getY() + 1.2, player.getZ() - 3, 0, 0, 0);
-        player.level.addParticle(ParticleTypes.FLAME, player.getX() - 3.5, player.getY() + 1.2, player.getZ() + -3.5, 0, 0, 0);
-        player.level.addParticle(ParticleTypes.FLAME, player.getX() - 3, player.getY() + 1.2, player.getZ() - 4, 0, 0, 0);
-        player.level.addParticle(ParticleTypes.FLAME, player.getX() - 2.5, player.getY() + 1.2, player.getZ() - 4.5, 0, 0, 0);
-        player.level.addParticle(ParticleTypes.FLAME, player.getX() - 2, player.getY() + 1.2, player.getZ() - 5, 0, 0, 0);
-        player.level.addParticle(ParticleTypes.FLAME, player.getX() - 1.5, player.getY() + 1.2, player.getZ() - 5.5, 0, 0, 0);
+    // Adds the given particle in a circle around the player
+    private static void doOuterRingParticles(BasicParticleType type, PlayerEntity player, World world) {
+        world.addParticle(type, player.getX() - 1, player.getY() + 1.2, player.getZ() - 6, 0, 0, 0);
+        world.addParticle(type, player.getX(), player.getY() + 1.2, player.getZ() - 6, 0, 0, 0);
+        world.addParticle(type, player.getX() + 1, player.getY() + 1.2, player.getZ() - 6, 0, 0, 0);
+        world.addParticle(type, player.getX() + 1.5, player.getY() + 1.2, player.getZ() - 5.5, 0, 0, 0);
+        world.addParticle(type, player.getX() + 2, player.getY() + 1.2, player.getZ() - 5, 0, 0, 0);
+        world.addParticle(type, player.getX() + 2.5, player.getY() + 1.2, player.getZ() - 4.5, 0, 0, 0);
+        world.addParticle(type, player.getX() + 3, player.getY() + 1.2, player.getZ() - 4, 0, 0, 0);
+        world.addParticle(type, player.getX() + 3.5, player.getY() + 1.2, player.getZ() - 3.5, 0, 0, 0);
+        world.addParticle(type, player.getX() + 4, player.getY() + 1.2, player.getZ() - 3, 0, 0, 0);
+        world.addParticle(type, player.getX() + 4.5, player.getY() + 1.2, player.getZ() - 2.5, 0, 0, 0);
+        world.addParticle(type, player.getX() + 5, player.getY() + 1.2, player.getZ() - 2, 0, 0, 0);
+        world.addParticle(type, player.getX() + 5.5, player.getY() + 1.2, player.getZ() - 1.5, 0, 0, 0);
+        world.addParticle(type, player.getX() + 6, player.getY() + 1.2, player.getZ() - 1, 0, 0, 0);
+        world.addParticle(type, player.getX() + 6, player.getY() + 1.2, player.getZ(), 0, 0, 0);
+        world.addParticle(type, player.getX() + 6, player.getY() + 1.2, player.getZ() + 1, 0, 0, 0);
+        world.addParticle(type, player.getX() + 5.5, player.getY() + 1.2, player.getZ() + 1.5, 0, 0, 0);
+        world.addParticle(type, player.getX() + 5, player.getY() + 1.2, player.getZ() + 2, 0, 0, 0);
+        world.addParticle(type, player.getX() + 4.5, player.getY() + 1.2, player.getZ() + 2.5, 0, 0, 0);
+        world.addParticle(type, player.getX() + 4, player.getY() + 1.2, player.getZ() + 3, 0, 0, 0);
+        world.addParticle(type, player.getX() + 3.5, player.getY() + 1.2, player.getZ() + 3.5, 0, 0, 0);
+        world.addParticle(type, player.getX() + 3, player.getY() + 1.2, player.getZ() + 4, 0, 0, 0);
+        world.addParticle(type, player.getX() + 2.5, player.getY() + 1.2, player.getZ() + 4.5, 0, 0, 0);
+        world.addParticle(type, player.getX() + 2, player.getY() + 1.2, player.getZ() + 5, 0, 0, 0);
+        world.addParticle(type, player.getX() + 1.5, player.getY() + 1.2, player.getZ() + 5.5, 0, 0, 0);
+        world.addParticle(type, player.getX() + 1, player.getY() + 1.2, player.getZ() + 6, 0, 0, 0);
+        world.addParticle(type, player.getX(), player.getY() + 1.2, player.getZ() + 6, 0, 0, 0);
+        world.addParticle(type, player.getX() - 1, player.getY() + 1.2, player.getZ() + 6, 0, 0, 0);
+        world.addParticle(type, player.getX() - 1.5, player.getY() + 1.2, player.getZ() + 5.5, 0, 0, 0);
+        world.addParticle(type, player.getX() - 2, player.getY() + 1.2, player.getZ() + 5, 0, 0, 0);
+        world.addParticle(type, player.getX() - 2.5, player.getY() + 1.2, player.getZ() + 4.5, 0, 0, 0);
+        world.addParticle(type, player.getX() - 3, player.getY() + 1.2, player.getZ() + 4, 0, 0, 0);
+        world.addParticle(type, player.getX() - 3.5, player.getY() + 1.2, player.getZ() + 3.5, 0, 0, 0);
+        world.addParticle(type, player.getX() - 4, player.getY() + 1.2, player.getZ() + 3, 0, 0, 0);
+        world.addParticle(type, player.getX() - 4.5, player.getY() + 1.2, player.getZ() + 2.5, 0, 0, 0);
+        world.addParticle(type, player.getX() - 5, player.getY() + 1.2, player.getZ() + 2, 0, 0, 0);
+        world.addParticle(type, player.getX() - 5.5, player.getY() + 1.2, player.getZ() + 1.5, 0, 0, 0);
+        world.addParticle(type, player.getX() - 6, player.getY() + 1.2, player.getZ() + 1, 0, 0, 0);
+        world.addParticle(type, player.getX() - 6, player.getY() + 1.2, player.getZ(), 0, 0, 0);
+        world.addParticle(type, player.getX() - 6, player.getY() + 1.2, player.getZ() - 1, 0, 0, 0);
+        world.addParticle(type, player.getX() - 5.5, player.getY() + 1.2, player.getZ() - 1.5, 0, 0, 0);
+        world.addParticle(type, player.getX() - 5, player.getY() + 1.2, player.getZ() - 2, 0, 0, 0);
+        world.addParticle(type, player.getX() - 4.5, player.getY() + 1.2, player.getZ() + -2.5, 0, 0, 0);
+        world.addParticle(type, player.getX() - 4, player.getY() + 1.2, player.getZ() - 3, 0, 0, 0);
+        world.addParticle(type, player.getX() - 3.5, player.getY() + 1.2, player.getZ() + -3.5, 0, 0, 0);
+        world.addParticle(type, player.getX() - 3, player.getY() + 1.2, player.getZ() - 4, 0, 0, 0);
+        world.addParticle(type, player.getX() - 2.5, player.getY() + 1.2, player.getZ() - 4.5, 0, 0, 0);
+        world.addParticle(type, player.getX() - 2, player.getY() + 1.2, player.getZ() - 5, 0, 0, 0);
+        world.addParticle(type, player.getX() - 1.5, player.getY() + 1.2, player.getZ() - 5.5, 0, 0, 0);
     }
 
     // Protection Circle
-    public static void doProtectionCircle(PlayerEntity player) {
-        List<Entity> entities = player.getCommandSenderWorld().getEntitiesOfClass(Entity.class,
+    public static void doProtectionCircle(PlayerEntity player, World world) {
+        List<Entity> entities = world.getEntitiesOfClass(Entity.class,
                 new AxisAlignedBB(player.getX() - 6, player.getY() - 6, player.getZ() - 6,
                         player.getX() + 6, player.getY() + 6, player.getZ() + 6), null)
                 .stream().sorted(getEntityComparator(player)).collect(Collectors.toList());
@@ -622,25 +618,29 @@ public class SpellActions {
                 entity.setDeltaMovement(entity.getLookAngle().reverse().multiply(0.3D, 0D, 0.3D));
             }
         }
+        protectionCircleTimer++;
+        if (protectionCircleTimer % 10 == 0) {
+            doOuterRingParticles(ParticleTypes.HAPPY_VILLAGER, player, world);
+        }
     }
 
     // Levitation
-    public static void doLevitation(PlayerEntity player) {
+    public static void doLevitation(PlayerEntity player, World world) {
         if (player.getDeltaMovement().y >= 0) {
             player.addEffect(new EffectInstance(Effects.LEVITATION, Integer.MAX_VALUE, 2, false, false));
 
             for (int a = 0; a < 1; a++) {
-                player.getCommandSenderWorld().addParticle(ParticleTypes.END_ROD, player.getX(), player.getY() - 1,
+                world.addParticle(ParticleTypes.END_ROD, player.getX(), player.getY() - 1,
                         player.getZ(), 0, player.getDeltaMovement().y, 0);
             }
         }
     }
 
     // Arrow Rain
-    public static void doArrowRain(PlayerEntity player) {
-        if (player.getCommandSenderWorld().isClientSide()) {
+    public static void doArrowRain(PlayerEntity player, World world) {
+        if (world.isClientSide()) {
             if (arrowRainCloudSpawnBoolean)
-                doCloudParticles(player);
+                doCloudParticles(player, world);
             arrowRainCloudSpawnBoolean = false;
 
             arrowRainCloudSpawnTimer++;
@@ -648,136 +648,86 @@ public class SpellActions {
                 arrowRainCloudSpawnBoolean = true;
                 arrowRainCloudSpawnTimer = 0;
             }
-        } else if (!player.getCommandSenderWorld().isClientSide()) {
+        } else {
             arrowRainArrowSpawnTimer++;
             if (arrowRainArrowSpawnTimer % 15 == 0) {
                 for (int i = 0; i < 5; i++) {
-                    doArrowSpawn(player);
+                    doArrowSpawn(player, world);
                 }
                 arrowRainArrowSpawnTimer = 0;
             }
         }
     }
 
-    public static void doArrowSpawn(PlayerEntity player) {
-        ArrowEntity arrowEntity = new ArrowEntity(player.getCommandSenderWorld(),
-                player.getX() + (player.getCommandSenderWorld().random.nextDouble() - 0.5D) * player.getBbWidth(),
-                player.getY() + 4, player.getZ() + (player.getCommandSenderWorld().random.nextDouble() - 0.5D) * player.getBbWidth());
+    public static void doArrowSpawn(PlayerEntity player, World world) {
+        ArrowEntity arrowEntity = new ArrowEntity(world,
+                player.getX() + (world.random.nextDouble() - 0.5D) * player.getBbWidth(),
+                player.getY() + 4, player.getZ() + (world.random.nextDouble() - 0.5D) * player.getBbWidth());
 
         arrowEntity.shootFromRotation(player, player.xRot, player.yRot, 1.0F, 1.0F, 1.0F);
-        arrowEntity.setDeltaMovement(MathHelper.cos((float) Math.toRadians(player.yRot + 90)) + (player.getCommandSenderWorld().random.nextFloat() - 0.5F) * player.getBbWidth(), -0.6, MathHelper.sin((float) Math.toRadians(player.yRot + 90)) + (player.getCommandSenderWorld().random.nextFloat() - 0.5F) * player.getBbWidth());
-        player.getCommandSenderWorld().addFreshEntity(arrowEntity);
+        arrowEntity.setDeltaMovement(MathHelper.cos((float) Math.toRadians(player.yRot + 90)) + (world.random.nextFloat() - 0.5F) * player.getBbWidth(), -0.6, MathHelper.sin((float) Math.toRadians(player.yRot + 90)) + (world.random.nextFloat() - 0.5F) * player.getBbWidth());
+        world.addFreshEntity(arrowEntity);
     }
 
-    public static void doCloudParticles(PlayerEntity playerEntity) {
+    public static void doCloudParticles(PlayerEntity player, World world) {
         for (int i = 0; i < 5; i++) {
-            playerEntity.level.addParticle(ParticleTypes.CLOUD, playerEntity.getX(), playerEntity.getY() + 5, playerEntity.getZ(), 0, 0, 0);
-            playerEntity.level.addParticle(ParticleTypes.CLOUD, playerEntity.getX() + 0.45, playerEntity.getY() + 5, playerEntity.getZ(), 0, 0, 0);
-            playerEntity.level.addParticle(ParticleTypes.CLOUD, playerEntity.getX() - 0.45, playerEntity.getY() + 5, playerEntity.getZ(), 0, 0, 0);
-            playerEntity.level.addParticle(ParticleTypes.CLOUD, playerEntity.getX(), playerEntity.getY() + 5, playerEntity.getZ() + 0.45, 0, 0, 0);
-            playerEntity.level.addParticle(ParticleTypes.CLOUD, playerEntity.getX(), playerEntity.getY() + 5, playerEntity.getZ() - 0.45, 0, 0, 0);
-            playerEntity.level.addParticle(ParticleTypes.CLOUD, playerEntity.getX() + 0.45, playerEntity.getY() + 5, playerEntity.getZ() + 0.45, 0, 0, 0);
-            playerEntity.level.addParticle(ParticleTypes.CLOUD, playerEntity.getX() - 0.45, playerEntity.getY() + 5, playerEntity.getZ() - 0.45, 0, 0, 0);
-            playerEntity.level.addParticle(ParticleTypes.CLOUD, playerEntity.getX() + 0.45, playerEntity.getY() + 5, playerEntity.getZ() - 0.45, 0, 0, 0);
-            playerEntity.level.addParticle(ParticleTypes.CLOUD, playerEntity.getX() - 0.45, playerEntity.getY() + 5, playerEntity.getZ() + 0.45, 0, 0, 0);
+            world.addParticle(ParticleTypes.CLOUD, player.getX(), player.getY() + 5, player.getZ(), 0, 0, 0);
+            world.addParticle(ParticleTypes.CLOUD, player.getX() + 0.45, player.getY() + 5, player.getZ(), 0, 0, 0);
+            world.addParticle(ParticleTypes.CLOUD, player.getX() - 0.45, player.getY() + 5, player.getZ(), 0, 0, 0);
+            world.addParticle(ParticleTypes.CLOUD, player.getX(), player.getY() + 5, player.getZ() + 0.45, 0, 0, 0);
+            world.addParticle(ParticleTypes.CLOUD, player.getX(), player.getY() + 5, player.getZ() - 0.45, 0, 0, 0);
+            world.addParticle(ParticleTypes.CLOUD, player.getX() + 0.45, player.getY() + 5, player.getZ() + 0.45, 0, 0, 0);
+            world.addParticle(ParticleTypes.CLOUD, player.getX() - 0.45, player.getY() + 5, player.getZ() - 0.45, 0, 0, 0);
+            world.addParticle(ParticleTypes.CLOUD, player.getX() + 0.45, player.getY() + 5, player.getZ() - 0.45, 0, 0, 0);
+            world.addParticle(ParticleTypes.CLOUD, player.getX() - 0.45, player.getY() + 5, player.getZ() + 0.45, 0, 0, 0);
         }
     }
 
     // Healing Circle
-    public static void doHealingCircle(PlayerEntity player) {
-        List<LivingEntity> livingEntities = player.getCommandSenderWorld().getEntitiesOfClass(LivingEntity.class,
+    public static void doHealingCircle(PlayerEntity player, World world) {
+        List<LivingEntity> livingEntities = world.getEntitiesOfClass(LivingEntity.class,
                 new AxisAlignedBB(player.getX() - 6, player.getY() - 6, player.getZ() - 6,
                         player.getX() + 6, player.getY() + 6, player.getZ() + 6), null)
                 .stream().sorted(getEntityComparator(player)).collect(Collectors.toList());
-
-        World world = player.getCommandSenderWorld();
         healingTimer++;
 
         if (healingTimer % 10 == 0) {
-            doHealingParticles(player, world);
+            doEnchantParticleInterior(player, world);
+            doOuterRingParticles(ParticleTypes.HAPPY_VILLAGER, player, world);
         }
 
         if (healingTimer % 20 == 0) {
-            for (LivingEntity entities : livingEntities) {
-                doRadiusParticles(entities);
-
-                if (entities instanceof PhantomEntity || entities instanceof SkeletonEntity || entities instanceof SkeletonHorseEntity
-                        || entities instanceof WitherEntity || entities instanceof WitherSkeletonEntity || entities instanceof ZoglinEntity
-                        || entities instanceof ZombieEntity || entities instanceof ZombieHorseEntity) {
-                    entities.setLastHurtByPlayer(player);
-                    entities.hurt(DamageSource.MAGIC, 1.0F);
+            for (LivingEntity livingEntity : livingEntities) {
+                doHealingCircleEntityParticle(livingEntity, world);
+                if (livingEntity.isInvertedHealAndHarm()) {
+                    livingEntity.setLastHurtByPlayer(player);
+                    livingEntity.hurt(DamageSource.MAGIC, 1.0F);
                 } else {
-                    entities.heal(1.0F);
+                    livingEntity.heal(1.0F);
                 }
             }
             healingTimer = 0;
         }
     }
 
-    public static void doHealingParticles(PlayerEntity player, World world) {
-        doEnchantParticleInterior(player, world);
-        // Ring
-        player.level.addParticle(ParticleTypes.HAPPY_VILLAGER, player.getX() - 1, player.getY() + 1.2, player.getZ() - 6, 0, 0, 0);
-        player.level.addParticle(ParticleTypes.HAPPY_VILLAGER, player.getX(), player.getY() + 1.2, player.getZ() - 6, 0, 0, 0);
-        player.level.addParticle(ParticleTypes.HAPPY_VILLAGER, player.getX() + 1, player.getY() + 1.2, player.getZ() - 6, 0, 0, 0);
-        player.level.addParticle(ParticleTypes.HAPPY_VILLAGER, player.getX() + 2, player.getY() + 1.2, player.getZ() - 5, 0, 0, 0);
-        player.level.addParticle(ParticleTypes.HAPPY_VILLAGER, player.getX() + 3, player.getY() + 1.2, player.getZ() - 4, 0, 0, 0);
-        player.level.addParticle(ParticleTypes.HAPPY_VILLAGER, player.getX() + 4, player.getY() + 1.2, player.getZ() - 3, 0, 0, 0);
-        player.level.addParticle(ParticleTypes.HAPPY_VILLAGER, player.getX() + 5, player.getY() + 1.2, player.getZ() - 2, 0, 0, 0);
-        player.level.addParticle(ParticleTypes.HAPPY_VILLAGER, player.getX() + 6, player.getY() + 1.2, player.getZ() - 1, 0, 0, 0);
-        player.level.addParticle(ParticleTypes.HAPPY_VILLAGER, player.getX() + 6, player.getY() + 1.2, player.getZ(), 0, 0, 0);
-        player.level.addParticle(ParticleTypes.HAPPY_VILLAGER, player.getX() + 6, player.getY() + 1.2, player.getZ() + 1, 0, 0, 0);
-        player.level.addParticle(ParticleTypes.HAPPY_VILLAGER, player.getX() + 5, player.getY() + 1.2, player.getZ() + 2, 0, 0, 0);
-        player.level.addParticle(ParticleTypes.HAPPY_VILLAGER, player.getX() + 4, player.getY() + 1.2, player.getZ() + 3, 0, 0, 0);
-        player.level.addParticle(ParticleTypes.HAPPY_VILLAGER, player.getX() + 3, player.getY() + 1.2, player.getZ() + 4, 0, 0, 0);
-        player.level.addParticle(ParticleTypes.HAPPY_VILLAGER, player.getX() + 2, player.getY() + 1.2, player.getZ() + 5, 0, 0, 0);
-        player.level.addParticle(ParticleTypes.HAPPY_VILLAGER, player.getX() + 1, player.getY() + 1.2, player.getZ() + 6, 0, 0, 0);
-        player.level.addParticle(ParticleTypes.HAPPY_VILLAGER, player.getX(), player.getY() + 1.2, player.getZ() + 6, 0, 0, 0);
-        player.level.addParticle(ParticleTypes.HAPPY_VILLAGER, player.getX() - 1, player.getY() + 1.2, player.getZ() + 6, 0, 0, 0);
-        player.level.addParticle(ParticleTypes.HAPPY_VILLAGER, player.getX() - 2, player.getY() + 1.2, player.getZ() + 5, 0, 0, 0);
-        player.level.addParticle(ParticleTypes.HAPPY_VILLAGER, player.getX() - 3, player.getY() + 1.2, player.getZ() + 4, 0, 0, 0);
-        player.level.addParticle(ParticleTypes.HAPPY_VILLAGER, player.getX() - 4, player.getY() + 1.2, player.getZ() + 3, 0, 0, 0);
-        player.level.addParticle(ParticleTypes.HAPPY_VILLAGER, player.getX() - 5, player.getY() + 1.2, player.getZ() + 2, 0, 0, 0);
-        player.level.addParticle(ParticleTypes.HAPPY_VILLAGER, player.getX() - 6, player.getY() + 1.2, player.getZ() + 1, 0, 0, 0);
-        player.level.addParticle(ParticleTypes.HAPPY_VILLAGER, player.getX() - 6, player.getY() + 1.2, player.getZ(), 0, 0, 0);
-        player.level.addParticle(ParticleTypes.HAPPY_VILLAGER, player.getX() - 6, player.getY() + 1.2, player.getZ() - 1, 0, 0, 0);
-        player.level.addParticle(ParticleTypes.HAPPY_VILLAGER, player.getX() - 5, player.getY() + 1.2, player.getZ() - 2, 0, 0, 0);
-        player.level.addParticle(ParticleTypes.HAPPY_VILLAGER, player.getX() - 4, player.getY() + 1.2, player.getZ() - 3, 0, 0, 0);
-        player.level.addParticle(ParticleTypes.HAPPY_VILLAGER, player.getX() - 3, player.getY() + 1.2, player.getZ() - 4, 0, 0, 0);
-        player.level.addParticle(ParticleTypes.HAPPY_VILLAGER, player.getX() - 2, player.getY() + 1.2, player.getZ() - 5, 0, 0, 0);
-    }
-
-    public static void doRadiusParticles(Entity entities) {
-        if (Minecraft.getInstance().player != null) {
-            World clientWorld = Minecraft.getInstance().player.getCommandSenderWorld();
-
-            if (entities instanceof PhantomEntity || entities instanceof SkeletonEntity || entities instanceof SkeletonHorseEntity
-                    || entities instanceof WitherEntity || entities instanceof WitherSkeletonEntity || entities instanceof ZoglinEntity
-                    || entities instanceof ZombieEntity || entities instanceof ZombieHorseEntity) {
-                for (int i = 0; i < 5; i++) {
-                    double d0 = (entities.getX() + clientWorld.random.nextFloat());
-                    double d1 = (entities.getY() + clientWorld.random.nextFloat());
-                    double d2 = (entities.getZ() + clientWorld.random.nextFloat());
-                    double d3 = (clientWorld.random.nextFloat() - 0.2D) * 0.5D;
-                    double d4 = (clientWorld.random.nextFloat() - 0.2D) * 0.5D;
-                    double d5 = (clientWorld.random.nextFloat() - 0.2D) * 0.5D;
-                    clientWorld.addParticle(ParticleTypes.SMOKE, d0, d1, d2, d3, d4, d5);
-                }
-            } else {
-                double d0 = (entities.getX() + (clientWorld.random.nextFloat() - 0.5D));
-                double d1 = (entities.getY() + (clientWorld.random.nextFloat() - 0.3D));
-                double d2 = (entities.getZ() + (clientWorld.random.nextFloat() - 0.5D));
-                double d3 = (clientWorld.random.nextFloat() - 0.2D) * 0.5D;
-                double d4 = (clientWorld.random.nextFloat() - 0.2D) * 0.5D;
-                double d5 = (clientWorld.random.nextFloat() - 0.2D) * 0.5D;
-                clientWorld.addParticle(ParticleTypes.HEART, d0, d1, d2, d3, d4, d5);
+    public static void doHealingCircleEntityParticle(LivingEntity entity, World world) {
+        double d0 = (entity.getX() + world.random.nextFloat());
+        double d1 = (entity.getY() + world.random.nextFloat());
+        double d2 = (entity.getZ() + world.random.nextFloat());
+        double d3 = (world.random.nextFloat() - 0.2D) * 0.5D;
+        double d4 = (world.random.nextFloat() - 0.2D) * 0.5D;
+        double d5 = (world.random.nextFloat() - 0.2D) * 0.5D;
+        if (entity.isInvertedHealAndHarm()) {
+            for (int i = 0; i < 5; i++) {
+                world.addParticle(ParticleTypes.SMOKE, d0, d1, d2, d3, d4, d5);
             }
+        } else {
+            world.addParticle(ParticleTypes.HEART, d0, d1, d2, d3, d4, d5);
         }
     }
 
     // Speed
-    public static void doSpeed(PlayerEntity player) {
-
+    public static void doSpeed(PlayerEntity player, World world) {
         ModifiableAttributeInstance attribute = player.getAttributes().getInstance(Attributes.MOVEMENT_SPEED);
         if (attribute != null) {
             attribute.setBaseValue(2.2F);
@@ -785,12 +735,11 @@ public class SpellActions {
     }
 
     // Respiration
-    public static void doRespiration(PlayerEntity player) {
-        List<PlayerEntity> players = player.getCommandSenderWorld().getEntitiesOfClass(PlayerEntity.class,
+    public static void doRespiration(PlayerEntity player, World world) {
+        List<PlayerEntity> players = world.getEntitiesOfClass(PlayerEntity.class,
                 new AxisAlignedBB(player.getX() - 10, player.getY() - 4, player.getZ() - 10,
                         player.getX() + 10, player.getY() + 4, player.getZ() + 10), null)
                 .stream().sorted(getEntityComparator(player)).collect(Collectors.toList());
-
         airTimer++;
         for (PlayerEntity p : players) {
             if (p.isUnderWater() && airTimer == 10) {
@@ -807,6 +756,7 @@ public class SpellActions {
         arrowRainArrowSpawnTimer = 0;
         arrowRainCloudSpawnTimer = 0;
         healingTimer = 0;
+        protectionCircleTimer = 0;
         airTimer = 0;
         ModifiableAttributeInstance instance = playerEntity.getAttributes().getInstance(Attributes.MOVEMENT_SPEED);
         if (instance != null) {
