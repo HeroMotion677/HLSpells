@@ -1,52 +1,32 @@
 package com.divinity.hlspells.items.capabilities.totemcap;
 
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.Hand;
+import net.minecraft.util.math.BlockPos;
 
 import javax.annotation.Nullable;
 
 public class TotemCap implements ITotemCap {
-    private double xPos;
-    private double yPos;
-    private double zPos;
     private boolean hasDied;
     private Hand hand;
+    private ListNBT playerInventoryNBT;
+    private BlockPos blockPos;
 
     public TotemCap() {
-        xPos = 0.0D;
-        yPos = 0.0D;
-        zPos = 0.0D;
         hasDied = false;
         hand = null;
+        playerInventoryNBT = new ListNBT();
+        blockPos = new BlockPos(0, 0, 0);
     }
 
     @Override
-    public double getXPos() {
-        return this.xPos;
+    public BlockPos getBlockPos() {
+        return blockPos;
     }
 
     @Override
-    public void setXPos(double xPos) {
-        this.xPos = xPos;
-    }
-
-    @Override
-    public double getYPos() {
-        return this.yPos;
-    }
-
-    @Override
-    public void setYPos(double yPos) {
-        this.yPos = yPos;
-    }
-
-    @Override
-    public double getZPos() {
-        return this.zPos;
-    }
-
-    @Override
-    public void setZPos(double zPos) {
-        this.zPos = zPos;
+    public void setBlockPos(BlockPos pos) {
+        this.blockPos = pos;
     }
 
     @Override
@@ -68,5 +48,15 @@ public class TotemCap implements ITotemCap {
     @Override
     public void setTotemInHand(@Nullable Hand hand) {
         this.hand = hand;
+    }
+
+    @Override
+    public ListNBT getInventoryNBT() {
+        return playerInventoryNBT;
+    }
+
+    @Override
+    public void setInventoryNBT(ListNBT playerInventory) {
+        this.playerInventoryNBT = playerInventory;
     }
 }

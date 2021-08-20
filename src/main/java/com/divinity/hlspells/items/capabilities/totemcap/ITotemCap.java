@@ -1,19 +1,14 @@
 package com.divinity.hlspells.items.capabilities.totemcap;
 
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.Hand;
+import net.minecraft.util.math.BlockPos;
 
 public interface ITotemCap {
-    double getXPos();
 
-    void setXPos(double xPos);
+    BlockPos getBlockPos();
 
-    double getYPos();
-
-    void setYPos(double yPos);
-
-    double getZPos();
-
-    void setZPos(double zPos);
+    void setBlockPos(BlockPos pos);
 
     boolean getHasDied();
 
@@ -22,4 +17,8 @@ public interface ITotemCap {
     Hand getTotemInHand();
 
     void setTotemInHand(Hand hand);
+
+    ListNBT getInventoryNBT();
+
+    void setInventoryNBT(ListNBT playerInventory);
 }

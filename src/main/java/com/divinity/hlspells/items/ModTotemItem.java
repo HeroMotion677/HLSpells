@@ -13,7 +13,6 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.event.entity.living.LivingDeathEvent;
 
 public class ModTotemItem extends Item {
     public ModTotemItem() {
@@ -21,9 +20,7 @@ public class ModTotemItem extends Item {
     }
 
 
-    public static void vanillaTotemBehavior(LivingDeathEvent event, LivingEntity entity, ItemStack heldItem, Item animationItem) {
-
-        event.setCanceled(true);
+    public static void vanillaTotemBehavior(LivingEntity entity, ItemStack heldItem, Item animationItem) {
         heldItem.shrink(1);
         entity.setHealth(1.0F);
         entity.removeAllEffects();

@@ -4,7 +4,6 @@
   "compatibilityLevel": "JAVA_8",
   "refmap": "hlspells.refmap.json",
   "mixins": [
-    "MixinDropItems",
     "MixinEnchantmentTable",
     "MixinGrindstoneContainer",
     "MixinGrindstoneContainerConstructor",

@@ -2,6 +2,7 @@ package com.divinity.hlspells.items.capabilities.totemcap;
 
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
+import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraftforge.common.capabilities.Capability;
@@ -13,9 +14,7 @@ public class TotemItemStorage implements Capability.IStorage<ITotemCap> {
     @Override
     public INBT writeNBT(Capability<ITotemCap> capability, ITotemCap instance, Direction side) {
         CompoundNBT tag = new CompoundNBT();
-        tag.putDouble("xPos", instance.getXPos());
-        tag.putDouble("yPos", instance.getYPos());
-        tag.putDouble("zPos", instance.getZPos());
+        tag.put("blockPos", NBTUtil.writeBlockPos(instance.getBlockPos()));
         tag.putBoolean("hasDied", instance.getHasDied());
         int hand = 0;
         Hand totemInHand = instance.getTotemInHand();
@@ -25,15 +24,14 @@ public class TotemItemStorage implements Capability.IStorage<ITotemCap> {
             hand = 2;
         }
         tag.putInt("hand", hand);
+        tag.put("playerInv", instance.getInventoryNBT());
         return tag;
     }
 
     @Override
     public void readNBT(Capability<ITotemCap> capability, ITotemCap instance, Direction side, INBT nbt) {
         CompoundNBT tag = (CompoundNBT) nbt;
-        instance.setXPos(tag.getDouble("xPos"));
-        instance.setYPos(tag.getDouble("yPos"));
-        instance.setZPos(tag.getDouble("zPos"));
+        instance.setBlockPos(NBTUtil.readBlockPos(tag.getCompound("blockPos")));
         instance.hasDied(tag.getBoolean("hasDied"));
         int hand = tag.getInt("hand");
         if (hand == 1) {
@@ -43,5 +41,6 @@ public class TotemItemStorage implements Capability.IStorage<ITotemCap> {
         } else {
             instance.setTotemInHand(null);
         }
+        instance.setInventoryNBT(tag.getList("playerInv", 0));
     }
 }

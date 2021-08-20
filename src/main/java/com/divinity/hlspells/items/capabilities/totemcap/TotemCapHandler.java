@@ -1,6 +1,7 @@
 package com.divinity.hlspells.items.capabilities.totemcap;
 
 import com.divinity.hlspells.init.ItemInit;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
@@ -13,7 +14,8 @@ import static com.divinity.hlspells.HLSpells.MODID;
 public class TotemCapHandler {
     @SubscribeEvent
     public static void onAttachCapabilities(AttachCapabilitiesEvent<ItemStack> event) {
-        if (event.getObject().getItem() == ItemInit.TOTEM_OF_RETURNING.get()) {
+        Item item = event.getObject().getItem();
+        if (item == ItemInit.TOTEM_OF_RETURNING.get() || item == ItemInit.TOTEM_OF_KEEPING.get()) {
             event.addCapability(new ResourceLocation(MODID, "totemcap"), new TotemItemProvider());
         }
     }
