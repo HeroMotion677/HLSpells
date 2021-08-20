@@ -27,7 +27,7 @@ public class WandInputPacket {
         return new WandInputPacket(buffer.readInt());
     }
 
-    public static void handle(WandInputPacket message, Supplier<NetworkEvent.Context> contextSupplier) {
+    public void handle(Supplier<NetworkEvent.Context> contextSupplier) {
         NetworkEvent.Context context = contextSupplier.get();
         context.enqueueWork(() -> {
             ServerPlayerEntity player = context.getSender();

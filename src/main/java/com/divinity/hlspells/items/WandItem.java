@@ -57,9 +57,9 @@ public class WandItem extends ShootableItem {
 
     @Override
     public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> text, ITooltipFlag flag) {
-        text.add(1, new StringTextComponent(TextFormatting.GOLD + "Spells: "));
         stack.getCapability(WandItemProvider.WAND_CAP, null).ifPresent(cap ->
         {
+            text.add(1, new StringTextComponent(TextFormatting.GOLD + "Spells: "));
             if (cap.getSpells().isEmpty()) {
                 text.add(new StringTextComponent(TextFormatting.GRAY + "   Empty"));
             } else {
