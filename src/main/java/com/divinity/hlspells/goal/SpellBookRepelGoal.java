@@ -210,6 +210,6 @@ public class SpellBookRepelGoal extends Goal {
                 return true;
             }
         }
-        return stack.getItem() instanceof SpellBookItem && SpellUtils.getSpellBook(stack).containsSpell(p -> p.getSpell() == SpellInit.REPEL.get());
+        return stack.getItem() instanceof SpellBookItem && SpellUtils.getSpell(stack).test(spell -> spell == SpellInit.REPEL.get());
     }
 }

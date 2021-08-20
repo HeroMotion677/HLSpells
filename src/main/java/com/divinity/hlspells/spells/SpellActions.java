@@ -297,7 +297,7 @@ public class SpellActions {
         }
     }
 
-    public static void doSoulSyphon(PlayerEntity player, World world) {
+    public static void doTeleport(PlayerEntity player, World world) {
         RayTraceResult rayTraceResult = Util.lookAt(player, 150D, 1F, false);
         Vector3d location = rayTraceResult.getLocation();
         int stepX = 0;
@@ -722,6 +722,9 @@ public class SpellActions {
                 world.addParticle(ParticleTypes.SMOKE, d0, d1, d2, d3, d4, d5);
             }
         } else {
+            d0 -= 0.5;
+            d1 -= 0.3;
+            d2 -= 0.5;
             world.addParticle(ParticleTypes.HEART, d0, d1, d2, d3, d4, d5);
         }
     }

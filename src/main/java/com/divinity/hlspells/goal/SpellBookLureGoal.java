@@ -116,7 +116,7 @@ public class SpellBookLureGoal extends Goal {
                 return true;
             }
         }
-        return stack.getItem() instanceof SpellBookItem && SpellUtils.getSpellBook(stack).containsSpell(p -> p.getSpell() == SpellInit.LURE.get());
+        return stack.getItem() instanceof SpellBookItem && SpellUtils.getSpell(stack).test(spell -> spell == SpellInit.LURE.get());
     }
 
     public boolean isRunning() {

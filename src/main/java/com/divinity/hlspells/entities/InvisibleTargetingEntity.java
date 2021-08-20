@@ -57,7 +57,7 @@ public class InvisibleTargetingEntity extends ArrowEntity {
     public void tick() {
         super.tick();
         if (home != null) {
-            // If the entity is more than specified blocks away from home position if so then remove it
+            // If the entity is more than specified blocks away from home position if so then remove it (We are checking with distance squared)
             if ((isLightning && (distanceToSqr(this.home) >= 2500)) || (!isLightning && (distanceToSqr(this.home) >= 1000))) {
                 this.remove();
             }

@@ -3,7 +3,6 @@ package com.divinity.hlspells.mixin;
 import com.divinity.hlspells.enchantments.ISpell;
 import com.divinity.hlspells.items.SpellBookItem;
 import com.divinity.hlspells.spell.Spell;
-import com.divinity.hlspells.spell.SpellBookObject;
 import com.divinity.hlspells.util.SpellUtils;
 import com.google.common.collect.Lists;
 import net.minecraft.enchantment.Enchantment;
@@ -41,10 +40,9 @@ public class MixinEnchantmentTable {
             for (Map.Entry<Enchantment, Integer> entry : enchantmentMap.entrySet()) {
                 Enchantment enchantment = entry.getKey();
                 if (enchantment instanceof ISpell) {
-                    Spell spell = Spell.byId(((ISpell) enchantment).getSpellRegistryName());
+                    Spell spell = SpellUtils.getSpellByID(((ISpell) enchantment).getSpellRegistryName());
                     if (spell != null) {
-                        SpellBookObject spellBookObject = SpellBookObject.byId(spell.getRegistryName());
-                        SpellUtils.setSpellBook(stack, spellBookObject);
+                        SpellUtils.setSpell(stack, spell);
                         stack.getEnchantmentTags().remove(!stack.getEnchantmentTags().isEmpty() ? stack.getEnchantmentTags().size() - 1 : 0);
                     }
                 }

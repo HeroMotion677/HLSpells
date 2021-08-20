@@ -1,12 +1,11 @@
 package com.divinity.hlspells.items.capabilities.wandcap;
 
-import com.divinity.hlspells.init.SpellBookInit;
+import com.divinity.hlspells.init.SpellInit;
 import com.divinity.hlspells.items.SpellBookItem;
 import com.divinity.hlspells.items.WandItem;
 import com.divinity.hlspells.network.NetworkManager;
 import com.divinity.hlspells.network.packets.WandInputPacket;
 import com.divinity.hlspells.spell.Spell;
-import com.divinity.hlspells.spell.SpellBookObject;
 import com.divinity.hlspells.util.SpellUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
@@ -58,7 +57,7 @@ public class WandCapHandler {
                             cap.setCurrentSpellCycle(CURRENT_SPELL_VALUE);
                             if (!cap.getSpells().isEmpty()) {
                                 cap.setCurrentSpellCycle(cap.getCurrentSpellCycle() + 1);
-                                Spell spell = Spell.byId(cap.getCurrentSpell());
+                                Spell spell = SpellUtils.getSpellByID(cap.getCurrentSpell());
                                 if (spell != null) {
                                     player.displayClientMessage(new StringTextComponent("Spell : " + spell.getTrueDisplayName()).withStyle(TextFormatting.GOLD), true);
                                 }
@@ -80,14 +79,14 @@ public class WandCapHandler {
         ItemStack spellBook = event.getRight().getItem() instanceof SpellBookItem ? event.getRight() : null;
         if (wandItem != null && spellBook != null) {
             ItemStack transformedItem = wandItem.copy();
-            if (SpellUtils.getSpellBook(spellBook) != SpellBookInit.EMPTY.get()) {
-                SpellBookObject book = SpellUtils.getSpellBook(spellBook);
-                transformedItem.getCapability(WandItemProvider.WAND_CAP, null)
-                        .ifPresent(p -> p.addSpell(book.getSpells().stream()
-                                .filter(pr -> pr.getSpell().getRegistryName() != null)
-                                .map(m -> m.getSpell().getRegistryName().toString())
-                                .findFirst()
-                                .orElse("null")));
+            Spell spell = SpellUtils.getSpell(spellBook);
+            if (spell != SpellInit.EMPTY.get()) {
+                transformedItem.getCapability(WandItemProvider.WAND_CAP)
+                        .ifPresent(wandCap -> {
+                            ResourceLocation rl = spell.getRegistryName();
+                            if (rl != null)
+                                wandCap.addSpell(rl.toString());
+                        });
             }
             event.setCost(15);
             event.setMaterialCost(1);

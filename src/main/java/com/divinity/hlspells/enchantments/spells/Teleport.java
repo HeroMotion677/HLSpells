@@ -1,7 +1,6 @@
 package com.divinity.hlspells.enchantments.spells;
 
 import com.divinity.hlspells.enchantments.ISpell;
-import com.divinity.hlspells.init.SpellBookInit;
 import com.divinity.hlspells.init.SpellInit;
 import com.divinity.hlspells.items.SpellBookItem;
 import com.divinity.hlspells.util.SpellUtils;
@@ -18,7 +17,7 @@ public class Teleport extends Enchantment implements ISpell {
 
     @Override
     public boolean canApplyAtEnchantingTable(ItemStack stack) {
-        return SpellUtils.getSpellBook(stack) == SpellBookInit.EMPTY.get();
+        return SpellUtils.getSpell(stack) == SpellInit.EMPTY.get();
     }
 
     @Override
@@ -58,7 +57,7 @@ public class Teleport extends Enchantment implements ISpell {
 
     @Override
     public String getSpellRegistryName() {
-        ResourceLocation registryName = SpellInit.SOUL_SYPHON.get().getRegistryName();
+        ResourceLocation registryName = SpellInit.TELEPORT.get().getRegistryName();
         return registryName != null ? registryName.toString() : "null";
     }
 }

@@ -2,15 +2,15 @@ package com.divinity.hlspells.spell;
 
 import com.divinity.hlspells.init.SpellInit;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Util;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 
 import javax.annotation.Nullable;
 import java.util.function.BiConsumer;
+import java.util.function.Predicate;
 
 public class Spell extends ForgeRegistryEntry<Spell> {
     private final SpellType spellType;
@@ -41,18 +41,6 @@ public class Spell extends ForgeRegistryEntry<Spell> {
         this.displayName = displayName;
         this.xpCost = xpCost;
         this.tickDelay = tickDelay;
-    }
-
-    /**
-     * Return an spell for the given id
-     */
-    @Nullable
-    public static Spell byId(String id) {
-        return SpellInit.SPELLS_REGISTRY.get().getValue(new ResourceLocation(id));
-    }
-
-    public boolean isInstantaneous() {
-        return false;
     }
 
     public boolean isCurse() {
@@ -86,7 +74,7 @@ public class Spell extends ForgeRegistryEntry<Spell> {
         return this.getOrCreateDescriptionId();
     }
 
-    public ITextComponent getDisplayName() {
+    public TextComponent getDisplayName() {
         return new TranslationTextComponent(this.getDescriptionId());
     }
 
@@ -96,5 +84,13 @@ public class Spell extends ForgeRegistryEntry<Spell> {
 
     public BiConsumer<PlayerEntity, World> getSpellAction() {
         return spellAction;
+    }
+
+    public boolean test(Predicate<Spell> predicate) {
+        return predicate.test(this);
+    }
+
+    public boolean isEmpty() {
+        return this == SpellInit.EMPTY.get();
     }
 }

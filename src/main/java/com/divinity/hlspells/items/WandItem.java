@@ -5,6 +5,7 @@ import com.divinity.hlspells.spell.Spell;
 import com.divinity.hlspells.spell.SpellType;
 import com.divinity.hlspells.spells.RunSpells;
 import com.divinity.hlspells.spells.SpellActions;
+import com.divinity.hlspells.util.SpellUtils;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
@@ -64,7 +65,7 @@ public class WandItem extends ShootableItem {
             } else {
                 cap.getSpells().forEach(c ->
                 {
-                    Spell spell = Spell.byId(c);
+                    Spell spell = SpellUtils.getSpellByID(c);
                     if (spell != null) {
                         if (cap.getCurrentSpell().equals(c)) {
                             text.add(new StringTextComponent(TextFormatting.BLUE + "   " + spell.getTrueDisplayName()));
@@ -84,7 +85,7 @@ public class WandItem extends ShootableItem {
         isWandHeldActive = true;
 
         itemstack.getCapability(WandItemProvider.WAND_CAP, null).filter(p -> !p.getSpells().isEmpty()).ifPresent(cap -> {
-            Spell spell = Spell.byId(cap.getCurrentSpell());
+            Spell spell = SpellUtils.getSpellByID(cap.getCurrentSpell());
             if (spell != null && !world.isClientSide()) {
                 if (playerIn.getUseItemRemainingTicks() < 71994 && (double) playerIn.getUseItemRemainingTicks() >= 71991) {
                     if (spell.getType() == SpellType.CAST) {

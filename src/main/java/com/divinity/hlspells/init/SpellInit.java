@@ -21,7 +21,7 @@ public class SpellInit {
     }, "No Spell"));
     public static final RegistryObject<Spell> FEATHER_FALLING = register("feather_falling", () -> new Spell(SpellType.HELD, SpellActions::doFeatherFalling, "Feather Falling", 1, 15));
     public static final RegistryObject<Spell> BLAST_PROTECTION = register("blast_protection", () -> new Spell(SpellType.CAST, SpellActions::doBlastSpell, "Blast Protection", 6));
-    public static final RegistryObject<Spell> SOUL_SYPHON = register("soul_syphon", () -> new Spell(SpellType.CAST, SpellActions::doSoulSyphon, "Teleport", 9));
+    public static final RegistryObject<Spell> TELEPORT = register("teleport", () -> new Spell(SpellType.CAST, SpellActions::doTeleport, "Teleport", 9));
     public static final RegistryObject<Spell> ARROW_RAIN = register("arrow_rain", () -> new Spell(SpellType.HELD, SpellActions::doArrowRain, "Arrow Rain", 1, 6));
     public static final RegistryObject<Spell> BOLT = register("bolt", () -> new Spell(SpellType.CAST, SpellActions::doBoltSpell, "Bolt", 5));
     public static final RegistryObject<Spell> HEALING_CIRCLE = register("healing_circle", () -> new Spell(SpellType.HELD, SpellActions::doHealingCircle, "Healing Circle", 1, 3));
@@ -45,8 +45,7 @@ public class SpellInit {
     public static final RegistryObject<Spell> REPEL = register("repel", () -> new Spell(SpellType.HELD, SpellActions::doRepel, "Repel", 1, 3));
     public static final RegistryObject<Spell> FLAMING_CIRCLE = register("flaming_circle", () -> new Spell(SpellType.HELD, SpellActions::doFlamingCircle, "Flaming Circle", 1, 6));
     public static Supplier<IForgeRegistry<Spell>> SPELLS_REGISTRY = SPELLS_DEFERRED_REGISTER.makeRegistry("spell", () ->
-            new RegistryBuilder<Spell>().setMaxID(Integer.MAX_VALUE - 1).onAdd((owner, stage, id, obj, oldObj) ->
-                    HLSpells.LOGGER.info("Spell added: " + getName(obj).toString() + " "))
+            new RegistryBuilder<Spell>().setMaxID(Integer.MAX_VALUE - 1)
                     .setDefaultKey(new ResourceLocation(HLSpells.MODID, "empty"))
     );
 
@@ -55,6 +54,8 @@ public class SpellInit {
     }
 
     public static RegistryObject<Spell> register(String name, Supplier<Spell> spell) {
-        return SPELLS_DEFERRED_REGISTER.register(name, spell);
+        RegistryObject<Spell> registryObject = SPELLS_DEFERRED_REGISTER.register(name, spell);
+        HLSpells.LOGGER.info("Spell added : " + registryObject.get().getTrueDisplayName() + " ");
+        return registryObject;
     }
 }

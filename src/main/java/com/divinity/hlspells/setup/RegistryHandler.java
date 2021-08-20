@@ -1,6 +1,9 @@
 package com.divinity.hlspells.setup;
 
-import com.divinity.hlspells.init.*;
+import com.divinity.hlspells.init.EnchantmentInit;
+import com.divinity.hlspells.init.EntityInit;
+import com.divinity.hlspells.init.ItemInit;
+import com.divinity.hlspells.init.SpellInit;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 public class RegistryHandler {
@@ -8,7 +11,6 @@ public class RegistryHandler {
         EnchantmentInit.ENCHANTMENTS.register(FMLJavaModLoadingContext.get().getModEventBus());
         ItemInit.ITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());
         SpellInit.SPELLS_DEFERRED_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
-        SpellBookInit.SPELL_BOOK_DEFERRED_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
         EntityInit.ENTITIES.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
 }

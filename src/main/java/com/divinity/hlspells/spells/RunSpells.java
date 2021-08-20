@@ -5,7 +5,6 @@ import com.divinity.hlspells.items.SpellBookItem;
 import com.divinity.hlspells.items.WandItem;
 import com.divinity.hlspells.items.capabilities.wandcap.WandItemProvider;
 import com.divinity.hlspells.spell.Spell;
-import com.divinity.hlspells.spell.SpellBookObject;
 import com.divinity.hlspells.spell.SpellType;
 import com.divinity.hlspells.util.SpellUtils;
 import net.minecraft.entity.player.PlayerEntity;
@@ -32,7 +31,7 @@ public class RunSpells {
             itemStack.getCapability(WandItemProvider.WAND_CAP, null)
                     .filter(cap -> !cap.getSpells().isEmpty())
                     .ifPresent(cap -> {
-                        Spell spell = Spell.byId(cap.getCurrentSpell());
+                        Spell spell = SpellUtils.getSpellByID(cap.getCurrentSpell());
                         // Ensures Sync (Temp solution for now, will probably need server -> client packet)
                         cap.setCurrentSpellCycle(CURRENT_SPELL_VALUE);
                         if (spell != null && spell.getType() == SpellType.CAST && spell.hasCost()) {
@@ -43,12 +42,12 @@ public class RunSpells {
                         }
                     });
         } else if (itemStack.getItem() instanceof SpellBookItem) {
-            SpellBookObject spellBook = SpellUtils.getSpellBook(itemStack);
-            if (spellBook.isEmpty() || spellBook.containsSpell(spellInstance -> spellInstance.getSpell().getType() != SpellType.CAST))
-                return;
-            if (spellBook.getSpell() != null && (player.isCreative() || (spellBook.getSpell().hasCost() && player.totalExperience >= spellBook.getSpell().getXpCost()))) {
-                spellBook.runAction(player, world);
-                player.giveExperiencePoints(-spellBook.getSpell().getXpCost());
+            Spell spell = SpellUtils.getSpell(itemStack);
+            if (!spell.isEmpty() && spell.test(s -> s.getType() == SpellType.CAST)) {
+                if (player.isCreative() || spell.hasCost() && player.totalExperience >= spell.getXpCost()) {
+                    spell.getSpellAction().accept(player, world);
+                    player.giveExperiencePoints(-spell.getXpCost());
+                }
             }
         }
     }
@@ -61,15 +60,15 @@ public class RunSpells {
                 Hand playerHand = player.getUsedItemHand();
                 if (playerHand == Hand.MAIN_HAND || playerHand == Hand.OFF_HAND) {
                     ItemStack playerItem = player.getItemInHand(playerHand);
-                    SpellBookObject spellBook = SpellUtils.getSpellBook(playerItem);
-                    boolean mainPredicate = spellBook.containsSpell(sI -> sI.getSpell().getType() == SpellType.HELD);
+                    Spell spell = SpellUtils.getSpell(playerItem);
+                    boolean mainPredicate = spell.test(s -> s.getType() == SpellType.HELD);
 
-                    if (mainPredicate && spellBook.getSpell() != null && spellBook.getSpell().hasCost()) {
-                        if (player.isCreative() || player.totalExperience >= spellBook.getSpell().getXpCost()) {
-                            spellBook.runAction(player, player.level);
+                    if (mainPredicate && spell.hasCost()) {
+                        if (player.isCreative() || player.totalExperience >= spell.getXpCost()) {
+                            spell.getSpellAction().accept(player, player.level);
                             placeHolder++;
-                            if (placeHolder == spellBook.getSpell().getTickDelay()) {
-                                player.giveExperiencePoints(-spellBook.getSpell().getXpCost());
+                            if (placeHolder == spell.getTickDelay()) {
+                                player.giveExperiencePoints(-spell.getXpCost());
                                 placeHolder = 0;
                             }
                         }
@@ -84,7 +83,7 @@ public class RunSpells {
                     ItemStack playerItem = player.getItemInHand(playerHand);
                     playerItem.getCapability(WandItemProvider.WAND_CAP, null)
                             .filter(iWandCap -> !iWandCap.getSpells().isEmpty()).ifPresent(cap -> {
-                        Spell spell = Spell.byId(cap.getCurrentSpell());
+                        Spell spell = SpellUtils.getSpellByID(cap.getCurrentSpell());
                         // Ensures Sync (Temp solution for now, will probably need server -> client packet)
                         cap.setCurrentSpellCycle(CURRENT_SPELL_VALUE);
                         if (spell != null && spell.getType() == SpellType.HELD && spell.hasCost()) {

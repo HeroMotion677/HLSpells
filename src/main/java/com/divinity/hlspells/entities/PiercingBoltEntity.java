@@ -34,10 +34,8 @@ public class PiercingBoltEntity extends ArrowEntity {
             this.remove();
         }
         Vector3d vector3d1 = this.getDeltaMovement();
-        if (this.level.isClientSide) {
-            this.level.addParticle(ParticleTypes.ENCHANTED_HIT, this.getX() - vector3d1.x, this.getY() - vector3d1.y + 0.15D, this.getZ() - vector3d1.z, 0.0D, 0.0D, 0.0D);
-            this.level.addParticle(ParticleTypes.ENCHANTED_HIT, this.getX() - vector3d1.x, this.getY() - vector3d1.y + 0.16D, this.getZ() - vector3d1.z, 0.0D, 0.0D, 0.0D);
-        }
+        this.level.addParticle(ParticleTypes.ENCHANTED_HIT, this.getX() - vector3d1.x, this.getY() - vector3d1.y + 0.15D, this.getZ() - vector3d1.z, 0.0D, 0.0D, 0.0D);
+        this.level.addParticle(ParticleTypes.ENCHANTED_HIT, this.getX() - vector3d1.x, this.getY() - vector3d1.y + 0.16D, this.getZ() - vector3d1.z, 0.0D, 0.0D, 0.0D);
     }
 
     @Override
