@@ -164,7 +164,7 @@ public class EntityDiesEvent {
         }
     }
 
-    // TOTEM OF RETURNING (Teleports the player to last died pos when right clicked)
+    // TOTEM OF RETURNING (Teleports the player to last died pos when right clicked)a
     @SubscribeEvent
     public static void onPlayerRightClick(PlayerInteractEvent.RightClickItem event) {
         if (event.getPlayer() != null) {
