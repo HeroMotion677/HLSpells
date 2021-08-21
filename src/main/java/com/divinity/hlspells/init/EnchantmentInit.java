@@ -41,5 +41,5 @@ public class EnchantmentInit {
     public static final RegistryObject<Enchantment> SPEED = ENCHANTMENTS.register("speed", () -> new Speed(EquipmentSlotType.MAINHAND));
     public static final RegistryObject<Enchantment> STORM = ENCHANTMENTS.register("storm", () -> new Storm(EquipmentSlotType.MAINHAND));
     public static final RegistryObject<Enchantment> TELEPORT = ENCHANTMENTS.register("teleport", () -> new Teleport(EquipmentSlotType.MAINHAND));
-
+    public static final RegistryObject<Enchantment> FROST_PATH = ENCHANTMENTS.register("frost_path",  () -> new FrostPath(EquipmentSlotType.MAINHAND));
 }

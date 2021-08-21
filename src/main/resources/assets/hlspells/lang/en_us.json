@@ -25,6 +25,7 @@
   "enchantment.hlspells.aqua_bolt": "Aqua Bolt",
   "enchantment.hlspells.lure": "Lure",
   "enchantment.hlspells.repel": "Repel",
+  "enchantment.hlspells.frost_path": "Frost Path",
   "enchantment.hlspells.flaming_circle": "Flaming Circle",
   "entity.minecraft.villager.hlspells.mage": "Mage",
   "item.hlspells.spell_book": "Spell Book",
@@ -58,5 +59,7 @@
   "spell.hlspells.lure": "Lure",
   "spell.hlspells.repel": "Repel",
   "spell.hlspells.flaming_circle": "Flaming Circle",
-  "item.hlspells.wand": "Wand"
+  "spell.hlspells.frost_path": "Frost Path",
+  "item.hlspells.wand": "Wand",
+  "item.hlspells.staff": "Staff"
 }

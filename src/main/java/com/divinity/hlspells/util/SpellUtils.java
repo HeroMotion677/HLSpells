@@ -36,7 +36,7 @@ public class SpellUtils {
             return true;
         else if (item == ItemInit.WAND.get() && existingSpells.size() < 3)
             return true;
-        else return item == ItemInit.STAFF.get() && existingSpells.size() < 6;
+        return item == ItemInit.STAFF.get() && existingSpells.size() < 6;
     }
 
     public static boolean canUseSpell(PlayerEntity player, Spell spell) {

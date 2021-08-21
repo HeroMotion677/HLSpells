@@ -3,6 +3,7 @@ package com.divinity.hlspells.setup.client;
 import com.divinity.hlspells.HLSpells;
 import com.divinity.hlspells.init.EntityInit;
 import com.divinity.hlspells.init.ItemInit;
+import com.divinity.hlspells.init.SpellInit;
 import com.divinity.hlspells.items.SpellHoldingItem;
 import com.divinity.hlspells.items.capabilities.spellholdercap.SpellHolderProvider;
 import com.divinity.hlspells.network.NetworkManager;
@@ -146,9 +147,11 @@ public class ClientSetup {
         if (hand != null) {
             ItemStack stack = player.getItemInHand(hand);
             if (player.isUsingItem() && !player.isPassenger() && stack.getItem() instanceof SpellHoldingItem) {
-                player.input.leftImpulse /= 0.2F;
-                player.input.forwardImpulse /= 0.2F;
-                sprintTriggerTime = player.sprintTriggerTime;
+                if (SpellUtils.getSpell(stack) == SpellInit.SPEED.get() || SpellUtils.getSpell(stack) == SpellInit.FROST_PATH.get()) {
+                    player.input.leftImpulse /= 0.2F;
+                    player.input.forwardImpulse /= 0.2F;
+                    sprintTriggerTime = player.sprintTriggerTime;
+                }
             }
         }
     }

@@ -67,8 +67,8 @@ public class SpellActions {
 
     static EffectInstance GLOWING = new EffectInstance(Effects.GLOWING, Integer.MAX_VALUE, 0, false, false);
     static EffectInstance LEVITATION = new EffectInstance(Effects.LEVITATION, Integer.MAX_VALUE, 2, false, false);
-    static EffectInstance SLOW_FALLING = new EffectInstance(Effects.SLOW_FALLING, Integer.MAX_VALUE, 2, false, false);
-    static EffectInstance SPEED = new EffectInstance(Effects.MOVEMENT_SPEED, Integer.MAX_VALUE, 4, false, false);
+    static EffectInstance SLOW_FALLING = new EffectInstance(Effects.SLOW_FALLING, Integer.MAX_VALUE, 5, false, false);
+    static EffectInstance SPEED = new EffectInstance(Effects.MOVEMENT_SPEED, Integer.MAX_VALUE, 2, false, false);
 
     /**
      * Returns a comparator which compares entities' distances to given player
@@ -484,10 +484,12 @@ public class SpellActions {
         }
     }
 
+    // Frost Path
+    public static void doFrostPath (PlayerEntity player, World world) {}
+
     // Lure
     public static void doLure(PlayerEntity player, World world) {
         player.addEffect(GLOWING);
-
         List<MobEntity> mobEntities = world.getEntitiesOfClass(MobEntity.class,
                 new AxisAlignedBB(player.getX() - LURE_RANGE, player.getY() - LURE_RANGE, player.getZ() - LURE_RANGE,
                         player.getX() + LURE_RANGE, player.getY() + LURE_RANGE, player.getZ() + LURE_RANGE), null)

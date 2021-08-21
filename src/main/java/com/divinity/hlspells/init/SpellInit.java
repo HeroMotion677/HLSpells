@@ -17,8 +17,7 @@ import java.util.function.Supplier;
 public class SpellInit {
 
     public static final DeferredRegister<Spell> SPELLS_DEFERRED_REGISTER = DeferredRegister.create(Spell.class, HLSpells.MODID);
-    public static final RegistryObject<Spell> EMPTY = register("empty", () -> new Spell(SpellType.CAST, (p, w) -> {
-    }, "No Spell"));
+    public static final RegistryObject<Spell> EMPTY = register("empty", () -> new Spell(SpellType.CAST, (p, w) -> {}, "No Spell"));
     public static final RegistryObject<Spell> FEATHER_FALLING = register("feather_falling", () -> new Spell(SpellType.HELD, SpellActions::doFeatherFalling, "Feather Falling", 1, 15));
     public static final RegistryObject<Spell> BLAST_PROTECTION = register("blast_protection", () -> new Spell(SpellType.CAST, SpellActions::doBlastSpell, "Blast Protection", 6));
     public static final RegistryObject<Spell> TELEPORT = register("teleport", () -> new Spell(SpellType.CAST, SpellActions::doTeleport, "Teleport", 9));
@@ -44,6 +43,8 @@ public class SpellInit {
     public static final RegistryObject<Spell> LURE = register("lure", () -> new Spell(SpellType.HELD, SpellActions::doLure, "Lure", 1, 10));
     public static final RegistryObject<Spell> REPEL = register("repel", () -> new Spell(SpellType.HELD, SpellActions::doRepel, "Repel", 1, 3));
     public static final RegistryObject<Spell> FLAMING_CIRCLE = register("flaming_circle", () -> new Spell(SpellType.HELD, SpellActions::doFlamingCircle, "Flaming Circle", 1, 6));
+    public static final RegistryObject<Spell> FROST_PATH =  register("frost_path", () -> new Spell(SpellType.HELD, SpellActions::doFrostPath, "Frost Path", 1, 6));
+
     public static Supplier<IForgeRegistry<Spell>> SPELLS_REGISTRY = SPELLS_DEFERRED_REGISTER.makeRegistry("spell", () ->
             new RegistryBuilder<Spell>().setMaxID(Integer.MAX_VALUE - 1).onAdd((owner, stage, id, obj, oldObj) -> {
             })
