@@ -118,7 +118,7 @@ jar {
                 'Signing-Fingerprint'     : project.hasProperty('signSHA1') ? project.findProperty('signSHA1') : 'unsigned'
         ])
     }
-    rename 'mixin.refmap.json', 'fancymenu.mixin-refmap.json'
+    rename 'mixin.refmap.json', 'hlspells.mixin-refmap.json'
 }
 
 jar.finalizedBy('reobfJar')
