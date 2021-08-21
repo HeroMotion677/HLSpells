@@ -43,6 +43,7 @@ public class EntityDiesEvent {
         if (event.getEntityLiving() instanceof PlayerEntity) {
             PlayerEntity player = (PlayerEntity) event.getEntityLiving();
             World world = player.level;
+
             //Responsible for stopping the totem in both hands being activated
             boolean griefingTotem = true;
             boolean escapingTotem = true;
@@ -195,7 +196,7 @@ public class EntityDiesEvent {
     /**
      * Sends a packet to the server to show totem activation and/or particles
      */
-    private static void displayActivation(PlayerEntity playerEntity, Item item, boolean particleIn) {
+    public static void displayActivation(PlayerEntity playerEntity, Item item, boolean particleIn) {
         NetworkManager.INSTANCE.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> playerEntity), new TotemPacket(new ItemStack(item), particleIn));
     }
 }

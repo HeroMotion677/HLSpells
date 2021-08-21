@@ -1,7 +1,9 @@
 package com.divinity.hlspells.items;
 
+import static com.divinity.hlspells.events.entity.EntityDiesEvent.displayActivation;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
@@ -19,17 +21,15 @@ public class ModTotemItem extends Item {
         super(new Item.Properties().tab(ItemGroup.TAB_COMBAT).stacksTo(1).rarity(Rarity.UNCOMMON));
     }
 
-
-    public static void vanillaTotemBehavior(LivingEntity entity, ItemStack heldItem, Item animationItem) {
+    public static void vanillaTotemBehavior(PlayerEntity entity, ItemStack heldItem, Item animationItem) {
         heldItem.shrink(1);
         entity.setHealth(1.0F);
         entity.removeAllEffects();
         entity.addEffect(new EffectInstance(Effects.REGENERATION, 900, 1));
         entity.addEffect(new EffectInstance(Effects.ABSORPTION, 100, 1));
-        Minecraft.getInstance().particleEngine.createTrackingEmitter(entity, ParticleTypes.TOTEM_OF_UNDYING, 30);
+        displayActivation(entity, animationItem, true);
         entity.level.playSound(null, entity.getX(), entity.getY(), entity.getZ(), SoundEvents.TOTEM_USE, SoundCategory.PLAYERS, 1.0F, 1.0F);
         entity.playSound(SoundEvents.TOTEM_USE, 1.0F, 1.0F);
-        Minecraft.getInstance().gameRenderer.displayItemActivation(new ItemStack(animationItem));
     }
 
     @Override
