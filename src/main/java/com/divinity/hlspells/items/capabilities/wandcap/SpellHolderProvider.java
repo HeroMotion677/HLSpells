@@ -14,8 +14,9 @@ import javax.annotation.Nullable;
 public class SpellHolderProvider implements ICapabilitySerializable<INBT> {
     @CapabilityInject(ISpellHolder.class)
     public static final Capability<ISpellHolder> SPELL_HOLDER_CAP = null;
+    private final SpellHolder spellHolder = new SpellHolder();
 
-    private LazyOptional<ISpellHolder> instance = LazyOptional.of(SPELL_HOLDER_CAP::getDefaultInstance);
+    private LazyOptional<ISpellHolder> instance = LazyOptional.of(() -> spellHolder);
 
     @Nonnull
     @Override
@@ -25,11 +26,11 @@ public class SpellHolderProvider implements ICapabilitySerializable<INBT> {
 
     @Override
     public INBT serializeNBT() {
-        return SPELL_HOLDER_CAP.getStorage().writeNBT(SPELL_HOLDER_CAP, this.instance.orElseThrow(() -> new IllegalArgumentException("LazyOptional must not be Empty!")), null);
+        return SPELL_HOLDER_CAP.writeNBT(spellHolder, null);
     }
 
     @Override
     public void deserializeNBT(INBT nbt) {
-        SPELL_HOLDER_CAP.getStorage().readNBT(SPELL_HOLDER_CAP, this.instance.orElseThrow(() -> new IllegalArgumentException("LazyOptional must not be Empty!")), null, nbt);
+        SPELL_HOLDER_CAP.readNBT(spellHolder, null, nbt);
     }
 }

@@ -10,10 +10,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.IWaterLoggable;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.entity.*;
-import net.minecraft.entity.ai.attributes.Attributes;
-import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
 import net.minecraft.entity.effect.LightningBoltEntity;
 import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -70,7 +67,7 @@ public class SpellActions {
 
     static EffectInstance GLOWING = new EffectInstance(Effects.GLOWING, Integer.MAX_VALUE, 0, false, false);
     static EffectInstance LEVITATION = new EffectInstance(Effects.LEVITATION, Integer.MAX_VALUE, 2, false, false);
-    static EffectInstance SLOW_FALLING = new EffectInstance(Effects.SLOW_FALLING,  Integer.MAX_VALUE, 2, false, false);
+    static EffectInstance SLOW_FALLING = new EffectInstance(Effects.SLOW_FALLING, Integer.MAX_VALUE, 2, false, false);
     static EffectInstance SPEED = new EffectInstance(Effects.MOVEMENT_SPEED, Integer.MAX_VALUE, 4, false, false);
 
     /**
@@ -708,7 +705,7 @@ public class SpellActions {
                 if (livingEntity.isInvertedHealAndHarm()) {
                     livingEntity.setLastHurtByPlayer(player);
                     livingEntity.hurt(DamageSource.MAGIC, 1.0F);
-                } else {
+                } else if (livingEntity.getHealth() < livingEntity.getMaxHealth()) {
                     livingEntity.heal(1.0F);
                 }
             }
@@ -716,18 +713,18 @@ public class SpellActions {
         }
     }
 
-    public static void doHealingCircleEntityParticle(LivingEntity entity, World world) {
-        double d0 = (entity.getX() + world.random.nextFloat());
-        double d1 = (entity.getY() + world.random.nextFloat());
-        double d2 = (entity.getZ() + world.random.nextFloat());
+    public static void doHealingCircleEntityParticle(LivingEntity livingEntity, World world) {
+        double d0 = (livingEntity.getX() + world.random.nextFloat());
+        double d1 = (livingEntity.getY() + world.random.nextFloat());
+        double d2 = (livingEntity.getZ() + world.random.nextFloat());
         double d3 = (world.random.nextFloat() - 0.2D) * 0.5D;
         double d4 = (world.random.nextFloat() - 0.2D) * 0.5D;
         double d5 = (world.random.nextFloat() - 0.2D) * 0.5D;
-        if (entity.isInvertedHealAndHarm()) {
+        if (livingEntity.isInvertedHealAndHarm()) {
             for (int i = 0; i < 5; i++) {
                 world.addParticle(ParticleTypes.SMOKE, d0, d1, d2, d3, d4, d5);
             }
-        } else {
+        } else if (livingEntity.getHealth() < livingEntity.getMaxHealth()) {
             d0 -= 0.5;
             d1 -= 0.3;
             d2 -= 0.5;

@@ -5,8 +5,7 @@ import com.divinity.hlspells.init.ItemInit;
 import com.divinity.hlspells.items.ModTotemItem;
 import com.divinity.hlspells.items.capabilities.totemcap.ITotemCap;
 import com.divinity.hlspells.items.capabilities.totemcap.TotemItemProvider;
-import com.divinity.hlspells.network.NetworkManager;
-import com.divinity.hlspells.network.packets.TotemPacket;
+import com.divinity.hlspells.setup.client.ClientSetup;
 import com.divinity.hlspells.util.Util;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -23,16 +22,16 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.network.PacketDistributor;
 
 import java.util.Iterator;
-import java.util.function.Supplier;
 
 @Mod.EventBusSubscriber(modid = HLSpells.MODID)
 public class EntityDiesEvent {
@@ -194,9 +193,9 @@ public class EntityDiesEvent {
     }
 
     /**
-     * Sends a packet to the server to show totem activation and/or particles
+     * Method to hide the client side call to show totem activation and/or particles
      */
     public static void displayActivation(PlayerEntity playerEntity, Item item, boolean particleIn) {
-        NetworkManager.INSTANCE.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> playerEntity), new TotemPacket(new ItemStack(item), particleIn));
+        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> ClientSetup.displayActivation(playerEntity, new ItemStack(item), particleIn));
     }
 }
