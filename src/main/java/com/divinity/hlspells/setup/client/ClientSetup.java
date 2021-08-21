@@ -19,10 +19,12 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemModelsProperties;
 import net.minecraft.item.ItemStack;
 import net.minecraft.particles.ParticleTypes;
+import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.InputUpdateEvent;
 import net.minecraftforge.client.settings.KeyConflictContext;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -128,6 +130,24 @@ public class ClientSetup {
             }
             if (!WAND_BINDING.isDown() && buttonPressedFlag) {
                 buttonPressedFlag = false;
+            }
+        }
+    }
+
+    /**
+     * When an spell holding item is used it stops the slowness effect
+     */
+    @SubscribeEvent
+    @SuppressWarnings("ConstantConditions")
+    public static void onInput(InputUpdateEvent event) {
+        ClientPlayerEntity player = (ClientPlayerEntity) event.getPlayer();
+        Hand hand = player.getUsedItemHand();
+        // Don't remove this even if it complaints it can't be null it can be null
+        if (hand != null) {
+            ItemStack stack = player.getItemInHand(hand);
+            if (player.isUsingItem() && !player.isPassenger() && stack.getItem() instanceof SpellHoldingItem) {
+                player.input.leftImpulse /= 0.2F;
+                player.input.forwardImpulse /= 0.2F;
             }
         }
     }
