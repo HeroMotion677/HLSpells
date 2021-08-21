@@ -1,4 +1,4 @@
-package com.divinity.hlspells.items.capabilities.wandcap;
+package com.divinity.hlspells.items.capabilities.spellholdercap;
 
 import com.divinity.hlspells.init.SpellInit;
 

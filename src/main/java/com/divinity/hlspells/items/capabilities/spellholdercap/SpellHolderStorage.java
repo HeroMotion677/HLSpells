@@ -1,4 +1,4 @@
-package com.divinity.hlspells.items.capabilities.wandcap;
+package com.divinity.hlspells.items.capabilities.spellholdercap;
 
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
@@ -10,8 +10,6 @@ import javax.annotation.Nullable;
 public class SpellHolderStorage implements Capability.IStorage<ISpellHolder> {
     public static final String CURRENT_SPELL_CYCLE_NBT = "currentSpellCycle";
     public static final String SPELL_NBT = "Spell ";
-    //TODO Ensures Sync (Temp solution for now, will probably need server -> client packet)
-    public static int CURRENT_SPELL_VALUE;
 
     @Nullable
     @Override
@@ -33,7 +31,6 @@ public class SpellHolderStorage implements Capability.IStorage<ISpellHolder> {
             instance.addSpell(tag.getString(SPELL_NBT + i));
         }
         instance.setCurrentSpellCycle(tag.getInt(CURRENT_SPELL_CYCLE_NBT));
-        CURRENT_SPELL_VALUE = tag.getInt(CURRENT_SPELL_CYCLE_NBT);
         instance.setHeldActive(tag.getBoolean("isHeld"));
     }
 }

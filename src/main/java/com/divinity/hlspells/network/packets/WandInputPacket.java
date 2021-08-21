@@ -1,7 +1,7 @@
 package com.divinity.hlspells.network.packets;
 
-import com.divinity.hlspells.items.WandItem;
-import com.divinity.hlspells.items.capabilities.wandcap.SpellHolderProvider;
+import com.divinity.hlspells.items.SpellHoldingItem;
+import com.divinity.hlspells.items.capabilities.spellholdercap.SpellHolderProvider;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
@@ -32,14 +32,14 @@ public class WandInputPacket {
         context.enqueueWork(() -> {
             ServerPlayerEntity player = context.getSender();
             if (player != null) {
-                boolean mainHandWand = player.getMainHandItem().getItem() instanceof WandItem;
-                boolean offHandWand = player.getOffhandItem().getItem() instanceof WandItem;
+                ItemStack mainHandStack = player.getMainHandItem();
+                ItemStack offHandStack = player.getOffhandItem();
+                boolean mainHandWand = mainHandStack.getItem() instanceof SpellHoldingItem && ((SpellHoldingItem) mainHandStack.getItem()).isWand();
+                boolean offHandWand = offHandStack.getItem() instanceof SpellHoldingItem && ((SpellHoldingItem) offHandStack.getItem()).isWand();
                 if (mainHandWand) {
-                    ItemStack wandItem = player.getMainHandItem();
-                    wandItem.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP, null).ifPresent(p -> p.setCurrentSpellCycle(p.getCurrentSpellCycle() + 1));
+                    mainHandStack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP, null).ifPresent(p -> p.setCurrentSpellCycle(p.getCurrentSpellCycle() + 1));
                 } else if (offHandWand) {
-                    ItemStack wandItem = player.getOffhandItem();
-                    wandItem.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP, null).ifPresent(p -> p.setCurrentSpellCycle(p.getCurrentSpellCycle() + 1));
+                    offHandStack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP, null).ifPresent(p -> p.setCurrentSpellCycle(p.getCurrentSpellCycle() + 1));
                 }
             }
         });

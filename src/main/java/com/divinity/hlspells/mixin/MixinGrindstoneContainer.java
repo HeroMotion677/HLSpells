@@ -1,7 +1,7 @@
 package com.divinity.hlspells.mixin;
 
-import com.divinity.hlspells.items.WandItem;
-import com.divinity.hlspells.items.capabilities.wandcap.SpellHolderProvider;
+import com.divinity.hlspells.items.SpellHoldingItem;
+import com.divinity.hlspells.items.capabilities.spellholdercap.SpellHolderProvider;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.container.GrindstoneContainer;
 import net.minecraft.item.ItemStack;
@@ -32,7 +32,8 @@ public class MixinGrindstoneContainer {
         ItemStack stack = repairSlots.getItem(0);
         ItemStack stack1 = repairSlots.getItem(1);
         boolean condition = original;
-        if ((!stack.isEmpty() && stack.getItem() instanceof WandItem) || (!stack1.isEmpty() && stack1.getItem() instanceof WandItem)) {
+        if ((!stack.isEmpty() && stack.getItem() instanceof SpellHoldingItem && ((SpellHoldingItem) stack.getItem()).isWand())
+                || (!stack1.isEmpty() && stack1.getItem() instanceof SpellHoldingItem && ((SpellHoldingItem) stack1.getItem()).isWand())) {
             condition = false;
         }
         return condition;
@@ -42,7 +43,7 @@ public class MixinGrindstoneContainer {
     @Inject(method = "removeNonCurses(Lnet/minecraft/item/ItemStack;II)Lnet/minecraft/item/ItemStack;", at = @At(value = "RETURN"), cancellable = true)
     public void removeSpells(ItemStack stack, int pDamage, int pCount, CallbackInfoReturnable<ItemStack> cir) {
         ItemStack output = cir.getReturnValue();
-        if (output.getItem() instanceof WandItem) {
+        if (output.getItem() instanceof SpellHoldingItem && ((SpellHoldingItem) output.getItem()).isWand()) {
             output.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP, null).ifPresent(iWandCap ->
             {
                 //get all the spells present and remove them all

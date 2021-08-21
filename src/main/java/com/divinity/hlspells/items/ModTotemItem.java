@@ -1,20 +1,18 @@
 package com.divinity.hlspells.items;
 
-import static com.divinity.hlspells.events.entity.EntityDiesEvent.displayActivation;
-import net.minecraft.client.Minecraft;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Rarity;
-import net.minecraft.particles.ParticleTypes;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+
+import static com.divinity.hlspells.events.entity.EntityDiesEvent.displayActivation;
 
 public class ModTotemItem extends Item {
     public ModTotemItem() {

@@ -1,9 +1,8 @@
 package com.divinity.hlspells.goal;
 
 import com.divinity.hlspells.init.SpellInit;
-import com.divinity.hlspells.items.SpellBookItem;
-import com.divinity.hlspells.items.WandItem;
-import com.divinity.hlspells.items.capabilities.wandcap.SpellHolderProvider;
+import com.divinity.hlspells.items.SpellHoldingItem;
+import com.divinity.hlspells.items.capabilities.spellholdercap.SpellHolderProvider;
 import com.divinity.hlspells.util.SpellUtils;
 import net.minecraft.entity.EntityPredicate;
 import net.minecraft.entity.MobEntity;
@@ -92,31 +91,17 @@ public class SpellBookLureGoal extends Goal {
 
     private boolean canFollowItem(PlayerEntity player, ItemStack stack) {
         boolean[] canDo = new boolean[2];
-        if (stack.getItem() instanceof WandItem) {
-            stack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP, null).ifPresent(cap ->
-            {
+        if (stack.getItem() instanceof SpellHoldingItem) {
+            stack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP, null).ifPresent(cap -> {
                 ResourceLocation location = SpellInit.LURE.get().getRegistryName();
-                if (location != null && cap.getSpells().get(cap.getCurrentSpellCycle()).equals(location.toString())) {
-                    canDo[0] = true;
-                } else if (location != null && !(cap.getSpells().get(cap.getCurrentSpellCycle()).equals(location.toString()))) {
-                    canDo[0] = false;
-
-                }
-                if (canDo[0]) {
-                    if (player.totalExperience >= SpellInit.LURE.get().getXpCost() && SpellInit.LURE.get().hasCost()) {
-                        canDo[1] = true;
-                    }
-                } else {
-                    canDo[1] = false;
-                }
-
+                // canDo[0] is true when the current spell is repel.
+                canDo[0] = location != null && cap.getCurrentSpell().equals(location.toString());
+                // canDo[1] is true when xp requirements are met.
+                canDo[1] = SpellUtils.canUseSpell(player, SpellInit.LURE.get());
             });
-
-            if (canDo[0] && canDo[1]) {
-                return true;
-            }
+            return canDo[0] && canDo[1];
         }
-        return stack.getItem() instanceof SpellBookItem && SpellUtils.getSpell(stack).test(spell -> spell == SpellInit.LURE.get());
+        return false;
     }
 
     public boolean isRunning() {

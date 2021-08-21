@@ -1,0 +1,6 @@
+{
+  "parent": "hlspells:item/staff",
+  "textures": {
+    "layer0": "hlspells:items/staff_3"
+  }
+}

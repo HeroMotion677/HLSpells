@@ -1,6 +1,6 @@
 package com.divinity.hlspells.mixin;
 
-import com.divinity.hlspells.items.WandItem;
+import com.divinity.hlspells.items.SpellHoldingItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import org.spongepowered.asm.mixin.Mixin;
@@ -18,7 +18,7 @@ public class MixinGrindstoneContainerConstructor {
     @Inject(method = "mayPlace(Lnet/minecraft/item/ItemStack;)Z", at = @At(value = "HEAD"), cancellable = true)
     private void mayPlace(ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
         if (stack.isDamageableItem() || stack.getItem() == Items.ENCHANTED_BOOK
-                || stack.isEnchanted() || stack.getItem() instanceof WandItem)
+                || stack.isEnchanted() || (stack.getItem() instanceof SpellHoldingItem && ((SpellHoldingItem) stack.getItem()).isWand()))
             cir.setReturnValue(true);
     }
 }

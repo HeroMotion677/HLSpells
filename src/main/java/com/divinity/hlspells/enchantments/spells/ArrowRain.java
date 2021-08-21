@@ -1,8 +1,8 @@
 package com.divinity.hlspells.enchantments.spells;
 
 import com.divinity.hlspells.enchantments.ISpell;
+import com.divinity.hlspells.init.ItemInit;
 import com.divinity.hlspells.init.SpellInit;
-import com.divinity.hlspells.items.SpellBookItem;
 import com.divinity.hlspells.util.SpellUtils;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentType;
@@ -22,7 +22,7 @@ public class ArrowRain extends Enchantment implements ISpell {
 
     @Override
     public boolean canEnchant(ItemStack stack) {
-        return stack.getItem() instanceof SpellBookItem || super.canEnchant(stack);
+        return stack.getItem() == ItemInit.SPELL_BOOK.get() || super.canEnchant(stack);
     }
 
     @Override

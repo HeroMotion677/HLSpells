@@ -1,9 +1,8 @@
 package com.divinity.hlspells.goal;
 
 import com.divinity.hlspells.init.SpellInit;
-import com.divinity.hlspells.items.SpellBookItem;
-import com.divinity.hlspells.items.WandItem;
-import com.divinity.hlspells.items.capabilities.wandcap.SpellHolderProvider;
+import com.divinity.hlspells.items.SpellHoldingItem;
+import com.divinity.hlspells.items.capabilities.spellholdercap.SpellHolderProvider;
 import com.divinity.hlspells.util.SpellUtils;
 import net.minecraft.entity.EntityPredicate;
 import net.minecraft.entity.MobEntity;
@@ -196,20 +195,18 @@ public class SpellBookRepelGoal extends Goal {
 
     private boolean canRepelItem(PlayerEntity player, ItemStack stack) {
         boolean[] canDo = new boolean[2];
-        if (stack.getItem() instanceof WandItem) {
+        if (stack.getItem() instanceof SpellHoldingItem) {
             stack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP, null).ifPresent(cap ->
             {
                 ResourceLocation location = SpellInit.REPEL.get().getRegistryName();
                 // canDo[0] is true when the current spell is repel.
-                canDo[0] = location != null && cap.getSpells().get(cap.getCurrentSpellCycle()).equals(location.toString());
+                canDo[0] = location != null && cap.getCurrentSpell().equals(location.toString());
                 // canDo[1] is true when xp requirements are met.
-                canDo[1] = player.totalExperience >= SpellInit.REPEL.get().getXpCost() && SpellInit.REPEL.get().hasCost();
+                canDo[1] = SpellUtils.canUseSpell(player, SpellInit.REPEL.get());
 
             });
-            if (canDo[0] && canDo[1]) {
-                return true;
-            }
+            return canDo[0] && canDo[1];
         }
-        return stack.getItem() instanceof SpellBookItem && SpellUtils.getSpell(stack).test(spell -> spell == SpellInit.REPEL.get());
+        return false;
     }
 }

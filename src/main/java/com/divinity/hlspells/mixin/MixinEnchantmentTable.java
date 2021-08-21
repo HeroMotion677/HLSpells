@@ -1,8 +1,8 @@
 package com.divinity.hlspells.mixin;
 
 import com.divinity.hlspells.enchantments.ISpell;
-import com.divinity.hlspells.items.SpellBookItem;
-import com.divinity.hlspells.items.capabilities.wandcap.SpellHolderProvider;
+import com.divinity.hlspells.init.ItemInit;
+import com.divinity.hlspells.items.capabilities.spellholdercap.SpellHolderProvider;
 import com.divinity.hlspells.spell.Spell;
 import com.divinity.hlspells.util.SpellUtils;
 import com.google.common.collect.Lists;
@@ -36,7 +36,7 @@ public class MixinEnchantmentTable {
     @Inject(method = "clickMenuButton(Lnet/minecraft/entity/player/PlayerEntity;I)Z", at = @At(value = "TAIL"), cancellable = true)
     public void clickMenuButton(PlayerEntity player, int value, CallbackInfoReturnable<Boolean> cir) {
         ItemStack stack = enchantSlots.getItem(0);
-        if (stack.getItem() instanceof SpellBookItem && !player.level.isClientSide()) {
+        if (stack.getItem() == ItemInit.SPELL_BOOK.get() && !player.level.isClientSide()) {
             Map<Enchantment, Integer> enchantmentMap = EnchantmentHelper.getEnchantments(stack);
             for (Map.Entry<Enchantment, Integer> entry : enchantmentMap.entrySet()) {
                 Enchantment enchantment = entry.getKey();
@@ -57,7 +57,7 @@ public class MixinEnchantmentTable {
     @Inject(method = "getEnchantmentList(Lnet/minecraft/item/ItemStack;II)Ljava/util/List;", at = @At(value = "RETURN"), cancellable = true)
     public void removeMultipleEnchants(ItemStack stack, int pEnchantSlot, int pLevel, CallbackInfoReturnable<List<EnchantmentData>> cir) {
         List<EnchantmentData> oldList = cir.getReturnValue();
-        if (stack.getItem() instanceof SpellBookItem && !oldList.isEmpty()) {
+        if (stack.getItem() == ItemInit.SPELL_BOOK.get() && !oldList.isEmpty()) {
             cir.setReturnValue(Lists.newArrayList(oldList.get(0)));
         }
     }

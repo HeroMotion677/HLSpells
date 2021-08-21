@@ -3,9 +3,8 @@ package com.divinity.hlspells.setup.client;
 import com.divinity.hlspells.HLSpells;
 import com.divinity.hlspells.init.EntityInit;
 import com.divinity.hlspells.init.ItemInit;
-import com.divinity.hlspells.items.SpellBookItem;
-import com.divinity.hlspells.items.WandItem;
-import com.divinity.hlspells.items.capabilities.wandcap.SpellHolderProvider;
+import com.divinity.hlspells.items.SpellHoldingItem;
+import com.divinity.hlspells.items.capabilities.spellholdercap.SpellHolderProvider;
 import com.divinity.hlspells.network.NetworkManager;
 import com.divinity.hlspells.network.packets.WandInputPacket;
 import com.divinity.hlspells.renderers.BaseBoltRenderer;
@@ -33,8 +32,6 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import org.lwjgl.glfw.GLFW;
 
-import static com.divinity.hlspells.items.capabilities.wandcap.SpellHolderStorage.CURRENT_SPELL_VALUE;
-
 @Mod.EventBusSubscriber(modid = HLSpells.MODID, value = Dist.CLIENT)
 public class ClientSetup {
     public static final KeyBinding WAND_BINDING = new KeyBinding("Wand Cycle", KeyConflictContext.UNIVERSAL, InputMappings.Type.KEYSYM, GLFW.GLFW_KEY_G, "HLSpells");
@@ -43,7 +40,7 @@ public class ClientSetup {
     public static void init(final FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
             ItemModelsProperties.register(ItemInit.SPELL_BOOK.get(), new ResourceLocation("using"), (stack, world, living) -> {
-                if (living instanceof PlayerEntity && living.isUsingItem() && living.getUseItem().getItem() instanceof SpellBookItem) {
+                if (living instanceof PlayerEntity && living.isUsingItem() && living.getUseItem() == stack) {
                     if ((double) living.getUseItemRemainingTicks() < 72000 && (double) living.getUseItemRemainingTicks() >= 71997) {
                         return 0.2F;
                     } else if ((double) living.getUseItemRemainingTicks() < 71997 && (double) living.getUseItemRemainingTicks() >= 71994) {
@@ -59,7 +56,23 @@ public class ClientSetup {
                 return 0;
             });
             ItemModelsProperties.register(ItemInit.WAND.get(), new ResourceLocation("pull"), (stack, world, living) -> {
-                if (living instanceof PlayerEntity && living.isUsingItem() && living.getUseItem().getItem() instanceof WandItem) {
+                if (living instanceof PlayerEntity && living.isUsingItem() && living.getUseItem() == stack) {
+                    if ((double) living.getUseItemRemainingTicks() < 72000 && (double) living.getUseItemRemainingTicks() >= 71997) {
+                        return 0.2F;
+                    } else if ((double) living.getUseItemRemainingTicks() < 71997 && (double) living.getUseItemRemainingTicks() >= 71994) {
+                        return 0.4F;
+                    } else if ((double) living.getUseItemRemainingTicks() < 71994 && (double) living.getUseItemRemainingTicks() >= 71991) {
+                        return 0.6F;
+                    } else if ((double) living.getUseItemRemainingTicks() < 71991 && (double) living.getUseItemRemainingTicks() >= 71988) {
+                        return 0.8F;
+                    } else if ((double) living.getUseItemRemainingTicks() < 71988) {
+                        return 1;
+                    }
+                }
+                return 0;
+            });
+            ItemModelsProperties.register(ItemInit.STAFF.get(), new ResourceLocation("pull"), (stack, world, living) -> {
+                if (living instanceof PlayerEntity && living.isUsingItem() && living.getUseItem() == stack) {
                     if ((double) living.getUseItemRemainingTicks() < 72000 && (double) living.getUseItemRemainingTicks() >= 71997) {
                         return 0.2F;
                     } else if ((double) living.getUseItemRemainingTicks() < 71997 && (double) living.getUseItemRemainingTicks() >= 71994) {
@@ -92,8 +105,8 @@ public class ClientSetup {
                     ItemStack stack = ItemStack.EMPTY;
                     ItemStack mainHand = player.getMainHandItem();
                     ItemStack offHand = player.getOffhandItem();
-                    boolean mainHandWand = mainHand.getItem() instanceof WandItem;
-                    boolean offHandWand = offHand.getItem() instanceof WandItem;
+                    boolean mainHandWand = mainHand.getItem() instanceof SpellHoldingItem && ((SpellHoldingItem) mainHand.getItem()).isWand();
+                    boolean offHandWand = offHand.getItem() instanceof SpellHoldingItem && ((SpellHoldingItem) offHand.getItem()).isWand();
                     if (mainHandWand)
                         stack = mainHand;
                     else if (offHandWand)
@@ -101,8 +114,6 @@ public class ClientSetup {
                     if (!stack.isEmpty()) {
                         stack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP, null).ifPresent(cap ->
                         {
-                            // Ensures Sync (Temp solution for now, will probably need server -> client packet)
-                            cap.setCurrentSpellCycle(CURRENT_SPELL_VALUE);
                             if (!cap.getSpells().isEmpty()) {
                                 cap.setCurrentSpellCycle(cap.getCurrentSpellCycle() + 1);
                                 Spell spell = SpellUtils.getSpellByID(cap.getCurrentSpell());
