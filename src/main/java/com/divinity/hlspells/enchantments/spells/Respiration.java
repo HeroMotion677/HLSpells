@@ -36,11 +36,6 @@ public class Respiration extends Enchantment implements ISpell {
     }
 
     @Override
-    protected boolean checkCompatibility(Enchantment enchantment) {
-        return !(enchantment instanceof ISpell);
-    }
-
-    @Override
     public boolean isTreasureOnly() {
         return false;
     }
