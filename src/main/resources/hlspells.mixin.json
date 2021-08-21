@@ -5,6 +5,7 @@
   "refmap": "hlspells.refmap.json",
   "mixins": [
     "MixinEnchantmentTable",
+    "MixinFrostWalker",
     "MixinGrindstoneContainer",
     "MixinGrindstoneContainerConstructor",
     "MixinGrindstoneExperience"

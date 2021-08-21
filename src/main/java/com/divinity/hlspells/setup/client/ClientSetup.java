@@ -36,6 +36,7 @@ import org.lwjgl.glfw.GLFW;
 
 @Mod.EventBusSubscriber(modid = HLSpells.MODID, value = Dist.CLIENT)
 public class ClientSetup {
+    public static int sprintTriggerTime;
     public static final KeyBinding WAND_BINDING = new KeyBinding("Wand Cycle", KeyConflictContext.UNIVERSAL, InputMappings.Type.KEYSYM, GLFW.GLFW_KEY_G, "HLSpells");
     static boolean buttonPressedFlag;
 
@@ -133,7 +134,6 @@ public class ClientSetup {
             }
         }
     }
-
     /**
      * When an spell holding item is used it stops the slowness effect
      */
@@ -148,6 +148,7 @@ public class ClientSetup {
             if (player.isUsingItem() && !player.isPassenger() && stack.getItem() instanceof SpellHoldingItem) {
                 player.input.leftImpulse /= 0.2F;
                 player.input.forwardImpulse /= 0.2F;
+                sprintTriggerTime = player.sprintTriggerTime;
             }
         }
     }
