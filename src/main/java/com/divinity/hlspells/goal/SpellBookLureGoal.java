@@ -97,7 +97,7 @@ public class SpellBookLureGoal extends Goal {
                 // canDo[0] is true when the current spell is repel.
                 canDo[0] = location != null && cap.getCurrentSpell().equals(location.toString());
                 // canDo[1] is true when xp requirements are met.
-                canDo[1] = SpellUtils.canUseSpell(player, SpellInit.LURE.get());
+                canDo[1] = SpellUtils.checkXpReq(player, SpellInit.LURE.get());
             });
             return canDo[0] && canDo[1];
         }

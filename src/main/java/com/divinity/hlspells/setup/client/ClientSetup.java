@@ -37,8 +37,8 @@ import org.lwjgl.glfw.GLFW;
 
 @Mod.EventBusSubscriber(modid = HLSpells.MODID, value = Dist.CLIENT)
 public class ClientSetup {
-    public static int sprintTriggerTime;
     public static final KeyBinding WAND_BINDING = new KeyBinding("Wand Cycle", KeyConflictContext.UNIVERSAL, InputMappings.Type.KEYSYM, GLFW.GLFW_KEY_G, "HLSpells");
+    public static int sprintTriggerTime;
     static boolean buttonPressedFlag;
 
     public static void init(final FMLClientSetupEvent event) {
@@ -121,9 +121,7 @@ public class ClientSetup {
                             if (!cap.getSpells().isEmpty()) {
                                 cap.setCurrentSpellCycle(cap.getCurrentSpellCycle() + 1);
                                 Spell spell = SpellUtils.getSpellByID(cap.getCurrentSpell());
-                                if (spell != null) {
-                                    player.displayClientMessage(new StringTextComponent("Spell : " + spell.getTrueDisplayName()).withStyle(TextFormatting.GOLD), true);
-                                }
+                                player.displayClientMessage(new StringTextComponent("Spell : " + spell.getTrueDisplayName()).withStyle(TextFormatting.GOLD), true);
                             }
                         });
                     }
@@ -135,6 +133,7 @@ public class ClientSetup {
             }
         }
     }
+
     /**
      * When a spell holding item is used it stops the slowness effect
      */
@@ -147,7 +146,8 @@ public class ClientSetup {
         if (hand != null) {
             ItemStack stack = player.getItemInHand(hand);
             if (player.isUsingItem() && !player.isPassenger() && stack.getItem() instanceof SpellHoldingItem) {
-                if (SpellUtils.getSpell(stack) == SpellInit.SPEED.get() || SpellUtils.getSpell(stack) == SpellInit.FROST_PATH.get()) {
+                Spell spell = SpellUtils.getSpell(stack);
+                if (spell == SpellInit.SPEED.get() || spell == SpellInit.FROST_PATH.get()) {
                     player.input.leftImpulse /= 0.2F;
                     player.input.forwardImpulse /= 0.2F;
                     sprintTriggerTime = player.sprintTriggerTime;

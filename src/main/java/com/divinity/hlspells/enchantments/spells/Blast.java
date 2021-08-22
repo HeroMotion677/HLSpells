@@ -51,6 +51,11 @@ public class Blast extends Enchantment implements ISpell {
     }
 
     @Override
+    protected boolean checkCompatibility(Enchantment enchantment) {
+        return !(enchantment instanceof ISpell) && super.checkCompatibility(enchantment);
+    }
+
+    @Override
     public String getSpellRegistryName() {
         ResourceLocation registryName = SpellInit.BLAST_PROTECTION.get().getRegistryName();
         return registryName != null ? registryName.toString() : "null";

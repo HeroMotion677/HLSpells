@@ -52,6 +52,11 @@ public class FrostPath extends Enchantment implements ISpell
     }
 
     @Override
+    protected boolean checkCompatibility(Enchantment enchantment) {
+        return !(enchantment instanceof ISpell) && super.checkCompatibility(enchantment);
+    }
+
+    @Override
     public String getSpellRegistryName() {
         ResourceLocation registryName = SpellInit.FROST_PATH.get().getRegistryName();
         return registryName != null ? registryName.toString() : "null";

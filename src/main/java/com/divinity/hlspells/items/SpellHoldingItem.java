@@ -34,7 +34,7 @@ import java.util.function.Predicate;
 
 public class SpellHoldingItem extends ShootableItem {
     private final boolean isSpellBook;
-    private Spell storedSpell = null;
+    private Spell currentStoredSpell = null;
 
     public SpellHoldingItem(Properties properties, boolean isSpellBook) {
         super(properties);
@@ -76,12 +76,10 @@ public class SpellHoldingItem extends ShootableItem {
                 } else {
                     spells.forEach(c -> {
                         Spell spell = SpellUtils.getSpellByID(c);
-                        if (spell != null) {
-                            if (cap.getCurrentSpell().equals(c)) {
-                                text.add(new StringTextComponent(TextFormatting.BLUE + "   " + spell.getTrueDisplayName()));
-                            } else {
-                                text.add(new StringTextComponent(TextFormatting.GRAY + "   " + spell.getTrueDisplayName()));
-                            }
+                        if (cap.getCurrentSpell().equals(c)) {
+                            text.add(new StringTextComponent(TextFormatting.BLUE + "   " + spell.getTrueDisplayName()));
+                        } else {
+                            text.add(new StringTextComponent(TextFormatting.GRAY + "   " + spell.getTrueDisplayName()));
                         }
                     });
                 }
@@ -119,7 +117,7 @@ public class SpellHoldingItem extends ShootableItem {
     public ActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
         ItemStack itemstack = player.getItemInHand(hand);
         player.startUsingItem(hand);
-        storedSpell = SpellUtils.getSpell(itemstack);
+        currentStoredSpell = SpellUtils.getSpell(itemstack);
         itemstack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP).ifPresent(cap -> cap.setHeldActive(true));
         if (!world.isClientSide()) {
             if (player.getUseItemRemainingTicks() < 71997 && player.getUseItemRemainingTicks() >= 71994 && isSpellBook) {
@@ -151,7 +149,7 @@ public class SpellHoldingItem extends ShootableItem {
                 if (cap.isHeldActive()) {
                     for (Hand hand : Hand.values()) {
                         ItemStack heldStack = player.getItemInHand(hand);
-                        if (SpellUtils.getSpell(heldStack) == storedSpell)
+                        if (SpellUtils.getSpell(heldStack) == currentStoredSpell)
                             return;
                     }
                     cap.setHeldActive(false);

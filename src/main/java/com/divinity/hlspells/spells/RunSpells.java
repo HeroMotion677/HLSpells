@@ -27,7 +27,7 @@ public class RunSpells {
                     .filter(cap -> !cap.getSpells().isEmpty())
                     .ifPresent(cap -> {
                         Spell spell = SpellUtils.getSpellByID(cap.getCurrentSpell());
-                        if (spell != null && spell.getType() == SpellType.CAST && spell.hasCost() && SpellUtils.canUseSpell(player, spell)) {
+                        if (spell.getType() == SpellType.CAST && spell.hasCost() && SpellUtils.checkXpReq(player, spell)) {
                             spell.getSpellAction().accept(player, world);
                             if (HLSpells.CONFIG.spellsUseXP.get())
                                 player.giveExperiencePoints(-spell.getXpCost());
@@ -49,7 +49,7 @@ public class RunSpells {
                             .ifPresent(cap -> {
                                 if (cap.isHeldActive()) {
                                     Spell spell = SpellUtils.getSpellByID(cap.getCurrentSpell());
-                                    if (spell != null && spell.getType() == SpellType.HELD && spell.hasCost() && SpellUtils.canUseSpell(player, spell)) {
+                                    if (spell.getType() == SpellType.HELD && spell.hasCost() && SpellUtils.checkXpReq(player, spell)) {
                                         spell.getSpellAction().accept(player, player.level);
                                         tick++;
                                         if (tick == spell.getTickDelay() && HLSpells.CONFIG.spellsUseXP.get()) {
