@@ -11,6 +11,9 @@ import net.minecraft.block.Blocks;
 import net.minecraft.block.IWaterLoggable;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.*;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.entity.ai.attributes.Attributes;
+import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
 import net.minecraft.entity.effect.LightningBoltEntity;
 import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -44,6 +47,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static com.divinity.hlspells.goal.SpellBookLureGoal.LURE_RANGE;
@@ -53,6 +57,9 @@ import static com.divinity.hlspells.goal.SpellBookLureGoal.LURE_RANGE;
  */
 @Mod.EventBusSubscriber(modid = HLSpells.MODID)
 public class SpellActions {
+    static final UUID speedUUID = UUID.fromString("05b61a62-ae84-492e-8536-f365b7143296");
+    static final AttributeModifier speedModifier = new AttributeModifier(speedUUID, "Speed", 2, AttributeModifier.Operation.MULTIPLY_TOTAL);
+
     static int fangsSpellEvokerFangSpawnTimer = 0;
     static boolean fangsActiveFlag = false;
     static boolean fangsSpellStaggerBoolean = false;
@@ -736,7 +743,12 @@ public class SpellActions {
 
     // Speed
     public static void doSpeed(PlayerEntity player, World world) {
-       player.addEffect(SPEED);
+        ModifiableAttributeInstance speedAttribute = player.getAttribute(Attributes.MOVEMENT_SPEED);
+        if (speedAttribute != null)  {
+            if (speedAttribute.getModifier(speedUUID) == null) {
+                speedAttribute.addPermanentModifier(speedModifier);
+            }
+        }
     }
 
     // Respiration
@@ -763,7 +775,12 @@ public class SpellActions {
         healingTimer = 0;
         protectionCircleTimer = 0;
         airTimer = 0;
-        playerEntity.removeEffect(SPEED.getEffect());
+        ModifiableAttributeInstance speedAttribute = playerEntity.getAttribute(Attributes.MOVEMENT_SPEED);
+        if (speedAttribute != null) {
+            if (speedAttribute.getModifier(speedUUID) != null) {
+                speedAttribute.removeModifier(speedModifier);
+            }
+        }
         playerEntity.removeEffect(SLOW_FALLING.getEffect());
         playerEntity.removeEffect(LEVITATION.getEffect());
         playerEntity.removeEffect(GLOWING.getEffect());
