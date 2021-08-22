@@ -27,7 +27,7 @@ public class SoulSummon extends Enchantment implements ISpell {
 
     @Override
     public int getMinCost(int value) {
-        return 1;
+        return 20;
     }
 
     @Override

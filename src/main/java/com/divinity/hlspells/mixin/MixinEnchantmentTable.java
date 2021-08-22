@@ -43,6 +43,7 @@ public class MixinEnchantmentTable {
                 if (enchantment instanceof ISpell) {
                     Spell spell = SpellUtils.getSpellByID(((ISpell) enchantment).getSpellRegistryName());
                     if (spell != null) {
+                        SpellUtils.se
                         stack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP).ifPresent(cap -> cap.addSpell(spell.getRegistryName().toString()));
                         stack.getEnchantmentTags().remove(!stack.getEnchantmentTags().isEmpty() ? stack.getEnchantmentTags().size() - 1 : 0);
                     }

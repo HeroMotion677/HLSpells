@@ -59,6 +59,8 @@ public class EntityDiesEvent {
                 if (heldItem.getItem() == ItemInit.TOTEM_OF_KEEPING.get() && keepingTotem) {
                     heldItem.getCapability(TotemItemProvider.TOTEM_CAP).ifPresent(cap -> {
                         cap.hasDied(true);
+                        if (hand == Hand.MAIN_HAND) cap.setTotemInHand(Hand.MAIN_HAND);
+                        else if (hand == Hand.OFF_HAND) cap.setTotemInHand(Hand.OFF_HAND);
                         cap.setInventoryNBT(player.inventory.save(new ListNBT()));
                     });
                     keepingTotem = false;
@@ -109,8 +111,8 @@ public class EntityDiesEvent {
         if (event.getEntity() instanceof PlayerEntity) {
             PlayerEntity player = (PlayerEntity) event.getEntity();
             // If true the inventory is loaded back and drops are removed
-            boolean keepingTotem = false;
-            for (Iterator<ItemEntity> itemEntityIterator = event.getDrops().iterator(); itemEntityIterator.hasNext(); ) {
+            boolean[] keepingTotem = new boolean[1];
+            for (Iterator<ItemEntity> itemEntityIterator = event.getDrops().iterator(); itemEntityIterator.hasNext();) {
                 ItemStack stack = itemEntityIterator.next().getItem();
                 // TOTEM OF RETURNING (Sets BlockPos to teleport to and sets the hand the totem should be in)
                 if (stack.getItem() == ItemInit.TOTEM_OF_RETURNING.get()) {
@@ -122,19 +124,27 @@ public class EntityDiesEvent {
                         if (hand == Hand.MAIN_HAND) {
                             player.inventory.add(player.inventory.selected, stack);
                             itemEntityIterator.remove();
+                            cap.setTotemInHand(null);
                         } else if (hand == Hand.OFF_HAND) {
                             player.inventory.offhand.set(0, stack);
                             itemEntityIterator.remove();
+                            cap.setTotemInHand(null);
                         }
                     });
                 }
-                //TOTEM OF KEEPING (Reloads player inventory even after dying and disables inventory from spilling)
+                // TOTEM OF KEEPING (Reloads player inventory even after dying and disables inventory from spilling)
                 if (stack.getItem() == ItemInit.TOTEM_OF_KEEPING.get()) {
-                    stack.getCapability(TotemItemProvider.TOTEM_CAP).filter(ITotemCap::getHasDied).ifPresent(iTotemCap -> player.inventory.load(iTotemCap.getInventoryNBT()));
-                    keepingTotem = true;
+                    stack.getCapability(TotemItemProvider.TOTEM_CAP).filter(ITotemCap::getHasDied).ifPresent(cap -> {
+                        Hand hand = cap.getTotemInHand();
+                        if (hand == Hand.MAIN_HAND || hand == Hand.OFF_HAND) {
+                            player.inventory.load(cap.getInventoryNBT());
+                            cap.setTotemInHand(null);
+                            keepingTotem[0] = true;
+                        }
+                    });
                 }
             }
-            if (keepingTotem) {
+            if (keepingTotem[0]) {
                 event.getDrops().clear();
             }
         }

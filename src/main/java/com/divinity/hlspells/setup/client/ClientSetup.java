@@ -136,7 +136,7 @@ public class ClientSetup {
         }
     }
     /**
-     * When an spell holding item is used it stops the slowness effect
+     * When a spell holding item is used it stops the slowness effect
      */
     @SubscribeEvent
     @SuppressWarnings("ConstantConditions")

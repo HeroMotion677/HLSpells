@@ -68,7 +68,7 @@ public class SpellActions {
     static EffectInstance GLOWING = new EffectInstance(Effects.GLOWING, Integer.MAX_VALUE, 0, false, false);
     static EffectInstance LEVITATION = new EffectInstance(Effects.LEVITATION, Integer.MAX_VALUE, 2, false, false);
     static EffectInstance SLOW_FALLING = new EffectInstance(Effects.SLOW_FALLING, Integer.MAX_VALUE, 5, false, false);
-    static EffectInstance SPEED = new EffectInstance(Effects.MOVEMENT_SPEED, Integer.MAX_VALUE, 2, false, false);
+    static EffectInstance SPEED = new EffectInstance(Effects.MOVEMENT_SPEED, Integer.MAX_VALUE, 4, false, false);
 
     /**
      * Returns a comparator which compares entities' distances to given player
@@ -734,10 +734,9 @@ public class SpellActions {
         }
     }
 
-    // Speed (WIP)
+    // Speed
     public static void doSpeed(PlayerEntity player, World world) {
-        // WIP
-        player.addEffect(SPEED);
+       player.addEffect(SPEED);
     }
 
     // Respiration

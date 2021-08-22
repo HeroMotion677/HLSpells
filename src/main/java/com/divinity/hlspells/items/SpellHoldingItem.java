@@ -182,7 +182,7 @@ public class SpellHoldingItem extends ShootableItem {
 
     @Override
     public UseAction getUseAnimation(ItemStack pStack) {
-        return isSpellBook ? UseAction.CROSSBOW : UseAction.SPEAR;
+        return isSpellBook ? UseAction.CROSSBOW : UseAction.BOW;
     }
 
     @Override
