@@ -194,6 +194,7 @@ public class SpellHoldingItem extends ShootableItem {
         return isSpellBook || super.isEnchantable(pStack);
     }
 
+    //*
     @Override
     public boolean isBookEnchantable(ItemStack stack, ItemStack book) {
         return isSpellBook && super.isBookEnchantable(stack, book);

@@ -26,16 +26,14 @@ public class SpellHolderHandler {
                 transformedItem.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP).ifPresent(wandCap -> {
                     if (SpellUtils.canAddSpell(transformedItem.getItem(), wandCap.getSpells())) {
                         wandCap.addSpell(spell.getRegistryName().toString());
-                        event.setCost(15);
-                        event.setOutput(transformedItem);
                     } else {
                         int currentSpellId = wandCap.getCurrentSpellCycle();
                         String currentSpell = wandCap.getCurrentSpell();
                         wandCap.getSpells().add(currentSpellId, spell.getRegistryName().toString());
                         wandCap.removeSpell(currentSpell);
-                        event.setCost(15);
-                        event.setOutput(transformedItem);
                     }
+                    event.setCost(15);
+                    event.setOutput(transformedItem);
                 });
             }
         }
