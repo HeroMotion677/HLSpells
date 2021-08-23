@@ -17,8 +17,7 @@ import java.util.function.Supplier;
 public class SpellInit {
 
     public static final DeferredRegister<Spell> SPELLS_DEFERRED_REGISTER = DeferredRegister.create(Spell.class, HLSpells.MODID);
-    public static final RegistryObject<Spell> EMPTY = register("empty", () -> new Spell(SpellType.CAST, (p, w) -> {
-    }, "No Spell"));
+    public static final RegistryObject<Spell> EMPTY = register("empty", () -> new Spell(SpellType.CAST, (p, w) -> {}, "No Spell"));
     public static final RegistryObject<Spell> SLOW_FALL = register("slow_fall", () -> new Spell(SpellType.HELD, SpellActions::doSlowFall, "Slow Falling", 1, 15));
     public static final RegistryObject<Spell> BLAST = register("blast", () -> new Spell(SpellType.CAST, SpellActions::doBlastSpell, "Blast", 6));
     public static final RegistryObject<Spell> TELEPORT = register("teleport", () -> new Spell(SpellType.CAST, SpellActions::doTeleport, "Teleport", 9));
@@ -47,10 +46,8 @@ public class SpellInit {
     public static final RegistryObject<Spell> FROST_PATH =  register("frost_path", () -> new Spell(SpellType.HELD, SpellActions::doFrostPath, "Frost Path", 1, 6));
 
     public static Supplier<IForgeRegistry<Spell>> SPELLS_REGISTRY = SPELLS_DEFERRED_REGISTER.makeRegistry("spell", () ->
-            new RegistryBuilder<Spell>().setMaxID(Integer.MAX_VALUE - 1).onAdd((owner, stage, id, obj, oldObj) -> {
-            })
-                    .setDefaultKey(new ResourceLocation(HLSpells.MODID, "empty"))
-    );
+            new RegistryBuilder<Spell>().setMaxID(Integer.MAX_VALUE - 1).onAdd((owner, stage, id, obj, oldObj) -> {})
+                    .setDefaultKey(new ResourceLocation(HLSpells.MODID, "empty")));
 
     public static <T extends IForgeRegistryEntry<?>> ResourceLocation getName(T type) {
         return Objects.requireNonNull(type.getRegistryName());
