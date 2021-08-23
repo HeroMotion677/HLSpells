@@ -6,6 +6,7 @@ import com.divinity.hlspells.init.SpellInit;
 import com.divinity.hlspells.items.capabilities.spellholdercap.ISpellHolder;
 import com.divinity.hlspells.items.capabilities.spellholdercap.SpellHolderProvider;
 import com.divinity.hlspells.spell.Spell;
+import com.divinity.hlspells.spell.SpellType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -41,5 +42,21 @@ public class SpellUtils {
 
     public static boolean checkXpReq(PlayerEntity player, Spell spell) {
         return player.isCreative() || !HLSpells.CONFIG.spellsUseXP.get() || player.totalExperience >= spell.getXpCost();
+    }
+
+    public static int getTickDelay(PlayerEntity player, Spell spell) {
+        //modify to alter tick delay
+        return spell.getTickDelay();
+    }
+
+    /**
+     * Do own check for configs
+     */
+    public static void removeXP(PlayerEntity player, Spell spell) {
+        int xpToRemove = spell.getXpCost();
+        if (spell.getType() == SpellType.CAST) {
+            // modify to remove more xp
+        }
+        player.giveExperiencePoints(-xpToRemove);
     }
 }

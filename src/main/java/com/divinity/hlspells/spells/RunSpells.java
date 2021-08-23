@@ -34,7 +34,7 @@ public class RunSpells {
                             if (!player.level.isClientSide())
                                 itemStack.hurt(1, player.getRandom(), (ServerPlayerEntity) player);
                             if (HLSpells.CONFIG.spellsUseXP.get())
-                                player.giveExperiencePoints(-spell.getXpCost());
+                                SpellUtils.removeXP(player, spell);
                         }
                     });
         }
@@ -57,7 +57,8 @@ public class RunSpells {
                                         spell.getSpellAction().accept(player, player.level);
                                         xpTickCounter++;
                                         durabilityTickCounter++;
-                                        if (xpTickCounter == spell.getTickDelay() && HLSpells.CONFIG.spellsUseXP.get()) {
+                                        if (xpTickCounter == SpellUtils.getTickDelay(player, spell) && HLSpells.CONFIG.spellsUseXP.get()) {
+                                            SpellUtils.removeXP(player, spell);
                                             player.giveExperiencePoints(-spell.getXpCost());
                                             xpTickCounter = 0;
                                         }
