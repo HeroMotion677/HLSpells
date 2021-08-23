@@ -35,8 +35,8 @@ public class StructureGen {
         addMageHouseToVillageConfig(dynamicRegistries, "repurposed_structures:village/swamp/houses", mainMageHouse, 4);
     }
 
-    private static void addMageHouseToVillageConfig(DynamicRegistries dynamicRegistries, String villagePiece, ResourceLocation waystoneStructure, int weight) {
-        LegacySingleJigsawPiece piece = JigsawPiece.legacy(waystoneStructure.toString()).apply(JigsawPattern.PlacementBehaviour.RIGID);
+    private static void addMageHouseToVillageConfig(DynamicRegistries dynamicRegistries, String villagePiece, ResourceLocation newHouseRL, int weight) {
+        LegacySingleJigsawPiece piece = JigsawPiece.legacy(newHouseRL.toString()).apply(JigsawPattern.PlacementBehaviour.RIGID);
         JigsawPattern pool = dynamicRegistries.registryOrThrow(Registry.TEMPLATE_POOL_REGISTRY).getOptional(new ResourceLocation(villagePiece)).orElse(null);
         if (pool != null) {
             // Pretty sure this can be an immutable list (when datapacked) so gotta make a copy to be safe.

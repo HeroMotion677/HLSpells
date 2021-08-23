@@ -1,0 +1,33 @@
+{
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "weight": 3,
+          "quality": 1,
+          "name": "hlspells:spell_book",
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{ForgeCaps: {Parent: {currentSpellCycle: 0, spellsSize: 1, isHeld: 0b, \"Spell 0\": \"hlspells:fangs\"}}}"
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 1,
+          "quality": 1,
+          "name": "hlspells:spell_book",
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{ForgeCaps: {Parent: {currentSpellCycle: 0, spellsSize: 1, isHeld: 0b, \"Spell 0\": \"hlspells:soul_summon\"}}}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
