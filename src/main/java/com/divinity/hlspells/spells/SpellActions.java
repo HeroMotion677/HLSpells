@@ -481,7 +481,7 @@ public class SpellActions {
     }
 
     // Feather Falling
-    public static void doFeatherFalling(PlayerEntity player, World world) {
+    public static void doSlowFall(PlayerEntity player, World world) {
         if (player.getDeltaMovement().y <= 0) {
             player.addEffect(SLOW_FALLING);
             for (int i = 0; i < 3; i++) {
@@ -744,10 +744,8 @@ public class SpellActions {
     // Speed
     public static void doSpeed(PlayerEntity player, World world) {
         ModifiableAttributeInstance speedAttribute = player.getAttribute(Attributes.MOVEMENT_SPEED);
-        if (speedAttribute != null)  {
-            if (speedAttribute.getModifier(speedUUID) == null) {
-                speedAttribute.addPermanentModifier(speedModifier);
-            }
+        if (speedAttribute != null && speedAttribute.getModifier(speedUUID) == null) {
+            speedAttribute.addPermanentModifier(speedModifier);
         }
     }
 

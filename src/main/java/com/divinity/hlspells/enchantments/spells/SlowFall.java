@@ -1,5 +1,6 @@
 package com.divinity.hlspells.enchantments.spells;
 
+import com.divinity.hlspells.HLSpells;
 import com.divinity.hlspells.enchantments.ISpell;
 import com.divinity.hlspells.init.ItemInit;
 import com.divinity.hlspells.init.SpellInit;
@@ -57,7 +58,12 @@ public class SlowFall extends Enchantment implements ISpell {
 
     @Override
     public String getSpellRegistryName() {
-        ResourceLocation registryName = SpellInit.FEATHER_FALLING.get().getRegistryName();
+        ResourceLocation registryName = SpellInit.SLOW_FALL.get().getRegistryName();
         return registryName != null ? registryName.toString() : "null";
+    }
+
+    @Override
+    public boolean isDiscoverable() {
+        return !HLSpells.CONFIG.lootOnlyMode.get();
     }
 }

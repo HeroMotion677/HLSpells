@@ -17,8 +17,9 @@ import java.util.function.Supplier;
 public class SpellInit {
 
     public static final DeferredRegister<Spell> SPELLS_DEFERRED_REGISTER = DeferredRegister.create(Spell.class, HLSpells.MODID);
-    public static final RegistryObject<Spell> EMPTY = register("empty", () -> new Spell(SpellType.CAST, (p, w) -> {}, "No Spell"));
-    public static final RegistryObject<Spell> FEATHER_FALLING = register("feather_falling", () -> new Spell(SpellType.HELD, SpellActions::doFeatherFalling, "Feather Falling", 1, 15));
+    public static final RegistryObject<Spell> EMPTY = register("empty", () -> new Spell(SpellType.CAST, (p, w) -> {
+    }, "No Spell"));
+    public static final RegistryObject<Spell> SLOW_FALL = register("slow_fall", () -> new Spell(SpellType.HELD, SpellActions::doSlowFall, "Feather Falling", 1, 15));
     public static final RegistryObject<Spell> BLAST_PROTECTION = register("blast_protection", () -> new Spell(SpellType.CAST, SpellActions::doBlastSpell, "Blast Protection", 6));
     public static final RegistryObject<Spell> TELEPORT = register("teleport", () -> new Spell(SpellType.CAST, SpellActions::doTeleport, "Teleport", 9));
     public static final RegistryObject<Spell> ARROW_RAIN = register("arrow_rain", () -> new Spell(SpellType.HELD, SpellActions::doArrowRain, "Arrow Rain", 1, 6));

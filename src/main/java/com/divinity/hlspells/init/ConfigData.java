@@ -14,7 +14,6 @@ public class ConfigData {
 
     public ConfigData(ForgeConfigSpec.Builder builder) {
         builder.push("Config");
-        //TODO implement spellXP and lootOnlyMode
         spellsUseXP = builder.comment("Should the spells use experience?").define("spellsUseXP", true);
         lootOnlyMode = builder.comment("Should the spells only be obtainable from loot?").define("lootOnlyMode", false);
         ArrayList<String> defaultFireMobsList = Lists.newArrayList("minecraft:blaze", "minecraft:magma_cube");

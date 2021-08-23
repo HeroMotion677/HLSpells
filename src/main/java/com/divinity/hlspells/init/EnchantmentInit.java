@@ -6,7 +6,6 @@ import com.divinity.hlspells.enchantments.SinkingCurse;
 import com.divinity.hlspells.enchantments.SoulBond;
 import com.divinity.hlspells.enchantments.SoulSyphon;
 import com.divinity.hlspells.enchantments.spells.*;
-import com.ibm.icu.impl.UResource;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraftforge.fml.RegistryObject;
@@ -38,7 +37,7 @@ public class EnchantmentInit {
     public static final RegistryObject<Enchantment> PULL = ENCHANTMENTS.register("pull", () -> new Pull(EquipmentSlotType.MAINHAND));
     public static final RegistryObject<Enchantment> REPEL = ENCHANTMENTS.register("repel", () -> new Repel(EquipmentSlotType.MAINHAND));
     public static final RegistryObject<Enchantment> RESPIRATION = ENCHANTMENTS.register("respiration", () -> new Respiration(EquipmentSlotType.MAINHAND));
-    public static final RegistryObject<Enchantment> FEATHER_FALLING = ENCHANTMENTS.register("feather_falling", () -> new SlowFall(EquipmentSlotType.MAINHAND));
+    public static final RegistryObject<Enchantment> FEATHER_FALLING = ENCHANTMENTS.register("slow_fall", () -> new SlowFall(EquipmentSlotType.MAINHAND));
     public static final RegistryObject<Enchantment> SOUL_SUMMON = ENCHANTMENTS.register("soul_summon", () -> new SoulSummon(EquipmentSlotType.MAINHAND));
     public static final RegistryObject<Enchantment> SPEED = ENCHANTMENTS.register("speed", () -> new Speed(EquipmentSlotType.MAINHAND));
     public static final RegistryObject<Enchantment> STORM = ENCHANTMENTS.register("storm", () -> new Storm(EquipmentSlotType.MAINHAND));

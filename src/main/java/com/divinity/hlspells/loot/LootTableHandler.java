@@ -1,10 +1,10 @@
-package com.divinity.hlspells.setup;
+package com.divinity.hlspells.loot;
 
 import com.divinity.hlspells.HLSpells;
-import net.minecraft.loot.LootEntry;
-import net.minecraft.loot.LootPool;
-import net.minecraft.loot.TableLootEntry;
+import net.minecraft.loot.*;
+import net.minecraft.loot.functions.ILootFunction;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.registry.Registry;
 import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -47,5 +47,18 @@ public class LootTableHandler {
         ResourceLocation table = new ResourceLocation(HLSpells.MODID, "inject/" + name);
         return TableLootEntry.lootTableReference(table)
                 .setWeight(1);
+    }
+
+    // Loot function is registered inside to not call too early and crash
+    public static final class LootFunctions {
+
+        public static final LootFunctionType SET_SPELL = register("set_spell", new SetSpell.Serializer());
+
+        private static LootFunctionType register(String id, LootFunction.Serializer<? extends ILootFunction> serializer) {
+            return Registry.register(Registry.LOOT_FUNCTION_TYPE, new ResourceLocation(HLSpells.MODID, id), new LootFunctionType(serializer));
+        }
+
+        public static void init() {
+        }
     }
 }

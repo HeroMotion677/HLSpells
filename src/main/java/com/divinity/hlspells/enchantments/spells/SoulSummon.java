@@ -1,5 +1,6 @@
 package com.divinity.hlspells.enchantments.spells;
 
+import com.divinity.hlspells.HLSpells;
 import com.divinity.hlspells.enchantments.ISpell;
 import com.divinity.hlspells.init.ItemInit;
 import com.divinity.hlspells.init.SpellInit;
@@ -59,5 +60,10 @@ public class SoulSummon extends Enchantment implements ISpell {
     public String getSpellRegistryName() {
         ResourceLocation registryName = SpellInit.SOUL_SUMMON.get().getRegistryName();
         return registryName != null ? registryName.toString() : "null";
+    }
+
+    @Override
+    public boolean isDiscoverable() {
+        return !HLSpells.CONFIG.lootOnlyMode.get();
     }
 }

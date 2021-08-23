@@ -5,13 +5,13 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "weight": 3,
+          "weight": 2,
           "quality": 1,
           "name": "hlspells:spell_book",
           "functions": [
             {
               "function": "hlspells:set_spell",
-              "spell": "hlspells:fangs"
+              "spell": "hlspells:flaming_bolt"
             }
           ]
         },
@@ -23,7 +23,19 @@
           "functions": [
             {
               "function": "hlspells:set_spell",
-              "spell": "hlspells:soul_summon"
+              "spell": "hlspells:flaming_circle"
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 2,
+          "quality": 1,
+          "name": "hlspells:spell_book",
+          "functions": [
+            {
+              "function": "hlspells:set_spell",
+              "spell": "hlspells:fire_ball"
             }
           ]
         }
