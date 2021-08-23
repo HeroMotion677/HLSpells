@@ -11,8 +11,8 @@ import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
-public class Storm extends Enchantment implements ISpell {
-    public Storm(EquipmentSlotType... slots) {
+public class LightningChain extends Enchantment implements ISpell {
+    public LightningChain(EquipmentSlotType... slots) {
         super(Rarity.VERY_RARE, EnchantmentType.BREAKABLE, slots);
     }
 
@@ -58,7 +58,7 @@ public class Storm extends Enchantment implements ISpell {
 
     @Override
     public String getSpellRegistryName() {
-        ResourceLocation registryName = SpellInit.STORM.get().getRegistryName();
+        ResourceLocation registryName = SpellInit.LIGHTNING_CHAIN.get().getRegistryName();
         return registryName != null ? registryName.toString() : "null";
     }
 

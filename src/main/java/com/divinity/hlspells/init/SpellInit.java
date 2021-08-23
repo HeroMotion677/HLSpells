@@ -28,7 +28,7 @@ public class SpellInit {
     public static final RegistryObject<Spell> SOUL_SUMMON = register("soul_summon", () -> new Spell(SpellType.CAST, SpellActions::doSummonSpell, "Soul Summon", 16));
     public static final RegistryObject<Spell> PULL = register("pull", () -> new Spell(SpellType.CAST, SpellActions::doPullSpell, "Pull", 3));
     public static final RegistryObject<Spell> BOND = register("bond", () -> new Spell(SpellType.CAST, SpellActions::doBondSpell, "Bond", 1));
-    public static final RegistryObject<Spell> STORM = register("storm", () -> new Spell(SpellType.CAST, SpellActions::doStormSpell, "Storm", 14));
+    public static final RegistryObject<Spell> LIGHTNING_CHAIN = register("lightning_chain", () -> new Spell(SpellType.CAST, SpellActions::doLightingChain, "Lightning Chain", 14));
     public static final RegistryObject<Spell> FIRE_BALL = register("fire_ball", () -> new Spell(SpellType.CAST, SpellActions::doFireBallSpell, "Fire Ball", 5));
     public static final RegistryObject<Spell> LEVITATION = register("levitation", () -> new Spell(SpellType.HELD, SpellActions::doLevitation, "Levitation", 1, 6));
     public static final RegistryObject<Spell> LIGHTNING_BOLT = register("lightning_bolt", () -> new Spell(SpellType.CAST, SpellActions::doLightningBolt, "Lightning Bolt", 8));

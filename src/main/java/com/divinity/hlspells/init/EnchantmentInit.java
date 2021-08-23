@@ -40,7 +40,7 @@ public class EnchantmentInit {
     public static final RegistryObject<Enchantment> FEATHER_FALLING = ENCHANTMENTS.register("slow_fall", () -> new SlowFall(EquipmentSlotType.MAINHAND));
     public static final RegistryObject<Enchantment> SOUL_SUMMON = ENCHANTMENTS.register("soul_summon", () -> new SoulSummon(EquipmentSlotType.MAINHAND));
     public static final RegistryObject<Enchantment> SPEED = ENCHANTMENTS.register("speed", () -> new Speed(EquipmentSlotType.MAINHAND));
-    public static final RegistryObject<Enchantment> STORM = ENCHANTMENTS.register("storm", () -> new Storm(EquipmentSlotType.MAINHAND));
+    public static final RegistryObject<Enchantment> STORM = ENCHANTMENTS.register("lightning_chain", () -> new LightningChain(EquipmentSlotType.MAINHAND));
     public static final RegistryObject<Enchantment> TELEPORT = ENCHANTMENTS.register("teleport", () -> new Teleport(EquipmentSlotType.MAINHAND));
     public static final RegistryObject<Enchantment> FROST_PATH = ENCHANTMENTS.register("frost_path",  () -> new FrostPath(EquipmentSlotType.MAINHAND));
     public static final RegistryObject<Enchantment> CURSE_OF_SINKING = ENCHANTMENTS.register("curse_of_sinking", () -> new SinkingCurse(EquipmentSlotType.HEAD, EquipmentSlotType.CHEST, EquipmentSlotType.LEGS,  EquipmentSlotType.FEET));

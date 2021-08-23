@@ -31,10 +31,10 @@ public class RunSpells {
                         Spell spell = SpellUtils.getSpellByID(cap.getCurrentSpell());
                         if (spell.getType() == SpellType.CAST && spell.hasCost() && SpellUtils.checkXpReq(player, spell)) {
                             spell.getSpellAction().accept(player, world);
-                            if (!player.level.isClientSide())
+                            if (!player.level.isClientSide() && player.abilities.instabuild)
                                 itemStack.hurt(1, player.getRandom(), (ServerPlayerEntity) player);
                             if (HLSpells.CONFIG.spellsUseXP.get())
-                                SpellUtils.removeXP(player, spell);
+                                player.giveExperiencePoints(-SpellUtils.getXpReq(player, spell));
                         }
                     });
         }
@@ -58,11 +58,10 @@ public class RunSpells {
                                         xpTickCounter++;
                                         durabilityTickCounter++;
                                         if (xpTickCounter == SpellUtils.getTickDelay(player, spell) && HLSpells.CONFIG.spellsUseXP.get()) {
-                                            SpellUtils.removeXP(player, spell);
-                                            player.giveExperiencePoints(-spell.getXpCost());
+                                            player.giveExperiencePoints(-SpellUtils.getXpReq(player, spell));
                                             xpTickCounter = 0;
                                         }
-                                        if (durabilityTickCounter == 15 && !player.level.isClientSide()) {
+                                        if (durabilityTickCounter == 15 && !player.level.isClientSide() && !player.isCreative()) {
                                             stack.hurt(1, player.getRandom(), (ServerPlayerEntity) player);
                                             durabilityTickCounter = 0;
                                         }

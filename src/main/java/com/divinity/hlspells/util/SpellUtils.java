@@ -42,7 +42,7 @@ public class SpellUtils {
     }
 
     public static boolean checkXpReq(PlayerEntity player, Spell spell) {
-        return player.isCreative() || !HLSpells.CONFIG.spellsUseXP.get() || player.totalExperience >= spell.getXpCost();
+        return player.isCreative() || !HLSpells.CONFIG.spellsUseXP.get() || player.totalExperience >= getXpReq(player, spell);
     }
 
     public static int getTickDelay(PlayerEntity player, Spell spell) {
@@ -53,16 +53,11 @@ public class SpellUtils {
         return tickDelay;
     }
 
-    /**
-     * Do own check for configs
-     */
-    public static void removeXP(PlayerEntity player, Spell spell) {
+    public static int getXpReq(PlayerEntity player, Spell spell) {
         int xpToRemove = spell.getXpCost();
-        if (spell.getType() == SpellType.CAST) {
-            if (player.getItemBySlot(EquipmentSlotType.HEAD).getItem() == ItemInit.WIZARD_HAT.get())  {
-                xpToRemove *= 0.7;
-            }
+        if (spell.getType() == SpellType.CAST && player.getItemBySlot(EquipmentSlotType.HEAD).getItem() == ItemInit.WIZARD_HAT.get()) {
+            xpToRemove *= 0.7;
         }
-        player.giveExperiencePoints(-xpToRemove);
+        return xpToRemove;
     }
 }

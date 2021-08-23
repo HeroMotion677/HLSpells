@@ -291,7 +291,7 @@ public class SpellActions {
     }
 
     // Pending change
-    public static void doStormSpell(PlayerEntity player, World world) {
+    public static void doLightingChain(PlayerEntity player, World world) {
         InvisibleTargetingEntity stormBullet = new InvisibleTargetingEntity(EntityInit.STORM_BULLET_ENTITY.get(), world);
         stormBullet.setHomePosition(player.position());
         stormBullet.setOwner(player);
