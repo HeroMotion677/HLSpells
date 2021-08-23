@@ -28,6 +28,7 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
@@ -118,8 +119,16 @@ public class SpellHoldingItem extends ShootableItem {
         ItemStack itemstack = player.getItemInHand(hand);
         player.startUsingItem(hand);
         currentStoredSpell = SpellUtils.getSpell(itemstack);
-        itemstack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP).ifPresent(cap -> cap.setHeldActive(true));
+        LazyOptional<ISpellHolder> capability = itemstack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP);
+        if (capability.isPresent()) {
+            List<String> spells = capability.map(ISpellHolder::getSpells).orElse(null);
+            if (spells != null && spells.isEmpty()) {
+                return ActionResult.pass(itemstack);
+            }
+        }
+        capability.ifPresent(cap -> cap.setHeldActive(true));
         if (!world.isClientSide()) {
+            System.out.println(isSpellBook);
             if (player.getUseItemRemainingTicks() < 71997 && player.getUseItemRemainingTicks() >= 71994 && isSpellBook) {
                 world.playSound(null, player.blockPosition(), SoundEvents.BOOK_PAGE_TURN, SoundCategory.NEUTRAL, 0.6F, 1.0F);
             }
@@ -160,11 +169,12 @@ public class SpellHoldingItem extends ShootableItem {
     public void releaseUsing(ItemStack stack, World world, LivingEntity entity, int power) {
         if (entity instanceof PlayerEntity) {
             PlayerEntity player = (PlayerEntity) entity;
-            stack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP).ifPresent(cap -> cap.setHeldActive(false));
+            LazyOptional<ISpellHolder> capability = stack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP);
+            capability.ifPresent(cap -> cap.setHeldActive(false));
             if (player.getUseItemRemainingTicks() < 71988) {
                 if (!world.isClientSide()) {
                     RunSpells.doCastSpell(player, world, stack);
-                    world.playSound(null, player.blockPosition(), SoundEvents.EVOKER_CAST_SPELL, SoundCategory.NEUTRAL, 0.6F, 1.0F);
+                    capability.filter(p -> !p.getSpells().isEmpty()).ifPresent(cap -> world.playSound(null, player.blockPosition(), SoundEvents.EVOKER_CAST_SPELL, SoundCategory.NEUTRAL, 0.6F, 1.0F));
                 }
                 SpellActions.doParticles(player);
             }
