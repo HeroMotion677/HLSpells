@@ -117,13 +117,15 @@ public class SpellHoldingItem extends ShootableItem {
     @Override
     public ActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
         ItemStack itemstack = player.getItemInHand(hand);
-        player.startUsingItem(hand);
         currentStoredSpell = SpellUtils.getSpell(itemstack);
         LazyOptional<ISpellHolder> capability = itemstack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP);
         if (capability.isPresent()) {
             List<String> spells = capability.map(ISpellHolder::getSpells).orElse(null);
-            if (spells != null && spells.isEmpty()) {
-                return ActionResult.pass(itemstack);
+            if (spells != null && !(spells.isEmpty())) {
+                player.startUsingItem(hand);
+            }
+            else {
+                return ActionResult.fail(itemstack);
             }
         }
         capability.ifPresent(cap -> cap.setHeldActive(true));
@@ -145,11 +147,6 @@ public class SpellHoldingItem extends ShootableItem {
 
     @Override
     public void inventoryTick(ItemStack stack, World world, Entity entity, int pItemSlot, boolean pIsSelected) {
-        if (isSpellBook && stack.getEnchantmentTags().size() > 1) {
-            for (int i = 0; i < stack.getEnchantmentTags().size() && stack.getEnchantmentTags().size() > 1; i++) {
-                stack.getEnchantmentTags().remove(i);
-            }
-        }
         if (entity instanceof PlayerEntity && stack.getItem() instanceof SpellHoldingItem) {
             PlayerEntity player = (PlayerEntity) entity;
             stack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP).ifPresent(cap -> {
@@ -174,7 +171,8 @@ public class SpellHoldingItem extends ShootableItem {
             if (player.getUseItemRemainingTicks() < 71988) {
                 if (!world.isClientSide()) {
                     RunSpells.doCastSpell(player, world, stack);
-                    capability.filter(p -> !p.getSpells().isEmpty()).ifPresent(cap -> world.playSound(null, player.blockPosition(), SoundEvents.EVOKER_CAST_SPELL, SoundCategory.NEUTRAL, 0.6F, 1.0F));
+                    capability.ifPresent(cap -> System.out.println(cap.containsSpell("hlspells:empty")));
+                    capability.filter(p -> !(p.getSpells().isEmpty()) || !(p.containsSpell("hlspells:empty"))).ifPresent(cap -> world.playSound(null, player.blockPosition(), SoundEvents.EVOKER_CAST_SPELL, SoundCategory.NEUTRAL, 0.6F, 1.0F));
                 }
                 SpellActions.doParticles(player);
             }
