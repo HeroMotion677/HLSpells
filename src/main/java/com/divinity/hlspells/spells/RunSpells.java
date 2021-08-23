@@ -7,7 +7,7 @@ import com.divinity.hlspells.spell.Spell;
 import com.divinity.hlspells.spell.SpellType;
 import com.divinity.hlspells.util.SpellUtils;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
 import net.minecraft.world.World;
@@ -31,7 +31,8 @@ public class RunSpells {
                         Spell spell = SpellUtils.getSpellByID(cap.getCurrentSpell());
                         if (spell.getType() == SpellType.CAST && spell.hasCost() && SpellUtils.checkXpReq(player, spell)) {
                             spell.getSpellAction().accept(player, world);
-                            itemStack.hurtAndBreak(1, player, (playerEntity) -> playerEntity.broadcastBreakEvent(EquipmentSlotType.MAINHAND));
+                            if (!player.level.isClientSide())
+                                itemStack.hurt(1, player.getRandom(), (ServerPlayerEntity) player);
                             if (HLSpells.CONFIG.spellsUseXP.get())
                                 player.giveExperiencePoints(-spell.getXpCost());
                         }
@@ -60,8 +61,8 @@ public class RunSpells {
                                             player.giveExperiencePoints(-spell.getXpCost());
                                             xpTickCounter = 0;
                                         }
-                                        if (durabilityTickCounter == 15) {
-                                            stack.hurtAndBreak(1, player, playerEntity -> playerEntity.broadcastBreakEvent(EquipmentSlotType.MAINHAND));
+                                        if (durabilityTickCounter == 15 && !player.level.isClientSide()) {
+                                            stack.hurt(1, player.getRandom(), (ServerPlayerEntity) player);
                                             durabilityTickCounter = 0;
                                         }
                                     }

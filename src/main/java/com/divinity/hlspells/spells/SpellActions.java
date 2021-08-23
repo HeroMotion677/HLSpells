@@ -4,6 +4,7 @@ import com.divinity.hlspells.HLSpells;
 import com.divinity.hlspells.entities.*;
 import com.divinity.hlspells.goal.SpellBookLureGoal;
 import com.divinity.hlspells.goal.SpellBookRepelGoal;
+import com.divinity.hlspells.init.BlockInit;
 import com.divinity.hlspells.init.EntityInit;
 import com.divinity.hlspells.util.Util;
 import net.minecraft.block.BlockState;
@@ -35,6 +36,7 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.*;
+import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
@@ -75,7 +77,6 @@ public class SpellActions {
     static EffectInstance GLOWING = new EffectInstance(Effects.GLOWING, Integer.MAX_VALUE, 0, false, false);
     static EffectInstance LEVITATION = new EffectInstance(Effects.LEVITATION, Integer.MAX_VALUE, 2, false, false);
     static EffectInstance SLOW_FALLING = new EffectInstance(Effects.SLOW_FALLING, Integer.MAX_VALUE, 5, false, false);
-    static EffectInstance SPEED = new EffectInstance(Effects.MOVEMENT_SPEED, Integer.MAX_VALUE, 4, false, false);
 
     /**
      * Returns a comparator which compares entities' distances to given player
@@ -492,7 +493,28 @@ public class SpellActions {
     }
 
     // Frost Path
-    public static void doFrostPath (PlayerEntity player, World world) {}
+    public static void doFrostPath(PlayerEntity player, World world) {
+        if (player.isOnGround()) {
+            BlockPos pos = player.blockPosition();
+            BlockState blockstate = BlockInit.CUSTOM_FROSTED_ICE.get().defaultBlockState();
+            float f = 3;
+            BlockPos.Mutable blockpos$mutable = new BlockPos.Mutable();
+
+            for (BlockPos blockpos : BlockPos.betweenClosed(pos.offset((-f), -1.0D, (-f)), pos.offset(f, -1.0D, f))) {
+                if (blockpos.closerThan(player.position(), f)) {
+                    blockpos$mutable.set(blockpos.getX(), blockpos.getY() + 1, blockpos.getZ());
+                    BlockState blockstate1 = world.getBlockState(blockpos$mutable);
+                    if (blockstate1.isAir(world, blockpos$mutable)) {
+                        BlockState blockstate2 = world.getBlockState(blockpos);
+                        if (blockstate2.getMaterial().isReplaceable() && blockstate.canSurvive(world, blockpos) && world.isUnobstructed(blockstate, blockpos, ISelectionContext.empty()) && !net.minecraftforge.event.ForgeEventFactory.onBlockPlace(player, net.minecraftforge.common.util.BlockSnapshot.create(world.dimension(), world, blockpos), net.minecraft.util.Direction.UP)) {
+                            world.setBlockAndUpdate(blockpos, blockstate);
+                            world.getBlockTicks().scheduleTick(blockpos, BlockInit.CUSTOM_FROSTED_ICE.get(), MathHelper.nextInt(player.getRandom(), 60, 120));
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     // Lure
     public static void doLure(PlayerEntity player, World world) {
