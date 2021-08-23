@@ -126,9 +126,7 @@ public class SpellHoldingItem extends ShootableItem {
 
             Spell spell = SpellUtils.getSpell(itemstack);
             if (spell != SpellInit.EMPTY.get() && player.getUseItemRemainingTicks() < 71994 && player.getUseItemRemainingTicks() >= 71991) {
-                if (spell.getType() == SpellType.CAST) {
-                    world.playSound(null, player.blockPosition(), SoundEvents.EVOKER_PREPARE_ATTACK, SoundCategory.NEUTRAL, 0.6F, 1.0F);
-                } else if (spell.getType() == SpellType.HELD) {
+                if (spell.getType() == SpellType.HELD) {
                     world.playSound(null, player.blockPosition(), SoundEvents.EVOKER_PREPARE_SUMMON, SoundCategory.NEUTRAL, 0.6F, 1.0F);
                 }
             }
