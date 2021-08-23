@@ -6,10 +6,13 @@ import net.minecraft.loot.LootPool;
 import net.minecraft.loot.TableLootEntry;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.LootTableLoadEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber(modid = HLSpells.MODID)
 public class LootTableHandler {
+
+    @SubscribeEvent
     public static void registerLoot(LootTableLoadEvent evt) {
         String prefix = "minecraft:chests/";
         String name = evt.getName().toString();
