@@ -69,6 +69,7 @@ public class EntityDiesEvent {
 
                 // TOTEM OF GRIEFING (Explodes if the totem is held)
                 if (heldItem.getItem() == ItemInit.TOTEM_OF_GRIEFING.get() && griefingTotem) {
+
                     world.explode(player, player.getX(), player.getY(), player.getZ(), 5.0F, Explosion.Mode.BREAK);
                     // Removes the totem from dropping
                     player.setItemInHand(hand, ItemStack.EMPTY);

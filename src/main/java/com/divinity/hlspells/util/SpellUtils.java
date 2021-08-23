@@ -8,6 +8,7 @@ import com.divinity.hlspells.items.capabilities.spellholdercap.SpellHolderProvid
 import com.divinity.hlspells.spell.Spell;
 import com.divinity.hlspells.spell.SpellType;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -45,8 +46,11 @@ public class SpellUtils {
     }
 
     public static int getTickDelay(PlayerEntity player, Spell spell) {
-        //modify to alter tick delay
-        return spell.getTickDelay();
+        int tickDelay = spell.getTickDelay();
+        if (player.getItemBySlot(EquipmentSlotType.HEAD).getItem() == ItemInit.WIZARD_HAT.get()) {
+            tickDelay = tickDelay > 4 ? tickDelay - 4 : tickDelay;
+        }
+        return tickDelay;
     }
 
     /**
@@ -55,7 +59,9 @@ public class SpellUtils {
     public static void removeXP(PlayerEntity player, Spell spell) {
         int xpToRemove = spell.getXpCost();
         if (spell.getType() == SpellType.CAST) {
-            // modify to remove more xp
+            if (player.getItemBySlot(EquipmentSlotType.HEAD).getItem() == ItemInit.WIZARD_HAT.get())  {
+                xpToRemove *= 0.7;
+            }
         }
         player.giveExperiencePoints(-xpToRemove);
     }
