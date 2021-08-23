@@ -58,7 +58,7 @@ public class Blast extends Enchantment implements ISpell {
 
     @Override
     public String getSpellRegistryName() {
-        ResourceLocation registryName = SpellInit.BLAST_PROTECTION.get().getRegistryName();
+        ResourceLocation registryName = SpellInit.BLAST.get().getRegistryName();
         return registryName != null ? registryName.toString() : "null";
     }
 
