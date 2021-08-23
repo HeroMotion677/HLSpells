@@ -38,7 +38,6 @@ import org.lwjgl.glfw.GLFW;
 @Mod.EventBusSubscriber(modid = HLSpells.MODID, value = Dist.CLIENT)
 public class ClientSetup {
     public static final KeyBinding WAND_BINDING = new KeyBinding("Wand Cycle", KeyConflictContext.UNIVERSAL, InputMappings.Type.KEYSYM, GLFW.GLFW_KEY_G, "HLSpells");
-    public static int sprintTriggerTime;
     static boolean buttonPressedFlag;
 
     public static void init(final FMLClientSetupEvent event) {
@@ -150,7 +149,6 @@ public class ClientSetup {
                 if (spell == SpellInit.SPEED.get() || spell == SpellInit.FROST_PATH.get()) {
                     player.input.leftImpulse /= 0.2F;
                     player.input.forwardImpulse /= 0.2F;
-                    sprintTriggerTime = player.sprintTriggerTime;
                 }
             }
         }

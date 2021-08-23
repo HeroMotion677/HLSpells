@@ -2,9 +2,11 @@ package com.divinity.hlspells.init;
 
 
 import com.divinity.hlspells.HLSpells;
+import com.divinity.hlspells.enchantments.SinkingCurse;
 import com.divinity.hlspells.enchantments.SoulBond;
 import com.divinity.hlspells.enchantments.SoulSyphon;
 import com.divinity.hlspells.enchantments.spells.*;
+import com.ibm.icu.impl.UResource;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraftforge.fml.RegistryObject;
@@ -42,4 +44,5 @@ public class EnchantmentInit {
     public static final RegistryObject<Enchantment> STORM = ENCHANTMENTS.register("storm", () -> new Storm(EquipmentSlotType.MAINHAND));
     public static final RegistryObject<Enchantment> TELEPORT = ENCHANTMENTS.register("teleport", () -> new Teleport(EquipmentSlotType.MAINHAND));
     public static final RegistryObject<Enchantment> FROST_PATH = ENCHANTMENTS.register("frost_path",  () -> new FrostPath(EquipmentSlotType.MAINHAND));
+    public static final RegistryObject<Enchantment> CURSE_OF_SINKING = ENCHANTMENTS.register("curse_of_sinking", () -> new SinkingCurse(EquipmentSlotType.HEAD, EquipmentSlotType.CHEST, EquipmentSlotType.LEGS,  EquipmentSlotType.FEET));
 }
