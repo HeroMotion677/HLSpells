@@ -4,7 +4,7 @@ license = "MIT License"
 
 [[mods]]
 modId = "hlspells"
-version = "1.16.5-r1.0"
+version = "1.16.5-b1.0"
 displayName = "HLSpells"
 credits = "Credits are on mod's page."
 displayURL = "\nDivinity: https://github.com/Divine144/HLSpells"
