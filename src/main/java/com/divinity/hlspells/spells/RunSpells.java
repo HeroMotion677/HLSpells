@@ -7,6 +7,7 @@ import com.divinity.hlspells.spell.Spell;
 import com.divinity.hlspells.spell.SpellType;
 import com.divinity.hlspells.util.SpellUtils;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
 import net.minecraft.world.World;
@@ -19,7 +20,8 @@ import net.minecraftforge.fml.common.Mod;
  */
 @Mod.EventBusSubscriber(modid = HLSpells.MODID)
 public class RunSpells {
-    static int tick;
+    static int xpTickCounter;
+    static int durabilityTickCounter;
 
     public static void doCastSpell(PlayerEntity player, World world, ItemStack itemStack) {
         if (itemStack.getItem() instanceof SpellHoldingItem) {
@@ -29,6 +31,7 @@ public class RunSpells {
                         Spell spell = SpellUtils.getSpellByID(cap.getCurrentSpell());
                         if (spell.getType() == SpellType.CAST && spell.hasCost() && SpellUtils.checkXpReq(player, spell)) {
                             spell.getSpellAction().accept(player, world);
+                            itemStack.hurtAndBreak(1, player, (playerEntity) -> playerEntity.broadcastBreakEvent(EquipmentSlotType.MAINHAND));
                             if (HLSpells.CONFIG.spellsUseXP.get())
                                 player.giveExperiencePoints(-spell.getXpCost());
                         }
@@ -51,19 +54,26 @@ public class RunSpells {
                                     Spell spell = SpellUtils.getSpellByID(cap.getCurrentSpell());
                                     if (spell.getType() == SpellType.HELD && spell.hasCost() && SpellUtils.checkXpReq(player, spell)) {
                                         spell.getSpellAction().accept(player, player.level);
-                                        tick++;
-                                        if (tick == spell.getTickDelay() && HLSpells.CONFIG.spellsUseXP.get()) {
+                                        xpTickCounter++;
+                                        durabilityTickCounter++;
+                                        if (xpTickCounter == spell.getTickDelay() && HLSpells.CONFIG.spellsUseXP.get()) {
                                             player.giveExperiencePoints(-spell.getXpCost());
-                                            tick = 0;
+                                            xpTickCounter = 0;
+                                        }
+                                        if (durabilityTickCounter == 15) {
+                                            stack.hurtAndBreak(1, player, playerEntity -> playerEntity.broadcastBreakEvent(EquipmentSlotType.MAINHAND));
+                                            durabilityTickCounter = 0;
                                         }
                                     }
                                 } else {
-                                    tick = 0;
+                                    xpTickCounter = 0;
+                                    durabilityTickCounter = 0;
                                     SpellActions.resetEffects(player);
                                 }
                             });
                 } else {
-                    tick = 0;
+                    xpTickCounter = 0;
+                    durabilityTickCounter = 0;
                     SpellActions.resetEffects(player);
                 }
             }
