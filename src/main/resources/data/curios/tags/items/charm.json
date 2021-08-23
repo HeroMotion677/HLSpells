@@ -1,0 +1,9 @@
+{
+  "replace": "false",
+  "values": [
+    "hlspells:totem_of_griefing",
+    "hlspells:totem_of_keeping",
+    "hlspells:totem_of_returning",
+    "hlspells:totem_of_escaping"
+  ]
+}

@@ -23,6 +23,10 @@ repositories {
         name = "ModMaven"
         url = "https://modmaven.k-4u.nl"
     }
+    maven {
+        name = "Curios maven"
+        url = "https://maven.theillusivec4.top/"
+    }
 }
 
 apply plugin: 'net.minecraftforge.gradle'
@@ -93,13 +97,16 @@ mixin {
 
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
-    // Compile against the JEI API but do not include it at runtime
+    // Compile against the API but do not include it at runtime
     compileOnly fg.deobf("mezz.jei:jei-${jei_mc_version}:${jei_version}:api")
-    // At runtime, use the full JEI jar
+    compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}:api")
+    // At runtime, use the full mod jar
     runtimeOnly fg.deobf("mezz.jei:jei-${jei_mc_version}:${jei_version}")
+    runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
     // Processes mixin annotations
     annotationProcessor 'org.spongepowered:mixin:0.8.2:processor'
     testAnnotationProcessor 'org.spongepowered:mixin:0.8.2:processor'
+
 }
 
 jar {

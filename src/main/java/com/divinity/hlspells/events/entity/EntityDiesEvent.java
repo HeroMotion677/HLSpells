@@ -6,6 +6,7 @@ import com.divinity.hlspells.items.ModTotemItem;
 import com.divinity.hlspells.items.capabilities.totemcap.ITotemCap;
 import com.divinity.hlspells.items.capabilities.totemcap.TotemItemProvider;
 import com.divinity.hlspells.setup.client.ClientSetup;
+import com.divinity.hlspells.util.CuriosCompat;
 import com.divinity.hlspells.util.Util;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -29,6 +30,7 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 
 import java.util.Iterator;
@@ -49,6 +51,64 @@ public class EntityDiesEvent {
             boolean returnTotem = true;
             boolean keepingTotem = true;
 
+            if (ModList.get().isLoaded("curios")) {
+                if (CuriosCompat.getItemInCuriosSlot(player, Items.TOTEM_OF_UNDYING).isPresent()) {
+                    escapingTotem = false;
+                }
+
+                if (CuriosCompat.getItemInCuriosSlot(player, ItemInit.TOTEM_OF_KEEPING.get()).isPresent()) {
+                    CuriosCompat.getItemInCuriosSlot(player, ItemInit.TOTEM_OF_KEEPING.get()).ifPresent(map -> {
+                        ItemStack stack = map.getRight();
+                        stack.getCapability(TotemItemProvider.TOTEM_CAP).ifPresent(cap -> {
+                            cap.hasDied(true);
+                            cap.setTotemInHand(Hand.MAIN_HAND);
+                            cap.setInventoryNBT(player.inventory.save(new ListNBT()));
+                        });
+                    });
+                    keepingTotem = false;
+                    griefingTotem = false;
+                }
+
+
+                if (CuriosCompat.getItemInCuriosSlot(player, ItemInit.TOTEM_OF_GRIEFING.get()).isPresent()) {
+                    CuriosCompat.getItemInCuriosSlot(player, ItemInit.TOTEM_OF_GRIEFING.get()).ifPresent(map -> {
+                        ItemStack stack = map.getRight();
+                        world.explode(player, player.getX(), player.getY(), player.getZ(), 5.0F, Explosion.Mode.BREAK);
+                        //TODO destroy the item in the curio slot
+                    });
+                    griefingTotem = false;
+                }
+
+                if (CuriosCompat.getItemInCuriosSlot(player, ItemInit.TOTEM_OF_ESCAPING.get()).isPresent()) {
+                    CuriosCompat.getItemInCuriosSlot(player, ItemInit.TOTEM_OF_ESCAPING.get()).ifPresent(map -> {
+                        ItemStack stack = map.getRight();
+                        ModTotemItem.vanillaTotemBehavior(player, stack, ItemInit.TOTEM_OF_ESCAPING.get());
+                    });
+                    player.addEffect(new EffectInstance(Effects.INVISIBILITY, 200, 0));
+                    // Teleport the player randomly nearby
+                    for (int i = 0; i < 16; ++i) {
+                        double xRand = player.getX() + (player.getRandom().nextDouble() - 0.5D) * 16.0D;
+                        double yRand = MathHelper.clamp(player.getY() + (player.getRandom().nextInt(16) - 8), 0.0D, world.getHeight() - 1D);
+                        double zRand = player.getZ() + (player.getRandom().nextDouble() - 0.5D) * 16.0D;
+                        player.randomTeleport(xRand, yRand, zRand, true);
+                        world.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.CHORUS_FRUIT_TELEPORT, SoundCategory.PLAYERS, 1.0F, 1.0F);
+                        player.playSound(SoundEvents.CHORUS_FRUIT_TELEPORT, 1.0F, 1.0F);
+                    }
+                    escapingTotem = false;
+                    returnTotem = false;
+                }
+
+                if (CuriosCompat.getItemInCuriosSlot(player, ItemInit.TOTEM_OF_RETURNING.get()).isPresent()) {
+                    CuriosCompat.getItemInCuriosSlot(player, ItemInit.TOTEM_OF_RETURNING.get()).ifPresent(map -> {
+                        ItemStack stack = map.getRight();
+                        stack.getCapability(TotemItemProvider.TOTEM_CAP).ifPresent(cap -> {
+                            cap.hasDied(true);
+                            cap.setTotemInHand(Hand.MAIN_HAND);
+                        });
+                    });
+                    returnTotem = false;
+                }
+            }
             for (Hand hand : Hand.values()) {
                 ItemStack heldItem = player.getItemInHand(hand);
                 if (heldItem.getItem() == Items.TOTEM_OF_UNDYING) {
@@ -113,7 +173,7 @@ public class EntityDiesEvent {
             PlayerEntity player = (PlayerEntity) event.getEntity();
             // If true the inventory is loaded back and drops are removed
             boolean[] keepingTotem = new boolean[1];
-            for (Iterator<ItemEntity> itemEntityIterator = event.getDrops().iterator(); itemEntityIterator.hasNext();) {
+            for (Iterator<ItemEntity> itemEntityIterator = event.getDrops().iterator(); itemEntityIterator.hasNext(); ) {
                 ItemStack stack = itemEntityIterator.next().getItem();
                 // TOTEM OF RETURNING (Sets BlockPos to teleport to and sets the hand the totem should be in)
                 if (stack.getItem() == ItemInit.TOTEM_OF_RETURNING.get()) {
