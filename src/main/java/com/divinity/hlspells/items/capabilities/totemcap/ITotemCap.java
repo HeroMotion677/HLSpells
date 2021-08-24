@@ -26,7 +26,6 @@ public interface ITotemCap {
 
     void setCuriosNBT(ListNBT curiosInv);
 
-
     int getCuriosSlot();
 
     void setCuriosSlot(int curiosSlot);

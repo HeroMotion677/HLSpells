@@ -7,6 +7,9 @@ import com.divinity.hlspells.items.capabilities.spellholdercap.SpellHolderStorag
 import com.divinity.hlspells.items.capabilities.totemcap.ITotemCap;
 import com.divinity.hlspells.items.capabilities.totemcap.TotemCap;
 import com.divinity.hlspells.items.capabilities.totemcap.TotemItemStorage;
+import com.divinity.hlspells.player.capability.IPlayerCap;
+import com.divinity.hlspells.player.capability.PlayerCap;
+import com.divinity.hlspells.player.capability.PlayerCapStorage;
 import com.divinity.hlspells.setup.RegistryHandler;
 import com.divinity.hlspells.setup.client.ClientSetup;
 import com.divinity.hlspells.util.CuriosCompat;
@@ -71,6 +74,7 @@ public class HLSpells {
     public void setup(final FMLCommonSetupEvent event) {
         CapabilityManager.INSTANCE.register(ISpellHolder.class, new SpellHolderStorage(), SpellHolder::new);
         CapabilityManager.INSTANCE.register(ITotemCap.class, new TotemItemStorage(), TotemCap::new);
+        CapabilityManager.INSTANCE.register(IPlayerCap.class, new PlayerCapStorage(), PlayerCap::new);
         POIFixup.registerPOI();
     }
 

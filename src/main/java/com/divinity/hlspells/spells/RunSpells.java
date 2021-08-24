@@ -3,15 +3,20 @@ package com.divinity.hlspells.spells;
 import com.divinity.hlspells.HLSpells;
 import com.divinity.hlspells.items.SpellHoldingItem;
 import com.divinity.hlspells.items.capabilities.spellholdercap.SpellHolderProvider;
+import com.divinity.hlspells.player.capability.PlayerCapProvider;
 import com.divinity.hlspells.spell.Spell;
 import com.divinity.hlspells.spell.SpellType;
 import com.divinity.hlspells.util.SpellUtils;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.potion.Effect;
+import net.minecraft.potion.EffectInstance;
+import net.minecraft.potion.Effects;
 import net.minecraft.util.Hand;
 import net.minecraft.world.World;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.living.PotionEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -25,7 +30,7 @@ public class RunSpells {
 
     public static void doCastSpell(PlayerEntity player, World world, ItemStack itemStack) {
         if (itemStack.getItem() instanceof SpellHoldingItem) {
-            itemStack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP, null)
+            itemStack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP)
                     .filter(cap -> !cap.getSpells().isEmpty())
                     .ifPresent(cap -> {
                         Spell spell = SpellUtils.getSpellByID(cap.getCurrentSpell());
@@ -47,7 +52,7 @@ public class RunSpells {
             Hand hand = player.getUsedItemHand();
             if (hand == Hand.MAIN_HAND || hand == Hand.OFF_HAND) {
                 ItemStack stack = player.getItemInHand(hand);
-                if (stack.getItem() instanceof SpellHoldingItem) {
+                if (stack.getItem() instanceof SpellHoldingItem &&  player.isUsingItem()) {
                     stack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP)
                             .filter(cap -> !cap.getSpells().isEmpty())
                             .ifPresent(cap -> {

@@ -6,6 +6,7 @@ import com.divinity.hlspells.goal.SpellBookLureGoal;
 import com.divinity.hlspells.goal.SpellBookRepelGoal;
 import com.divinity.hlspells.init.BlockInit;
 import com.divinity.hlspells.init.EntityInit;
+import com.divinity.hlspells.player.capability.PlayerCapProvider;
 import com.divinity.hlspells.util.Util;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -16,6 +17,7 @@ import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
 import net.minecraft.entity.effect.LightningBoltEntity;
+import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ArrowEntity;
@@ -24,9 +26,11 @@ import net.minecraft.entity.projectile.FireballEntity;
 import net.minecraft.entity.projectile.ShulkerBulletEntity;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
+import net.minecraft.item.ItemStack;
 import net.minecraft.network.IPacket;
 import net.minecraft.particles.BasicParticleType;
 import net.minecraft.particles.ParticleTypes;
+import net.minecraft.potion.Effect;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.state.properties.BlockStateProperties;
@@ -41,13 +45,17 @@ import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.event.entity.living.PotionEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.network.NetworkHooks;
 
 import javax.annotation.Nullable;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.divinity.hlspells.goal.SpellBookLureGoal.LURE_RANGE;
@@ -60,10 +68,6 @@ public class SpellActions {
     static final UUID speedUUID = UUID.fromString("05b61a62-ae84-492e-8536-f365b7143296");
     static final AttributeModifier speedModifier = new AttributeModifier(speedUUID, "Speed", 2, AttributeModifier.Operation.MULTIPLY_TOTAL);
 
-    static int fangsSpellEvokerFangSpawnTimer = 0;
-    static boolean fangsActiveFlag = false;
-    static boolean fangsSpellStaggerBoolean = false;
-    static PlayerEntity fangsSpellActivator;
     static int flameTimer = 0;
     static int arrowRainArrowSpawnTimer = 0;
     static int arrowRainCloudSpawnTimer = 0;
@@ -72,9 +76,9 @@ public class SpellActions {
     static int healingTimer = 0;
     static int airTimer = 0;
 
-    static EffectInstance GLOWING = new EffectInstance(Effects.GLOWING, Integer.MAX_VALUE, 0, false, false);
-    static EffectInstance LEVITATION = new EffectInstance(Effects.LEVITATION, Integer.MAX_VALUE, 2, false, false);
-    static EffectInstance SLOW_FALLING = new EffectInstance(Effects.SLOW_FALLING, Integer.MAX_VALUE, 5, false, false);
+    public static EffectInstance GLOWING = new EffectInstance(Effects.GLOWING, Integer.MAX_VALUE, 5, false, false);
+    public static EffectInstance LEVITATION = new EffectInstance(Effects.LEVITATION, Integer.MAX_VALUE, 5, false, false);
+    public static EffectInstance SLOW_FALLING = new EffectInstance(Effects.SLOW_FALLING, Integer.MAX_VALUE, 5, false, false);
 
     /**
      * Returns a comparator which compares entities' distances to given player
@@ -288,7 +292,6 @@ public class SpellActions {
         }
     }
 
-    // Pending change
     public static void doLightingChain(PlayerEntity player, World world) {
         InvisibleTargetingEntity stormBullet = new InvisibleTargetingEntity(EntityInit.STORM_BULLET_ENTITY.get(), world);
         stormBullet.setHomePosition(player.position());
@@ -387,6 +390,16 @@ public class SpellActions {
     // Slow Fall
     public static void doSlowFall(PlayerEntity player, World world) {
         if (player.getDeltaMovement().y <= 0) {
+            EffectInstance effect = player.getEffect(Effects.SLOW_FALLING);
+            if (effect != null && effect.isVisible()) {
+                player.getCapability(PlayerCapProvider.PLAYER_CAP).ifPresent(cap -> {
+                    if (cap.getEffect() == null) {
+                        cap.setEffect(effect.getEffect());
+                        cap.setEffectDuration(effect.getDuration());
+                        cap.setEffectAmplifier(effect.getAmplifier());
+                    }
+                });
+            }
             player.addEffect(SLOW_FALLING);
             for (int i = 0; i < 3; i++) {
                 world.addParticle(ParticleTypes.CLOUD, player.getX(), player.getY() - 1,
@@ -421,7 +434,19 @@ public class SpellActions {
 
     // Lure
     public static void doLure(PlayerEntity player, World world) {
+
+        EffectInstance effect = player.getEffect(Effects.GLOWING);
+        if (effect != null && effect.isVisible()) {
+            player.getCapability(PlayerCapProvider.PLAYER_CAP).ifPresent(cap -> {
+                if (cap.getEffect() == null) {
+                    cap.setEffect(effect.getEffect());
+                    cap.setEffectDuration(effect.getDuration());
+                    cap.setEffectAmplifier(effect.getAmplifier());
+                }
+            });
+        }
         player.addEffect(GLOWING);
+
         List<MobEntity> mobEntities = world.getEntitiesOfClass(MobEntity.class,
                 new AxisAlignedBB(player.getX() - LURE_RANGE, player.getY() - LURE_RANGE, player.getZ() - LURE_RANGE,
                         player.getX() + LURE_RANGE, player.getY() + LURE_RANGE, player.getZ() + LURE_RANGE), null)
@@ -440,6 +465,7 @@ public class SpellActions {
             }
         }
     }
+
 
     // Repel
     public static void doRepel(PlayerEntity player, World world) {
@@ -564,6 +590,19 @@ public class SpellActions {
     // Levitation
     public static void doLevitation(PlayerEntity player, World world) {
         if (player.getDeltaMovement().y >= 0) {
+
+            EffectInstance effect = player.getEffect(Effects.LEVITATION);
+
+            if (effect != null && effect.isVisible()) {
+                player.getCapability(PlayerCapProvider.PLAYER_CAP).ifPresent(cap -> {
+                    if (cap.getEffect() == null) {
+                        cap.setEffect(effect.getEffect());
+                        cap.setEffectDuration(effect.getDuration());
+                        cap.setEffectAmplifier(effect.getAmplifier());
+                    }
+                });
+            }
+
             player.addEffect(LEVITATION);
 
             for (int a = 0; a < 1; a++) {
@@ -692,21 +731,6 @@ public class SpellActions {
         }
     }
 
-    public static void resetEffects(PlayerEntity playerEntity) {
-        arrowRainArrowSpawnTimer = 0;
-        arrowRainCloudSpawnTimer = 0;
-        healingTimer = 0;
-        protectionCircleTimer = 0;
-        airTimer = 0;
-        ModifiableAttributeInstance speedAttribute = playerEntity.getAttribute(Attributes.MOVEMENT_SPEED);
-        if (speedAttribute != null && speedAttribute.getModifier(speedUUID) != null) {
-            speedAttribute.removeModifier(speedModifier);
-        }
-        playerEntity.removeEffect(SLOW_FALLING.getEffect());
-        playerEntity.removeEffect(LEVITATION.getEffect());
-        playerEntity.removeEffect(GLOWING.getEffect());
-    }
-
     public static void createSpellEntity(LivingEntity entity, World world, double x, double z, double y, float yaw, int warmup) {
         BlockPos blockpos = new BlockPos(x, y, z);
         boolean flag = false;
@@ -733,5 +757,41 @@ public class SpellActions {
         if (flag) {
             world.addFreshEntity(new EvokerFangsEntity(world, x, blockpos.getY() + d0, z, yaw, warmup, entity));
         }
+    }
+
+    public static void resetEffects(PlayerEntity playerEntity) {
+        arrowRainArrowSpawnTimer = 0;
+        arrowRainCloudSpawnTimer = 0;
+        healingTimer = 0;
+        protectionCircleTimer = 0;
+        airTimer = 0;
+        ModifiableAttributeInstance speedAttribute = playerEntity.getAttribute(Attributes.MOVEMENT_SPEED);
+        if (speedAttribute != null && speedAttribute.getModifier(speedUUID) != null) {
+            speedAttribute.removeModifier(speedModifier);
+        }
+        EffectInstance instance = playerEntity.getEffect(Effects.GLOWING);
+        EffectInstance instance2 = playerEntity.getEffect(Effects.LEVITATION);
+        EffectInstance instance3 = playerEntity.getEffect(Effects.SLOW_FALLING);
+
+        /* Check if the player has any one of these effects while they're not holding down a spell item, should prevent
+        a bug where if you quickly tap the spell item and switch to a different one the infinite effect is applied to the player
+        MIGHT have repercussions on other mods that have these effects and are not visible. */
+
+        if (instance != null && !instance.isVisible() && instance.getAmplifier() >= 5) {
+            playerEntity.removeEffect(instance.getEffect());
+        } if (instance2 != null && !instance2.isVisible() && instance2.getAmplifier() >= 5) {
+            playerEntity.removeEffect(instance2.getEffect());
+        } if (instance3 != null && !instance3.isVisible() && instance3.getAmplifier() >= 5) {
+            playerEntity.removeEffect(instance3.getEffect());
+        }
+
+        // Reapplies the old effect to the player (if applicable)
+        playerEntity.getCapability(PlayerCapProvider.PLAYER_CAP).ifPresent(c -> {
+            Effect effect = c.getEffect();
+            if (effect != null) {
+                playerEntity.addEffect(new EffectInstance(effect, c.getEffectDuration(), c.getEffectAmplifier()));
+                c.resetEffect();
+            }
+        });
     }
 }

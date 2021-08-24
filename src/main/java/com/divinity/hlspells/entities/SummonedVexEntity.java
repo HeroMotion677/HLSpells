@@ -48,7 +48,6 @@ public class SummonedVexEntity extends VexEntity {
         }
     }
 
-    // This method isn't called for some reason, no idea why
     @Override
     public void readAdditionalSaveData(CompoundNBT nbt) {
         if (nbt.contains("Owner")) {
