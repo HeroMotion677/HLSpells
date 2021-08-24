@@ -31,9 +31,9 @@ public class RunSpells {
                         Spell spell = SpellUtils.getSpellByID(cap.getCurrentSpell());
                         if (spell.getType() == SpellType.CAST && spell.hasCost() && SpellUtils.checkXpReq(player, spell)) {
                             spell.getSpellAction().accept(player, world);
-                            if (!player.level.isClientSide() && player.abilities.instabuild)
+                            if (!player.level.isClientSide() && !player.isCreative())
                                 itemStack.hurt(1, player.getRandom(), (ServerPlayerEntity) player);
-                            if (HLSpells.CONFIG.spellsUseXP.get())
+                            if (HLSpells.CONFIG.spellsUseXP.get() && !player.isCreative())
                                 player.giveExperiencePoints(-SpellUtils.getXpReq(player, spell));
                         }
                     });
@@ -57,7 +57,7 @@ public class RunSpells {
                                         spell.getSpellAction().accept(player, player.level);
                                         xpTickCounter++;
                                         durabilityTickCounter++;
-                                        if (xpTickCounter == SpellUtils.getTickDelay(player, spell) && HLSpells.CONFIG.spellsUseXP.get()) {
+                                        if (xpTickCounter == SpellUtils.getTickDelay(player, spell) && HLSpells.CONFIG.spellsUseXP.get() && !player.isCreative()) {
                                             player.giveExperiencePoints(-SpellUtils.getXpReq(player, spell));
                                             xpTickCounter = 0;
                                         }

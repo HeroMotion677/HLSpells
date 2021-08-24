@@ -1,5 +1,5 @@
 {
-  "parent": "hlspells:item/staff",
+  "parent": "hlspells:item/staff/staff_1",
   "textures": {
     "layer0": "hlspells:items/staff_5"
   }

@@ -21,4 +21,17 @@ public interface ITotemCap {
     ListNBT getInventoryNBT();
 
     void setInventoryNBT(ListNBT playerInventory);
+
+    ListNBT getCuriosNBT();
+
+    void setCuriosNBT(ListNBT curiosInv);
+
+
+    int getCuriosSlot();
+
+    void setCuriosSlot(int curiosSlot);
+
+    boolean diedTotemInCurios();
+
+    void setDiedTotemInCurios(boolean inCurios);
 }

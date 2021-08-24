@@ -1,0 +1,6 @@
+{
+  "parent": "hlspells:item/staff/staff_gui_1",
+  "textures": {
+    "layer0": "hlspells:items/staff_gui_2"
+  }
+}

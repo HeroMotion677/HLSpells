@@ -25,6 +25,9 @@ public class TotemItemStorage implements Capability.IStorage<ITotemCap> {
         }
         tag.putInt("hand", hand);
         tag.put("playerInv", instance.getInventoryNBT());
+        tag.put("curiosInv", instance.getCuriosNBT());
+        tag.putInt("curiosSlot", instance.getCuriosSlot());
+        tag.putBoolean("curiosDied", instance.diedTotemInCurios());
         return tag;
     }
 
@@ -42,5 +45,8 @@ public class TotemItemStorage implements Capability.IStorage<ITotemCap> {
             instance.setTotemInHand(null);
         }
         instance.setInventoryNBT(tag.getList("playerInv", 0));
+        instance.setCuriosNBT(tag.getList("curiosInv", 0));
+        instance.setCuriosSlot(tag.getInt("curiosSlot"));
+        instance.setDiedTotemInCurios(tag.getBoolean("curiosDied"));
     }
 }

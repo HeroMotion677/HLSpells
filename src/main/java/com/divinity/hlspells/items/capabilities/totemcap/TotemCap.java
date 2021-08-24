@@ -11,12 +11,17 @@ public class TotemCap implements ITotemCap {
     private Hand hand;
     private ListNBT playerInventoryNBT;
     private BlockPos blockPos;
+    private ListNBT curiosNBT;
+    private int curiosSlot;
+    private boolean curioDied;
 
     public TotemCap() {
         hasDied = false;
         hand = null;
         playerInventoryNBT = new ListNBT();
         blockPos = new BlockPos(0, 0, 0);
+        curiosNBT = new ListNBT();
+        curiosSlot = 0;
     }
 
     @Override
@@ -58,5 +63,35 @@ public class TotemCap implements ITotemCap {
     @Override
     public void setInventoryNBT(ListNBT playerInventory) {
         this.playerInventoryNBT = playerInventory;
+    }
+
+    @Override
+    public ListNBT getCuriosNBT() {
+        return curiosNBT;
+    }
+
+    @Override
+    public void setCuriosNBT(ListNBT curiosInv) {
+        this.curiosNBT = curiosInv;
+    }
+
+    @Override
+    public int getCuriosSlot() {
+        return curiosSlot;
+    }
+
+    @Override
+    public void setCuriosSlot(int curiosSlot) {
+        this.curiosSlot = curiosSlot;
+    }
+
+    @Override
+    public boolean diedTotemInCurios() {
+        return curioDied;
+    }
+
+    @Override
+    public void setDiedTotemInCurios(boolean inCurios) {
+        this.curioDied = inCurios;
     }
 }

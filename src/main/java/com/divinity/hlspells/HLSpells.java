@@ -9,6 +9,7 @@ import com.divinity.hlspells.items.capabilities.totemcap.TotemCap;
 import com.divinity.hlspells.items.capabilities.totemcap.TotemItemStorage;
 import com.divinity.hlspells.setup.RegistryHandler;
 import com.divinity.hlspells.setup.client.ClientSetup;
+import com.divinity.hlspells.util.CuriosCompat;
 import com.divinity.hlspells.villages.POIFixup;
 import com.divinity.hlspells.villages.StructureGen;
 import com.divinity.hlspells.villages.Villagers;
@@ -18,10 +19,12 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.commons.lang3.tuple.Pair;
@@ -47,12 +50,12 @@ public class HLSpells {
 
         // Registers an event with the mod specific event bus. This is needed to register new stuff.
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::sendImc);
         // Only registers client setup on client only
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientSetup::init));
         registerAllDeferredRegistryObjects(FMLJavaModLoadingContext.get().getModEventBus());
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.addListener(this::setupMageHouses);
-        MinecraftForge.EVENT_BUS.register(this);
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, CONFIG_SPEC);
     }
 
@@ -61,9 +64,6 @@ public class HLSpells {
         Villagers.PROFESSIONS.register(modBus);
     }
 
-    /*
-      Add to Village pools in FMLServerAboutToStartEvent so Mage houses shows up in Villages modified by datapacks.
-     */
     public void setupMageHouses(final FMLServerAboutToStartEvent event) {
         StructureGen.setupVillageWorldGen(event.getServer().registryAccess());
     }
@@ -72,5 +72,10 @@ public class HLSpells {
         CapabilityManager.INSTANCE.register(ISpellHolder.class, new SpellHolderStorage(), SpellHolder::new);
         CapabilityManager.INSTANCE.register(ITotemCap.class, new TotemItemStorage(), TotemCap::new);
         POIFixup.registerPOI();
+    }
+
+    public void sendImc(InterModEnqueueEvent event) {
+        if (ModList.get().isLoaded("curios"))
+            CuriosCompat.sendImc();
     }
 }

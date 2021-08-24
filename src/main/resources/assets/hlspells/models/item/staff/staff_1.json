@@ -138,44 +138,6 @@
       }
     }
   ],
-  "overrides": [
-    {
-      "predicate": {
-        "pull": 0
-      },
-      "model": "hlspells:item/staff_1"
-    },
-    {
-      "predicate": {
-        "pull": 0.2
-      },
-      "model": "hlspells:item/staff_2"
-    },
-    {
-      "predicate": {
-        "pull": 0.4
-      },
-      "model": "hlspells:item/staff_3"
-    },
-    {
-      "predicate": {
-        "pull": 0.6
-      },
-      "model": "hlspells:item/staff_4"
-    },
-    {
-      "predicate": {
-        "pull": 0.8
-      },
-      "model": "hlspells:item/staff_5"
-    },
-    {
-      "predicate": {
-        "pull": 1
-      },
-      "model": "hlspells:item/staff_6"
-    }
-  ],
   "display": {
     "thirdperson_righthand": {
       "translation": [9.5, -11.25, 10.75],
