@@ -332,7 +332,7 @@ public class SpellActions {
     public static void doSummonSpell(PlayerEntity player, World world) {
         for (int i = 0; i < 4; ++i) {
             BlockPos blockpos = player.blockPosition().offset(-2 + world.random.nextInt(5), 1, -2 + world.random.nextInt(5));
-            SummonedVexEntity vexEntity = new SummonedVexEntity(EntityType.VEX, world);
+            SummonedVexEntity vexEntity = new SummonedVexEntity(EntityInit.SUMMONED_VEX_ENTITY.get(), world);
             vexEntity.moveTo(blockpos, 0.0F, 0.0F);
             vexEntity.setSummonedOwner(player);
             vexEntity.setLimitedLife(20 * (30 + world.random.nextInt(50)));
@@ -498,15 +498,15 @@ public class SpellActions {
             BlockPos pos = player.blockPosition();
             BlockState blockstate = BlockInit.CUSTOM_FROSTED_ICE.get().defaultBlockState();
             float f = 3;
-            BlockPos.Mutable blockpos$mutable = new BlockPos.Mutable();
+            BlockPos.Mutable mutablePos = new BlockPos.Mutable();
 
             for (BlockPos blockpos : BlockPos.betweenClosed(pos.offset((-f), -1.0D, (-f)), pos.offset(f, -1.0D, f))) {
                 if (blockpos.closerThan(player.position(), f)) {
-                    blockpos$mutable.set(blockpos.getX(), blockpos.getY() + 1, blockpos.getZ());
-                    BlockState blockstate1 = world.getBlockState(blockpos$mutable);
-                    if (blockstate1.isAir(world, blockpos$mutable)) {
-                        BlockState blockstate2 = world.getBlockState(blockpos);
-                        if (blockstate2.getMaterial().isReplaceable() && blockstate.canSurvive(world, blockpos) && world.isUnobstructed(blockstate, blockpos, ISelectionContext.empty()) && !net.minecraftforge.event.ForgeEventFactory.onBlockPlace(player, net.minecraftforge.common.util.BlockSnapshot.create(world.dimension(), world, blockpos), net.minecraft.util.Direction.UP)) {
+                    mutablePos.set(blockpos.getX(), blockpos.getY() + 1, blockpos.getZ());
+                    BlockState mutableState = world.getBlockState(mutablePos);
+                    if (mutableState.isAir(world, mutablePos)) {
+                        BlockState state = world.getBlockState(blockpos);
+                        if (state.getMaterial().isReplaceable() && blockstate.canSurvive(world, blockpos) && world.isUnobstructed(blockstate, blockpos, ISelectionContext.empty()) && !net.minecraftforge.event.ForgeEventFactory.onBlockPlace(player, net.minecraftforge.common.util.BlockSnapshot.create(world.dimension(), world, blockpos), net.minecraft.util.Direction.UP)) {
                             world.setBlockAndUpdate(blockpos, blockstate);
                             world.getBlockTicks().scheduleTick(blockpos, BlockInit.CUSTOM_FROSTED_ICE.get(), MathHelper.nextInt(player.getRandom(), 60, 120));
                         }
@@ -796,10 +796,8 @@ public class SpellActions {
         protectionCircleTimer = 0;
         airTimer = 0;
         ModifiableAttributeInstance speedAttribute = playerEntity.getAttribute(Attributes.MOVEMENT_SPEED);
-        if (speedAttribute != null) {
-            if (speedAttribute.getModifier(speedUUID) != null) {
-                speedAttribute.removeModifier(speedModifier);
-            }
+        if (speedAttribute != null && speedAttribute.getModifier(speedUUID) != null) {
+            speedAttribute.removeModifier(speedModifier);
         }
         playerEntity.removeEffect(SLOW_FALLING.getEffect());
         playerEntity.removeEffect(LEVITATION.getEffect());
