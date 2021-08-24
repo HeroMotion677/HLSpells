@@ -28,7 +28,6 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
@@ -123,23 +122,18 @@ public class SpellHoldingItem extends ShootableItem {
             List<String> spells = capability.map(ISpellHolder::getSpells).orElse(null);
             if (spells != null && !(spells.isEmpty())) {
                 player.startUsingItem(hand);
-            }
-            else {
+            } else {
                 return ActionResult.fail(itemstack);
             }
         }
         capability.ifPresent(cap -> cap.setHeldActive(true));
         if (!world.isClientSide()) {
-            System.out.println(isSpellBook);
-            if (player.getUseItemRemainingTicks() < 71997 && player.getUseItemRemainingTicks() >= 71994 && isSpellBook) {
+            if (isSpellBook)
                 world.playSound(null, player.blockPosition(), SoundEvents.BOOK_PAGE_TURN, SoundCategory.NEUTRAL, 0.6F, 1.0F);
-            }
 
             Spell spell = SpellUtils.getSpell(itemstack);
-            if (spell != SpellInit.EMPTY.get() && player.getUseItemRemainingTicks() < 71994 && player.getUseItemRemainingTicks() >= 71991) {
-                if (spell.getType() == SpellType.HELD) {
-                    world.playSound(null, player.blockPosition(), SoundEvents.EVOKER_PREPARE_SUMMON, SoundCategory.NEUTRAL, 0.6F, 1.0F);
-                }
+            if (spell != SpellInit.EMPTY.get() && spell.getType() == SpellType.HELD) {
+                world.playSound(null, player.blockPosition(), SoundEvents.EVOKER_PREPARE_SUMMON, SoundCategory.NEUTRAL, 0.6F, 1.0F);
             }
         }
         return ActionResult.success(itemstack);
@@ -168,13 +162,13 @@ public class SpellHoldingItem extends ShootableItem {
             PlayerEntity player = (PlayerEntity) entity;
             LazyOptional<ISpellHolder> capability = stack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP);
             capability.ifPresent(cap -> cap.setHeldActive(false));
-            if (player.getUseItemRemainingTicks() < 71988) {
-                if (!world.isClientSide()) {
-                    RunSpells.doCastSpell(player, world, stack);
-                    capability.ifPresent(cap -> System.out.println(cap.containsSpell("hlspells:empty")));
-                    capability.filter(p -> !(p.getSpells().isEmpty()) || !(p.containsSpell("hlspells:empty"))).ifPresent(cap -> world.playSound(null, player.blockPosition(), SoundEvents.EVOKER_CAST_SPELL, SoundCategory.NEUTRAL, 0.6F, 1.0F));
-                }
-                SpellActions.doParticles(player);
+            if (player.getUseItemRemainingTicks() < 71988 && !world.isClientSide()) {
+                RunSpells.doCastSpell(player, world, stack);
+                capability.filter(p -> !(p.getSpells().isEmpty()) || !(p.containsSpell("hlspells:empty")))
+                        .ifPresent(cap -> {
+                            world.playSound(null, player.blockPosition(), SoundEvents.EVOKER_CAST_SPELL, SoundCategory.NEUTRAL, 0.6F, 1.0F);
+                            SpellActions.doParticles(player);
+                        });
             }
         }
     }
@@ -194,10 +188,9 @@ public class SpellHoldingItem extends ShootableItem {
         return isSpellBook || super.isEnchantable(pStack);
     }
 
-    //*
     @Override
     public boolean isBookEnchantable(ItemStack stack, ItemStack book) {
-        return isSpellBook && super.isBookEnchantable(stack, book);
+        return isSpellBook;
     }
 
     @Override
@@ -221,7 +214,7 @@ public class SpellHoldingItem extends ShootableItem {
         if (stackTag == null) {
             stackTag = new CompoundNBT();
         } else {
-            stackTag = stackTag.copy(); //Because we dont actually want to add this data to the server side ItemStack
+            stackTag = stackTag.copy(); //Because we don't actually want to add this data to the server side ItemStack
         }
         stackTag.put("spellCap", capTag);
         return stackTag;
