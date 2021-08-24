@@ -7,10 +7,10 @@ modId = "hlspells"
 version = "1.16.5-b1.0"
 displayName = "HLSpells"
 credits = "Credits are on mod's page."
-displayURL = "\nDivinity: https://github.com/Divine144/HLSpells"
-authors = "Divinity"
+displayURL = "https://www.curseforge.com/minecraft/mc-mods/hlspells"
+authors = "Divinity, StrikerRocker"
 description = '''
-HLSpells is a mod adding spells and more...
+Ever wanted magic in Minecraft but don't want to commit to those over-complicated ritual magic mods? Then welcome to HLSpells, the plug and play somewhat Vanilla + (+) magic mod. Cast a multitude of spells, all the way from a chain of lightning to just instantly taming your new pet.
 '''
 
 [[dependencies.hlspells]] #optional
