@@ -104,7 +104,10 @@ public class SpellHoldingItem extends ShootableItem {
             if (this.allowdedIn(pGroup)) {
                 for (Spell spell : SpellInit.SPELLS_REGISTRY.get()) {
                     ItemStack stack = new ItemStack(this);
-                    stack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP).ifPresent(cap -> cap.addSpell(spell.getRegistryName().toString()));
+                    stack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP).ifPresent(cap -> {
+                        if (spell != SpellInit.EMPTY.get())
+                            cap.addSpell(spell.getRegistryName().toString());
+                    });
                     pItems.add(stack);
                 }
             }
@@ -164,7 +167,7 @@ public class SpellHoldingItem extends ShootableItem {
             capability.ifPresent(cap -> cap.setHeldActive(false));
             if (player.getUseItemRemainingTicks() < 71988 && !world.isClientSide()) {
                 RunSpells.doCastSpell(player, world, stack);
-                capability.filter(p -> !(p.getSpells().isEmpty()) && !(p.containsSpell("hlspells:empty")))
+                capability.filter(p -> !(p.getSpells().isEmpty()))
                         .ifPresent(cap -> {
                             world.playSound(null, player.blockPosition(), SoundEvents.EVOKER_CAST_SPELL, SoundCategory.NEUTRAL, 0.6F, 1.0F);
                             SpellActions.doParticles(player);

@@ -42,8 +42,6 @@ public class MixinEnchantmentTable {
                     stack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP).ifPresent(cap -> {
                         cap.addSpell(spell.getRegistryName().toString());
                         // By default empty spell is added to the empty spell book in creative inventory
-                        if (cap.containsSpell("hlspells:empty"))
-                            cap.removeSpell("hlspells:empty");
                     });
                     stack.getEnchantmentTags().remove(!stack.getEnchantmentTags().isEmpty() ? stack.getEnchantmentTags().size() - 1 : 0);
                 }
