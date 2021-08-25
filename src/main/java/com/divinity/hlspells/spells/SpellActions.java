@@ -298,7 +298,7 @@ public class SpellActions {
     }
 
     public static void doTeleport(PlayerEntity player, World world) {
-        RayTraceResult rayTraceResult = Util.lookAt(player, 150D, 1F, false);
+        RayTraceResult rayTraceResult = Util.lookAt(player, 50D, 1F, false);
         Vector3d location = rayTraceResult.getLocation();
         int stepX = 0;
         int stepY = 1;
