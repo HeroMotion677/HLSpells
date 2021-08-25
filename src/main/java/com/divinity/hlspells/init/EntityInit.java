@@ -16,8 +16,8 @@ import net.minecraftforge.registries.ForgeRegistries;
 public class EntityInit {
     public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(ForgeRegistries.ENTITIES, HLSpells.MODID);
 
-    public static final RegistryObject<EntityType<InvisibleTargetingEntity>> STORM_BULLET_ENTITY = ENTITIES.register("storm_bullet", () ->
-            EntityType.Builder.of(InvisibleTargetingEntity::new, EntityClassification.MISC).build(HLSpells.MODID + "storm_bullet"));
+    public static final RegistryObject<EntityType<InvisibleTargetingEntity>> INVISIBLE_TARGETING_ENTITY = ENTITIES.register("invisible_targeting_entity", () ->
+            EntityType.Builder.of(InvisibleTargetingEntity::new, EntityClassification.MISC).build(HLSpells.MODID + "invisible_targeting_entity"));
 
     public static final RegistryObject<EntityType<PiercingBoltEntity>> PIERCING_BOLT_ENTITY = ENTITIES.register("piercing_bolt", () ->
             EntityType.Builder.of(PiercingBoltEntity::new, EntityClassification.MISC).sized(0.3125F, 0.3125F).build

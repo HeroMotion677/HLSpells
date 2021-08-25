@@ -8,6 +8,7 @@ import com.divinity.hlspells.items.capabilities.totemcap.TotemItemProvider;
 import com.divinity.hlspells.setup.client.ClientSetup;
 import com.divinity.hlspells.util.CuriosCompat;
 import com.divinity.hlspells.util.Util;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -18,6 +19,7 @@ import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -60,16 +62,10 @@ public class EntityDiesEvent {
                         ItemStack stack = map.getRight();
                         ModTotemItem.vanillaTotemBehavior(player, stack, ItemInit.TOTEM_OF_ESCAPING.get());
                     });
+                    event.setCanceled(true);
                     player.addEffect(new EffectInstance(Effects.INVISIBILITY, 200, 0));
                     // Teleport the player randomly nearby
-                    for (int i = 0; i < 16; ++i) {
-                        double xRand = player.getX() + (player.getRandom().nextDouble() - 0.5D) * 16.0D;
-                        double yRand = MathHelper.clamp(player.getY() + (player.getRandom().nextInt(16) - 8), 0.0D, world.getHeight() - 1D);
-                        double zRand = player.getZ() + (player.getRandom().nextDouble() - 0.5D) * 16.0D;
-                        player.randomTeleport(xRand, yRand, zRand, true);
-                        world.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.CHORUS_FRUIT_TELEPORT, SoundCategory.PLAYERS, 1.0F, 1.0F);
-                        player.playSound(SoundEvents.CHORUS_FRUIT_TELEPORT, 1.0F, 1.0F);
-                    }
+                    randomTeleport(player);
                     escapingTotem = false;
                     keepingTotem = false;
                     returnTotem = false;
@@ -95,9 +91,7 @@ public class EntityDiesEvent {
                 if (CuriosCompat.getItemInCuriosSlot(player, ItemInit.TOTEM_OF_GRIEFING.get()).isPresent() && griefingTotem) {
                     CuriosCompat.getItemInCuriosSlot(player, ItemInit.TOTEM_OF_GRIEFING.get()).ifPresent(map -> {
                         world.explode(player, player.getX(), player.getY(), player.getZ(), 5.0F, Explosion.Mode.BREAK);
-                        CuriosCompat.getCuriosHandler(player).ifPresent(iItemHandlerModifiable -> {
-                            iItemHandlerModifiable.setStackInSlot(map.middle, ItemStack.EMPTY);
-                        });
+                        CuriosCompat.getCuriosHandler(player).ifPresent(itemHandler -> itemHandler.setStackInSlot(map.middle, ItemStack.EMPTY));
                     });
                     griefingTotem = false;
                 }
@@ -127,14 +121,7 @@ public class EntityDiesEvent {
                     ModTotemItem.vanillaTotemBehavior(player, heldItem, ItemInit.TOTEM_OF_ESCAPING.get());
                     player.addEffect(new EffectInstance(Effects.INVISIBILITY, 200, 0));
                     // Teleport the player randomly nearby
-                    for (int i = 0; i < 16; ++i) {
-                        double xRand = player.getX() + (player.getRandom().nextDouble() - 0.5D) * 16.0D;
-                        double yRand = MathHelper.clamp(player.getY() + (player.getRandom().nextInt(16) - 8), 0.0D, world.getHeight() - 1D);
-                        double zRand = player.getZ() + (player.getRandom().nextDouble() - 0.5D) * 16.0D;
-                        player.randomTeleport(xRand, yRand, zRand, true);
-                        world.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.CHORUS_FRUIT_TELEPORT, SoundCategory.PLAYERS, 1.0F, 1.0F);
-                        player.playSound(SoundEvents.CHORUS_FRUIT_TELEPORT, 1.0F, 1.0F);
-                    }
+                    randomTeleport(player);
                     escapingTotem = false;
                     keepingTotem = false;
                     returnTotem = false;
@@ -212,9 +199,9 @@ public class EntityDiesEvent {
                             if (ModList.get().isLoaded(CURIOS_ID)) {
                                 CuriosCompat.restoreCuriosInv(player, cap.getCuriosNBT());
                                 CuriosCompat.getItemInCuriosSlot(player, ItemInit.TOTEM_OF_KEEPING.get()).ifPresent(triple -> {
-                                    triple.getRight().getCapability(TotemItemProvider.TOTEM_CAP).ifPresent(iTotemCap -> {
-                                        iTotemCap.setDiedTotemInCurios(cap.diedTotemInCurios());
-                                        iTotemCap.setCuriosSlot(cap.getCuriosSlot());
+                                    triple.getRight().getCapability(TotemItemProvider.TOTEM_CAP).ifPresent(totemCap -> {
+                                        totemCap.setDiedTotemInCurios(cap.diedTotemInCurios());
+                                        totemCap.setCuriosSlot(cap.getCuriosSlot());
                                     });
                                 });
                             }
@@ -244,28 +231,27 @@ public class EntityDiesEvent {
                 current.inventory.offhand.set(0, original.inventory.offhand.get(0));
             }
 
+            boolean keepingActivated = false;
             // TOTEM OF KEEPING (Restores the inventory)
             if (ModList.get().isLoaded(CURIOS_ID) && CuriosCompat.getItemInCuriosSlot(original, ItemInit.TOTEM_OF_KEEPING.get()).isPresent()) {
-                CuriosCompat.restoreCuriosInv(current, CuriosCompat.getCuriosInv(original));
-                CuriosCompat.getItemInCuriosSlot(current, ItemInit.TOTEM_OF_KEEPING.get()).ifPresent(triple -> {
+                CuriosCompat.getItemInCuriosSlot(original, ItemInit.TOTEM_OF_KEEPING.get()).ifPresent(triple -> {
                     triple.getRight().getCapability(TotemItemProvider.TOTEM_CAP).ifPresent(cap -> {
                         if (cap.diedTotemInCurios()) {
-                            //TODO keeping totem isnt removed when used in curios slot
-                            CuriosCompat.getCuriosHandler(current).ifPresent(handler -> {
-                                handler.setStackInSlot(cap.getCuriosSlot(), ItemStack.EMPTY);
-                            });
+                            CuriosCompat.getCuriosHandler(original).ifPresent(handler -> handler.setStackInSlot(cap.getCuriosSlot(), ItemStack.EMPTY));
                         }
                     });
                 });
-                current.inventory.replaceWith(original.inventory);
-                displayActivation(current, ItemInit.TOTEM_OF_KEEPING.get(), true);
+                CuriosCompat.restoreCuriosInv(current, CuriosCompat.getCuriosInv(original));
+                keepingActivated = true;
             } else if (original.getMainHandItem().getItem() == ItemInit.TOTEM_OF_KEEPING.get()) {
                 int mainSlot = original.inventory.findSlotMatchingItem(original.getMainHandItem());
                 original.inventory.getItem(mainSlot != -1 ? mainSlot : 0).shrink(mainSlot != -1 ? 1 : 0);
-                current.inventory.replaceWith(original.inventory);
-                displayActivation(current, ItemInit.TOTEM_OF_KEEPING.get(), true);
+                keepingActivated = true;
             } else if (original.getOffhandItem().getItem() == ItemInit.TOTEM_OF_KEEPING.get()) {
                 original.inventory.offhand.get(0).shrink(1);
+                keepingActivated = true;
+            }
+            if (keepingActivated) {
                 current.inventory.replaceWith(original.inventory);
                 displayActivation(current, ItemInit.TOTEM_OF_KEEPING.get(), true);
             }
@@ -303,5 +289,26 @@ public class EntityDiesEvent {
      */
     public static void displayActivation(PlayerEntity player, Item item, boolean particleIn) {
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> ClientSetup.displayActivation(player, new ItemStack(item), particleIn));
+    }
+
+    public static void randomTeleport(LivingEntity entity) {
+        double d0 = entity.getX();
+        double d1 = entity.getY();
+        double d2 = entity.getZ();
+        for (int i = 0; i < 16; ++i) {
+            double d3 = entity.getX() + (entity.getRandom().nextDouble() - 0.5D) * 16.0D;
+            double d4 = MathHelper.clamp(entity.getY() + (entity.getRandom().nextInt(16) - 8), 0.0D, (entity.level.getHeight() - 1));
+            double d5 = entity.getZ() + (entity.getRandom().nextDouble() - 0.5D) * 16.0D;
+            if (entity.isPassenger()) {
+                entity.stopRiding();
+            }
+
+            if (entity.randomTeleport(d3, d4, d5, true)) {
+                SoundEvent soundevent = SoundEvents.CHORUS_FRUIT_TELEPORT;
+                entity.level.playSound(null, d0, d1, d2, soundevent, SoundCategory.PLAYERS, 1.0F, 1.0F);
+                entity.playSound(soundevent, 1.0F, 1.0F);
+                break;
+            }
+        }
     }
 }

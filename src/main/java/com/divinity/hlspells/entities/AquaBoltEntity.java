@@ -79,7 +79,6 @@ public class AquaBoltEntity extends ArrowEntity {
         } else {
             boolean flag = entity.hurt(DamageSource.indirectMobAttack(this, livingentity).setProjectile(), 3.0F);
             if (flag && this.level instanceof ServerWorld) {
-                System.out.println("Hurt 3");
                 ((ServerWorld) this.level).sendParticles(ParticleTypes.BUBBLE_POP, this.getX() - this.random.nextInt(2), this.getY(), this.getZ() - this.random.nextFloat(), 12, 0.2D, 0.2D, 0.2D, 0.0D);
                 entity.clearFire();
                 this.doEnchantDamageEffects(livingentity, entity);
@@ -123,6 +122,11 @@ public class AquaBoltEntity extends ArrowEntity {
     @Override
     protected SoundEvent getDefaultHitGroundSoundEvent() {
         return SoundEvents.SHULKER_BULLET_HIT;
+    }
+
+    @Override
+    public boolean isNoGravity() {
+        return true;
     }
 
     @Override

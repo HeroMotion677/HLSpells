@@ -1,0 +1,6 @@
+{
+  "parent": "hlspells:item/totem_of_returning",
+  "textures": {
+    "layer0": "hlspells:items/totem_of_returning_used"
+  }
+}

@@ -4,7 +4,6 @@ import com.divinity.hlspells.enchantments.ISpell;
 import com.divinity.hlspells.init.SpellInit;
 import com.divinity.hlspells.items.capabilities.spellholdercap.ISpellHolder;
 import com.divinity.hlspells.items.capabilities.spellholdercap.SpellHolderProvider;
-import com.divinity.hlspells.player.capability.PlayerCapProvider;
 import com.divinity.hlspells.spell.Spell;
 import com.divinity.hlspells.spell.SpellType;
 import com.divinity.hlspells.spells.RunSpells;
@@ -20,8 +19,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.ShootableItem;
 import net.minecraft.item.UseAction;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.potion.Effect;
-import net.minecraft.potion.EffectInstance;
 import net.minecraft.util.*;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
@@ -34,8 +31,6 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
-
-import static com.divinity.hlspells.spells.SpellActions.*;
 
 public class SpellHoldingItem extends ShootableItem {
     private final boolean isSpellBook;
@@ -169,11 +164,11 @@ public class SpellHoldingItem extends ShootableItem {
             capability.ifPresent(cap -> cap.setHeldActive(false));
             if (player.getUseItemRemainingTicks() < 71988 && !world.isClientSide()) {
                 RunSpells.doCastSpell(player, world, stack);
-                capability.filter(p -> !(p.getSpells().isEmpty()) || !(p.containsSpell("hlspells:empty")))
-                    .ifPresent(cap -> {
-                        world.playSound(null, player.blockPosition(), SoundEvents.EVOKER_CAST_SPELL, SoundCategory.NEUTRAL, 0.6F, 1.0F);
-                        SpellActions.doParticles(player);
-                });
+                capability.filter(p -> !(p.getSpells().isEmpty()) && !(p.containsSpell("hlspells:empty")))
+                        .ifPresent(cap -> {
+                            world.playSound(null, player.blockPosition(), SoundEvents.EVOKER_CAST_SPELL, SoundCategory.NEUTRAL, 0.6F, 1.0F);
+                            SpellActions.doParticles(player);
+                        });
             }
         }
     }
@@ -190,7 +185,7 @@ public class SpellHoldingItem extends ShootableItem {
 
     @Override
     public boolean isEnchantable(ItemStack pStack) {
-        return isSpellBook || super.isEnchantable(pStack);
+        return isSpellBook;
     }
 
     @Override

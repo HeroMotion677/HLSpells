@@ -6,6 +6,8 @@ import com.divinity.hlspells.init.ItemInit;
 import com.divinity.hlspells.init.SpellInit;
 import com.divinity.hlspells.items.SpellHoldingItem;
 import com.divinity.hlspells.items.capabilities.spellholdercap.SpellHolderProvider;
+import com.divinity.hlspells.items.capabilities.totemcap.ITotemCap;
+import com.divinity.hlspells.items.capabilities.totemcap.TotemItemProvider;
 import com.divinity.hlspells.network.NetworkManager;
 import com.divinity.hlspells.network.packets.WandInputPacket;
 import com.divinity.hlspells.renderers.BaseBoltRenderer;
@@ -28,6 +30,7 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.InputUpdateEvent;
 import net.minecraftforge.client.settings.KeyConflictContext;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
@@ -92,8 +95,17 @@ public class ClientSetup {
                 return 0;
             });
         });
+        ItemModelsProperties.register(ItemInit.TOTEM_OF_RETURNING.get(), new ResourceLocation("used"), (stack, world, living) -> {
+            if (living instanceof PlayerEntity) {
+                LazyOptional<ITotemCap> totemCap = stack.getCapability(TotemItemProvider.TOTEM_CAP);
+                if (totemCap.isPresent()) {
+                    return totemCap.map(ITotemCap::getHasDied).orElse(false) ? 1 : 0;
+                }
+            }
+            return 0;
+        });
         ClientRegistry.registerKeyBinding(WAND_BINDING);
-        RenderingRegistry.registerEntityRenderingHandler(EntityInit.STORM_BULLET_ENTITY.get(), StormBoltRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityInit.INVISIBLE_TARGETING_ENTITY.get(), StormBoltRenderer::new);
         RenderingRegistry.registerEntityRenderingHandler(EntityInit.PIERCING_BOLT_ENTITY.get(), manager -> new BaseBoltRenderer<>(manager, new ResourceLocation(HLSpells.MODID, "textures/entity/bolt/green_bolt.png")));
         RenderingRegistry.registerEntityRenderingHandler(EntityInit.FLAMING_BOLT_ENTITY.get(), manager -> new BaseBoltRenderer<>(manager, new ResourceLocation(HLSpells.MODID, "textures/entity/bolt/orange_bolt.png")));
         RenderingRegistry.registerEntityRenderingHandler(EntityInit.AQUA_BOLT_ENTITY.get(), manager -> new BaseBoltRenderer<>(manager, new ResourceLocation(HLSpells.MODID, "textures/entity/bolt/blue_bolt.png")));

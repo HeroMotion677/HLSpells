@@ -10,6 +10,8 @@ import net.minecraft.network.IPacket;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.EntityRayTraceResult;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkHooks;
@@ -47,8 +49,9 @@ public class InvisibleTargetingEntity extends ArrowEntity {
     public void tick() {
         super.tick();
         if (home != null) {
-            // If the entity is more than specified blocks away from home position if so then remove it (We are checking with distance squared)
-            if ((isLightning && (distanceToSqr(this.home) >= 2500)) || (!isLightning && (distanceToSqr(this.home) >= 1000))) {
+            // If the entity is more than specified blocks away from home position if so then remove it
+            float distance = MathHelper.sqrt(distanceToSqr(this.home));
+            if ((isLightning && distance >= 50) || (!isLightning && (distance >= 10))) {
                 this.remove();
             }
         }
@@ -59,7 +62,7 @@ public class InvisibleTargetingEntity extends ArrowEntity {
                 lightning.moveTo(this.getX(), this.getY(), this.getZ());
                 this.level.addFreshEntity(lightning);
             } else if (this.getOwner() instanceof PlayerEntity) {
-                SpellActions.createSpellEntity((LivingEntity) this.getOwner(), level, this.xOld, this.zOld, getY(), 0, 0);
+                SpellActions.createFangsEntity((LivingEntity) this.getOwner(), level, this.xOld, this.zOld, getY(), 0, 0);
             }
         }
     }
@@ -78,6 +81,10 @@ public class InvisibleTargetingEntity extends ArrowEntity {
         this.level.addParticle(ParticleTypes.EXPLOSION, this.getX(), this.getY(), this.getZ(), 0.2D, 0.2D, 0.2D);
         this.playSound(SoundEvents.SHULKER_BULLET_HIT, 1.0F, 1.0F);
         this.remove();
+    }
+
+    @Override
+    protected void onHitEntity(EntityRayTraceResult pResult) {
     }
 
     public void setHomePosition(Vector3d position3d) {

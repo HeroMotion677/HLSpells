@@ -17,7 +17,6 @@ import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
 import net.minecraft.entity.effect.LightningBoltEntity;
-import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ArrowEntity;
@@ -26,7 +25,6 @@ import net.minecraft.entity.projectile.FireballEntity;
 import net.minecraft.entity.projectile.ShulkerBulletEntity;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
-import net.minecraft.item.ItemStack;
 import net.minecraft.network.IPacket;
 import net.minecraft.particles.BasicParticleType;
 import net.minecraft.particles.ParticleTypes;
@@ -45,17 +43,13 @@ import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
-import net.minecraftforge.event.entity.living.PotionEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.network.NetworkHooks;
 
 import javax.annotation.Nullable;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.divinity.hlspells.goal.SpellBookLureGoal.LURE_RANGE;
@@ -67,7 +61,9 @@ import static com.divinity.hlspells.goal.SpellBookLureGoal.LURE_RANGE;
 public class SpellActions {
     static final UUID speedUUID = UUID.fromString("05b61a62-ae84-492e-8536-f365b7143296");
     static final AttributeModifier speedModifier = new AttributeModifier(speedUUID, "Speed", 2, AttributeModifier.Operation.MULTIPLY_TOTAL);
-
+    public static EffectInstance GLOWING = new EffectInstance(Effects.GLOWING, Integer.MAX_VALUE, 5, false, false);
+    public static EffectInstance LEVITATION = new EffectInstance(Effects.LEVITATION, Integer.MAX_VALUE, 5, false, false);
+    public static EffectInstance SLOW_FALLING = new EffectInstance(Effects.SLOW_FALLING, Integer.MAX_VALUE, 5, false, false);
     static int flameTimer = 0;
     static int arrowRainArrowSpawnTimer = 0;
     static int arrowRainCloudSpawnTimer = 0;
@@ -75,10 +71,6 @@ public class SpellActions {
     static boolean arrowRainCloudSpawnBoolean = true;
     static int healingTimer = 0;
     static int airTimer = 0;
-
-    public static EffectInstance GLOWING = new EffectInstance(Effects.GLOWING, Integer.MAX_VALUE, 5, false, false);
-    public static EffectInstance LEVITATION = new EffectInstance(Effects.LEVITATION, Integer.MAX_VALUE, 5, false, false);
-    public static EffectInstance SLOW_FALLING = new EffectInstance(Effects.SLOW_FALLING, Integer.MAX_VALUE, 5, false, false);
 
     /**
      * Returns a comparator which compares entities' distances to given player
@@ -190,7 +182,6 @@ public class SpellActions {
 
     public static void doFlamingBolt(PlayerEntity player, World world) {
         FlamingBoltEntity flamingBolt = new FlamingBoltEntity(EntityInit.FLAMING_BOLT_ENTITY.get(), world);
-        flamingBolt.setNoGravity(true);
         flamingBolt.setOwner(player);
         flamingBolt.setPos(player.getX() + player.getViewVector(1.0F).x, player.getY() + 1.35, player.getZ() + player.getViewVector(1.0F).z);
         flamingBolt.shootFromRotation(player, player.xRot, player.yRot, 1.3F, 1.3F, 1.3F);
@@ -199,7 +190,6 @@ public class SpellActions {
 
     public static void doAquaBolt(PlayerEntity player, World world) {
         AquaBoltEntity aquaBolt = new AquaBoltEntity(EntityInit.AQUA_BOLT_ENTITY.get(), world);
-        aquaBolt.setNoGravity(true);
         aquaBolt.setOwner(player);
         aquaBolt.setPos(player.getX() + player.getViewVector(1.0F).x, player.getY() + 1.35, player.getZ() + player.getViewVector(1.0F).z);
         aquaBolt.shootFromRotation(player, player.xRot, player.yRot, 1.3F, 1.3F, 1.3F);
@@ -208,7 +198,6 @@ public class SpellActions {
 
     public static void doPiercingBolt(PlayerEntity player, World world) {
         PiercingBoltEntity piercingBullet = new PiercingBoltEntity(EntityInit.PIERCING_BOLT_ENTITY.get(), world);
-        piercingBullet.setNoGravity(true);
         piercingBullet.setOwner(player);
         piercingBullet.setPos(player.getX() + player.getViewVector(1.0F).x, player.getY() + 1.35, player.getZ() + player.getViewVector(1.0F).z);
         piercingBullet.shootFromRotation(player, player.xRot, player.yRot, 1.3F, 1.3F, 1.3F);
@@ -254,7 +243,6 @@ public class SpellActions {
                 }
             }
         };
-
         entity.setNoGravity(true);
         entity.setPos(player.getX() + player.getViewVector(1.0F).x, player.getY() + 1.35, player.getZ() + player.getViewVector(1.0F).z);
         entity.shootFromRotation(player, player.xRot, player.yRot, 1.3F, 1.3F, 1.3F);
@@ -293,7 +281,7 @@ public class SpellActions {
     }
 
     public static void doLightingChain(PlayerEntity player, World world) {
-        InvisibleTargetingEntity stormBullet = new InvisibleTargetingEntity(EntityInit.STORM_BULLET_ENTITY.get(), world);
+        InvisibleTargetingEntity stormBullet = new InvisibleTargetingEntity(EntityInit.INVISIBLE_TARGETING_ENTITY.get(), world);
         stormBullet.setHomePosition(player.position());
         stormBullet.setOwner(player);
         stormBullet.setPos(player.getX() + player.getViewVector(1.0F).x, player.getY() + 1.35, player.getZ() + player.getViewVector(1.0F).z);
@@ -367,7 +355,7 @@ public class SpellActions {
     public static void doFangsSpell(PlayerEntity player, World world) {
         float f = (float) MathHelper.atan2(player.getZ(), player.getX());
         if (!player.isShiftKeyDown()) {
-            InvisibleTargetingEntity stormBullet = new InvisibleTargetingEntity(EntityInit.STORM_BULLET_ENTITY.get(), world);
+            InvisibleTargetingEntity stormBullet = new InvisibleTargetingEntity(EntityInit.INVISIBLE_TARGETING_ENTITY.get(), world);
             stormBullet.setHomePosition(player.position());
             stormBullet.setIsLightning(false);
             stormBullet.setOwner(player);
@@ -378,11 +366,11 @@ public class SpellActions {
         } else {
             for (int i = 0; i < 5; ++i) {
                 float f1 = f + i * (float) Math.PI * 0.4F;
-                createSpellEntity(player, world, player.getX() + MathHelper.cos(f1) * 1.5D, player.getZ() + MathHelper.sin(f1) * 1.5D, player.getY(), f1, 0);
+                createFangsEntity(player, world, player.getX() + MathHelper.cos(f1) * 1.5D, player.getZ() + MathHelper.sin(f1) * 1.5D, player.getY(), f1, 0);
             }
             for (int k = 0; k < 8; ++k) {
                 float f2 = f + k * (float) Math.PI * 2.0F / 8.0F + 1.2566371F;
-                createSpellEntity(player, world, player.getX() + MathHelper.cos(f2) * 2.5D, player.getZ() + MathHelper.sin(f2) * 2.5D, player.getY(), f2, 3);
+                createFangsEntity(player, world, player.getX() + MathHelper.cos(f2) * 2.5D, player.getZ() + MathHelper.sin(f2) * 2.5D, player.getY(), f2, 3);
             }
         }
     }
@@ -408,7 +396,7 @@ public class SpellActions {
         }
     }
 
-    // Frost Path
+    // Frost Path (Code is from FrostWalkerEnchantment onEntityMoved())
     public static void doFrostPath(PlayerEntity player, World world) {
         if (player.isOnGround()) {
             BlockPos pos = player.blockPosition();
@@ -731,7 +719,8 @@ public class SpellActions {
         }
     }
 
-    public static void createSpellEntity(LivingEntity entity, World world, double x, double z, double y, float yaw, int warmup) {
+    //(Code is from EvokerEntity$AttackSpellGoal createSpellEntity)
+    public static void createFangsEntity(LivingEntity entity, World world, double x, double z, double y, float yaw, int warmup) {
         BlockPos blockpos = new BlockPos(x, y, z);
         boolean flag = false;
         double d0 = 0.0D;
@@ -779,9 +768,11 @@ public class SpellActions {
 
         if (instance != null && !instance.isVisible() && instance.getAmplifier() >= 5) {
             playerEntity.removeEffect(instance.getEffect());
-        } if (instance2 != null && !instance2.isVisible() && instance2.getAmplifier() >= 5) {
+        }
+        if (instance2 != null && !instance2.isVisible() && instance2.getAmplifier() >= 5) {
             playerEntity.removeEffect(instance2.getEffect());
-        } if (instance3 != null && !instance3.isVisible() && instance3.getAmplifier() >= 5) {
+        }
+        if (instance3 != null && !instance3.isVisible() && instance3.getAmplifier() >= 5) {
             playerEntity.removeEffect(instance3.getEffect());
         }
 

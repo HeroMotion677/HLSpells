@@ -108,4 +108,9 @@ public class PiercingBoltEntity extends ArrowEntity {
     public boolean isOnFire() {
         return false;
     }
+
+    @Override
+    public boolean isNoGravity() {
+        return true;
+    }
 }

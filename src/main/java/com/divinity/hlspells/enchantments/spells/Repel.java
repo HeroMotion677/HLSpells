@@ -33,7 +33,7 @@ public class Repel extends Enchantment implements ISpell {
 
     @Override
     public int getMaxCost(int value) {
-        return 33;
+        return 38;
     }
 
     @Override
