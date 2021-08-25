@@ -1,4 +1,4 @@
-package com.divinity.hlspells.util;
+package com.divinity.hlspells.compat;
 
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;

@@ -1,12 +1,12 @@
 package com.divinity.hlspells.events.entity;
 
 import com.divinity.hlspells.HLSpells;
+import com.divinity.hlspells.compat.CuriosCompat;
 import com.divinity.hlspells.init.ItemInit;
 import com.divinity.hlspells.items.ModTotemItem;
 import com.divinity.hlspells.items.capabilities.totemcap.ITotemCap;
 import com.divinity.hlspells.items.capabilities.totemcap.TotemItemProvider;
 import com.divinity.hlspells.setup.client.ClientSetup;
-import com.divinity.hlspells.util.CuriosCompat;
 import com.divinity.hlspells.util.Util;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.item.ItemEntity;

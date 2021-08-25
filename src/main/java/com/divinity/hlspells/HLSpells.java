@@ -1,5 +1,6 @@
 package com.divinity.hlspells;
 
+import com.divinity.hlspells.compat.CuriosCompat;
 import com.divinity.hlspells.init.ConfigData;
 import com.divinity.hlspells.items.capabilities.spellholdercap.ISpellHolder;
 import com.divinity.hlspells.items.capabilities.spellholdercap.SpellHolder;
@@ -12,7 +13,6 @@ import com.divinity.hlspells.player.capability.PlayerCap;
 import com.divinity.hlspells.player.capability.PlayerCapStorage;
 import com.divinity.hlspells.setup.RegistryHandler;
 import com.divinity.hlspells.setup.client.ClientSetup;
-import com.divinity.hlspells.util.CuriosCompat;
 import com.divinity.hlspells.villages.POIFixup;
 import com.divinity.hlspells.villages.StructureGen;
 import com.divinity.hlspells.villages.Villagers;
