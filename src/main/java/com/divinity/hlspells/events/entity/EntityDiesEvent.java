@@ -55,6 +55,7 @@ public class EntityDiesEvent {
             boolean returnTotem = true;
             boolean keepingTotem = true;
 
+            // Handles totem functionality in curios slots if present
             if (ModList.get().isLoaded(CURIOS_ID)) {
                 if (CuriosCompat.getItemInCuriosSlot(player, ItemInit.TOTEM_OF_ESCAPING.get()).isPresent()) {
                     event.setCanceled(true);
@@ -84,7 +85,9 @@ public class EntityDiesEvent {
                             cap.setDiedTotemInCurios(true);
                         });
                     });
+                    escapingTotem = false;
                     keepingTotem = false;
+                    returnTotem = false;
                     griefingTotem = false;
                 }
 
@@ -93,6 +96,8 @@ public class EntityDiesEvent {
                         world.explode(player, player.getX(), player.getY(), player.getZ(), 5.0F, Explosion.Mode.BREAK);
                         CuriosCompat.getCuriosHandler(player).ifPresent(itemHandler -> itemHandler.setStackInSlot(map.middle, ItemStack.EMPTY));
                     });
+                    escapingTotem = false;
+                    keepingTotem = false;
                     griefingTotem = false;
                 }
 
@@ -104,18 +109,25 @@ public class EntityDiesEvent {
                             cap.setTotemInHand(Hand.MAIN_HAND);
                         });
                     });
+                    escapingTotem = false;
+                    keepingTotem = false;
                     returnTotem = false;
+                    griefingTotem = false;
                 }
             }
+            // Disable all custom totems if vanilla totem is activated
             for (Hand hand : Hand.values()) {
                 ItemStack heldItem = player.getItemInHand(hand);
                 if (heldItem.getItem() == Items.TOTEM_OF_UNDYING) {
                     escapingTotem = false;
                     keepingTotem = false;
                     griefingTotem = false;
+                    returnTotem = false;
                 }
-
-                // TOTEM OF ESCAPING (Does vanilla totem logic and teleports the player randomly)
+            }
+            // TOTEM OF ESCAPING (Does vanilla totem logic and teleports the player randomly)
+            for (Hand hand : Hand.values()) {
+                ItemStack heldItem = player.getItemInHand(hand);
                 if (heldItem.getItem() == ItemInit.TOTEM_OF_ESCAPING.get() && escapingTotem) {
                     event.setCanceled(true);
                     ModTotemItem.vanillaTotemBehavior(player, heldItem, ItemInit.TOTEM_OF_ESCAPING.get());
@@ -127,8 +139,10 @@ public class EntityDiesEvent {
                     returnTotem = false;
                     griefingTotem = false;
                 }
-
-                // TOTEM OF KEEPING (Saves player inventory and updates the totem the player has died)
+            }
+            // TOTEM OF KEEPING (Saves player inventory and updates the totem the player has died)
+            for (Hand hand : Hand.values()) {
+                ItemStack heldItem = player.getItemInHand(hand);
                 if (heldItem.getItem() == ItemInit.TOTEM_OF_KEEPING.get() && keepingTotem) {
                     heldItem.getCapability(TotemItemProvider.TOTEM_CAP).ifPresent(cap -> {
                         cap.hasDied(true);
@@ -139,10 +153,13 @@ public class EntityDiesEvent {
                             cap.setCuriosNBT(CuriosCompat.getCuriosInv(player));
                     });
                     keepingTotem = false;
+                    returnTotem = false;
                     griefingTotem = false;
                 }
-
-                // TOTEM OF GRIEFING (Explodes if the totem is held)
+            }
+            // TOTEM OF GRIEFING (Explodes if the totem is held)
+            for (Hand hand : Hand.values()) {
+                ItemStack heldItem = player.getItemInHand(hand);
                 if (heldItem.getItem() == ItemInit.TOTEM_OF_GRIEFING.get() && griefingTotem) {
 
                     world.explode(player, player.getX(), player.getY(), player.getZ(), 5.0F, Explosion.Mode.BREAK);
@@ -150,8 +167,10 @@ public class EntityDiesEvent {
                     player.setItemInHand(hand, ItemStack.EMPTY);
                     griefingTotem = false;
                 }
-
-                // TOTEM OF RETURNING (Saves the hand the totem is in and updates the totem the player has died)
+            }
+            // TOTEM OF RETURNING (Saves the hand the totem is in and updates the totem the player has died)
+            for (Hand hand : Hand.values()) {
+                ItemStack heldItem = player.getItemInHand(hand);
                 if (heldItem.getItem() == ItemInit.TOTEM_OF_RETURNING.get() && returnTotem) {
                     heldItem.getCapability(TotemItemProvider.TOTEM_CAP).ifPresent(cap -> {
                         cap.hasDied(true);
