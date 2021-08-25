@@ -78,8 +78,6 @@ public class EntityDiesEvent {
                         stack.getCapability(TotemItemProvider.TOTEM_CAP).ifPresent(cap -> {
                             cap.hasDied(true);
                             cap.setTotemInHand(Hand.MAIN_HAND);
-                            cap.setInventoryNBT(player.inventory.save(new ListNBT()));
-                            cap.setCuriosNBT(CuriosCompat.getCuriosInv(player));
                             cap.setCuriosSlot(map.getMiddle());
                             cap.setDiedTotemInCurios(true);
                         });
@@ -105,6 +103,7 @@ public class EntityDiesEvent {
                             cap.setTotemInHand(Hand.MAIN_HAND);
                             cap.setCuriosSlot(map.getMiddle());
                             cap.setDiedTotemInCurios(true);
+                            cap.setBlockPos(player.blockPosition());
                         });
                     });
                     escapingTotem = false;
@@ -136,7 +135,30 @@ public class EntityDiesEvent {
                     griefingTotem = false;
                 }
             }
-            // TOTEM OF KEEPING (Saves player inventory and updates the totem the player has died)
+            // TOTEM OF GRIEFING (Explodes if the totem is held)
+            for (Hand hand : Hand.values()) {
+                ItemStack heldItem = player.getItemInHand(hand);
+                if (heldItem.getItem() == ItemInit.TOTEM_OF_GRIEFING.get() && griefingTotem) {
+                    world.explode(player, player.getX(), player.getY(), player.getZ(), 5.0F, Explosion.Mode.BREAK);
+                    // Removes the totem from dropping
+                    player.setItemInHand(hand, ItemStack.EMPTY);
+                    griefingTotem = false;
+                }
+            }
+            // TOTEM OF RETURNING (Saves the hand the totem is in and updates the totem the player has died)
+            for (Hand hand : Hand.values()) {
+                ItemStack heldItem = player.getItemInHand(hand);
+                if (heldItem.getItem() == ItemInit.TOTEM_OF_RETURNING.get() && returnTotem) {
+                    heldItem.getCapability(TotemItemProvider.TOTEM_CAP).ifPresent(cap -> {
+                        cap.hasDied(true);
+                        cap.setBlockPos(player.blockPosition());
+                        if (hand == Hand.MAIN_HAND) cap.setTotemInHand(Hand.MAIN_HAND);
+                        else if (hand == Hand.OFF_HAND) cap.setTotemInHand(Hand.OFF_HAND);
+                    });
+                    returnTotem = false;
+                }
+            }
+            // Save the inventory and curios at the end to save modifications.
             for (Hand hand : Hand.values()) {
                 ItemStack heldItem = player.getItemInHand(hand);
                 if (heldItem.getItem() == ItemInit.TOTEM_OF_KEEPING.get() && keepingTotem) {
@@ -151,28 +173,14 @@ public class EntityDiesEvent {
                     keepingTotem = false;
                 }
             }
-            // TOTEM OF GRIEFING (Explodes if the totem is held)
-            for (Hand hand : Hand.values()) {
-                ItemStack heldItem = player.getItemInHand(hand);
-                if (heldItem.getItem() == ItemInit.TOTEM_OF_GRIEFING.get() && griefingTotem) {
-
-                    world.explode(player, player.getX(), player.getY(), player.getZ(), 5.0F, Explosion.Mode.BREAK);
-                    // Removes the totem from dropping
-                    player.setItemInHand(hand, ItemStack.EMPTY);
-                    griefingTotem = false;
-                }
-            }
-            // TOTEM OF RETURNING (Saves the hand the totem is in and updates the totem the player has died)
-            for (Hand hand : Hand.values()) {
-                ItemStack heldItem = player.getItemInHand(hand);
-                if (heldItem.getItem() == ItemInit.TOTEM_OF_RETURNING.get() && returnTotem) {
-                    heldItem.getCapability(TotemItemProvider.TOTEM_CAP).ifPresent(cap -> {
-                        cap.hasDied(true);
-                        if (hand == Hand.MAIN_HAND) cap.setTotemInHand(Hand.MAIN_HAND);
-                        else if (hand == Hand.OFF_HAND) cap.setTotemInHand(Hand.OFF_HAND);
+            if (ModList.get().isLoaded(CURIOS_ID) && CuriosCompat.getItemInCuriosSlot(player, ItemInit.TOTEM_OF_KEEPING.get()).isPresent()) {
+                CuriosCompat.getItemInCuriosSlot(player, ItemInit.TOTEM_OF_KEEPING.get()).ifPresent(map -> {
+                    ItemStack stack = map.getRight();
+                    stack.getCapability(TotemItemProvider.TOTEM_CAP).ifPresent(cap -> {
+                        cap.setInventoryNBT(player.inventory.save(new ListNBT()));
+                        cap.setCuriosNBT(CuriosCompat.getCuriosInv(player));
                     });
-                    returnTotem = false;
-                }
+                });
             }
         }
     }
@@ -185,11 +193,30 @@ public class EntityDiesEvent {
             boolean[] keepingTotem = new boolean[1];
             for (Iterator<ItemEntity> itemEntityIterator = event.getDrops().iterator(); itemEntityIterator.hasNext(); ) {
                 ItemStack stack = itemEntityIterator.next().getItem();
+                // TOTEM OF KEEPING (Reloads player inventory even after dying and disables inventory from spilling)
+                if (stack.getItem() == ItemInit.TOTEM_OF_KEEPING.get() && !keepingTotem[0]) {
+                    stack.getCapability(TotemItemProvider.TOTEM_CAP).filter(ITotemCap::getHasDied).ifPresent(cap -> {
+                        Hand hand = cap.getTotemInHand();
+                        if (hand == Hand.MAIN_HAND || hand == Hand.OFF_HAND) {
+                            player.inventory.load(cap.getInventoryNBT());
+                            if (ModList.get().isLoaded(CURIOS_ID)) {
+                                CuriosCompat.restoreCuriosInv(player, cap.getCuriosNBT());
+                                CuriosCompat.getItemInCuriosSlot(player, ItemInit.TOTEM_OF_KEEPING.get()).ifPresent(triple -> {
+                                    triple.getRight().getCapability(TotemItemProvider.TOTEM_CAP).ifPresent(totemCap -> {
+                                        totemCap.setDiedTotemInCurios(cap.diedTotemInCurios());
+                                        totemCap.setCuriosSlot(cap.getCuriosSlot());
+                                    });
+                                });
+                            }
+                            cap.setTotemInHand(null);
+                            keepingTotem[0] = true;
+                        }
+                    });
+                }
                 // TOTEM OF RETURNING (Sets BlockPos to teleport to and sets the slot the totem should be in)
                 if (stack.getItem() == ItemInit.TOTEM_OF_RETURNING.get()) {
                     stack.getCapability(TotemItemProvider.TOTEM_CAP).filter(ITotemCap::getHasDied).ifPresent(cap ->
                     {
-                        cap.setBlockPos(player.blockPosition());
                         Hand hand = cap.getTotemInHand();
                         boolean returnInCurio = false;
                         if (ModList.get().isLoaded(CURIOS_ID) && cap.diedTotemInCurios()) {
@@ -212,26 +239,6 @@ public class EntityDiesEvent {
                         }
                     });
                 }
-                // TOTEM OF KEEPING (Reloads player inventory even after dying and disables inventory from spilling)
-                if (stack.getItem() == ItemInit.TOTEM_OF_KEEPING.get() && !keepingTotem[0]) {
-                    stack.getCapability(TotemItemProvider.TOTEM_CAP).filter(ITotemCap::getHasDied).ifPresent(cap -> {
-                        Hand hand = cap.getTotemInHand();
-                        if (hand == Hand.MAIN_HAND || hand == Hand.OFF_HAND) {
-                            player.inventory.load(cap.getInventoryNBT());
-                            if (ModList.get().isLoaded(CURIOS_ID)) {
-                                CuriosCompat.restoreCuriosInv(player, cap.getCuriosNBT());
-                                CuriosCompat.getItemInCuriosSlot(player, ItemInit.TOTEM_OF_KEEPING.get()).ifPresent(triple -> {
-                                    triple.getRight().getCapability(TotemItemProvider.TOTEM_CAP).ifPresent(totemCap -> {
-                                        totemCap.setDiedTotemInCurios(cap.diedTotemInCurios());
-                                        totemCap.setCuriosSlot(cap.getCuriosSlot());
-                                    });
-                                });
-                            }
-                            cap.setTotemInHand(null);
-                            keepingTotem[0] = true;
-                        }
-                    });
-                }
             }
             if (keepingTotem[0])
                 event.getDrops().removeIf(itemEntity -> {
@@ -246,15 +253,6 @@ public class EntityDiesEvent {
         if (event.isWasDeath() && !event.getEntity().level.isClientSide()) {
             PlayerEntity original = event.getOriginal();
             PlayerEntity current = event.getPlayer();
-            // TOTEM OF RETURNING (Adds totem to the inventory)
-            if (ModList.get().isLoaded(CURIOS_ID) && CuriosCompat.getItemInCuriosSlot(original, ItemInit.TOTEM_OF_RETURNING.get()).isPresent()) {
-                CuriosCompat.restoreCuriosInv(current, CuriosCompat.getCuriosInv(original));
-            } else if (original.getMainHandItem().getItem() == ItemInit.TOTEM_OF_RETURNING.get()) {
-                current.inventory.setItem(original.inventory.selected, original.inventory.getSelected());
-            } else if (original.getOffhandItem().getItem() == ItemInit.TOTEM_OF_RETURNING.get()) {
-                current.inventory.offhand.set(0, original.inventory.offhand.get(0));
-            }
-
             boolean keepingActivated = false;
             // TOTEM OF KEEPING (Restores the inventory)
             if (ModList.get().isLoaded(CURIOS_ID) && CuriosCompat.getItemInCuriosSlot(original, ItemInit.TOTEM_OF_KEEPING.get()).isPresent()) {
@@ -278,6 +276,15 @@ public class EntityDiesEvent {
             if (keepingActivated) {
                 current.inventory.replaceWith(original.inventory);
                 displayActivation(current, ItemInit.TOTEM_OF_KEEPING.get(), true);
+            }
+
+            // TOTEM OF RETURNING (Adds totem to the inventory)
+            if (ModList.get().isLoaded(CURIOS_ID) && CuriosCompat.getItemInCuriosSlot(original, ItemInit.TOTEM_OF_RETURNING.get()).isPresent()) {
+                CuriosCompat.restoreCuriosInv(current, CuriosCompat.getCuriosInv(original));
+            } else if (original.getMainHandItem().getItem() == ItemInit.TOTEM_OF_RETURNING.get()) {
+                current.inventory.setItem(original.inventory.selected, original.inventory.getSelected());
+            } else if (original.getOffhandItem().getItem() == ItemInit.TOTEM_OF_RETURNING.get()) {
+                current.inventory.offhand.set(0, original.inventory.offhand.get(0));
             }
         }
     }
