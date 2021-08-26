@@ -40,7 +40,7 @@ import java.util.Iterator;
 @Mod.EventBusSubscriber(modid = HLSpells.MODID)
 public class EntityDiesEvent {
 
-    private static String CURIOS_ID = "curios";
+    public static String CURIOS_ID = "curios";
 
     //Prioritize Death totem savers
     @SubscribeEvent
