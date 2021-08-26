@@ -12,6 +12,13 @@
             {
               "function": "hlspells:set_spell",
               "spell": "hlspells:fangs"
+            },
+            {
+              "function": "minecraft:set_damage",
+              "damage": {
+                "min": 0.13,
+                "max": 0.5
+              }
             }
           ]
         },
@@ -24,6 +31,13 @@
             {
               "function": "hlspells:set_spell",
               "spell": "hlspells:soul_summon"
+            },
+            {
+              "function": "minecraft:set_damage",
+              "damage": {
+                "min": 0.13,
+                "max": 0.5
+              }
             }
           ]
         }

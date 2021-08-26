@@ -3,20 +3,15 @@ package com.divinity.hlspells.spells;
 import com.divinity.hlspells.HLSpells;
 import com.divinity.hlspells.items.SpellHoldingItem;
 import com.divinity.hlspells.items.capabilities.spellholdercap.SpellHolderProvider;
-import com.divinity.hlspells.player.capability.PlayerCapProvider;
 import com.divinity.hlspells.spell.Spell;
 import com.divinity.hlspells.spell.SpellType;
 import com.divinity.hlspells.util.SpellUtils;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.potion.Effect;
-import net.minecraft.potion.EffectInstance;
-import net.minecraft.potion.Effects;
 import net.minecraft.util.Hand;
 import net.minecraft.world.World;
 import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.living.PotionEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -35,11 +30,12 @@ public class RunSpells {
                     .ifPresent(cap -> {
                         Spell spell = SpellUtils.getSpellByID(cap.getCurrentSpell());
                         if (spell.getType() == SpellType.CAST && spell.hasCost() && SpellUtils.checkXpReq(player, spell)) {
-                            spell.getSpellAction().accept(player, world);
-                            if (!player.level.isClientSide() && !player.isCreative())
-                                itemStack.hurt(1, player.getRandom(), (ServerPlayerEntity) player);
-                            if (HLSpells.CONFIG.spellsUseXP.get() && !player.isCreative())
-                                player.giveExperiencePoints(-SpellUtils.getXpReq(player, spell));
+                            if (spell.getSpellAction().test(player, world)) {
+                                if (!player.level.isClientSide() && !player.isCreative())
+                                    itemStack.hurt(1, player.getRandom(), (ServerPlayerEntity) player);
+                                if (HLSpells.CONFIG.spellsUseXP.get() && !player.isCreative())
+                                    player.giveExperiencePoints(-SpellUtils.getXpReq(player, spell));
+                            }
                         }
                     });
         }
@@ -52,23 +48,24 @@ public class RunSpells {
             Hand hand = player.getUsedItemHand();
             if (hand == Hand.MAIN_HAND || hand == Hand.OFF_HAND) {
                 ItemStack stack = player.getItemInHand(hand);
-                if (stack.getItem() instanceof SpellHoldingItem &&  player.isUsingItem()) {
+                if (stack.getItem() instanceof SpellHoldingItem && player.isUsingItem()) {
                     stack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP)
                             .filter(cap -> !cap.getSpells().isEmpty())
                             .ifPresent(cap -> {
                                 if (cap.isHeldActive()) {
                                     Spell spell = SpellUtils.getSpellByID(cap.getCurrentSpell());
                                     if (spell.getType() == SpellType.HELD && spell.hasCost() && SpellUtils.checkXpReq(player, spell)) {
-                                        spell.getSpellAction().accept(player, player.level);
-                                        xpTickCounter++;
-                                        durabilityTickCounter++;
-                                        if (xpTickCounter == SpellUtils.getTickDelay(player, spell) && HLSpells.CONFIG.spellsUseXP.get() && !player.isCreative()) {
-                                            player.giveExperiencePoints(-SpellUtils.getXpReq(player, spell));
-                                            xpTickCounter = 0;
-                                        }
-                                        if (durabilityTickCounter == 15 && !player.level.isClientSide() && !player.isCreative()) {
-                                            stack.hurt(1, player.getRandom(), (ServerPlayerEntity) player);
-                                            durabilityTickCounter = 0;
+                                        if (spell.getSpellAction().test(player, player.level)) {
+                                            xpTickCounter++;
+                                            durabilityTickCounter++;
+                                            if (xpTickCounter == SpellUtils.getTickDelay(player, spell) && HLSpells.CONFIG.spellsUseXP.get() && !player.isCreative()) {
+                                                player.giveExperiencePoints(-SpellUtils.getXpReq(player, spell));
+                                                xpTickCounter = 0;
+                                            }
+                                            if (durabilityTickCounter == 15 && !player.level.isClientSide() && !player.isCreative()) {
+                                                stack.hurt(1, player.getRandom(), (ServerPlayerEntity) player);
+                                                durabilityTickCounter = 0;
+                                            }
                                         }
                                     }
                                 } else {

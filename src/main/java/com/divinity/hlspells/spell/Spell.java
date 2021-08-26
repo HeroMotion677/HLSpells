@@ -9,12 +9,12 @@ import net.minecraft.world.World;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 
 import javax.annotation.Nullable;
-import java.util.function.BiConsumer;
+import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
 public class Spell extends ForgeRegistryEntry<Spell> {
     private final SpellType spellType;
-    private final BiConsumer<PlayerEntity, World> spellAction;
+    private final BiPredicate<PlayerEntity, World> spellAction;
     private final String displayName;
     private int xpCost;
     private int tickDelay;
@@ -22,20 +22,20 @@ public class Spell extends ForgeRegistryEntry<Spell> {
     @Nullable
     private String descriptionId;
 
-    public Spell(SpellType spellType, BiConsumer<PlayerEntity, World> spellAction, String displayName) {
+    public Spell(SpellType spellType, BiPredicate<PlayerEntity, World> spellAction, String displayName) {
         this.spellType = spellType;
         this.spellAction = spellAction;
         this.displayName = displayName;
     }
 
-    public Spell(SpellType spellType, BiConsumer<PlayerEntity, World> spellAction, String displayName, int xpCost) {
+    public Spell(SpellType spellType, BiPredicate<PlayerEntity, World> spellAction, String displayName, int xpCost) {
         this.spellType = spellType;
         this.spellAction = spellAction;
         this.displayName = displayName;
         this.xpCost = xpCost;
     }
 
-    public Spell(SpellType spellType, BiConsumer<PlayerEntity, World> spellAction, String displayName, int xpCost, int tickDelay) {
+    public Spell(SpellType spellType, BiPredicate<PlayerEntity, World> spellAction, String displayName, int xpCost, int tickDelay) {
         this.spellType = spellType;
         this.spellAction = spellAction;
         this.displayName = displayName;
@@ -82,7 +82,7 @@ public class Spell extends ForgeRegistryEntry<Spell> {
         return this.spellType;
     }
 
-    public BiConsumer<PlayerEntity, World> getSpellAction() {
+    public BiPredicate<PlayerEntity, World> getSpellAction() {
         return spellAction;
     }
 

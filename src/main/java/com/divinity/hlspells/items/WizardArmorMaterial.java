@@ -5,19 +5,16 @@ import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.IArmorMaterial;
 import net.minecraft.item.Items;
 import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.util.IItemProvider;
 import net.minecraft.util.LazyValue;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.function.Supplier;
 
 import static com.divinity.hlspells.HLSpells.MODID;
 
 public enum WizardArmorMaterial implements IArmorMaterial {
-    WIZHAT("wizhat", 5, new int[] {0, 0, 0, 1}, 22, SoundEvents.ARMOR_EQUIP_LEATHER, 0F, 0.0F, () -> {
+    WIZHAT("wizhat", 5, new int[]{0, 0, 0, 1}, 22, SoundEvents.ARMOR_EQUIP_LEATHER, 0F, 0.0F, () -> {
         return Ingredient.of(Items.LEATHER);
     });
     private static final int[] HEALTH_PER_SLOT = new int[]{1, 1, 1, 11};
@@ -30,15 +27,15 @@ public enum WizardArmorMaterial implements IArmorMaterial {
     private final float knockbackResistance;
     private final LazyValue<Ingredient> repairIngredient;
 
-    WizardArmorMaterial(String nameIn, int maxDamageFactor, int[] damageReductionAmountIn, int enchantabilityIn, SoundEvent soundIn, float toughnessIn, float knockbackResistanceIn, Supplier<Ingredient> repairMaterialIn) {
-        this.name = nameIn;
+    WizardArmorMaterial(String name, int maxDamageFactor, int[] damageReductionAmount, int enchantability, SoundEvent sound, float toughness, float knockbackResistance, Supplier<Ingredient> repairMaterial) {
+        this.name = name;
         this.durabilityMultiplier = maxDamageFactor;
-        this.slotProtections = damageReductionAmountIn;
-        this.enchantmentValue = enchantabilityIn;
-        this.sound = soundIn;
-        this.toughness = toughnessIn;
-        this.knockbackResistance = knockbackResistanceIn;
-        this.repairIngredient = new LazyValue<>(repairMaterialIn);
+        this.slotProtections = damageReductionAmount;
+        this.enchantmentValue = enchantability;
+        this.sound = sound;
+        this.toughness = toughness;
+        this.knockbackResistance = knockbackResistance;
+        this.repairIngredient = new LazyValue<>(repairMaterial);
     }
 
     @Override
