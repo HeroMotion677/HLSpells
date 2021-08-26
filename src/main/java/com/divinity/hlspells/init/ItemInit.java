@@ -4,6 +4,7 @@ import com.divinity.hlspells.HLSpells;
 import com.divinity.hlspells.items.ModTotemItem;
 import com.divinity.hlspells.items.SpellHoldingItem;
 import com.divinity.hlspells.items.WizardArmorMaterial;
+import com.divinity.hlspells.items.armor.WizardHatArmorItem;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.Item;
@@ -22,5 +23,5 @@ public class ItemInit {
     public static final RegistryObject<Item> SPELL_BOOK = ITEMS.register("spell_book", () -> new SpellHoldingItem(new Item.Properties().tab(ItemGroup.TAB_TOOLS).durability(300), true));
     public static final RegistryObject<Item> WAND = ITEMS.register("wand", () -> new SpellHoldingItem(new Item.Properties().tab(ItemGroup.TAB_TOOLS).durability(700), false));
     public static final RegistryObject<Item> STAFF = ITEMS.register("staff", () -> new SpellHoldingItem(new Item.Properties().tab(ItemGroup.TAB_TOOLS).durability(1300), false));
-    public static final RegistryObject<Item> WIZARD_HAT = ITEMS.register("wizard_hat", () -> new ArmorItem(WizardArmorMaterial.WIZHAT, EquipmentSlotType.HEAD, new Item.Properties().tab(ItemGroup.TAB_COMBAT)));
+    public static final RegistryObject<Item> WIZARD_HAT = ITEMS.register("wizard_hat", () -> new WizardHatArmorItem(WizardArmorMaterial.WIZHAT, EquipmentSlotType.HEAD, new Item.Properties().tab(ItemGroup.TAB_TOOLS)));
 }

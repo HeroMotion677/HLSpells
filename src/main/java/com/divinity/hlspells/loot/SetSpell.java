@@ -1,6 +1,7 @@
 package com.divinity.hlspells.loot;
 
 import com.divinity.hlspells.items.capabilities.spellholdercap.SpellHolderProvider;
+import com.divinity.hlspells.network.NetworkManager;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
@@ -10,6 +11,9 @@ import net.minecraft.loot.LootFunction;
 import net.minecraft.loot.LootFunctionType;
 import net.minecraft.loot.conditions.ILootCondition;
 import net.minecraft.util.JSONUtils;
+import net.minecraft.world.chunk.Chunk;
+import net.minecraftforge.event.AttachCapabilitiesEvent;
+import org.spongepowered.asm.mixin.injection.At;
 
 /**
  * Sets the spell for the given stack

@@ -89,7 +89,8 @@ public class SpellHoldingItem extends ShootableItem {
 
     @Override
     public boolean isFoil(ItemStack pStack) {
-        return isSpellBook && SpellUtils.getSpell(pStack) != SpellInit.EMPTY.get();
+        List<String> spells = pStack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP).map(ISpellHolder::getSpells).orElse(null);
+        return isSpellBook && SpellUtils.getSpell(pStack) != SpellInit.EMPTY.get() || !isSpellBook && spells != null && !spells.isEmpty();
     }
 
     @Nullable

@@ -322,7 +322,7 @@ public class EntityDiesEvent {
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> ClientSetup.displayActivation(player, new ItemStack(item), particleIn));
     }
 
-    public static void randomTeleport(LivingEntity entity) {
+    private static void randomTeleport(LivingEntity entity) {
         double d0 = entity.getX();
         double d1 = entity.getY();
         double d2 = entity.getZ();
