@@ -12,6 +12,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.IWaterLoggable;
 import net.minecraft.block.material.Material;
+import net.minecraft.enchantment.FrostWalkerEnchantment;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.Attributes;
@@ -398,31 +399,28 @@ public class SpellActions {
 
     // Frost Path (Code is from FrostWalkerEnchantment onEntityMoved())
     public static void doFrostPath(PlayerEntity player, World world) {
-        if (player.isOnGround()) {
-            BlockPos pos = player.blockPosition();
-            BlockState blockstate = BlockInit.CUSTOM_FROSTED_ICE.get().defaultBlockState();
-            float f = 3;
-            BlockPos.Mutable mutablePos = new BlockPos.Mutable();
-
-            for (BlockPos blockpos : BlockPos.betweenClosed(pos.offset((-f), -1.0D, (-f)), pos.offset(f, -1.0D, f))) {
-                if (blockpos.closerThan(player.position(), f)) {
-                    mutablePos.set(blockpos.getX(), blockpos.getY() + 1, blockpos.getZ());
-                    BlockState mutableState = world.getBlockState(mutablePos);
-                    if (mutableState.isAir(world, mutablePos)) {
-                        BlockState state = world.getBlockState(blockpos);
-                        if (state.getMaterial().isReplaceable() && blockstate.canSurvive(world, blockpos) && world.isUnobstructed(blockstate, blockpos, ISelectionContext.empty()) && !net.minecraftforge.event.ForgeEventFactory.onBlockPlace(player, net.minecraftforge.common.util.BlockSnapshot.create(world.dimension(), world, blockpos), net.minecraft.util.Direction.UP)) {
-                            world.setBlockAndUpdate(blockpos, blockstate);
-                            world.getBlockTicks().scheduleTick(blockpos, BlockInit.CUSTOM_FROSTED_ICE.get(), MathHelper.nextInt(player.getRandom(), 60, 120));
-                        }
+        BlockPos pos = player.blockPosition();
+        BlockState blockstate = BlockInit.CUSTOM_FROSTED_ICE.get().defaultBlockState();
+        float f = 3;
+        BlockPos.Mutable mutablePos = new BlockPos.Mutable();
+        for (BlockPos blockpos : BlockPos.betweenClosed(pos.offset((-f), -1.0D, (-f)), pos.offset(f, -1.0D, f))) {
+            if (blockpos.closerThan(player.position(), f)) {
+                mutablePos.set(blockpos.getX(), blockpos.getY() + 1, blockpos.getZ());
+                BlockState mutableState = world.getBlockState(mutablePos);
+                if (mutableState.isAir(world, mutablePos)) {
+                    BlockState state = world.getBlockState(blockpos);
+                    if (state.getMaterial().isReplaceable() && blockstate.canSurvive(world, blockpos) && world.isUnobstructed(blockstate, blockpos, ISelectionContext.empty()) && !net.minecraftforge.event.ForgeEventFactory.onBlockPlace(player, net.minecraftforge.common.util.BlockSnapshot.create(world.dimension(), world, blockpos), net.minecraft.util.Direction.UP)) {
+                        world.setBlockAndUpdate(blockpos, blockstate);
+                        world.getBlockTicks().scheduleTick(blockpos, BlockInit.CUSTOM_FROSTED_ICE.get(), MathHelper.nextInt(player.getRandom(), 60, 120));
                     }
                 }
             }
         }
     }
 
+
     // Lure
     public static void doLure(PlayerEntity player, World world) {
-
         EffectInstance effect = player.getEffect(Effects.GLOWING);
         if (effect != null && effect.isVisible()) {
             player.getCapability(PlayerCapProvider.PLAYER_CAP).ifPresent(cap -> {
