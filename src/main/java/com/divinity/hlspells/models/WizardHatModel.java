@@ -3,6 +3,7 @@ package com.divinity.hlspells.models;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.entity.player.AbstractClientPlayerEntity;
+import net.minecraft.client.renderer.entity.PlayerRenderer;
 import net.minecraft.client.renderer.entity.model.BipedModel;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.renderer.entity.model.PlayerModel;
@@ -24,7 +25,7 @@ public class WizardHatModel<T extends LivingEntity> extends BipedModel<T> {
         texHeight = 64;
 
         hat_main = new ModelRenderer(this);
-        hat_main.setPos(0.0F, 22.0F, 0.0F);
+        hat_main.setPos(0.0F, -6.0F, 0.0F);
 
         cube_r1 = new ModelRenderer(this);
         cube_r1.setPos(0.0F, 0.0F, 0.0F);
