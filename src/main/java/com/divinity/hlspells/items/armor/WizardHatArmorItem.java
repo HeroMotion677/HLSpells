@@ -1,13 +1,9 @@
 package com.divinity.hlspells.items.armor;
 
 import com.divinity.hlspells.models.WizardHatModel;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.player.AbstractClientPlayerEntity;
-import net.minecraft.client.renderer.entity.PlayerRenderer;
 import net.minecraft.client.renderer.entity.model.BipedModel;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.IArmorMaterial;
@@ -31,7 +27,7 @@ public class WizardHatArmorItem extends ArmorItem {
     @SuppressWarnings("unchecked")
     @Nullable
     @Override
-    public <A extends BipedModel<?>> A getArmorModel(LivingEntity entityLiving, ItemStack itemStack, EquipmentSlotType armorSlot, A _default) {
-        return armorSlot == EquipmentSlotType.HEAD ? (A) new WizardHatModel(1.0F) : super.getArmorModel(entityLiving, itemStack, armorSlot, _default);
+    public <A extends BipedModel<?>> A getArmorModel(LivingEntity entityLiving, ItemStack itemStack, EquipmentSlotType armorSlot, A defaultModel) {
+        return armorSlot == EquipmentSlotType.HEAD ? (A) new WizardHatModel(1.0F) : super.getArmorModel(entityLiving, itemStack, armorSlot, defaultModel);
     }
 }
