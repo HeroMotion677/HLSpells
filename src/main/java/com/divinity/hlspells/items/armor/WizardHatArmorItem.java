@@ -32,6 +32,6 @@ public class WizardHatArmorItem extends ArmorItem {
     @Nullable
     @Override
     public <A extends BipedModel<?>> A getArmorModel(LivingEntity entityLiving, ItemStack itemStack, EquipmentSlotType armorSlot, A _default) {
-        return armorSlot == EquipmentSlotType.HEAD ? (A) new WizardHatModel<>(1.0F) : super.getArmorModel(entityLiving, itemStack, armorSlot, _default);
+        return armorSlot == EquipmentSlotType.HEAD ? (A) new WizardHatModel(1.0F) : super.getArmorModel(entityLiving, itemStack, armorSlot, _default);
     }
 }
