@@ -65,7 +65,7 @@ public class EntityDiesEvent {
             // Check if any item in the player's inventory contains soul bond enchant
             boolean soulBond = player.inventory.compartments
                               .stream()
-                              .flatMap(Collection::stream)
+                              .flatMap(Collection::stream) // Flatmap to reduce overhead
                               .anyMatch(p -> EnchantmentHelper.getItemEnchantmentLevel(EnchantmentInit.SOUL_BOND.get(), p) > 0);
 
             System.out.println(soulBond);
