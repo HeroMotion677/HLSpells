@@ -6,7 +6,7 @@ import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-public class POIFixup {
+public class POIFixUp {
 
     private static final Method blockStatesInjector = ObfuscationReflectionHelper.findMethod(PointOfInterestType.class, "func_221052_a",
             PointOfInterestType.class);
