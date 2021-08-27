@@ -7,6 +7,7 @@ import net.minecraft.client.renderer.entity.PlayerRenderer;
 import net.minecraft.client.renderer.entity.model.BipedModel;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.IArmorMaterial;
@@ -17,7 +18,6 @@ import javax.annotation.Nullable;
 import static com.divinity.hlspells.HLSpells.MODID;
 
 public class WizardHatArmorItem extends ArmorItem {
-
     public WizardHatArmorItem(IArmorMaterial material, EquipmentSlotType type, Properties properties) {
         super(material, type, properties);
     }
@@ -28,10 +28,10 @@ public class WizardHatArmorItem extends ArmorItem {
         return MODID  + ":" + "textures/armor/wizard_hat.png";
     }
 
-    @SuppressWarnings({"unchecked"})
+    @SuppressWarnings("unchecked")
     @Nullable
     @Override
     public <A extends BipedModel<?>> A getArmorModel(LivingEntity entityLiving, ItemStack itemStack, EquipmentSlotType armorSlot, A _default) {
-        return (A) new WizardHatModel<>(1.0F);
+        return armorSlot == EquipmentSlotType.HEAD ? (A) new WizardHatModel<>(1.0F) : super.getArmorModel(entityLiving, itemStack, armorSlot, _default);
     }
 }
