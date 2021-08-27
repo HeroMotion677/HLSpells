@@ -2,6 +2,7 @@ package com.divinity.hlspells.player.capability;
 
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.potion.Effect;
 import net.minecraft.potion.Effects;
 import net.minecraft.util.Direction;
@@ -20,6 +21,9 @@ public class PlayerCapStorage implements Capability.IStorage<IPlayerCap> {
             tag.putInt("effectDuration", instance.getEffectDuration());
             tag.putInt("effectAmplifier", instance.getEffectAmplifier());
         }
+        if (instance.getSoulBondInventoryNBT() != null) {
+            tag.put("playerSoulBondInv", instance.getSoulBondInventoryNBT());
+        }
         return tag;
     }
 
@@ -27,10 +31,14 @@ public class PlayerCapStorage implements Capability.IStorage<IPlayerCap> {
     public void readNBT(Capability<IPlayerCap> capability, IPlayerCap instance, Direction side, INBT nbt) {
         CompoundNBT tag = (CompoundNBT) nbt;
         int effect = tag.getInt("effect");
+        ListNBT soulBondNbt = tag.getList("playerSoulBondInv", 0);
         if (effect != 0) {
             instance.setEffect(Effect.byId(tag.getInt("effect")));
             instance.setEffectDuration(tag.getInt("effectDuration"));
             instance.setEffectAmplifier(tag.getInt("effectAmplifier"));
+        }
+        if (!soulBondNbt.isEmpty()) {
+            instance.setSoulBondInventoryNBT(soulBondNbt);
         }
     }
 }

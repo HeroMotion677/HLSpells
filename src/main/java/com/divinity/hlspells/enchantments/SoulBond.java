@@ -7,7 +7,7 @@ import net.minecraft.inventory.EquipmentSlotType;
 
 public class SoulBond extends Enchantment {
     public SoulBond(EquipmentSlotType... slots) {
-        super(Rarity.UNCOMMON, EnchantmentType.BREAKABLE, slots);
+        super(Rarity.VERY_RARE, EnchantmentType.BREAKABLE, slots);
     }
 
     @Override

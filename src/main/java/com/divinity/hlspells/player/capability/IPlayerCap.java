@@ -1,5 +1,6 @@
 package com.divinity.hlspells.player.capability;
 
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.potion.Effect;
 import net.minecraft.potion.EffectInstance;
 
@@ -21,4 +22,9 @@ public interface IPlayerCap {
     void setEffectAmplifier(int amplifier);
 
     void resetEffect();
+
+    @Nullable
+    ListNBT getSoulBondInventoryNBT();
+
+    void setSoulBondInventoryNBT(@Nullable ListNBT playerInventory);
 }

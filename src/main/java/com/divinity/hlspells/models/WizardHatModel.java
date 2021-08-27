@@ -10,7 +10,7 @@ public class WizardHatModel extends BipedModel<LivingEntity> {
     private ModelRenderer hatTop;
     private ModelRenderer hangingPart;
 
-    public <A extends BipedModel<?>> WizardHatModel(float scale) {
+    public WizardHatModel(float scale) {
         super(scale, 0, 64, 128);
 
         complete = new ModelRenderer(this);
