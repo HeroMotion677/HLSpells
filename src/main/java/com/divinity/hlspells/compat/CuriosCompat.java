@@ -26,6 +26,7 @@ import top.theillusivec4.curios.api.CuriosCapability;
 import top.theillusivec4.curios.api.SlotContext;
 import top.theillusivec4.curios.api.SlotTypeMessage;
 import top.theillusivec4.curios.api.type.capability.ICurio;
+import top.theillusivec4.curios.api.type.inventory.ICurioStacksHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -36,8 +37,8 @@ public class CuriosCompat {
         return CuriosApi.getCuriosHelper().findEquippedCurio(item, entity);
     }
 
-    public static Optional<ImmutableTriple<String, Integer, ItemStack>> getStackInCuriosSlot(LivingEntity entity, ItemStack stack) {
-        return CuriosApi.getCuriosHelper().findEquippedCurio(itemStack -> itemStack.equals(stack), entity);
+    public static Optional<ICurioStacksHandler> getStackHandler(LivingEntity entity) {
+        return CuriosApi.getCuriosHelper().getCuriosHandler(entity).map(iCuriosItemHandler -> iCuriosItemHandler.getStacksHandler("charm")).orElse(Optional.empty());
     }
 
     public static LazyOptional<IItemHandlerModifiable> getCuriosHandler(LivingEntity livingEntity) {
@@ -93,7 +94,7 @@ public class CuriosCompat {
                     }
                     ListNBT cosmeticStacks = tag.getList("CosmeticStacks", Constants.NBT.TAG_COMPOUND);
                     for (int j = 0; j < cosmeticStacks.size(); j++) {
-                        CompoundNBT compoundnbt = stacks.getCompound(j);
+                        CompoundNBT compoundnbt = cosmeticStacks.getCompound(j);
                         int slot = compoundnbt.getInt("Slot");
                         ItemStack itemstack = ItemStack.of(compoundnbt);
                         if (!itemstack.isEmpty()) {

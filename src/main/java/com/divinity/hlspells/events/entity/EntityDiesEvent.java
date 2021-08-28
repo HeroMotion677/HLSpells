@@ -10,7 +10,6 @@ import com.divinity.hlspells.items.capabilities.totemcap.TotemItemProvider;
 import com.divinity.hlspells.player.capability.PlayerCapProvider;
 import com.divinity.hlspells.setup.client.ClientSetup;
 import com.divinity.hlspells.util.Util;
-import com.google.common.collect.Lists;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.item.ItemEntity;
@@ -18,14 +17,10 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
-import net.minecraft.util.Hand;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.SoundEvents;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.Explosion;
@@ -37,17 +32,13 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
-import org.lwjgl.system.CallbackI;
 
-import java.util.*;
-import java.util.stream.Stream;
+import java.util.Collection;
+import java.util.Iterator;
 
 @Mod.EventBusSubscriber(modid = HLSpells.MODID)
 public class EntityDiesEvent {
-
-    public static String CURIOS_ID = "curios";
 
     //Prioritize Death totem savers
     @SubscribeEvent
@@ -64,13 +55,11 @@ public class EntityDiesEvent {
 
             // Check if any item in the player's inventory contains soul bond enchant
             boolean soulBond = player.inventory.compartments
-                              .stream()
-                              .flatMap(Collection::stream) // Flatmap to reduce overhead
-                              .anyMatch(p -> EnchantmentHelper.getItemEnchantmentLevel(EnchantmentInit.SOUL_BOND.get(), p) > 0);
-
-            System.out.println(soulBond);
+                    .stream()
+                    .flatMap(Collection::stream) // Flatmap to reduce overhead
+                    .anyMatch(p -> EnchantmentHelper.getItemEnchantmentLevel(EnchantmentInit.SOUL_BOND.get(), p) > 0);
             // Handles totem functionality in curios slots if present
-            if (ModList.get().isLoaded(CURIOS_ID)) {
+            if (HLSpells.isCurioLoaded) {
                 if (CuriosCompat.getItemInCuriosSlot(player, ItemInit.TOTEM_OF_ESCAPING.get()).isPresent()) {
                     event.setCanceled(true);
                     CuriosCompat.getItemInCuriosSlot(player, ItemInit.TOTEM_OF_ESCAPING.get()).ifPresent(map -> {
@@ -103,9 +92,9 @@ public class EntityDiesEvent {
                 }
 
                 if (CuriosCompat.getItemInCuriosSlot(player, ItemInit.TOTEM_OF_GRIEFING.get()).isPresent() && griefingTotem) {
-                    CuriosCompat.getItemInCuriosSlot(player, ItemInit.TOTEM_OF_GRIEFING.get()).ifPresent(map -> {
+                    CuriosCompat.getItemInCuriosSlot(player, ItemInit.TOTEM_OF_GRIEFING.get()).ifPresent(triple -> {
                         world.explode(player, player.getX(), player.getY(), player.getZ(), 5.0F, Explosion.Mode.BREAK);
-                        CuriosCompat.getCuriosHandler(player).ifPresent(itemHandler -> itemHandler.setStackInSlot(map.middle, ItemStack.EMPTY));
+                        triple.getRight().shrink(1);
                     });
                     escapingTotem = false;
                     griefingTotem = false;
@@ -183,14 +172,14 @@ public class EntityDiesEvent {
                         if (hand == Hand.MAIN_HAND) cap.setTotemInHand(Hand.MAIN_HAND);
                         else if (hand == Hand.OFF_HAND) cap.setTotemInHand(Hand.OFF_HAND);
                         cap.setInventoryNBT(player.inventory.save(new ListNBT()));
-                        if (ModList.get().isLoaded(CURIOS_ID))
+                        if (HLSpells.isCurioLoaded)
                             cap.setCuriosNBT(CuriosCompat.getCuriosInv(player));
                     });
                     keepingTotem = false;
                     soulBond = false;
                 }
             }
-            if (ModList.get().isLoaded(CURIOS_ID) && CuriosCompat.getItemInCuriosSlot(player, ItemInit.TOTEM_OF_KEEPING.get()).isPresent()) {
+            if (HLSpells.isCurioLoaded && CuriosCompat.getItemInCuriosSlot(player, ItemInit.TOTEM_OF_KEEPING.get()).isPresent()) {
                 soulBond = false;
                 CuriosCompat.getItemInCuriosSlot(player, ItemInit.TOTEM_OF_KEEPING.get()).ifPresent(map -> {
                     ItemStack stack = map.getRight();
@@ -202,16 +191,14 @@ public class EntityDiesEvent {
             }
 
             if (soulBond) {
-                ListNBT playerInv = player.inventory.save(new ListNBT());
-                ListNBT soulBondItemsList = new ListNBT();
-                for (int i = 0; i < playerInv.size(); i++) {
-                    CompoundNBT compoundNBT = playerInv.getCompound(i);
-                    ItemStack stack = ItemStack.of(compoundNBT);
-                    if (EnchantmentHelper.getItemEnchantmentLevel(EnchantmentInit.SOUL_BOND.get(), stack) > 0) {
-                        soulBondItemsList.add(compoundNBT); // Adding every soul bond enchanted item to the list
+                player.getCapability(PlayerCapProvider.PLAYER_CAP).ifPresent(cap -> {
+                    int size = player.inventory.compartments.stream().mapToInt(NonNullList::size).sum();
+                    for (int i = 0; i < size; i++) {
+                        ItemStack stack = player.inventory.getItem(i);
+                        if (EnchantmentHelper.getItemEnchantmentLevel(EnchantmentInit.SOUL_BOND.get(), stack) > 0)
+                            cap.addSoulBondItem(i, stack);
                     }
-                }
-                player.getCapability(PlayerCapProvider.PLAYER_CAP).ifPresent(cap -> cap.setSoulBondInventoryNBT(soulBondItemsList));
+                });
             }
         }
     }
@@ -230,17 +217,18 @@ public class EntityDiesEvent {
                         Hand hand = cap.getTotemInHand();
                         if (hand == Hand.MAIN_HAND || hand == Hand.OFF_HAND) {
                             player.inventory.load(cap.getInventoryNBT());
-                            if (ModList.get().isLoaded(CURIOS_ID)) {
+                            if (HLSpells.isCurioLoaded) {
                                 CuriosCompat.restoreCuriosInv(player, cap.getCuriosNBT());
                                 CuriosCompat.getItemInCuriosSlot(player, ItemInit.TOTEM_OF_KEEPING.get()).ifPresent(triple -> {
                                     triple.getRight().getCapability(TotemItemProvider.TOTEM_CAP).ifPresent(totemCap -> {
-                                        totemCap.setDiedTotemInCurios(cap.diedTotemInCurios());
+                                        totemCap.setDiedTotemInCurios(true);
                                         totemCap.setCuriosSlot(cap.getCuriosSlot());
                                     });
                                 });
                             }
                             cap.setTotemInHand(null);
                             keepingTotem[0] = true;
+                            itemEntityIterator.remove();
                         }
                     });
                 }
@@ -250,8 +238,8 @@ public class EntityDiesEvent {
                     {
                         Hand hand = cap.getTotemInHand();
                         boolean returnInCurio = false;
-                        if (ModList.get().isLoaded(CURIOS_ID) && cap.diedTotemInCurios()) {
-                            CuriosCompat.getCuriosHandler(player).ifPresent(handler -> handler.setStackInSlot(cap.getCuriosSlot(), stack));
+                        if (HLSpells.isCurioLoaded && cap.diedTotemInCurios()) {
+                            CuriosCompat.getStackHandler(player).ifPresent(stackHandler -> stackHandler.getStacks().setStackInSlot(cap.getCuriosSlot(), stack));
                             itemEntityIterator.remove();
                             cap.setTotemInHand(null);
                             returnInCurio = true;
@@ -270,23 +258,18 @@ public class EntityDiesEvent {
                         }
                     });
                 }
-
+            }
+            for (Iterator<ItemEntity> itemEntityIterator = event.getDrops().iterator(); itemEntityIterator.hasNext(); ) {
+                ItemStack stack = itemEntityIterator.next().getItem();
                 // SOUL BOND
                 if (EnchantmentHelper.getItemEnchantmentLevel(EnchantmentInit.SOUL_BOND.get(), stack) > 0 && !keepingTotem[0]) {
                     itemEntityIterator.remove();
-                    player.getCapability(PlayerCapProvider.PLAYER_CAP).ifPresent(cap -> {
-                        if (cap.getSoulBondInventoryNBT() != null) {
-                            ListNBT currentInv = player.inventory.save(new ListNBT()); // Retrieves everything the player has after death
-                            cap.getSoulBondInventoryNBT().addAll(currentInv); // Adding everything the player has after death to the soul bond list, should work with other items that persist through death
-                            player.inventory.load(cap.getSoulBondInventoryNBT()); // This gets fired multiple times, not sure if this will be an issue?
-                        }
-                    });
                 }
             }
             if (keepingTotem[0])
                 event.getDrops().removeIf(itemEntity -> {
                     if (player.inventory.contains(itemEntity.getItem())) return true;
-                    return ModList.get().isLoaded(CURIOS_ID) && CuriosCompat.getItemInCuriosSlot(player, itemEntity.getItem().getItem()).isPresent();
+                    return HLSpells.isCurioLoaded && CuriosCompat.getItemInCuriosSlot(player, itemEntity.getItem().getItem()).isPresent();
                 });
         }
     }
@@ -298,11 +281,11 @@ public class EntityDiesEvent {
             PlayerEntity current = event.getPlayer();
             boolean keepingActivated = false;
             // TOTEM OF KEEPING (Restores the inventory)
-            if (ModList.get().isLoaded(CURIOS_ID) && CuriosCompat.getItemInCuriosSlot(original, ItemInit.TOTEM_OF_KEEPING.get()).isPresent()) {
+            if (HLSpells.isCurioLoaded && CuriosCompat.getItemInCuriosSlot(original, ItemInit.TOTEM_OF_KEEPING.get()).isPresent()) {
                 CuriosCompat.getItemInCuriosSlot(original, ItemInit.TOTEM_OF_KEEPING.get()).ifPresent(triple -> {
                     triple.getRight().getCapability(TotemItemProvider.TOTEM_CAP).ifPresent(cap -> {
                         if (cap.diedTotemInCurios()) {
-                            CuriosCompat.getCuriosHandler(original).ifPresent(handler -> handler.setStackInSlot(cap.getCuriosSlot(), ItemStack.EMPTY));
+                            triple.getRight().shrink(1);
                         }
                     });
                 });
@@ -322,7 +305,7 @@ public class EntityDiesEvent {
             }
 
             // TOTEM OF RETURNING (Adds totem to the inventory)
-            if (ModList.get().isLoaded(CURIOS_ID) && CuriosCompat.getItemInCuriosSlot(original, ItemInit.TOTEM_OF_RETURNING.get()).isPresent()) {
+            if (HLSpells.isCurioLoaded && CuriosCompat.getItemInCuriosSlot(original, ItemInit.TOTEM_OF_RETURNING.get()).isPresent()) {
                 CuriosCompat.restoreCuriosInv(current, CuriosCompat.getCuriosInv(original));
             } else if (original.getMainHandItem().getItem() == ItemInit.TOTEM_OF_RETURNING.get()) {
                 current.inventory.setItem(original.inventory.selected, original.inventory.getSelected());
@@ -333,9 +316,8 @@ public class EntityDiesEvent {
             // SOUL BOND
             if (!keepingActivated) {
                 original.getCapability(PlayerCapProvider.PLAYER_CAP).ifPresent(cap -> {
-                    if (cap.getSoulBondInventoryNBT() != null) {
-                        current.inventory.replaceWith(original.inventory);
-                        cap.setSoulBondInventoryNBT(null);
+                    if (!cap.getSoulBondItems().isEmpty()) {
+                        cap.getSoulBondItems().forEach(current.inventory::setItem);
                     }
                 });
             }

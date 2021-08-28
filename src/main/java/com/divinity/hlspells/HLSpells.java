@@ -39,6 +39,7 @@ public class HLSpells {
     public static final Logger LOGGER = LogManager.getLogger();
     public static final String MODID = "hlspells";
     public static final ConfigData CONFIG;
+    public static boolean isCurioLoaded = false;
     private static final ForgeConfigSpec CONFIG_SPEC;
 
     static {
@@ -60,6 +61,7 @@ public class HLSpells {
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.addListener(this::setupMageHouses);
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, CONFIG_SPEC);
+        isCurioLoaded = ModList.get().isLoaded("curios");
     }
 
     private void registerAllDeferredRegistryObjects(IEventBus modBus) {
