@@ -271,12 +271,17 @@ public class EntityDiesEvent {
                     });
                 }
 
-                // Currently, this will only load soul bond enchanted items. Not compatible with other items that persist through death
+                // Currently, this will replace the entire inventory with soul bond items. Not compatible with other items that persist through death
                 if (EnchantmentHelper.getItemEnchantmentLevel(EnchantmentInit.SOUL_BOND.get(), stack) > 0 && !keepingTotem[0]) {
                     itemEntityIterator.remove();
                     player.getCapability(PlayerCapProvider.PLAYER_CAP).ifPresent(cap -> {
                         if (cap.getSoulBondInventoryNBT() != null) {
-                            player.inventory.load(cap.getSoulBondInventoryNBT());
+                            ListNBT currentInv = player.inventory.save(new ListNBT());
+                            for (int i = 0; i < currentInv.size(); i++) {
+                                CompoundNBT compoundNBT = currentInv.getCompound(i);
+                                cap.getSoulBondInventoryNBT().add(compoundNBT);
+                            }
+                            player.inventory.load(cap.getSoulBondInventoryNBT()); // This gets fired multiple times, not sure if this will be an issue?
                         }
                     });
                 }

@@ -1,12 +1,13 @@
 package com.divinity.hlspells.player.capability;
 
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.potion.Effect;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 
 import javax.annotation.Nullable;
-import java.util.Objects;
+import java.util.*;
 
 public class PlayerCap implements IPlayerCap {
 
