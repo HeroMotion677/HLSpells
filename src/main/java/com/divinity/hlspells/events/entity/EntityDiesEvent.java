@@ -266,6 +266,13 @@ public class EntityDiesEvent {
                     itemEntityIterator.remove();
                 }
             }
+            if (!keepingTotem[0]) {
+                player.getCapability(PlayerCapProvider.PLAYER_CAP).ifPresent(cap -> {
+                    if (!cap.getSoulBondItems().isEmpty()) {
+                        cap.getSoulBondItems().forEach(player.inventory::setItem);
+                    }
+                });
+            }
             if (keepingTotem[0])
                 event.getDrops().removeIf(itemEntity -> {
                     if (player.inventory.contains(itemEntity.getItem())) return true;
@@ -317,7 +324,7 @@ public class EntityDiesEvent {
             if (!keepingActivated) {
                 original.getCapability(PlayerCapProvider.PLAYER_CAP).ifPresent(cap -> {
                     if (!cap.getSoulBondItems().isEmpty()) {
-                        cap.getSoulBondItems().forEach(current.inventory::setItem);
+                        current.inventory.replaceWith(original.inventory);
                         cap.getSoulBondItems().clear();
                     }
                 });
