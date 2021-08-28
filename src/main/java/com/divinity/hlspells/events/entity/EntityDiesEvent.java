@@ -10,6 +10,7 @@ import com.divinity.hlspells.items.capabilities.totemcap.TotemItemProvider;
 import com.divinity.hlspells.player.capability.PlayerCapProvider;
 import com.divinity.hlspells.setup.client.ClientSetup;
 import com.divinity.hlspells.util.Util;
+import com.google.common.collect.Lists;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.item.ItemEntity;
@@ -40,8 +41,7 @@ import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import org.lwjgl.system.CallbackI;
 
-import java.util.Collection;
-import java.util.Iterator;
+import java.util.*;
 import java.util.stream.Stream;
 
 @Mod.EventBusSubscriber(modid = HLSpells.MODID)
@@ -208,7 +208,7 @@ public class EntityDiesEvent {
                     CompoundNBT compoundNBT = playerInv.getCompound(i);
                     ItemStack stack = ItemStack.of(compoundNBT);
                     if (EnchantmentHelper.getItemEnchantmentLevel(EnchantmentInit.SOUL_BOND.get(), stack) > 0) {
-                        soulBondItemsList.add(compoundNBT);
+                        soulBondItemsList.add(compoundNBT); // Adding every soul bond enchanted item to the list
                     }
                 }
                 player.getCapability(PlayerCapProvider.PLAYER_CAP).ifPresent(cap -> cap.setSoulBondInventoryNBT(soulBondItemsList));
@@ -271,16 +271,13 @@ public class EntityDiesEvent {
                     });
                 }
 
-                // Currently, this will replace the entire inventory with soul bond items. Not compatible with other items that persist through death
+                // SOUL BOND
                 if (EnchantmentHelper.getItemEnchantmentLevel(EnchantmentInit.SOUL_BOND.get(), stack) > 0 && !keepingTotem[0]) {
                     itemEntityIterator.remove();
                     player.getCapability(PlayerCapProvider.PLAYER_CAP).ifPresent(cap -> {
                         if (cap.getSoulBondInventoryNBT() != null) {
-                            ListNBT currentInv = player.inventory.save(new ListNBT());
-                            for (int i = 0; i < currentInv.size(); i++) {
-                                CompoundNBT compoundNBT = currentInv.getCompound(i);
-                                cap.getSoulBondInventoryNBT().add(compoundNBT);
-                            }
+                            ListNBT currentInv = player.inventory.save(new ListNBT()); // Retrieves everything the player has after death
+                            cap.getSoulBondInventoryNBT().addAll(currentInv); // Adding everything the player has after death to the soul bond list, should work with other items that persist through death
                             player.inventory.load(cap.getSoulBondInventoryNBT()); // This gets fired multiple times, not sure if this will be an issue?
                         }
                     });
