@@ -26,7 +26,6 @@ public class SoulSyphon extends Enchantment {
     @Override
     protected boolean checkCompatibility(Enchantment enchantment) {
         return enchantment != Enchantments.VANISHING_CURSE && enchantment != Enchantments.BINDING_CURSE;
-
     }
 
     @Override
