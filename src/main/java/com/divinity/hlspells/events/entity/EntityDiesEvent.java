@@ -324,7 +324,7 @@ public class EntityDiesEvent {
             if (!keepingActivated) {
                 original.getCapability(PlayerCapProvider.PLAYER_CAP).ifPresent(cap -> {
                     if (!cap.getSoulBondItems().isEmpty()) {
-                        current.inventory.replaceWith(original.inventory);
+                        cap.getSoulBondItems().forEach(current.inventory::setItem);
                         cap.getSoulBondItems().clear();
                     }
                 });
