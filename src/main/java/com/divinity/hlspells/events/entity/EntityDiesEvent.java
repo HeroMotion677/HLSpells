@@ -267,11 +267,14 @@ public class EntityDiesEvent {
                 }
             }
             if (!keepingTotem[0]) {
-                player.getCapability(PlayerCapProvider.PLAYER_CAP).ifPresent(cap -> {
-                    if (!cap.getSoulBondItems().isEmpty()) {
-                        cap.getSoulBondItems().forEach(player.inventory::setItem);
+                // Present here to show the soul bond items on respawn screen.
+                player.getCapability(PlayerCapProvider.PLAYER_CAP).ifPresent(cap -> cap.getSoulBondItems().forEach((pIndex, pStack) -> {
+                    if (player.inventory.getItem(pIndex).isEmpty()) {
+                        player.inventory.setItem(pIndex, pStack);
+                    } else {
+                        player.inventory.add(pStack);
                     }
-                });
+                }));
             }
             if (keepingTotem[0])
                 event.getDrops().removeIf(itemEntity -> {
@@ -324,7 +327,13 @@ public class EntityDiesEvent {
             if (!keepingActivated) {
                 original.getCapability(PlayerCapProvider.PLAYER_CAP).ifPresent(cap -> {
                     if (!cap.getSoulBondItems().isEmpty()) {
-                        cap.getSoulBondItems().forEach(current.inventory::setItem);
+                        cap.getSoulBondItems().forEach((pIndex, pStack) -> {
+                            if (current.inventory.getItem(pIndex).isEmpty()) {
+                                current.inventory.setItem(pIndex, pStack);
+                            } else {
+                                current.inventory.add(pStack);
+                            }
+                        });
                         cap.getSoulBondItems().clear();
                     }
                 });
