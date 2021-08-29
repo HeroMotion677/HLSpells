@@ -48,7 +48,7 @@ public class SpellUtils {
     public static int getTickDelay(PlayerEntity player, Spell spell) {
         int tickDelay = spell.getTickDelay();
         if (player.getItemBySlot(EquipmentSlotType.HEAD).getItem() == ItemInit.WIZARD_HAT.get()) {
-            tickDelay = tickDelay > 4 ? tickDelay - 4 : tickDelay;
+            tickDelay = tickDelay + 4;
         }
         return tickDelay;
     }

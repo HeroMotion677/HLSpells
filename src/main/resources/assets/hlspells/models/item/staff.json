@@ -7,6 +7,9 @@
   "perspectives": {
     "gui": {
       "parent": "hlspells:item/staff/staff_gui_1"
+    },
+    "ground": {
+      "parent": "hlspells:item/staff/staff_gui_1"
     }
   },
   "overrides": [
