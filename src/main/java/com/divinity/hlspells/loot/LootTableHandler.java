@@ -49,16 +49,9 @@ public class LootTableHandler {
                 .setWeight(1);
     }
 
-    // Loot function is registered inside to not call too early and crash
-    public static final class LootFunctions {
+    public static final LootFunctionType SET_SPELL = register("set_spell", new SetSpell.Serializer());
 
-        public static final LootFunctionType SET_SPELL = register("set_spell", new SetSpell.Serializer());
-
-        private static LootFunctionType register(String id, LootFunction.Serializer<? extends ILootFunction> serializer) {
-            return Registry.register(Registry.LOOT_FUNCTION_TYPE, new ResourceLocation(HLSpells.MODID, id), new LootFunctionType(serializer));
-        }
-
-        public static void init() {
-        }
+    private static LootFunctionType register(String id, LootFunction.Serializer<? extends ILootFunction> serializer) {
+        return Registry.register(Registry.LOOT_FUNCTION_TYPE, new ResourceLocation(HLSpells.MODID, id), new LootFunctionType(serializer));
     }
 }

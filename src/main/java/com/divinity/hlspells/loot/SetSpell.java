@@ -34,7 +34,7 @@ public class SetSpell extends LootFunction {
 
     @Override
     public LootFunctionType getType() {
-        return LootTableHandler.LootFunctions.SET_SPELL;
+        return LootTableHandler.SET_SPELL;
     }
 
     public static class Serializer extends LootFunction.Serializer<SetSpell> {

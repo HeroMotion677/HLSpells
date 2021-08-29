@@ -11,6 +11,5 @@ public class RegistryHandler {
         BlockInit.BLOCKS.register(FMLJavaModLoadingContext.get().getModEventBus());
         SpellInit.SPELLS_DEFERRED_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
         EntityInit.ENTITIES.register(FMLJavaModLoadingContext.get().getModEventBus());
-        LootTableHandler.LootFunctions.init();
     }
 }
