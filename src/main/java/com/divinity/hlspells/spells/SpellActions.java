@@ -59,11 +59,11 @@ import static com.divinity.hlspells.goal.SpellBookLureGoal.LURE_RANGE;
  */
 @Mod.EventBusSubscriber(modid = HLSpells.MODID)
 public class SpellActions {
+    public static final EffectInstance GLOWING = new EffectInstance(Effects.GLOWING, Integer.MAX_VALUE, 5, false, false);
+    public static final EffectInstance LEVITATION = new EffectInstance(Effects.LEVITATION, Integer.MAX_VALUE, 5, false, false);
+    public static final EffectInstance SLOW_FALLING = new EffectInstance(Effects.SLOW_FALLING, Integer.MAX_VALUE, 5, false, false);
     static final UUID speedUUID = UUID.fromString("05b61a62-ae84-492e-8536-f365b7143296");
     static final AttributeModifier speedModifier = new AttributeModifier(speedUUID, "Speed", 2, AttributeModifier.Operation.MULTIPLY_TOTAL);
-    public static EffectInstance GLOWING = new EffectInstance(Effects.GLOWING, Integer.MAX_VALUE, 5, false, false);
-    public static EffectInstance LEVITATION = new EffectInstance(Effects.LEVITATION, Integer.MAX_VALUE, 5, false, false);
-    public static EffectInstance SLOW_FALLING = new EffectInstance(Effects.SLOW_FALLING, Integer.MAX_VALUE, 5, false, false);
     static int flameTimer = 0;
     static int arrowRainArrowSpawnTimer = 0;
     static int arrowRainCloudSpawnTimer = 0;
@@ -457,10 +457,9 @@ public class SpellActions {
         player.addEffect(GLOWING);
 
         List<MobEntity> mobEntities = world.getEntitiesOfClass(MobEntity.class,
-                new AxisAlignedBB(player.getX() - LURE_RANGE, player.getY() - LURE_RANGE, player.getZ() - LURE_RANGE,
-                        player.getX() + LURE_RANGE, player.getY() + LURE_RANGE, player.getZ() + LURE_RANGE), null)
+                        new AxisAlignedBB(player.getX() - LURE_RANGE, player.getY() - LURE_RANGE, player.getZ() - LURE_RANGE,
+                                player.getX() + LURE_RANGE, player.getY() + LURE_RANGE, player.getZ() + LURE_RANGE), null)
                 .stream().sorted(getEntityComparator(player)).collect(Collectors.toList());
-        boolean used = false;
         for (MobEntity mob : mobEntities) {
             List<? extends String> blacklistedMobs = HLSpells.CONFIG.sapientMobsList.get();
             boolean predicate = false;
@@ -471,20 +470,18 @@ public class SpellActions {
             }
             if (!predicate && mob.goalSelector.getRunningGoals().noneMatch(p -> p.getGoal() instanceof SpellBookLureGoal)) {
                 mob.goalSelector.addGoal(0, new SpellBookLureGoal(mob, 1.0D));
-                used = true;
             }
         }
-        return used;
+        return true;
     }
 
 
     // Repel
     public static boolean doRepel(PlayerEntity player, World world) {
         List<MobEntity> mobEntities = world.getEntitiesOfClass(MobEntity.class,
-                new AxisAlignedBB(player.getX() - 15, player.getY() - 15, player.getZ() - 15,
-                        player.getX() + 15, player.getY() + 15, player.getZ() + 15), null)
+                        new AxisAlignedBB(player.getX() - 15, player.getY() - 15, player.getZ() - 15,
+                                player.getX() + 15, player.getY() + 15, player.getZ() + 15), null)
                 .stream().sorted(getEntityComparator(player)).collect(Collectors.toList());
-        boolean used = false;
         for (MobEntity mob : mobEntities) {
             List<? extends String> blacklistedMobs = HLSpells.CONFIG.sapientMobsList.get();
             boolean predicate = false;
@@ -495,21 +492,19 @@ public class SpellActions {
             }
             if (!predicate && mob.goalSelector.getRunningGoals().noneMatch(p -> p.getGoal() instanceof SpellBookRepelGoal)) {
                 mob.goalSelector.addGoal(0, new SpellBookRepelGoal(mob, 1.2D));
-                used = true;
             }
         }
-        return used;
+        return true;
     }
 
     // Flaming Circle
     public static boolean doFlamingCircle(PlayerEntity player, World world) {
         List<LivingEntity> livingEntities = world.getEntitiesOfClass(LivingEntity.class,
-                new AxisAlignedBB(player.getX() - 6, player.getY() + 1, player.getZ() - 6,
-                        player.getX() + 6, player.getY() - 1, player.getZ() + 6), null)
+                        new AxisAlignedBB(player.getX() - 6, player.getY() + 1, player.getZ() - 6,
+                                player.getX() + 6, player.getY() - 1, player.getZ() + 6), null)
                 .stream().sorted(getEntityComparator(player)).collect(Collectors.toList());
 
         flameTimer++;
-        boolean used = false;
         if (flameTimer % 10 == 0) {
             doEnchantParticleInterior(player, world);
             doOuterRingParticles(ParticleTypes.FLAME, player, world);
@@ -517,12 +512,11 @@ public class SpellActions {
         }
         for (LivingEntity entity : livingEntities) {
             if (entity != null && entity != player) {
-                used = true;
                 entity.setLastHurtByPlayer(player);
                 entity.setSecondsOnFire(1);
             }
         }
-        return used;
+        return true;
     }
 
     private static void doEnchantParticleInterior(PlayerEntity player, World world) {
@@ -576,9 +570,9 @@ public class SpellActions {
         world.addParticle(type, player.getX() - 6, player.getY() + 1.2, player.getZ() - 1, 0, 0, 0);
         world.addParticle(type, player.getX() - 5.5, player.getY() + 1.2, player.getZ() - 1.5, 0, 0, 0);
         world.addParticle(type, player.getX() - 5, player.getY() + 1.2, player.getZ() - 2, 0, 0, 0);
-        world.addParticle(type, player.getX() - 4.5, player.getY() + 1.2, player.getZ() + -2.5, 0, 0, 0);
+        world.addParticle(type, player.getX() - 4.5, player.getY() + 1.2, player.getZ() - 2.5, 0, 0, 0);
         world.addParticle(type, player.getX() - 4, player.getY() + 1.2, player.getZ() - 3, 0, 0, 0);
-        world.addParticle(type, player.getX() - 3.5, player.getY() + 1.2, player.getZ() + -3.5, 0, 0, 0);
+        world.addParticle(type, player.getX() - 3.5, player.getY() + 1.2, player.getZ() - 3.5, 0, 0, 0);
         world.addParticle(type, player.getX() - 3, player.getY() + 1.2, player.getZ() - 4, 0, 0, 0);
         world.addParticle(type, player.getX() - 2.5, player.getY() + 1.2, player.getZ() - 4.5, 0, 0, 0);
         world.addParticle(type, player.getX() - 2, player.getY() + 1.2, player.getZ() - 5, 0, 0, 0);
@@ -588,21 +582,19 @@ public class SpellActions {
     // Protection Circle
     public static boolean doProtectionCircle(PlayerEntity player, World world) {
         List<Entity> entities = world.getEntitiesOfClass(Entity.class,
-                new AxisAlignedBB(player.getX() - 6, player.getY() - 6, player.getZ() - 6,
-                        player.getX() + 6, player.getY() + 6, player.getZ() + 6), null)
+                        new AxisAlignedBB(player.getX() - 6, player.getY() - 6, player.getZ() - 6,
+                                player.getX() + 6, player.getY() + 6, player.getZ() + 6), null)
                 .stream().sorted(getEntityComparator(player)).collect(Collectors.toList());
-        boolean used = false;
         for (Entity entity : entities) {
             if (!(entity instanceof PlayerEntity)) {
                 entity.setDeltaMovement(entity.getLookAngle().reverse().multiply(0.3D, 0D, 0.3D));
-                used = true;
             }
         }
         protectionCircleTimer++;
         if (protectionCircleTimer % 10 == 0) {
             doOuterRingParticles(ParticleTypes.HAPPY_VILLAGER, player, world);
         }
-        return used;
+        return true;
     }
 
     // Levitation
@@ -682,11 +674,10 @@ public class SpellActions {
     // Healing Circle
     public static boolean doHealingCircle(PlayerEntity player, World world) {
         List<LivingEntity> livingEntities = world.getEntitiesOfClass(LivingEntity.class,
-                new AxisAlignedBB(player.getX() - 6, player.getY() - 6, player.getZ() - 6,
-                        player.getX() + 6, player.getY() + 6, player.getZ() + 6), null)
+                        new AxisAlignedBB(player.getX() - 6, player.getY() - 6, player.getZ() - 6,
+                                player.getX() + 6, player.getY() + 6, player.getZ() + 6), null)
                 .stream().sorted(getEntityComparator(player)).collect(Collectors.toList());
         healingTimer++;
-        boolean used = false;
         if (healingTimer % 10 == 0) {
             doEnchantParticleInterior(player, world);
             doOuterRingParticles(ParticleTypes.HAPPY_VILLAGER, player, world);
@@ -695,7 +686,6 @@ public class SpellActions {
         if (healingTimer % 20 == 0) {
             for (LivingEntity livingEntity : livingEntities) {
                 doHealingCircleEntityParticle(livingEntity, world);
-                used = true;
                 if (livingEntity.isInvertedHealAndHarm()) {
                     livingEntity.setLastHurtByPlayer(player);
                     livingEntity.hurt(DamageSource.MAGIC, 1.0F);
@@ -705,7 +695,7 @@ public class SpellActions {
             }
             healingTimer = 0;
         }
-        return used;
+        return true;
     }
 
     public static void doHealingCircleEntityParticle(LivingEntity livingEntity, World world) {
@@ -739,22 +729,20 @@ public class SpellActions {
     // Respiration
     public static boolean doRespiration(PlayerEntity player, World world) {
         List<PlayerEntity> players = world.getEntitiesOfClass(PlayerEntity.class,
-                new AxisAlignedBB(player.getX() - 10, player.getY() - 4, player.getZ() - 10,
-                        player.getX() + 10, player.getY() + 4, player.getZ() + 10), null)
+                        new AxisAlignedBB(player.getX() - 10, player.getY() - 4, player.getZ() - 10,
+                                player.getX() + 10, player.getY() + 4, player.getZ() + 10), null)
                 .stream().sorted(getEntityComparator(player)).collect(Collectors.toList());
         airTimer++;
-        boolean used = false;
         for (PlayerEntity p : players) {
             if (p.isUnderWater() && airTimer == 10) {
                 p.setAirSupply(p.getAirSupply() + 15);
                 if (p.getAirSupply() > p.getMaxAirSupply()) {
                     p.setAirSupply(p.getMaxAirSupply());
-                    used = true;
                 }
                 airTimer = 0;
             }
         }
-        return used;
+        return true;
     }
 
     //(Code is from EvokerEntity$AttackSpellGoal createSpellEntity)
