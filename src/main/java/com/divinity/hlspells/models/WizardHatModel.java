@@ -25,12 +25,12 @@ public class WizardHatModel extends BipedModel<LivingEntity> {
         hatTop = new ModelRenderer(this);
         hatTop.setPos(0.0F, -0.25F, -0.5F);
         setRotationAngle(hatTop, -0.3054F, 0.0F, 0.0F);
-        hatTop.texOffs(0, 73).addBox(-3.5F, -6.75F, -4.5F, 7.0F, 7.0F, 9.0F, 0.0F, false);
+        hatTop.texOffs(0, 73).addBox(-4.0F, -7.75F, -4.5F, 8.0F, 8.0F, 9.0F, 0.0F, false);
 
         hangingPart = new ModelRenderer(this);
         hangingPart.setPos(0.0F, -8.75F, 4.5F);
         setRotationAngle(hangingPart, -0.3491F, 0.0F, 0.0F);
-        hangingPart.texOffs(25, 82).addBox(-2.5F, 2.0F, 0.5F, 5.0F, 4.0F, 7.0F, 0.0F, false);
+        hangingPart.texOffs(27, 83).addBox(-2.5F, 0.95F, 0.35F, 5.0F, 4.0F, 7.0F, 0.0F, false);
         hatTop.addChild(hangingPart);
 
         complete.addChild(hatTop);
