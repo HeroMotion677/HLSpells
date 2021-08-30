@@ -58,7 +58,7 @@ public class ProtectionCircle extends Enchantment implements ISpell {
 
     @Override
     public String getSpellRegistryName() {
-        ResourceLocation registryName = SpellInit.PROTECTION_CIRCLE.get().getRegistryName();
+        ResourceLocation registryName = null; //TODOSpellInit.PROTECTION_CIRCLE.get().getRegistryName();
         return registryName != null ? registryName.toString() : "null";
     }
 

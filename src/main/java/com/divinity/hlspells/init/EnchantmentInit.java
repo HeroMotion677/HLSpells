@@ -33,7 +33,7 @@ public class EnchantmentInit {
     public static final RegistryObject<Enchantment> LIGHTNING_BOLT = ENCHANTMENTS.register("lightning_bolt", () -> new LightningBolt(EquipmentSlotType.MAINHAND));
     public static final RegistryObject<Enchantment> LURE = ENCHANTMENTS.register("lure", () -> new Lure(EquipmentSlotType.MAINHAND));
     public static final RegistryObject<Enchantment> PIERCING_BOLT = ENCHANTMENTS.register("piercing_bolt", () -> new PiercingBolt(EquipmentSlotType.MAINHAND));
-    public static final RegistryObject<Enchantment> PROTECTION_CIRCLE = ENCHANTMENTS.register("protection_circle", () -> new ProtectionCircle(EquipmentSlotType.MAINHAND));
+    //public static final RegistryObject<Enchantment> PROTECTION_CIRCLE = ENCHANTMENTS.register("protection_circle", () -> new ProtectionCircle(EquipmentSlotType.MAINHAND));
     public static final RegistryObject<Enchantment> PULL = ENCHANTMENTS.register("pull", () -> new Pull(EquipmentSlotType.MAINHAND));
     public static final RegistryObject<Enchantment> REPEL = ENCHANTMENTS.register("repel", () -> new Repel(EquipmentSlotType.MAINHAND));
     public static final RegistryObject<Enchantment> RESPIRATION = ENCHANTMENTS.register("respiration", () -> new Respiration(EquipmentSlotType.MAINHAND));

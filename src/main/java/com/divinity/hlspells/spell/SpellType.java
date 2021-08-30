@@ -4,7 +4,7 @@ import net.minecraft.util.text.TextFormatting;
 
 public enum SpellType {
     CAST(TextFormatting.GRAY),
-    HELD(TextFormatting.GOLD),
+    HELD(TextFormatting.GRAY),
     CURSE(TextFormatting.RED);
 
     private final TextFormatting tooltipFormatting;

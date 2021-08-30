@@ -32,7 +32,7 @@ public class SpellInit {
     public static final RegistryObject<Spell> LEVITATION = register("levitation", () -> new Spell(SpellType.HELD, SpellActions::doLevitation, "Levitation", 1, 6));
     public static final RegistryObject<Spell> LIGHTNING_BOLT = register("lightning_bolt", () -> new Spell(SpellType.CAST, SpellActions::doLightningBolt, "Lightning Bolt", 8));
     public static final RegistryObject<Spell> KNOCKBACK_BOLT = register("knockback_bolt", () -> new Spell(SpellType.CAST, SpellActions::doKnockBackBolt, "Knockback Bolt", 3));
-    public static final RegistryObject<Spell> PROTECTION_CIRCLE = register("protection_circle", () -> new Spell(SpellType.HELD, SpellActions::doProtectionCircle, "Protection Circle", 1, 6));
+    //public static final RegistryObject<Spell> PROTECTION_CIRCLE = register("protection_circle", () -> new Spell(SpellType.HELD, SpellActions::doProtectionCircle, "Protection Circle", 1, 6));
     public static final RegistryObject<Spell> RESPIRATION = register("respiration", () -> new Spell(SpellType.HELD, SpellActions::doRespiration, "Respiration", 1, 15));
     public static final RegistryObject<Spell> SPEED = register("speed", () -> new Spell(SpellType.HELD, SpellActions::doSpeed, "Speed", 1, 1));
     public static final RegistryObject<Spell> PIERCING_BOLT = register("piercing_bolt", () -> new Spell(SpellType.CAST, SpellActions::doPiercingBolt, "Piercing Bolt", 12));
