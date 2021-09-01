@@ -1,0 +1,15 @@
+{
+  "type": "hlspells:evoker_modifier",
+  "conditions": [
+    {
+      "condition": "minecraft:killed_by_player"
+    },
+    {
+      "condition": "minecraft:entity_properties",
+      "predicate": {
+        "type": "minecraft:evoker"
+      },
+      "entity": "this"
+    }
+  ]
+}
