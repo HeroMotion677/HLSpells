@@ -232,7 +232,7 @@ public class EntityDiesEvent {
                         }
                     });
                 }
-                // TOTEM OF RETURNING (Sets BlockPos to teleport to and sets the slot the totem should be in)
+                // TOTEM OF RETURNING (Sets BlockPos to teleportToLocation to and sets the slot the totem should be in)
                 if (stack.getItem() == ItemInit.TOTEM_OF_RETURNING.get()) {
                     stack.getCapability(TotemItemProvider.TOTEM_CAP).filter(ITotemCap::getHasDied).ifPresent(cap ->
                     {
@@ -357,7 +357,7 @@ public class EntityDiesEvent {
                             world.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.TOTEM_USE, SoundCategory.PLAYERS, 0.3F, 0.3F);
                             player.teleportTo(pos.getX(), pos.getY(), pos.getZ());
                             player.setItemInHand(hand, ItemStack.EMPTY);
-                            Util.teleportParticles(world, pos, 200);
+                            Util.doTeleportParticles(world, pos, 200);
                             world.playSound(null, player.blockPosition(), SoundEvents.ENDERMAN_TELEPORT, SoundCategory.PLAYERS, 0.7F, 0.7F);
                         });
                         return;

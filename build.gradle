@@ -6,7 +6,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath group: 'me.sizableshrimp.parchmenttest', name: 'ForgeGradle', version: '4.1.+', changing: true
+        classpath group: 'me.sizableshrimp.parchmenttest', name: 'ForgeGradle', version: '5.1.+', changing: true
         classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
     }
 }
@@ -104,9 +104,8 @@ dependencies {
     runtimeOnly fg.deobf("mezz.jei:jei-${jei_mc_version}:${jei_version}")
     runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
     // Processes mixin annotations
-    annotationProcessor 'org.spongepowered:mixin:0.8.2:processor'
-    testAnnotationProcessor 'org.spongepowered:mixin:0.8.2:processor'
-
+    annotationProcessor 'org.spongepowered:mixin:0.8.3:processor'
+    testAnnotationProcessor 'org.spongepowered:mixin:0.8.3:processor'
 }
 
 jar {

@@ -331,7 +331,7 @@ public class SpellActions {
         double tz = location.z() + stepZ;
         BlockPos teleportPos = new BlockPos(tx, ty, tz);
         player.fallDistance = 0;
-        Util.teleport(world, player.blockPosition(), teleportPos, player);
+        Util.teleportToLocation(world, player.blockPosition(), teleportPos, player);
         return true;
     }
 

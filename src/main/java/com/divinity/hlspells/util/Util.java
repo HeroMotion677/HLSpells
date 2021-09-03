@@ -3,7 +3,6 @@ package com.divinity.hlspells.util;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
@@ -11,41 +10,29 @@ import net.minecraft.util.math.*;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 
-import java.util.Collections;
 import java.util.function.Predicate;
 
 public class Util {
 
     /**
-     * Teleport the specified entity to specified block position
-     *
-     * @param world       The departure world
-     * @param pos         The departure position
-     * @param teleportPos The arrival position
-     * @param entity      The entity that is teleported
+     * Teleports an entity to a location
+     * @param world
+     * @param pos
+     * @param teleportPos
+     * @param entity
      */
-    public static void teleport(World world, BlockPos pos, BlockPos teleportPos, Entity entity) {
-        double teleportXCo = teleportPos.getX();
-        double teleportYCo = teleportPos.getY();
-        double teleportZCo = teleportPos.getZ();
-        entity.teleportTo(teleportXCo, teleportYCo, teleportZCo);
-        if (entity instanceof ServerPlayerEntity) {
-            ((ServerPlayerEntity) entity).connection.teleport(teleportXCo, teleportYCo, teleportZCo, entity.yRot,
-                    entity.xRot, Collections.emptySet());
-        }
-        teleportParticles(world, pos, 300);
-        teleportParticles(world, teleportPos, 300);
-        world.playSound(null, pos, SoundEvents.ENDERMAN_TELEPORT, SoundCategory.NEUTRAL,
-                0.6F, 1.0F);
-        world.playSound(null, teleportPos, SoundEvents.ENDERMAN_TELEPORT, SoundCategory.NEUTRAL,
-                0.6F, 1.0F);
+
+    public static void teleportToLocation(World world, BlockPos pos, BlockPos teleportPos, Entity entity) {
+        entity.setPos(teleportPos.getX(), teleportPos.getY(), teleportPos.getZ());
+        doTeleportParticles(world, pos, 150);
+        doTeleportParticles(world, teleportPos, 150);
+        world.playSound(null, pos, SoundEvents.ENDERMAN_TELEPORT, SoundCategory.NEUTRAL, 0.6F, 1.0F);
     }
 
-
     /**
-     * Spawns teleport particles at the given location
+     * Spawns teleportToLocation particles at the given location
      */
-    public static void teleportParticles(World world, BlockPos pos, int number) {
+    public static void doTeleportParticles(World world, BlockPos pos, int number) {
         for (int l = 0; l < number; l++) {
             double d0 = (pos.getX() + world.random.nextFloat());
             double d1 = (pos.getY() + world.random.nextFloat());

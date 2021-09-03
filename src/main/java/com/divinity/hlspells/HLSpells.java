@@ -13,7 +13,6 @@ import com.divinity.hlspells.player.capability.PlayerCap;
 import com.divinity.hlspells.player.capability.PlayerCapStorage;
 import com.divinity.hlspells.setup.RegistryHandler;
 import com.divinity.hlspells.setup.client.ClientSetup;
-import com.divinity.hlspells.villages.POIFixUp;
 import com.divinity.hlspells.villages.StructureGen;
 import com.divinity.hlspells.villages.Villagers;
 import net.minecraftforge.api.distmarker.Dist;
@@ -77,7 +76,6 @@ public class HLSpells {
         CapabilityManager.INSTANCE.register(ISpellHolder.class, new SpellHolderStorage(), SpellHolder::new);
         CapabilityManager.INSTANCE.register(ITotemCap.class, new TotemItemStorage(), TotemCap::new);
         CapabilityManager.INSTANCE.register(IPlayerCap.class, new PlayerCapStorage(), PlayerCap::new);
-        POIFixUp.registerPOI();
     }
 
     public void sendImc(InterModEnqueueEvent event) {

@@ -14,12 +14,17 @@ import com.divinity.hlspells.renderers.BaseBoltRenderer;
 import com.divinity.hlspells.renderers.StormBoltRenderer;
 import com.divinity.hlspells.spell.Spell;
 import com.divinity.hlspells.util.SpellUtils;
+import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.renderer.entity.VexRenderer;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.client.util.InputMappings;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.IItemPropertyGetter;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemModelsProperties;
 import net.minecraft.item.ItemStack;
 import net.minecraft.particles.ParticleTypes;
@@ -34,10 +39,15 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
+import net.minecraftforge.fml.client.registry.IRenderFactory;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import org.lwjgl.glfw.GLFW;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 @Mod.EventBusSubscriber(modid = HLSpells.MODID, value = Dist.CLIENT)
 public class ClientSetup {
@@ -46,54 +56,9 @@ public class ClientSetup {
 
     public static void init(final FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
-            ItemModelsProperties.register(ItemInit.SPELL_BOOK.get(), new ResourceLocation("using"), (stack, world, living) -> {
-                if (living instanceof PlayerEntity && living.isUsingItem() && living.getUseItem() == stack) {
-                    if ((double) living.getUseItemRemainingTicks() < 72000 && (double) living.getUseItemRemainingTicks() >= 71997) {
-                        return 0.2F;
-                    } else if ((double) living.getUseItemRemainingTicks() < 71997 && (double) living.getUseItemRemainingTicks() >= 71994) {
-                        return 0.4F;
-                    } else if ((double) living.getUseItemRemainingTicks() < 71994 && (double) living.getUseItemRemainingTicks() >= 71991) {
-                        return 0.6F;
-                    } else if ((double) living.getUseItemRemainingTicks() < 71991 && (double) living.getUseItemRemainingTicks() >= 71988) {
-                        return 0.8F;
-                    } else if ((double) living.getUseItemRemainingTicks() < 71988) {
-                        return 1;
-                    }
-                }
-                return 0;
-            });
-            ItemModelsProperties.register(ItemInit.WAND.get(), new ResourceLocation("pull"), (stack, world, living) -> {
-                if (living instanceof PlayerEntity && living.isUsingItem() && living.getUseItem() == stack) {
-                    if ((double) living.getUseItemRemainingTicks() < 72000 && (double) living.getUseItemRemainingTicks() >= 71997) {
-                        return 0.2F;
-                    } else if ((double) living.getUseItemRemainingTicks() < 71997 && (double) living.getUseItemRemainingTicks() >= 71994) {
-                        return 0.4F;
-                    } else if ((double) living.getUseItemRemainingTicks() < 71994 && (double) living.getUseItemRemainingTicks() >= 71991) {
-                        return 0.6F;
-                    } else if ((double) living.getUseItemRemainingTicks() < 71991 && (double) living.getUseItemRemainingTicks() >= 71988) {
-                        return 0.8F;
-                    } else if ((double) living.getUseItemRemainingTicks() < 71988) {
-                        return 1;
-                    }
-                }
-                return 0;
-            });
-            ItemModelsProperties.register(ItemInit.STAFF.get(), new ResourceLocation("pull"), (stack, world, living) -> {
-                if (living instanceof PlayerEntity && living.isUsingItem() && living.getUseItem() == stack) {
-                    if ((double) living.getUseItemRemainingTicks() < 72000 && (double) living.getUseItemRemainingTicks() >= 71997) {
-                        return 0.2F;
-                    } else if ((double) living.getUseItemRemainingTicks() < 71997 && (double) living.getUseItemRemainingTicks() >= 71994) {
-                        return 0.4F;
-                    } else if ((double) living.getUseItemRemainingTicks() < 71994 && (double) living.getUseItemRemainingTicks() >= 71991) {
-                        return 0.6F;
-                    } else if ((double) living.getUseItemRemainingTicks() < 71991 && (double) living.getUseItemRemainingTicks() >= 71988) {
-                        return 0.8F;
-                    } else if ((double) living.getUseItemRemainingTicks() < 71988) {
-                        return 1;
-                    }
-                }
-                return 0;
-            });
+            registerItemModel(ItemInit.SPELL_BOOK.get(), new ResourceLocation("using"), 3, 0.2F, 0.4F, 0.6F, 0.8F, 1F);
+            registerItemModel(ItemInit.WAND.get(), new ResourceLocation("pull"), 3, 0.2F, 0.4F, 0.6F, 0.8F, 1F);
+            registerItemModel(ItemInit.STAFF.get(), new ResourceLocation("pull"), 3, 0.2F, 0.4F, 0.6F, 0.8F, 1F);
         });
         ItemModelsProperties.register(ItemInit.TOTEM_OF_RETURNING.get(), new ResourceLocation("used"), (stack, world, living) -> {
             if (living instanceof PlayerEntity) {
@@ -110,6 +75,29 @@ public class ClientSetup {
         RenderingRegistry.registerEntityRenderingHandler(EntityInit.FLAMING_BOLT_ENTITY.get(), manager -> new BaseBoltRenderer<>(manager, new ResourceLocation(HLSpells.MODID, "textures/entity/bolt/orange_bolt.png")));
         RenderingRegistry.registerEntityRenderingHandler(EntityInit.AQUA_BOLT_ENTITY.get(), manager -> new BaseBoltRenderer<>(manager, new ResourceLocation(HLSpells.MODID, "textures/entity/bolt/blue_bolt.png")));
         RenderingRegistry.registerEntityRenderingHandler(EntityInit.SUMMONED_VEX_ENTITY.get(), VexRenderer::new);
+    }
+
+    /**
+     * Registers the model of a given item
+     * @param item The item to register the model of
+     * @param location The resource location of the model predicate
+     * @param useItemRemainTickOffset The tick offset at which the item will change models at
+     * @param values The values to return for each model
+     */
+    private static void registerItemModel(Item item, ResourceLocation location, int useItemRemainTickOffset, float... values) {
+        ItemModelsProperties.register(item, location, (stack, world, living) -> {
+            if (living instanceof PlayerEntity && living.isUsingItem() && living.getUseItem() == stack) {
+                int useDuration = item.getUseDuration(item.getDefaultInstance());
+                int minUseAmount = useDuration - (useItemRemainTickOffset * (values.length - 1));
+                for (int i = 0; i < values.length; i++) {
+                    if ((double) living.getUseItemRemainingTicks() < minUseAmount) return values[values.length - 1];
+                    else if ((double) living.getUseItemRemainingTicks() < useDuration && (double) living.getUseItemRemainingTicks() >= (useDuration - (useItemRemainTickOffset * (i == 0 ? 1 : i)))) {
+                        return values[i];
+                    }
+                }
+            }
+            return 0;
+        });
     }
 
     @SubscribeEvent
