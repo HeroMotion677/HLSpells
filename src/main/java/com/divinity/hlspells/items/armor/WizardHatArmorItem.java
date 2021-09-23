@@ -8,6 +8,8 @@ import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.IArmorMaterial;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 
@@ -27,6 +29,7 @@ public class WizardHatArmorItem extends ArmorItem {
     @SuppressWarnings("unchecked")
     @Nullable
     @Override
+    @OnlyIn(Dist.CLIENT)
     public <A extends BipedModel<?>> A getArmorModel(LivingEntity entityLiving, ItemStack itemStack, EquipmentSlotType armorSlot, A defaultModel) {
         return armorSlot == EquipmentSlotType.HEAD ? (A) new WizardHatModel(1.0F) : super.getArmorModel(entityLiving, itemStack, armorSlot, defaultModel);
     }
