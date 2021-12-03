@@ -23,7 +23,7 @@ public class Bolt extends Enchantment implements ISpell {
 
     @Override
     public boolean canEnchant(ItemStack stack) {
-        return stack.getItem() == ItemInit.SPELL_BOOK.get() || super.canEnchant(stack);
+        return stack.getItem() == ItemInit.SPELL_BOOK.get();
     }
 
     @Override

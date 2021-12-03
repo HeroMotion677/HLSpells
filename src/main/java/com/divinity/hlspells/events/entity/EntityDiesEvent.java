@@ -7,13 +7,15 @@ import com.divinity.hlspells.init.ItemInit;
 import com.divinity.hlspells.items.ModTotemItem;
 import com.divinity.hlspells.items.capabilities.totemcap.ITotemCap;
 import com.divinity.hlspells.items.capabilities.totemcap.TotemItemProvider;
+import com.divinity.hlspells.network.NetworkManager;
+import com.divinity.hlspells.network.packets.TotemActivatedPacket;
 import com.divinity.hlspells.player.capability.PlayerCapProvider;
-import com.divinity.hlspells.setup.client.ClientSetup;
 import com.divinity.hlspells.util.Util;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -25,14 +27,13 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
-import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.network.PacketDistributor;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -302,7 +303,15 @@ public class EntityDiesEvent {
                 CuriosCompat.restoreCuriosInv(current, CuriosCompat.getCuriosInv(original));
                 keepingActivated = true;
             } else if (original.getMainHandItem().getItem() == ItemInit.TOTEM_OF_KEEPING.get()) {
-                int mainSlot = original.inventory.findSlotMatchingItem(original.getMainHandItem());
+                int mainSlot = -1;
+                PlayerInventory inv = original.inventory;
+                for (int i = 0; i < inv.items.size(); ++i) {
+                    ItemStack stackInSlot = inv.items.get(i);
+                    if (!stackInSlot.isEmpty() && original.getMainHandItem().getItem() == stackInSlot.getItem() &&
+                            ItemStack.tagMatches(original.getMainHandItem(), stackInSlot)) {
+                        mainSlot = i;
+                    }
+                }
                 original.inventory.getItem(mainSlot != -1 ? mainSlot : 0).shrink(mainSlot != -1 ? 1 : 0);
                 keepingActivated = true;
             } else if (original.getOffhandItem().getItem() == ItemInit.TOTEM_OF_KEEPING.get()) {
@@ -311,7 +320,8 @@ public class EntityDiesEvent {
             }
             if (keepingActivated) {
                 current.inventory.replaceWith(original.inventory);
-                displayActivation(current, ItemInit.TOTEM_OF_KEEPING.get(), true);
+                current.level.broadcastEntityEvent(current, (byte) 35);
+                displayActivation(current, ItemInit.TOTEM_OF_KEEPING.get());
             }
 
             // TOTEM OF RETURNING (Adds totem to the inventory)
@@ -341,7 +351,7 @@ public class EntityDiesEvent {
         }
     }
 
-    // TOTEM OF RETURNING (Teleports the player to last died pos when right clicked)
+    // TOTEM OF RETURNING (Teleports the player to last died pos when right-clicked)
     @SubscribeEvent
     public static void onPlayerRightClick(PlayerInteractEvent.RightClickItem event) {
         if (event.getPlayer() != null) {
@@ -353,7 +363,7 @@ public class EntityDiesEvent {
                     if (stack.getItem() == ItemInit.TOTEM_OF_RETURNING.get()) {
                         stack.getCapability(TotemItemProvider.TOTEM_CAP).filter(ITotemCap::getHasDied).ifPresent(cap -> {
                             BlockPos pos = cap.getBlockPos();
-                            displayActivation(player, ItemInit.TOTEM_OF_RETURNING.get(), true);
+                            displayActivation(player, ItemInit.TOTEM_OF_RETURNING.get());
                             world.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.TOTEM_USE, SoundCategory.PLAYERS, 0.3F, 0.3F);
                             player.teleportTo(pos.getX(), pos.getY(), pos.getZ());
                             player.setItemInHand(hand, ItemStack.EMPTY);
@@ -370,8 +380,8 @@ public class EntityDiesEvent {
     /**
      * Method to hide the client side call to show totem activation and/or particles
      */
-    public static void displayActivation(PlayerEntity player, Item item, boolean particleIn) {
-        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> ClientSetup.displayActivation(player, new ItemStack(item), particleIn));
+    public static void displayActivation(PlayerEntity player, Item item) {
+        NetworkManager.INSTANCE.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new TotemActivatedPacket(player.getUUID(), new ItemStack(item)));
     }
 
     private static void randomTeleport(LivingEntity entity) {

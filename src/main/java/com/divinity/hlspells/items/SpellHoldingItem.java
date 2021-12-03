@@ -14,7 +14,10 @@ import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.*;
+import net.minecraft.item.ItemGroup;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.ShootableItem;
+import net.minecraft.item.UseAction;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.*;
 import net.minecraft.util.text.ITextComponent;
@@ -124,7 +127,7 @@ public class SpellHoldingItem extends ShootableItem {
             if (spells != null && !(spells.isEmpty())) {
                 player.startUsingItem(hand);
             } else {
-                return ActionResult.fail(itemstack);
+                return ActionResult.pass(itemstack);
             }
         }
         capability.ifPresent(cap -> cap.setHeldActive(true));
@@ -138,6 +141,11 @@ public class SpellHoldingItem extends ShootableItem {
             }
         }
         return ActionResult.success(itemstack);
+    }
+
+    @Override
+    public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
+        return false;
     }
 
     @Override

@@ -4,7 +4,7 @@ license = "MIT License"
 
 [[mods]]
 modId = "hlspells"
-version = "1.16.5-b1.0"
+version = "${file.jarVersion}"
 displayName = "HLSpells"
 credits = "Credits are on mod's page."
 displayURL = "https://www.curseforge.com/minecraft/mc-mods/hlspells"
@@ -24,4 +24,10 @@ side = "BOTH"
 modId = "minecraft"
 mandatory = true
 versionRange = "[1.16.5,1.17)"
+ordering = "NONE"
+
+[[dependencies.hlspells]]
+modId = "curios"
+mandatory = false
+versionRange = "[1.16.5-4.0.6.3,)"
 ordering = "NONE"

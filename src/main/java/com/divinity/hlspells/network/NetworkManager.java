@@ -1,6 +1,7 @@
 package com.divinity.hlspells.network;
 
 import com.divinity.hlspells.HLSpells;
+import com.divinity.hlspells.network.packets.TotemActivatedPacket;
 import com.divinity.hlspells.network.packets.WandInputPacket;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -21,5 +22,6 @@ public class NetworkManager {
     @SubscribeEvent
     public static void registerNetworkStuff(FMLCommonSetupEvent event) {
         INSTANCE.registerMessage(index++, WandInputPacket.class, WandInputPacket::encode, WandInputPacket::decode, WandInputPacket::handle);
+        INSTANCE.registerMessage(index++, TotemActivatedPacket.class, TotemActivatedPacket::encode, TotemActivatedPacket::decode, TotemActivatedPacket::handle);
     }
 }

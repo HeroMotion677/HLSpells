@@ -12,8 +12,6 @@ import java.util.function.Supplier;
 public class WandInputPacket {
     private int key;
 
-    public WandInputPacket() {
-    }
 
     public WandInputPacket(int key) {
         this.key = key;
