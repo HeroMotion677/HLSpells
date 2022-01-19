@@ -14,20 +14,15 @@ import com.divinity.hlspells.renderers.BaseBoltRenderer;
 import com.divinity.hlspells.renderers.StormBoltRenderer;
 import com.divinity.hlspells.spell.Spell;
 import com.divinity.hlspells.util.SpellUtils;
-import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.renderer.entity.VexRenderer;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.client.util.InputMappings;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.IItemPropertyGetter;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemModelsProperties;
 import net.minecraft.item.ItemStack;
-import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.StringTextComponent;
@@ -39,15 +34,10 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
-import net.minecraftforge.fml.client.registry.IRenderFactory;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import org.lwjgl.glfw.GLFW;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 @Mod.EventBusSubscriber(modid = HLSpells.MODID, value = Dist.CLIENT)
 public class ClientSetup {
@@ -79,10 +69,11 @@ public class ClientSetup {
 
     /**
      * Registers the model of a given item
-     * @param item The item to register the model of
-     * @param location The resource location of the model predicate
+     *
+     * @param item                    The item to register the model of
+     * @param location                The resource location of the model predicate
      * @param useItemRemainTickOffset The tick offset at which the item will change models at
-     * @param values The values to return for each model
+     * @param values                  The values to return for each model
      */
     private static void registerItemModel(Item item, ResourceLocation location, int useItemRemainTickOffset, float... values) {
         ItemModelsProperties.register(item, location, (stack, world, living) -> {
@@ -153,13 +144,6 @@ public class ClientSetup {
                     player.input.forwardImpulse /= 0.2F;
                 }
             }
-        }
-    }
-
-    public static void displayActivation(PlayerEntity playerEntity, ItemStack stack, boolean particleIn) {
-        Minecraft.getInstance().gameRenderer.displayItemActivation(stack);
-        if (particleIn) {
-            Minecraft.getInstance().particleEngine.createTrackingEmitter(playerEntity, ParticleTypes.TOTEM_OF_UNDYING, 30);
         }
     }
 }

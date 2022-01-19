@@ -64,7 +64,7 @@ public class Util {
      * Raytrace the player look vector to return what entity is looked at. Returns null if not found
      */
     public static Entity rayTrace(World world, PlayerEntity player, double range) {
-        Vector3d pos = player.getPosition(0f);
+        Vector3d pos = player.position();
         Vector3d cam1 = player.getLookAngle();
         Vector3d cam2 = cam1.add(cam1.x * range, cam1.y * range, cam1.z * range);
         AxisAlignedBB aabb = player.getBoundingBox().expandTowards(cam1.scale(range)).inflate(1.0F, 1.0F, 1.0F);

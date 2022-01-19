@@ -18,12 +18,12 @@ public class Blast extends Enchantment implements ISpell {
 
     @Override
     public boolean canApplyAtEnchantingTable(ItemStack stack) {
-        return SpellUtils.getSpell(stack) == SpellInit.EMPTY.get() && stack.getItem() == ItemInit.SPELL_BOOK.get();
+        return SpellUtils.getSpell(stack) == SpellInit.EMPTY.get();
     }
 
     @Override
     public boolean canEnchant(ItemStack stack) {
-        return stack.getItem() == ItemInit.SPELL_BOOK.get() && SpellUtils.getSpell(stack) == SpellInit.EMPTY.get() || super.canEnchant(stack);
+        return stack.getItem() == ItemInit.SPELL_BOOK.get();
     }
 
     @Override

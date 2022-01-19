@@ -25,7 +25,7 @@ public class ModTotemItem extends Item {
         entity.removeAllEffects();
         entity.addEffect(new EffectInstance(Effects.REGENERATION, 900, 1));
         entity.addEffect(new EffectInstance(Effects.ABSORPTION, 100, 1));
-        displayActivation(entity, animationItem, true);
+        displayActivation(entity, animationItem);
         entity.level.playSound(null, entity.getX(), entity.getY(), entity.getZ(), SoundEvents.TOTEM_USE, SoundCategory.PLAYERS, 1.0F, 1.0F);
         entity.playSound(SoundEvents.TOTEM_USE, 1.0F, 1.0F);
     }

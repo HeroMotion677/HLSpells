@@ -67,19 +67,23 @@ public class RunSpells {
                                                 durabilityTickCounter = 0;
                                             }
                                         }
+                                    } else {
+                                        reset(player);
                                     }
                                 } else {
-                                    xpTickCounter = 0;
-                                    durabilityTickCounter = 0;
-                                    SpellActions.resetEffects(player);
+                                    reset(player);
                                 }
                             });
                 } else {
-                    xpTickCounter = 0;
-                    durabilityTickCounter = 0;
-                    SpellActions.resetEffects(player);
+                    reset(player);
                 }
             }
         }
+    }
+
+    public static void reset(PlayerEntity player) {
+        xpTickCounter = 0;
+        durabilityTickCounter = 0;
+        SpellActions.resetEffects(player);
     }
 }
