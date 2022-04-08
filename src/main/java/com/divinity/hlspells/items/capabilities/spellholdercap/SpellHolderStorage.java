@@ -1,5 +1,6 @@
 package com.divinity.hlspells.items.capabilities.spellholdercap;
 
+import net.minecraft.enchantment.UnbreakingEnchantment;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.util.Direction;
@@ -16,8 +17,10 @@ public class SpellHolderStorage implements Capability.IStorage<ISpellHolder> {
     public INBT writeNBT(Capability<ISpellHolder> capability, ISpellHolder instance, Direction side) {
         CompoundNBT tag = new CompoundNBT();
         tag.putInt("spellsSize", instance.getSpells().size());
-        for (int i = 0; i < instance.getSpells().size(); i++) {
-            tag.putString(SPELL_NBT + i, instance.getSpells().get(i));
+        if (instance.getSpells() != null) {
+            for (int i = 0; i < instance.getSpells().size(); i++) {
+                tag.putString(SPELL_NBT + i, instance.getSpells().get(i));
+            }
         }
         tag.putInt(CURRENT_SPELL_CYCLE_NBT, instance.getCurrentSpellCycle());
         tag.putBoolean("isHeld", instance.isHeldActive());

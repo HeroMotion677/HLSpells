@@ -11,6 +11,8 @@ public class ConfigData {
     public final ForgeConfigSpec.BooleanValue lootOnlyMode;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> fireMobsList;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> sapientMobsList;
+    public final ForgeConfigSpec.DoubleValue spellCastTime;
+    public final ForgeConfigSpec.DoubleValue teleportRange;
 
     public ConfigData(ForgeConfigSpec.Builder builder) {
         builder.push("Config");
@@ -23,6 +25,9 @@ public class ConfigData {
                 "minecraft:evoker", "minecraft:illusioner", "minecraft:vindicator", "minecraft:piglin_brute", "minecraft:piglin");
         sapientMobsList = builder.comment("Lists of mobs which are immune to repel and lure spell")
                 .defineList("sapientMobsList", defaultSapientMobsList, String.class::isInstance);
+        spellCastTime = builder.comment("How long should spell items be held before they cast? (seconds)")
+                .defineInRange("spellCastTime", 0.3, 0, 60);
+        teleportRange = builder.comment("Teleport range for the teleport spell.").defineInRange("teleportRange", 50D, 1D, 500D);
         builder.pop();
     }
 }

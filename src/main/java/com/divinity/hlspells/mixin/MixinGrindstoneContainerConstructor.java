@@ -11,9 +11,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 /**
  * Mixin to allow wand to be inserted into grindstone
  */
-@Mixin(targets = {"net/minecraft/inventory/container/GrindstoneContainer$2",
-        "net/minecraft/inventory/container/GrindstoneContainer$3"
-})
+@Mixin(targets = {"net/minecraft/inventory/container/GrindstoneContainer$2", "net/minecraft/inventory/container/GrindstoneContainer$3"})
 public class MixinGrindstoneContainerConstructor {
     @Inject(method = "mayPlace(Lnet/minecraft/item/ItemStack;)Z", at = @At(value = "HEAD"), cancellable = true)
     private void mayPlace(ItemStack stack, CallbackInfoReturnable<Boolean> cir) {

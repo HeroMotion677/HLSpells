@@ -10,8 +10,8 @@ import net.minecraftforge.fml.network.NetworkEvent;
 import java.util.function.Supplier;
 
 public class WandInputPacket {
-    private int key;
 
+    private int key;
 
     public WandInputPacket(int key) {
         this.key = key;

@@ -3,7 +3,6 @@ package com.divinity.hlspells.spells;
 import com.divinity.hlspells.HLSpells;
 import com.divinity.hlspells.entities.*;
 import com.divinity.hlspells.goal.SpellBookLureGoal;
-import com.divinity.hlspells.goal.SpellBookRepelGoal;
 import com.divinity.hlspells.init.BlockInit;
 import com.divinity.hlspells.init.EntityInit;
 import com.divinity.hlspells.player.capability.PlayerCapProvider;
@@ -16,7 +15,10 @@ import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
+import net.minecraft.entity.ai.goal.NearestAttackableTargetExpiringGoal;
+import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
 import net.minecraft.entity.effect.LightningBoltEntity;
+import net.minecraft.entity.monster.ZombieEntity;
 import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ArrowEntity;
@@ -314,7 +316,7 @@ public class SpellActions {
     }
 
     public static boolean doTeleport(PlayerEntity player, World world) {
-        RayTraceResult rayTraceResult = Util.lookAt(player, 50D, 1F, false);
+        RayTraceResult rayTraceResult = Util.lookAt(player, HLSpells.CONFIG.teleportRange.get(), 1F, false);
         Vector3d location = rayTraceResult.getLocation();
         int stepX = 0;
         int stepY = 1;
@@ -464,7 +466,7 @@ public class SpellActions {
             List<? extends String> blacklistedMobs = HLSpells.CONFIG.sapientMobsList.get();
             boolean predicate = false;
             for (String id : blacklistedMobs) {
-                if (id.equals(mob.getType().getRegistryName().toString())) {
+                if (id.equals(mob.getType().getRegistryName() != null ? mob.getType().getRegistryName().toString() : "")) {
                     predicate = true;
                 }
             }
@@ -476,8 +478,8 @@ public class SpellActions {
     }
 
 
-    // Repel
-    public static boolean doRepel(PlayerEntity player, World world) {
+    // Repel (Disabled for now)
+/*    public static boolean doRepel(PlayerEntity player, World world) {
         List<MobEntity> mobEntities = world.getEntitiesOfClass(MobEntity.class,
                         new AxisAlignedBB(player.getX() - 15, player.getY() - 15, player.getZ() - 15,
                                 player.getX() + 15, player.getY() + 15, player.getZ() + 15), null)
@@ -495,7 +497,7 @@ public class SpellActions {
             }
         }
         return true;
-    }
+    }*/
 
     // Flaming Circle
     public static boolean doFlamingCircle(PlayerEntity player, World world) {

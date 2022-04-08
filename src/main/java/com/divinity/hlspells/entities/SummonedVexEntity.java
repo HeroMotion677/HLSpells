@@ -1,10 +1,15 @@
 package com.divinity.hlspells.entities;
 
+import com.divinity.hlspells.spells.SpellActions;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.controller.MovementController;
 import net.minecraft.entity.ai.goal.*;
+import net.minecraft.entity.merchant.villager.VillagerEntity;
 import net.minecraft.entity.monster.MonsterEntity;
+import net.minecraft.entity.monster.SlimeEntity;
 import net.minecraft.entity.monster.VexEntity;
+import net.minecraft.entity.monster.ZombieEntity;
+import net.minecraft.entity.passive.IronGolemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
@@ -12,6 +17,7 @@ import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.IPacket;
 import net.minecraft.util.SoundEvents;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
@@ -20,6 +26,9 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkHooks;
 
 import java.util.EnumSet;
+import java.util.List;
+import java.util.stream.Collectors;
+
 
 public class SummonedVexEntity extends VexEntity {
     protected PlayerEntity playerOwner;
@@ -38,14 +47,20 @@ public class SummonedVexEntity extends VexEntity {
     @Override
     public void tick() {
         super.tick();
-        if (this.playerOwner != null) {
+        if (this.playerOwner != null && this.isAlive()) {
             this.setBoundOrigin(this.playerOwner.blockPosition());
-            if (this.isAlive() && this.distanceTo(this.playerOwner) > 14.0D) {
+            if (this.distanceTo(this.playerOwner) > 12.0D && this.distanceTo(this.playerOwner) <= 50.0D) {
                 BlockPos ownerPos = this.playerOwner.blockPosition().offset(-2 + this.playerOwner.level.random.nextInt(5),
                         1, -2 + this.playerOwner.level.random.nextInt(5));
                 this.moveControl.setWantedPosition(ownerPos.getX(), ownerPos.getY(), ownerPos.getZ(), 0.75D);
             }
-        }
+            else if (this.distanceTo(this.playerOwner) > 50D) {
+                BlockPos ownerPos = this.playerOwner.blockPosition().offset(-2 + this.playerOwner.level.random.nextInt(5),
+                        1, -2 + this.playerOwner.level.random.nextInt(5));
+                this.teleportTo(ownerPos.getX(), ownerPos.getY(), ownerPos.getZ());
+                this.moveControl.setWantedPosition(ownerPos.getX(), ownerPos.getY(), ownerPos.getZ(), 0.6D);
+            }
+        } else this.kill();
     }
 
     @Override
@@ -71,8 +86,8 @@ public class SummonedVexEntity extends VexEntity {
         this.goalSelector.addGoal(8, new MoveRandomGoal());
         this.goalSelector.addGoal(9, new LookAtGoal(this, PlayerEntity.class, 3.0F, 1.0F));
         this.goalSelector.addGoal(10, new LookAtGoal(this, MobEntity.class, 8.0F));
-        this.targetSelector.addGoal(1, new CopyOwnerTargetGoal(this));
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, MonsterEntity.class, true));
+        this.targetSelector.addGoal(0, new CopyOwnerTargetGoal(this));
+        this.targetSelector.addGoal(1, new AttackedOwnerEnemyGoal(this));
     }
 
     public PlayerEntity getSummonedOwner() {
@@ -105,7 +120,7 @@ public class SummonedVexEntity extends VexEntity {
 
         public boolean canUse() {
             if (SummonedVexEntity.this.getTarget() != null && !SummonedVexEntity.this.getMoveControl().hasWanted() && SummonedVexEntity.this.random.nextInt(2) == 0) {
-                return SummonedVexEntity.this.distanceToSqr(SummonedVexEntity.this.getTarget()) > 4.0D;
+                return SummonedVexEntity.this.distanceToSqr(SummonedVexEntity.this.getTarget()) > 2.0D;
             } else {
                 return false;
             }
@@ -119,10 +134,12 @@ public class SummonedVexEntity extends VexEntity {
         @Override
         public void start() {
             LivingEntity livingentity = SummonedVexEntity.this.getTarget();
-            Vector3d vector3d = livingentity.getEyePosition(1.0F);
-            SummonedVexEntity.this.moveControl.setWantedPosition(vector3d.x, vector3d.y, vector3d.z, 1.0D);
-            SummonedVexEntity.this.setIsCharging(true);
-            SummonedVexEntity.this.playSound(SoundEvents.VEX_CHARGE, 1.0F, 1.0F);
+            if (livingentity != null) {
+                Vector3d vector3d = livingentity.getEyePosition(1.0F);
+                SummonedVexEntity.this.moveControl.setWantedPosition(vector3d.x, vector3d.y, vector3d.z, 1.0D);
+                SummonedVexEntity.this.setIsCharging(true);
+                SummonedVexEntity.this.playSound(SoundEvents.VEX_CHARGE, 1.0F, 1.0F);
+            }
         }
 
         @Override
@@ -133,17 +150,19 @@ public class SummonedVexEntity extends VexEntity {
         @Override
         public void tick() {
             LivingEntity livingentity = SummonedVexEntity.this.getTarget();
-            if (SummonedVexEntity.this.getBoundingBox().intersects(livingentity.getBoundingBox())) {
-                SummonedVexEntity.this.doHurtTarget(livingentity);
-                SummonedVexEntity.this.setIsCharging(false);
-            } else {
-                double d0 = SummonedVexEntity.this.distanceToSqr(livingentity);
-                if (d0 < 9.0D) {
-                    Vector3d vector3d = livingentity.getEyePosition(1.0F);
-                    SummonedVexEntity.this.moveControl.setWantedPosition(vector3d.x, vector3d.y, vector3d.z, 1.0D);
+            if (livingentity != null) {
+                if (SummonedVexEntity.this.getBoundingBox().inflate(0.5).intersects(livingentity.getBoundingBox())) {
+                    SummonedVexEntity.this.doHurtTarget(livingentity);
+                    SummonedVexEntity.this.setIsCharging(false);
+                }
+                else {
+                    double d0 = SummonedVexEntity.this.distanceToSqr(livingentity);
+                    if (d0 < 9.0D) {
+                        Vector3d vector3d = livingentity.getEyePosition(1.0F);
+                        SummonedVexEntity.this.moveControl.setWantedPosition(vector3d.x, vector3d.y, vector3d.z, 1.0D);
+                    }
                 }
             }
-
         }
     }
 
@@ -156,12 +175,45 @@ public class SummonedVexEntity extends VexEntity {
 
         @Override
         public boolean canUse() {
-            return SummonedVexEntity.this.playerOwner != null && SummonedVexEntity.this.playerOwner.getLastHurtMob() != null && this.canAttack(SummonedVexEntity.this.playerOwner.getLastHurtMob(), this.copyOwnerTargeting) && !(SummonedVexEntity.this.playerOwner.getLastHurtMob() instanceof SummonedVexEntity) && !(SummonedVexEntity.this.playerOwner.getLastHurtMob() instanceof PlayerEntity);
+            return SummonedVexEntity.this.getTarget() == null && SummonedVexEntity.this.playerOwner != null && SummonedVexEntity.this.playerOwner.getLastHurtMob() != null && this.canAttack(SummonedVexEntity.this.playerOwner.getLastHurtMob(), this.copyOwnerTargeting) && !(SummonedVexEntity.this.playerOwner.getLastHurtMob() instanceof SummonedVexEntity) && !(SummonedVexEntity.this.playerOwner.getLastHurtMob() instanceof PlayerEntity);
         }
 
         @Override
         public void start() {
             SummonedVexEntity.this.setTarget(SummonedVexEntity.this.playerOwner.getLastHurtMob());
+            super.start();
+        }
+    }
+
+    class AttackedOwnerEnemyGoal extends TargetGoal {
+        private final EntityPredicate attackedOwnerTargeting = (new EntityPredicate()).allowUnseeable().ignoreInvisibilityTesting();
+        private MobEntity entity;
+
+        public AttackedOwnerEnemyGoal(CreatureEntity mob) {
+            super(mob, false);
+        }
+
+        @Override
+        public boolean canUse() {
+            int scanRange = 15;
+            List<MobEntity> mobEntities = SummonedVexEntity.this.level.getEntitiesOfClass(MobEntity.class,
+                            new AxisAlignedBB(SummonedVexEntity.this.getX() - scanRange, SummonedVexEntity.this.getY() - scanRange, SummonedVexEntity.this.getZ() - scanRange,
+                            SummonedVexEntity.this.getX() + scanRange, SummonedVexEntity.this.getY() + scanRange, SummonedVexEntity.this.getZ() + scanRange), null)
+                    .stream().sorted(SpellActions.getEntityComparator(SummonedVexEntity.this.playerOwner)).collect(Collectors.toList());
+            for (MobEntity mob : mobEntities) {
+                if (mob != null && !(mob instanceof SummonedVexEntity)) {
+                    if (mob.getTarget() == SummonedVexEntity.this.playerOwner) {
+                        entity = mob;
+                        return SummonedVexEntity.this.getTarget() == null && SummonedVexEntity.this.playerOwner != null && this.canAttack(mob, this.attackedOwnerTargeting);
+                    }
+                }
+            }
+            return false;
+        }
+
+        @Override
+        public void start() {
+            SummonedVexEntity.this.setTarget(entity);
             super.start();
         }
     }

@@ -23,7 +23,7 @@ import java.util.function.Predicate;
 import java.util.function.ToDoubleFunction;
 
 
-public class SpellBookRepelGoal extends Goal {
+/*public class SpellBookRepelGoal extends Goal {
     private static final EntityPredicate TEMP_TARGETING = (new EntityPredicate()).range(15.0D).allowInvulnerable().allowSameTeam().allowNonAttackable().allowUnseeable();
     protected final PathNavigator pathNav;
     private final MobEntity entity;
@@ -209,4 +209,4 @@ public class SpellBookRepelGoal extends Goal {
         }
         return false;
     }
-}
+}*/

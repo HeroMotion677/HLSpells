@@ -7,7 +7,8 @@
     "MixinEnchantmentTable",
     "MixinGrindstoneContainer",
     "MixinGrindstoneContainerConstructor",
-    "MixinGrindstoneExperience", "MixinSmithingRecipe"
+    "MixinGrindstoneExperience",
+    "MixinSmithingRecipe"
   ],
   "minVersion": "0.8",
   "injectors": {

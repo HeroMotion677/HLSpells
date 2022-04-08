@@ -1,5 +1,6 @@
 package com.divinity.hlspells.items;
 
+import com.divinity.hlspells.HLSpells;
 import com.divinity.hlspells.enchantments.ISpell;
 import com.divinity.hlspells.init.SpellInit;
 import com.divinity.hlspells.items.capabilities.spellholdercap.ISpellHolder;
@@ -11,20 +12,23 @@ import com.divinity.hlspells.spells.SpellActions;
 import com.divinity.hlspells.util.SpellUtils;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ShootableItem;
-import net.minecraft.item.UseAction;
+import net.minecraft.item.*;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
+import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.*;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.LazyOptional;
 
 import javax.annotation.Nullable;
@@ -90,7 +94,7 @@ public class SpellHoldingItem extends ShootableItem {
     @Override
     public boolean isFoil(ItemStack pStack) {
         List<String> spells = pStack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP).map(ISpellHolder::getSpells).orElse(null);
-        return isSpellBook && SpellUtils.getSpell(pStack) != SpellInit.EMPTY.get() || !isSpellBook && spells != null && !spells.isEmpty();
+        return isSpellBook && SpellUtils.getSpell(pStack) != SpellInit.EMPTY.get() || !isSpellBook && spells != null && !spells.isEmpty() || super.isFoil(pStack);
     }
 
     @Nullable
@@ -171,7 +175,7 @@ public class SpellHoldingItem extends ShootableItem {
             PlayerEntity player = (PlayerEntity) entity;
             LazyOptional<ISpellHolder> capability = stack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP);
             capability.ifPresent(cap -> cap.setHeldActive(false));
-            if (player.getUseItemRemainingTicks() < 71988 && !world.isClientSide()) {
+            if (player.getUseItemRemainingTicks() < (72000 - (HLSpells.CONFIG.spellCastTime.get() * 20)) && !world.isClientSide()) {
                 RunSpells.doCastSpell(player, world, stack);
                 capability.filter(p -> !(p.getSpells().isEmpty()))
                         .ifPresent(cap -> {
@@ -181,6 +185,7 @@ public class SpellHoldingItem extends ShootableItem {
             }
         }
     }
+
 
     @Override
     public int getUseDuration(ItemStack pStack) {
@@ -199,7 +204,8 @@ public class SpellHoldingItem extends ShootableItem {
 
     @Override
     public boolean isBookEnchantable(ItemStack stack, ItemStack book) {
-        return isSpellBook;
+        return isSpellBook || (!isSpellBook() && EnchantedBookItem.getEnchantments(book).getString(0).contains("minecraft:mending")
+                || !isSpellBook() && EnchantedBookItem.getEnchantments(book).getString(0).contains("minecraft:unbreaking"));
     }
 
     @Override

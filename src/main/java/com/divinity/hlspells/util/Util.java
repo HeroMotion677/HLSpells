@@ -23,7 +23,7 @@ public class Util {
      */
 
     public static void teleportToLocation(World world, BlockPos pos, BlockPos teleportPos, Entity entity) {
-        entity.setPos(teleportPos.getX(), teleportPos.getY(), teleportPos.getZ());
+        entity.teleportTo(teleportPos.getX(), teleportPos.getY(), teleportPos.getZ());
         doTeleportParticles(world, pos, 150);
         doTeleportParticles(world, teleportPos, 150);
         world.playSound(null, pos, SoundEvents.ENDERMAN_TELEPORT, SoundCategory.NEUTRAL, 0.6F, 1.0F);

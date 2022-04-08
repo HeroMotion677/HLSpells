@@ -41,7 +41,7 @@ public class SpellInit {
     public static final RegistryObject<Spell> FLAMING_BOLT = register("flaming_bolt", () -> new Spell(SpellType.CAST, SpellActions::doFlamingBolt, "Flaming Bolt", 7));
     public static final RegistryObject<Spell> AQUA_BOLT = register("aqua_bolt", () -> new Spell(SpellType.CAST, SpellActions::doAquaBolt, "Aqua Bolt", 4));
     public static final RegistryObject<Spell> LURE = register("lure", () -> new Spell(SpellType.HELD, SpellActions::doLure, "Lure", 1, 10));
-    public static final RegistryObject<Spell> REPEL = register("repel", () -> new Spell(SpellType.HELD, SpellActions::doRepel, "Repel", 1, 3));
+    //public static final RegistryObject<Spell> REPEL = register("repel", () -> new Spell(SpellType.HELD, SpellActions::doRepel, "Repel", 1, 3));
     public static final RegistryObject<Spell> FLAMING_CIRCLE = register("flaming_circle", () -> new Spell(SpellType.HELD, SpellActions::doFlamingCircle, "Flaming Circle", 1, 6));
     public static final RegistryObject<Spell> FROST_PATH =  register("frost_path", () -> new Spell(SpellType.HELD, SpellActions::doFrostPath, "Frost Path", 1, 6));
 

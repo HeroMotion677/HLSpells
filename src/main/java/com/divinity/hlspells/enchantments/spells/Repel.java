@@ -11,6 +11,7 @@ import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
+/*
 public class Repel extends Enchantment implements ISpell {
     public Repel(EquipmentSlotType... slots) {
         super(Rarity.VERY_RARE, EnchantmentType.BREAKABLE, slots);
@@ -67,3 +68,4 @@ public class Repel extends Enchantment implements ISpell {
         return !HLSpells.CONFIG.lootOnlyMode.get();
     }
 }
+*/

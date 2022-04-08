@@ -17,7 +17,7 @@ public enum WizardArmorMaterial implements IArmorMaterial {
     WIZHAT("wizhat", 5, new int[]{0, 0, 0, 1}, 22, SoundEvents.ARMOR_EQUIP_LEATHER, 0F, 0.0F, () -> {
         return Ingredient.of(Items.LEATHER);
     });
-    private static final int[] HEALTH_PER_SLOT = new int[]{1, 1, 1, 11};
+    private static final int[] HEALTH_PER_SLOT = new int[]{1, 1, 1, 20};
     private final String name;
     private final int durabilityMultiplier;
     private final int[] slotProtections;
