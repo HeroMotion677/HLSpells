@@ -175,7 +175,7 @@ public class SpellHoldingItem extends ShootableItem {
             PlayerEntity player = (PlayerEntity) entity;
             LazyOptional<ISpellHolder> capability = stack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP);
             capability.ifPresent(cap -> cap.setHeldActive(false));
-            if (player.getUseItemRemainingTicks() < (72000 - (HLSpells.CONFIG.spellCastTime.get() * 20)) && !world.isClientSide()) {
+            if (!world.isClientSide() && !isSpellBook ? (player.getUseItemRemainingTicks() < (72000 - (HLSpells.CONFIG.spellCastTime.get() * 20))) : player.getUseItemRemainingTicks() < 71988) {
                 RunSpells.doCastSpell(player, world, stack);
                 capability.filter(p -> !(p.getSpells().isEmpty()))
                         .ifPresent(cap -> {
@@ -204,8 +204,8 @@ public class SpellHoldingItem extends ShootableItem {
 
     @Override
     public boolean isBookEnchantable(ItemStack stack, ItemStack book) {
-        return isSpellBook || (!isSpellBook() && EnchantedBookItem.getEnchantments(book).getString(0).contains("minecraft:mending")
-                || !isSpellBook() && EnchantedBookItem.getEnchantments(book).getString(0).contains("minecraft:unbreaking"));
+        return (!isSpellBook && EnchantedBookItem.getEnchantments(book).getString(0).contains("minecraft:mending")
+                || !isSpellBook && EnchantedBookItem.getEnchantments(book).getString(0).contains("minecraft:unbreaking"));
     }
 
     @Override
