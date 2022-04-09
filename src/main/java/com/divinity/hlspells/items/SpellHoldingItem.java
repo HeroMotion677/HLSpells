@@ -30,6 +30,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -204,8 +205,8 @@ public class SpellHoldingItem extends ShootableItem {
 
     @Override
     public boolean isBookEnchantable(ItemStack stack, ItemStack book) {
-        return (!isSpellBook && EnchantedBookItem.getEnchantments(book).getString(0).contains("minecraft:mending")
-                || !isSpellBook && EnchantedBookItem.getEnchantments(book).getString(0).contains("minecraft:unbreaking"));
+        return !isSpellBook && EnchantedBookItem.getEnchantments(book).getString(0).contains("minecraft:unbreaking") &&
+        EnchantmentHelper.getItemEnchantmentLevel(Enchantments.UNBREAKING, stack) < Integer.parseInt(String.valueOf(EnchantedBookItem.getEnchantments(book).getString(0).charAt(5)));
     }
 
     @Override

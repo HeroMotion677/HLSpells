@@ -6,15 +6,15 @@ import com.divinity.hlspells.items.capabilities.spellholdercap.SpellHolderProvid
 import com.divinity.hlspells.spell.Spell;
 import com.divinity.hlspells.spell.SpellType;
 import com.divinity.hlspells.util.SpellUtils;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.enchantment.Enchantments;
-import net.minecraft.enchantment.UnbreakingEnchantment;
+import net.minecraft.enchantment.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.item.EnchantedBookItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
+import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -82,6 +82,25 @@ public class RunSpells {
                             });
                 } else {
                     reset(player);
+                }
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void applyEnchantments(AnvilUpdateEvent event) {
+        if (event != null) {
+            if (event.getRight().getItem() instanceof EnchantedBookItem) {
+                ItemStack book = event.getRight();
+                if (EnchantedBookItem.getEnchantments(book).getString(0).contains("minecraft:mending")) {
+                    if (event.getLeft().getItem() instanceof SpellHoldingItem && !((SpellHoldingItem) event.getLeft().getItem()).isSpellBook()) {
+                        if (EnchantmentHelper.getItemEnchantmentLevel(Enchantments.MENDING, event.getLeft()) == 0) {
+                            event.setCost(6);
+                            ItemStack copy = event.getLeft().copy();
+                            copy.enchant(Enchantments.MENDING, 1);
+                            event.setOutput(copy);
+                        }
+                    }
                 }
             }
         }

@@ -34,10 +34,10 @@ public class TotemActivatedPacket {
         if (context.getDirection().getReceptionSide() == LogicalSide.CLIENT) {
             context.enqueueWork(() -> {
                 Minecraft mc = Minecraft.getInstance();
-                PlayerEntity totemActivatedPlayer = mc.level.getPlayerByUUID(player);
+                PlayerEntity totemActivatedPlayer = mc.level != null ? mc.level.getPlayerByUUID(player) : null;
                 if (totemActivatedPlayer != null) {
                     mc.particleEngine.createTrackingEmitter(totemActivatedPlayer, ParticleTypes.TOTEM_OF_UNDYING, 30);
-                    if (mc.player.getUUID().equals(player)) {
+                    if (mc.player != null && mc.player.getUUID().equals(player)) {
                         Minecraft.getInstance().gameRenderer.displayItemActivation(stack);
                     }
                 }
