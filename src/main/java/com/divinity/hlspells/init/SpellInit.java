@@ -42,7 +42,8 @@ public class SpellInit {
     //public static final RegistryObject<Spell> REPEL = register("repel", () -> new Spell(SpellType.HELD, SpellActions::doRepel, "Repel", 1, 3));
     public static final RegistryObject<Spell> FLAMING_CIRCLE = register("flaming_circle", () -> new Spell(SpellType.HELD, SpellActions::doFlamingCircle, "Flaming Circle", 1, 6));
     public static final RegistryObject<Spell> FROST_PATH =  register("frost_path", () -> new Spell(SpellType.HELD, SpellActions::doFrostPath, "Frost Path", 1, 6));
-
+    public static final RegistryObject<Spell> WITHER_SKULL = register("wither_skull", () -> new Spell(SpellType.CAST, SpellActions::doWitherSkull, "Wither Skull", 10));
+    public static final RegistryObject<Spell> TORPEDO = register("torpedo", () -> new Spell(SpellType.CAST, SpellActions::doTorpedo, "Torpedo", 8));
     public static Supplier<IForgeRegistry<Spell>> SPELLS_REGISTRY = SPELLS_DEFERRED_REGISTER.makeRegistry(Spell.class, () ->
             new RegistryBuilder<Spell>().setMaxID(Integer.MAX_VALUE - 1).onAdd((owner, stage, id, obj, oldObj) -> {
                     })

@@ -1,0 +1,93 @@
+{
+  "credit": "Made with Blockbench",
+  "texture_size": [64, 128],
+  "textures": {
+    "layer0": "hlspells:models/armor/wizard_hat"
+  },
+  "elements": [
+    {
+      "name": "cube_r1",
+      "from": [-6, 22, -4.25],
+      "to": [6, 24, 7.75],
+      "color": 5,
+      "faces": {
+        "north": {"uv": [3, 8.875, 6, 9.125], "texture": "#layer0"},
+        "east": {"uv": [0, 8.875, 3, 9.125], "texture": "#layer0"},
+        "south": {"uv": [9, 8.875, 12, 9.125], "texture": "#layer0"},
+        "west": {"uv": [6, 8.875, 9, 9.125], "texture": "#layer0"},
+        "up": {"uv": [6, 8.875, 3, 7.375], "texture": "#layer0"},
+        "down": {"uv": [9, 7.375, 6, 8.875], "texture": "#layer0"}
+      }
+    },
+    {
+      "name": "main",
+      "from": [-4, 24, -2.81352],
+      "to": [4, 31, 6.18648],
+      "rotation": {"angle": 0, "axis": "x", "origin": [0, 25, -5]},
+      "color": 5,
+      "faces": {
+        "north": {"uv": [2.25, 10.25, 4.25, 11.125], "texture": "#layer0"},
+        "east": {"uv": [0, 10.25, 2.25, 11.125], "texture": "#layer0"},
+        "south": {"uv": [6.5, 10.25, 8.5, 11.125], "texture": "#layer0"},
+        "west": {"uv": [4.25, 10.25, 6.5, 11.125], "texture": "#layer0"},
+        "up": {"uv": [4.25, 10.25, 2.25, 9.125], "texture": "#layer0"},
+        "down": {"uv": [6.25, 9.125, 4.25, 10.25], "texture": "#layer0"}
+      }
+    },
+    {
+      "name": "rotator",
+      "from": [-2.5, 27, -6.65],
+      "to": [2.5, 31, 0.35],
+      "rotation": {"angle": 22.5, "axis": "x", "origin": [0, 0, 0]},
+      "color": 5,
+      "faces": {
+        "north": {"uv": [8.5, 11.25, 9.75, 11.75], "texture": "#layer0"},
+        "east": {"uv": [6.75, 11.25, 8.5, 11.75], "texture": "#layer0"},
+        "south": {"uv": [11.5, 11.25, 12.75, 11.75], "texture": "#layer0"},
+        "west": {"uv": [9.75, 11.25, 11.5, 11.75], "texture": "#layer0"},
+        "up": {"uv": [9.75, 11.25, 8.5, 10.375], "texture": "#layer0"},
+        "down": {"uv": [11, 10.375, 9.75, 11.25], "texture": "#layer0"}
+      }
+    }
+  ],
+  "display": {
+    "thirdperson_righthand": {
+      "rotation": [78.5, 0, 0],
+      "translation": [2, -7.75, 5]
+    },
+    "head": {
+      "rotation": [13, 0, 0],
+      "translation": [12, -18.75, 4.25],
+      "scale": [1.5, 1.5, 1.5]
+    }
+  },
+  "groups": [
+    {
+      "name": "hat_main",
+      "origin": [0, 30, 0],
+      "color": 0,
+      "children": [
+        {
+          "name": "cube_r1",
+          "origin": [0, 30, 0],
+          "color": 0,
+          "children": [0]
+        },
+        {
+          "name": "main",
+          "origin": [0, 30.25, -0.5],
+          "color": 0,
+          "children": [
+            1,
+            {
+              "name": "rotator",
+              "origin": [0, 39, 4],
+              "color": 0,
+              "children": [2]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

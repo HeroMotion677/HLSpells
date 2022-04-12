@@ -7,6 +7,11 @@ import com.divinity.hlspells.init.BlockInit;
 import com.divinity.hlspells.init.EntityInit;
 import com.divinity.hlspells.player.capability.PlayerCapProvider;
 import com.divinity.hlspells.util.Util;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.stats.Stats;
+import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.projectile.*;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SimpleWaterloggedBlock;
@@ -14,13 +19,7 @@ import net.minecraft.world.level.material.Material;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
-import net.minecraft.world.entity.LightningBolt;
-import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.Arrow;
-import net.minecraft.world.entity.projectile.EvokerFangs;
-import net.minecraft.world.entity.projectile.LargeFireball;
-import net.minecraft.world.entity.projectile.ShulkerBullet;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.network.protocol.Packet;
@@ -52,11 +51,6 @@ import static com.divinity.hlspells.goal.SpellBookLureGoal.LURE_RANGE;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
@@ -447,6 +441,44 @@ public class SpellActions {
             }
         }
         return used;
+    }
+
+    // Wither Skull
+    public static boolean doWitherSkull(Player player, Level world) {
+        Vec3 vector3d = player.getViewVector(1.0F);
+        WitherSkull witherSkullEntity = new WitherSkull(world, player, vector3d.x, vector3d.y, vector3d.z);
+        witherSkullEntity.setPos(player.getX() + vector3d.x * 1.5D, player.getY() + 1, player.getZ() + vector3d.z * 1.5D);
+        witherSkullEntity.setOwner(player);
+        world.addFreshEntity(witherSkullEntity);
+        return true;
+    }
+
+    public static boolean doTorpedo(Player player, Level world) {
+        if (player != null) {
+            int i = player.getUseItem().getUseDuration();
+            if (i >= 10) {
+                int j = 3;
+                float f7 = player.getYRot();
+                float f = player.getXRot();
+                float f1 = -Mth.sin(f7 * ((float)Math.PI / 180F)) * Mth.cos(f * ((float)Math.PI / 180F));
+                float f2 = -Mth.sin(f * ((float)Math.PI / 180F));
+                float f3 = Mth.cos(f7 * ((float)Math.PI / 180F)) * Mth.cos(f * ((float)Math.PI / 180F));
+                float f4 = Mth.sqrt(f1 * f1 + f2 * f2 + f3 * f3);
+                float f5 = 3.0F * ((1.0F + (float)j) / 4.0F);
+                f1 *= f5 / f4;
+                f2 *= f5 / f4;
+                f3 *= f5 / f4;
+                player.push((double)f1, (double)f2, (double)f3);
+                player.startAutoSpinAttack(20);
+                if (player.isOnGround()) {
+                    player.move(MoverType.SELF, new Vec3(0.0D, (double)1.1999999F, 0.0D));
+                }
+                SoundEvent soundevent = SoundEvents.TRIDENT_RIPTIDE_1;
+                player.level.playSound((Player)null, player, soundevent, SoundSource.PLAYERS, 1.0F, 1.0F);
+
+            }
+        }
+        return true;
     }
 
 

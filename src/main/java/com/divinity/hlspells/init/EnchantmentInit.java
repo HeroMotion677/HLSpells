@@ -44,4 +44,6 @@ public class EnchantmentInit {
     public static final RegistryObject<Enchantment> TELEPORT = ENCHANTMENTS.register("teleport", () -> new Teleport(EquipmentSlot.MAINHAND));
     public static final RegistryObject<Enchantment> FROST_PATH = ENCHANTMENTS.register("frost_path",  () -> new FrostPath(EquipmentSlot.MAINHAND));
     public static final RegistryObject<Enchantment> CURSE_OF_SINKING = ENCHANTMENTS.register("curse_of_sinking", () -> new SinkingCurse(EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS,  EquipmentSlot.FEET));
+    public static final RegistryObject<Enchantment> WITHER_SKULL = ENCHANTMENTS.register("wither_skull", () -> new WitherSkull(EquipmentSlot.MAINHAND));
+    public static final RegistryObject<Enchantment> TORPEDO = ENCHANTMENTS.register("torpedo", () -> new Torpedo(EquipmentSlot.MAINHAND));
 }

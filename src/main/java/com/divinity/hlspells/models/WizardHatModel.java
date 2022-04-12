@@ -12,18 +12,18 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.decoration.ArmorStand;
 
-public class WizardHatModel<T extends Entity> extends EntityModel<T> {
-    // This layer location should be baked with EntityRendererProvider.Context in the entity renderer and passed into this model's constructor
+public class WizardHatModel<T extends LivingEntity> extends HumanoidModel<T> {
+
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation(HLSpells.MODID, "wizard_hat"), "main");
-    private final ModelPart hat_main;
 
     public WizardHatModel(ModelPart root) {
-        this.hat_main = root.getChild("hat_main");
+        super(root);
     }
 
     public static LayerDefinition createBodyLayer() {
-        MeshDefinition meshdefinition = new MeshDefinition();
+        MeshDefinition meshdefinition = HumanoidModel.createMesh(new CubeDeformation(0), 0);
         PartDefinition partdefinition = meshdefinition.getRoot();
 
         PartDefinition hat_main = partdefinition.addOrReplaceChild("hat_main", CubeListBuilder.create(),
@@ -42,12 +42,19 @@ public class WizardHatModel<T extends Entity> extends EntityModel<T> {
 
     @Override
     public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-
+        if (entity instanceof ArmorStand) {
+            super.setupAnim(entity, 0, 0, 0, 0, 0);
+        } else {
+            head.copyFrom(super.head);
+            hat.copyFrom(super.hat);
+            super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+        }
     }
 
     @Override
     public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-        hat_main.render(poseStack, buffer, packedLight, packedOverlay);
+        head.render(poseStack, buffer, packedLight, packedOverlay);
+        hat.render(poseStack, buffer, packedLight, packedOverlay);
     }
 
     private void setRotationAngle(ModelPart modelRenderer, float x, float y, float z) {

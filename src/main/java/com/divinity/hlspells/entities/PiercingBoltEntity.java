@@ -18,6 +18,8 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.network.NetworkHooks;
 
 public class PiercingBoltEntity extends Arrow {
+    private byte pierceCounter = 0;
+
     public PiercingBoltEntity(EntityType<? extends PiercingBoltEntity> type, Level world) {
         super(type, world);
         this.setNoGravity(true);
