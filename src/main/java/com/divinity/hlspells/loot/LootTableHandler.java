@@ -1,13 +1,23 @@
 package com.divinity.hlspells.loot;
 
 import com.divinity.hlspells.HLSpells;
-import net.minecraft.loot.*;
-import net.minecraft.loot.functions.ILootFunction;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.Registry;
+import net.minecraft.world.level.storage.loot.providers.number.BinomialDistributionGenerator;
+import net.minecraft.world.level.storage.loot.providers.number.LootNumberProviderType;
+import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
 import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+
+import net.minecraft.world.level.storage.loot.LootPool;
+import net.minecraft.world.level.storage.loot.entries.LootPoolEntryContainer;
+import net.minecraft.world.level.storage.loot.entries.LootTableReference;
+import net.minecraft.world.level.storage.loot.functions.LootItemConditionalFunction;
+import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 
 @Mod.EventBusSubscriber(modid = HLSpells.MODID)
 public class LootTableHandler {
@@ -38,20 +48,14 @@ public class LootTableHandler {
     public static LootPool getInjectPool(String entryName) {
         return LootPool.lootPool()
                 .add(getInjectEntry(entryName))
-                .bonusRolls(0, 1)
+                .setBonusRolls(BinomialDistributionGenerator.binomial(0, 1))
                 .name("inject")
                 .build();
     }
 
-    private static LootEntry.Builder<?> getInjectEntry(String name) {
+    private static LootPoolEntryContainer.Builder<?> getInjectEntry(String name) {
         ResourceLocation table = new ResourceLocation(HLSpells.MODID, "inject/" + name);
-        return TableLootEntry.lootTableReference(table)
+        return LootTableReference.lootTableReference(table)
                 .setWeight(1);
-    }
-
-    public static final LootFunctionType SET_SPELL = register("set_spell", new SetSpell.Serializer());
-
-    private static LootFunctionType register(String id, LootFunction.Serializer<? extends ILootFunction> serializer) {
-        return Registry.register(Registry.LOOT_FUNCTION_TYPE, new ResourceLocation(HLSpells.MODID, id), new LootFunctionType(serializer));
     }
 }

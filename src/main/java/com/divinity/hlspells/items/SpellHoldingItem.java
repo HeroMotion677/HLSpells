@@ -10,25 +10,20 @@ import com.divinity.hlspells.spell.SpellType;
 import com.divinity.hlspells.spells.RunSpells;
 import com.divinity.hlspells.spells.SpellActions;
 import com.divinity.hlspells.util.SpellUtils;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.enchantment.Enchantments;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.*;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.nbt.NBTUtil;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.*;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.World;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.ChatFormatting;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -37,7 +32,20 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
 
-public class SpellHoldingItem extends ShootableItem {
+import net.minecraft.world.item.Item.Properties;
+
+import net.minecraft.core.NonNullList;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.EnchantedBookItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ProjectileWeaponItem;
+import net.minecraft.world.item.UseAnim;
+
+public class SpellHoldingItem extends ProjectileWeaponItem {
     private final boolean isSpellBook;
     private Spell currentStoredSpell = null;
 
@@ -68,23 +76,23 @@ public class SpellHoldingItem extends ShootableItem {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable World pLevel, List<ITextComponent> text, ITooltipFlag pFlag) {
+    public void appendHoverText(ItemStack stack, @Nullable Level pLevel, List<Component> text, TooltipFlag pFlag) {
         stack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP, null).ifPresent(cap -> {
             List<String> spells = cap.getSpells();
             if (isSpellBook) {
                 Spell spell = SpellUtils.getSpell(stack);
                 text.add(spell.getDisplayName().withStyle(spell.getType().getTooltipFormatting()));
             } else {
-                text.add(1, new StringTextComponent(TextFormatting.GOLD + "Spells: "));
+                text.add(1, new TextComponent(ChatFormatting.GOLD + "Spells: "));
                 if (spells.isEmpty()) {
-                    text.add(new StringTextComponent(TextFormatting.GRAY + "   Empty"));
+                    text.add(new TextComponent(ChatFormatting.GRAY + "   Empty"));
                 } else {
                     spells.forEach(c -> {
                         Spell spell = SpellUtils.getSpellByID(c);
                         if (cap.getCurrentSpell().equals(c)) {
-                            text.add(new StringTextComponent(TextFormatting.BLUE + "   " + spell.getTrueDisplayName()));
+                            text.add(new TextComponent(ChatFormatting.BLUE + "   " + spell.getTrueDisplayName()));
                         } else {
-                            text.add(new StringTextComponent(TextFormatting.GRAY + "   " + spell.getTrueDisplayName()));
+                            text.add(new TextComponent(ChatFormatting.GRAY + "   " + spell.getTrueDisplayName()));
                         }
                     });
                 }
@@ -100,12 +108,12 @@ public class SpellHoldingItem extends ShootableItem {
 
     @Nullable
     @Override
-    public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundNBT nbt) {
+    public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag nbt) {
         return new SpellHolderProvider();
     }
 
     @Override
-    public void fillItemCategory(ItemGroup pGroup, NonNullList<ItemStack> pItems) {
+    public void fillItemCategory(CreativeModeTab pGroup, NonNullList<ItemStack> pItems) {
         if (isSpellBook) {
             if (this.allowdedIn(pGroup)) {
                 for (Spell spell : SpellInit.SPELLS_REGISTRY.get()) {
@@ -123,7 +131,7 @@ public class SpellHoldingItem extends ShootableItem {
     }
 
     @Override
-    public ActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
+    public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand) {
         ItemStack itemstack = player.getItemInHand(hand);
         currentStoredSpell = SpellUtils.getSpell(itemstack);
         LazyOptional<ISpellHolder> capability = itemstack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP);
@@ -132,20 +140,20 @@ public class SpellHoldingItem extends ShootableItem {
             if (spells != null && !(spells.isEmpty())) {
                 player.startUsingItem(hand);
             } else {
-                return ActionResult.pass(itemstack);
+                return InteractionResultHolder.pass(itemstack);
             }
         }
         capability.ifPresent(cap -> cap.setHeldActive(true));
         if (!world.isClientSide()) {
             if (isSpellBook)
-                world.playSound(null, player.blockPosition(), SoundEvents.BOOK_PAGE_TURN, SoundCategory.NEUTRAL, 0.6F, 1.0F);
+                world.playSound(null, player.blockPosition(), SoundEvents.BOOK_PAGE_TURN, SoundSource.NEUTRAL, 0.6F, 1.0F);
 
             Spell spell = SpellUtils.getSpell(itemstack);
             if (spell != SpellInit.EMPTY.get() && spell.getType() == SpellType.HELD) {
-                world.playSound(null, player.blockPosition(), SoundEvents.EVOKER_PREPARE_SUMMON, SoundCategory.NEUTRAL, 0.6F, 1.0F);
+                world.playSound(null, player.blockPosition(), SoundEvents.EVOKER_PREPARE_SUMMON, SoundSource.NEUTRAL, 0.6F, 1.0F);
             }
         }
-        return ActionResult.success(itemstack);
+        return InteractionResultHolder.success(itemstack);
     }
 
     @Override
@@ -154,12 +162,12 @@ public class SpellHoldingItem extends ShootableItem {
     }
 
     @Override
-    public void inventoryTick(ItemStack stack, World world, Entity entity, int pItemSlot, boolean pIsSelected) {
-        if (entity instanceof PlayerEntity && stack.getItem() instanceof SpellHoldingItem) {
-            PlayerEntity player = (PlayerEntity) entity;
+    public void inventoryTick(ItemStack stack, Level world, Entity entity, int pItemSlot, boolean pIsSelected) {
+        if (entity instanceof Player && stack.getItem() instanceof SpellHoldingItem) {
+            Player player = (Player) entity;
             stack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP).ifPresent(cap -> {
                 if (cap.isHeldActive()) {
-                    for (Hand hand : Hand.values()) {
+                    for (InteractionHand hand : InteractionHand.values()) {
                         ItemStack heldStack = player.getItemInHand(hand);
                         if (SpellUtils.getSpell(heldStack) == currentStoredSpell)
                             return;
@@ -171,16 +179,15 @@ public class SpellHoldingItem extends ShootableItem {
     }
 
     @Override
-    public void releaseUsing(ItemStack stack, World world, LivingEntity entity, int power) {
-        if (entity instanceof PlayerEntity) {
-            PlayerEntity player = (PlayerEntity) entity;
+    public void releaseUsing(ItemStack stack, Level world, LivingEntity entity, int power) {
+        if (entity instanceof Player player) {
             LazyOptional<ISpellHolder> capability = stack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP);
             capability.ifPresent(cap -> cap.setHeldActive(false));
             if (!world.isClientSide() && !isSpellBook ? (player.getUseItemRemainingTicks() < (72000 - (HLSpells.CONFIG.spellCastTime.get() * 20))) : player.getUseItemRemainingTicks() < 71988) {
                 RunSpells.doCastSpell(player, world, stack);
                 capability.filter(p -> !(p.getSpells().isEmpty()))
                         .ifPresent(cap -> {
-                            world.playSound(null, player.blockPosition(), SoundEvents.EVOKER_CAST_SPELL, SoundCategory.NEUTRAL, 0.6F, 1.0F);
+                            world.playSound(null, player.blockPosition(), SoundEvents.EVOKER_CAST_SPELL, SoundSource.NEUTRAL, 0.6F, 1.0F);
                             SpellActions.doParticles(player);
                         });
             }
@@ -194,8 +201,8 @@ public class SpellHoldingItem extends ShootableItem {
     }
 
     @Override
-    public UseAction getUseAnimation(ItemStack pStack) {
-        return isSpellBook ? UseAction.CROSSBOW : UseAction.BOW;
+    public UseAnim getUseAnimation(ItemStack pStack) {
+        return isSpellBook ? UseAnim.CROSSBOW : UseAnim.BOW;
     }
 
     @Override
@@ -217,18 +224,18 @@ public class SpellHoldingItem extends ShootableItem {
     // Responsible for syncing capability to client side
     @Nullable
     @Override
-    public CompoundNBT getShareTag(ItemStack stack) {
-        CompoundNBT capTag = new CompoundNBT();
+    public CompoundTag getShareTag(ItemStack stack) {
+        CompoundTag capTag = new CompoundTag();
         LazyOptional<ISpellHolder> spellHolder = stack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP);
         if (spellHolder.isPresent()) {
-            spellHolder.ifPresent(cap -> capTag.put("spellHolder", Objects.requireNonNull(SpellHolderProvider.SPELL_HOLDER_CAP.writeNBT(spellHolder.orElseThrow(RuntimeException::new), null))));
+            spellHolder.ifPresent(cap -> capTag.put("spellHolder", stack.serializeNBT()));
         }
-        CompoundNBT stackTag = stack.getTag();
+        CompoundTag stackTag = stack.getTag();
         if (capTag.isEmpty()) {
             return stackTag;
         }
         if (stackTag == null) {
-            stackTag = new CompoundNBT();
+            stackTag = new CompoundTag();
         } else {
             stackTag = stackTag.copy(); //Because we don't actually want to add this data to the server side ItemStack
         }
@@ -237,12 +244,12 @@ public class SpellHoldingItem extends ShootableItem {
     }
 
     @Override
-    public void readShareTag(ItemStack stack, @Nullable CompoundNBT nbt) {
+    public void readShareTag(ItemStack stack, @Nullable CompoundTag nbt) {
         stack.setTag(nbt);
         if (nbt != null && nbt.contains("spellCap")) {
-            CompoundNBT capTags = nbt.getCompound("spellCap");
+            CompoundTag capTags = nbt.getCompound("spellCap");
             if (capTags.contains("spellHolder")) {
-                stack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP).ifPresent(spellHolder -> SpellHolderProvider.SPELL_HOLDER_CAP.readNBT(spellHolder, null, capTags.get("spellHolder")));
+                stack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP).ifPresent(spellHolder -> stack.deserializeNBT(nbt));
             }
         }
     }

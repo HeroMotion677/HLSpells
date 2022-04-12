@@ -1,7 +1,6 @@
 {
-  "credit": "Made with Blockbench",
-  "parent": "item/generated",
-  "textures": {
-    "layer0": "hlspells:items/wizard_hat"
-  }
+	"parent": "minecraft:item/generated",
+	"textures": {
+		"layer0": "hlspells:items/wizard_hat"
+	}
 }

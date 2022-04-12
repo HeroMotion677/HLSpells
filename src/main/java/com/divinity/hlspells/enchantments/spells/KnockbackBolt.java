@@ -5,15 +5,15 @@ import com.divinity.hlspells.enchantments.ISpell;
 import com.divinity.hlspells.init.ItemInit;
 import com.divinity.hlspells.init.SpellInit;
 import com.divinity.hlspells.util.SpellUtils;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentType;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentCategory;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.resources.ResourceLocation;
 
 public class KnockbackBolt extends Enchantment implements ISpell {
-    public KnockbackBolt(EquipmentSlotType... slots) {
-        super(Enchantment.Rarity.COMMON, EnchantmentType.BREAKABLE, slots);
+    public KnockbackBolt(EquipmentSlot... slots) {
+        super(Enchantment.Rarity.COMMON, EnchantmentCategory.BREAKABLE, slots);
     }
 
     @Override

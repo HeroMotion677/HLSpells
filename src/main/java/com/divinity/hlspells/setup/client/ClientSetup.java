@@ -14,34 +14,45 @@ import com.divinity.hlspells.renderers.BaseBoltRenderer;
 import com.divinity.hlspells.renderers.StormBoltRenderer;
 import com.divinity.hlspells.spell.Spell;
 import com.divinity.hlspells.util.SpellUtils;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.player.ClientPlayerEntity;
+import net.minecraft.client.model.EntityModel;
+import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.block.model.ItemTransforms;
+import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.VexRenderer;
-import net.minecraft.client.settings.KeyBinding;
-import net.minecraft.client.util.InputMappings;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemModelsProperties;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Hand;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.client.KeyMapping;
+import com.mojang.blaze3d.platform.InputConstants;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.core.Direction;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.*;
+import net.minecraft.client.renderer.item.ItemProperties;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.ChatFormatting;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.InputUpdateEvent;
+import net.minecraftforge.client.ClientRegistry;
+import net.minecraftforge.client.event.MovementInputUpdateEvent;
 import net.minecraftforge.client.settings.KeyConflictContext;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
-import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import org.lwjgl.glfw.GLFW;
+import top.theillusivec4.curios.api.SlotContext;
+import top.theillusivec4.curios.api.client.CuriosRendererRegistry;
+import top.theillusivec4.curios.api.client.ICurioRenderer;
 
 @Mod.EventBusSubscriber(modid = HLSpells.MODID, value = Dist.CLIENT)
 public class ClientSetup {
-    public static final KeyBinding WAND_BINDING = new KeyBinding("Wand Cycle", KeyConflictContext.UNIVERSAL, InputMappings.Type.KEYSYM, GLFW.GLFW_KEY_G, "HLSpells");
+    public static final KeyMapping WAND_BINDING = new KeyMapping("Wand Cycle", KeyConflictContext.UNIVERSAL, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_G, "HLSpells");
     static boolean buttonPressedFlag;
 
     public static void init(final FMLClientSetupEvent event) {
@@ -50,8 +61,8 @@ public class ClientSetup {
             registerItemModel(ItemInit.WAND.get(), new ResourceLocation("pull"), 3, 0.2F, 0.4F, 0.6F, 0.8F, 1F);
             registerItemModel(ItemInit.STAFF.get(), new ResourceLocation("pull"), 3, 0.2F, 0.4F, 0.6F, 0.8F, 1F);
         });
-        ItemModelsProperties.register(ItemInit.TOTEM_OF_RETURNING.get(), new ResourceLocation("used"), (stack, world, living) -> {
-            if (living instanceof PlayerEntity) {
+        ItemProperties.register(ItemInit.TOTEM_OF_RETURNING.get(), new ResourceLocation("used"), (stack, world, living, integer) -> {
+            if (living instanceof Player) {
                 LazyOptional<ITotemCap> totemCap = stack.getCapability(TotemItemProvider.TOTEM_CAP);
                 if (totemCap.isPresent()) {
                     return totemCap.map(ITotemCap::getHasDied).orElse(false) ? 1 : 0;
@@ -60,11 +71,28 @@ public class ClientSetup {
             return 0;
         });
         ClientRegistry.registerKeyBinding(WAND_BINDING);
-        RenderingRegistry.registerEntityRenderingHandler(EntityInit.INVISIBLE_TARGETING_ENTITY.get(), StormBoltRenderer::new);
-        RenderingRegistry.registerEntityRenderingHandler(EntityInit.PIERCING_BOLT_ENTITY.get(), manager -> new BaseBoltRenderer<>(manager, new ResourceLocation(HLSpells.MODID, "textures/entity/bolt/green_bolt.png")));
-        RenderingRegistry.registerEntityRenderingHandler(EntityInit.FLAMING_BOLT_ENTITY.get(), manager -> new BaseBoltRenderer<>(manager, new ResourceLocation(HLSpells.MODID, "textures/entity/bolt/orange_bolt.png")));
-        RenderingRegistry.registerEntityRenderingHandler(EntityInit.AQUA_BOLT_ENTITY.get(), manager -> new BaseBoltRenderer<>(manager, new ResourceLocation(HLSpells.MODID, "textures/entity/bolt/blue_bolt.png")));
-        RenderingRegistry.registerEntityRenderingHandler(EntityInit.SUMMONED_VEX_ENTITY.get(), VexRenderer::new);
+
+        // Curios Renderer Registration
+        ICurioRenderer renderer = new ICurioRenderer() {
+            @Override
+            public <T extends LivingEntity, M extends EntityModel<T>> void render(ItemStack stack, SlotContext slotContext, PoseStack matrixStack, RenderLayerParent<T, M> renderLayerParent, MultiBufferSource renderTypeBuffer, int light, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
+                LocalPlayer clientPlayer = Minecraft.getInstance().player;
+                if (clientPlayer != null) {
+                    ICurioRenderer.translateIfSneaking(matrixStack, clientPlayer);
+                    ICurioRenderer.rotateIfSneaking(matrixStack, clientPlayer);
+                }
+                matrixStack.scale(0.35F, 0.35F, 0.35F);
+                matrixStack.translate(0.0F, 0.5F, -0.4F);
+                matrixStack.mulPose(Direction.DOWN.getRotation());
+                Minecraft.getInstance().getItemRenderer()
+                        .renderStatic(stack, ItemTransforms.TransformType.NONE, light, OverlayTexture.NO_OVERLAY,
+                                matrixStack, renderTypeBuffer, 1);
+            }
+        };
+        CuriosRendererRegistry.register(ItemInit.TOTEM_OF_RETURNING.get(), () -> renderer);
+        CuriosRendererRegistry.register(ItemInit.TOTEM_OF_KEEPING.get(), () -> renderer);
+        CuriosRendererRegistry.register(ItemInit.TOTEM_OF_ESCAPING.get(), () -> renderer);
+        CuriosRendererRegistry.register(ItemInit.TOTEM_OF_GRIEFING.get(), () -> renderer);
     }
 
     /**
@@ -76,8 +104,8 @@ public class ClientSetup {
      * @param values                  The values to return for each model
      */
     private static void registerItemModel(Item item, ResourceLocation location, int useItemRemainTickOffset, float... values) {
-        ItemModelsProperties.register(item, location, (stack, world, living) -> {
-            if (living instanceof PlayerEntity && living.isUsingItem() && living.getUseItem() == stack) {
+        ItemProperties.register(item, location, (stack, world, living, integer) -> {
+            if (living instanceof Player && living.isUsingItem() && living.getUseItem() == stack) {
                 int useDuration = item.getUseDuration(item.getDefaultInstance());
                 int minUseAmount = useDuration - (useItemRemainTickOffset * (values.length - 1));
                 for (int i = 0; i < values.length; i++) {
@@ -94,7 +122,7 @@ public class ClientSetup {
     @SubscribeEvent
     public static void onClientTick(TickEvent.ClientTickEvent event) {
         if (event.phase == TickEvent.Phase.END) {
-            ClientPlayerEntity player = Minecraft.getInstance().player;
+            LocalPlayer player = Minecraft.getInstance().player;
             if (WAND_BINDING.isDown() && !buttonPressedFlag) {
                 if (player != null && !player.isUsingItem()) {
                     NetworkManager.INSTANCE.sendToServer(new WandInputPacket(WAND_BINDING.getKey().getValue()));
@@ -113,13 +141,14 @@ public class ClientSetup {
                             if (!cap.getSpells().isEmpty()) {
                                 cap.setCurrentSpellCycle(cap.getCurrentSpellCycle() + 1);
                                 Spell spell = SpellUtils.getSpellByID(cap.getCurrentSpell());
-                                player.displayClientMessage(new StringTextComponent("Spell : " + spell.getTrueDisplayName()).withStyle(TextFormatting.GOLD), true);
+                                player.displayClientMessage(new TextComponent("Spell : " + spell.getTrueDisplayName()).withStyle(ChatFormatting.GOLD), true);
                             }
                         });
                     }
                 }
                 buttonPressedFlag = true;
             }
+
             if (!WAND_BINDING.isDown() && buttonPressedFlag) {
                 buttonPressedFlag = false;
             }
@@ -131,9 +160,9 @@ public class ClientSetup {
      */
     @SubscribeEvent
     @SuppressWarnings("ConstantConditions")
-    public static void onInput(InputUpdateEvent event) {
-        ClientPlayerEntity player = (ClientPlayerEntity) event.getPlayer();
-        Hand hand = player.getUsedItemHand();
+    public static void onInput(MovementInputUpdateEvent event) {
+        LocalPlayer player = (LocalPlayer) event.getPlayer();
+        InteractionHand hand = player.getUsedItemHand();
         // Don't remove this even if it complaints it can't be null it can be null
         if (hand != null) {
             ItemStack stack = player.getItemInHand(hand);

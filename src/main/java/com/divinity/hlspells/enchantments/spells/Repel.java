@@ -5,11 +5,6 @@ import com.divinity.hlspells.enchantments.ISpell;
 import com.divinity.hlspells.init.ItemInit;
 import com.divinity.hlspells.init.SpellInit;
 import com.divinity.hlspells.util.SpellUtils;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentType;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
 
 /*
 public class Repel extends Enchantment implements ISpell {

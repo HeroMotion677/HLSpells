@@ -1,26 +1,26 @@
 package com.divinity.hlspells.items.capabilities.totemcap;
 
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.core.BlockPos;
 
 import javax.annotation.Nullable;
 
 public class TotemCap implements ITotemCap {
     private boolean hasDied;
-    private Hand hand;
-    private ListNBT playerInventoryNBT;
+    private InteractionHand hand;
+    private ListTag playerInventoryNBT;
     private BlockPos blockPos;
-    private ListNBT curiosNBT;
+    private ListTag curiosNBT;
     private int curiosSlot;
     private boolean curioDied;
 
     public TotemCap() {
         hasDied = false;
         hand = null;
-        playerInventoryNBT = new ListNBT();
+        playerInventoryNBT = new ListTag();
         blockPos = new BlockPos(0, 0, 0);
-        curiosNBT = new ListNBT();
+        curiosNBT = new ListTag();
         curiosSlot = 0;
     }
 
@@ -46,32 +46,32 @@ public class TotemCap implements ITotemCap {
 
     @Override
     @Nullable
-    public Hand getTotemInHand() {
+    public InteractionHand getTotemInHand() {
         return hand;
     }
 
     @Override
-    public void setTotemInHand(@Nullable Hand hand) {
+    public void setTotemInHand(@Nullable InteractionHand hand) {
         this.hand = hand;
     }
 
     @Override
-    public ListNBT getInventoryNBT() {
+    public ListTag getInventoryNBT() {
         return playerInventoryNBT;
     }
 
     @Override
-    public void setInventoryNBT(ListNBT playerInventory) {
+    public void setInventoryNBT(ListTag playerInventory) {
         this.playerInventoryNBT = playerInventory;
     }
 
     @Override
-    public ListNBT getCuriosNBT() {
+    public ListTag getCuriosNBT() {
         return curiosNBT;
     }
 
     @Override
-    public void setCuriosNBT(ListNBT curiosInv) {
+    public void setCuriosNBT(ListTag curiosInv) {
         this.curiosNBT = curiosInv;
     }
 

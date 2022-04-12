@@ -1,8 +1,8 @@
 package com.divinity.hlspells.items.capabilities.totemcap;
 
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.core.BlockPos;
 
 public interface ITotemCap {
 
@@ -14,17 +14,17 @@ public interface ITotemCap {
 
     void hasDied(boolean value);
 
-    Hand getTotemInHand();
+    InteractionHand getTotemInHand();
 
-    void setTotemInHand(Hand hand);
+    void setTotemInHand(InteractionHand hand);
 
-    ListNBT getInventoryNBT();
+    ListTag getInventoryNBT();
 
-    void setInventoryNBT(ListNBT playerInventory);
+    void setInventoryNBT(ListTag playerInventory);
 
-    ListNBT getCuriosNBT();
+    ListTag getCuriosNBT();
 
-    void setCuriosNBT(ListNBT curiosInv);
+    void setCuriosNBT(ListTag curiosInv);
 
     int getCuriosSlot();
 

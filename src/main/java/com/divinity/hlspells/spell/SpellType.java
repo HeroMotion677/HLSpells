@@ -1,19 +1,19 @@
 package com.divinity.hlspells.spell;
 
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.ChatFormatting;
 
 public enum SpellType {
-    CAST(TextFormatting.GRAY),
-    HELD(TextFormatting.GRAY),
-    CURSE(TextFormatting.RED);
+    CAST(ChatFormatting.GRAY),
+    HELD(ChatFormatting.GRAY),
+    CURSE(ChatFormatting.RED);
 
-    private final TextFormatting tooltipFormatting;
+    private final ChatFormatting tooltipFormatting;
 
-    SpellType(TextFormatting textFormatting) {
+    SpellType(ChatFormatting textFormatting) {
         this.tooltipFormatting = textFormatting;
     }
 
-    public TextFormatting getTooltipFormatting() {
+    public ChatFormatting getTooltipFormatting() {
         return this.tooltipFormatting;
     }
 }

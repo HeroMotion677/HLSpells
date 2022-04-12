@@ -1,9 +1,9 @@
 package com.divinity.hlspells.player.capability;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -15,8 +15,13 @@ public class PlayerCapHandler {
 
     @SubscribeEvent
     public static void onAttachCapabilities (AttachCapabilitiesEvent<Entity> event) {
-        if (event.getObject() instanceof PlayerEntity) {
+        if (event.getObject() instanceof Player && !event.getObject().getCapability(PlayerCapProvider.PLAYER_CAP).isPresent()) {
             event.addCapability(new ResourceLocation(MODID, "playereffectcap"), new PlayerCapProvider());
         }
+    }
+
+    @SubscribeEvent
+    public static void onRegisterCapabilities(RegisterCapabilitiesEvent event) {
+        event.register(IPlayerCap.class);
     }
 }

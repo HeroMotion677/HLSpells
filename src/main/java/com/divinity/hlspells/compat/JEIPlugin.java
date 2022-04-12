@@ -7,7 +7,7 @@ import com.divinity.hlspells.items.capabilities.spellholdercap.SpellHolderProvid
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.registration.ISubtypeRegistration;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 
 @JeiPlugin
 public class JEIPlugin implements IModPlugin {

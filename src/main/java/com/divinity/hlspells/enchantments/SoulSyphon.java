@@ -1,16 +1,18 @@
 package com.divinity.hlspells.enchantments;
 
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentType;
-import net.minecraft.enchantment.Enchantments;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.AxeItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.SwordItem;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentCategory;
+import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.AxeItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.SwordItem;
+
+import net.minecraft.world.item.enchantment.Enchantment.Rarity;
 
 public class SoulSyphon extends Enchantment {
-    public SoulSyphon(EquipmentSlotType... slots) {
-        super(Rarity.VERY_RARE, EnchantmentType.WEAPON, slots);
+    public SoulSyphon(EquipmentSlot... slots) {
+        super(Rarity.VERY_RARE, EnchantmentCategory.WEAPON, slots);
     }
 
     @Override

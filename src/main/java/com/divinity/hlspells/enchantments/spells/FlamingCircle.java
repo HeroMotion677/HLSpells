@@ -5,15 +5,17 @@ import com.divinity.hlspells.enchantments.ISpell;
 import com.divinity.hlspells.init.ItemInit;
 import com.divinity.hlspells.init.SpellInit;
 import com.divinity.hlspells.util.SpellUtils;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentType;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentCategory;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.resources.ResourceLocation;
+
+import net.minecraft.world.item.enchantment.Enchantment.Rarity;
 
 public class FlamingCircle extends Enchantment implements ISpell {
-    public FlamingCircle(EquipmentSlotType... slots) {
-        super(Rarity.RARE, EnchantmentType.BREAKABLE, slots);
+    public FlamingCircle(EquipmentSlot... slots) {
+        super(Rarity.RARE, EnchantmentCategory.BREAKABLE, slots);
     }
 
     @Override

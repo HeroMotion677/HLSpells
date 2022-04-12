@@ -1,5 +1,7 @@
 package com.divinity.hlspells.items.capabilities.spellholdercap;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 
 public interface ISpellHolder {
@@ -18,7 +20,7 @@ public interface ISpellHolder {
 
     void setCurrentSpellCycle(int currentSpellCycle);
 
-    String getCurrentSpell();
+    @NotNull String getCurrentSpell();
 
     boolean isHeldActive();
 

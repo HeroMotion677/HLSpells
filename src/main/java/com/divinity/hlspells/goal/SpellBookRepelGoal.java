@@ -4,17 +4,6 @@ import com.divinity.hlspells.init.SpellInit;
 import com.divinity.hlspells.items.SpellHoldingItem;
 import com.divinity.hlspells.items.capabilities.spellholdercap.SpellHolderProvider;
 import com.divinity.hlspells.util.SpellUtils;
-import net.minecraft.entity.EntityPredicate;
-import net.minecraft.entity.MobEntity;
-import net.minecraft.entity.ai.goal.Goal;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.pathfinding.*;
-import net.minecraft.tags.FluidTags;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Vector3d;
 
 import javax.annotation.Nullable;
 import java.util.EnumSet;

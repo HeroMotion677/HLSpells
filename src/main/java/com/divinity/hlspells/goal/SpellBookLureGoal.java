@@ -4,23 +4,24 @@ import com.divinity.hlspells.init.SpellInit;
 import com.divinity.hlspells.items.SpellHoldingItem;
 import com.divinity.hlspells.items.capabilities.spellholdercap.SpellHolderProvider;
 import com.divinity.hlspells.util.SpellUtils;
-import net.minecraft.entity.EntityPredicate;
-import net.minecraft.entity.MobEntity;
-import net.minecraft.entity.ai.goal.Goal;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.pathfinding.FlyingPathNavigator;
-import net.minecraft.pathfinding.GroundPathNavigator;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.targeting.TargetingConditions;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.entity.ai.navigation.FlyingPathNavigation;
+import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.EnumSet;
 
 public class SpellBookLureGoal extends Goal {
     public static final double LURE_RANGE = 20.0D;
-    private static final EntityPredicate TEMP_TARGETING = (new EntityPredicate()).range(LURE_RANGE).allowInvulnerable().allowSameTeam().allowNonAttackable().allowUnseeable();
-    private final MobEntity entity;
+    private static final TargetingConditions TEMP_TARGETING = (new TargetingConditions(true)).range(LURE_RANGE).ignoreInvisibilityTesting();
+    private final Mob entity;
     private final double speedModifier;
-    private PlayerEntity player;
+    private Player player;
     private double pRotX;
     private double pRotY;
     private double px;
@@ -28,7 +29,7 @@ public class SpellBookLureGoal extends Goal {
     private double pz;
     private boolean isRunning;
 
-    public SpellBookLureGoal(MobEntity entity, double speedModifier) {
+    public SpellBookLureGoal(Mob entity, double speedModifier) {
         this.entity = entity;
         this.speedModifier = speedModifier;
         this.setFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
@@ -36,7 +37,7 @@ public class SpellBookLureGoal extends Goal {
 
     @Override
     public boolean canUse() {
-        if (entity.getNavigation() instanceof GroundPathNavigator || entity.getNavigation() instanceof FlyingPathNavigator) {
+        if (entity.getNavigation() instanceof GroundPathNavigation || entity.getNavigation() instanceof FlyingPathNavigation) {
             this.player = this.entity.level.getNearestPlayer(TEMP_TARGETING, this.entity);
             return player != null && player.isUsingItem() && this.canFollowItem(player, player.getItemInHand(player.getUsedItemHand())) && this.entity.distanceTo(player) >= 1;
         }
@@ -89,7 +90,7 @@ public class SpellBookLureGoal extends Goal {
         }
     }
 
-    private boolean canFollowItem(PlayerEntity player, ItemStack stack) {
+    private boolean canFollowItem(Player player, ItemStack stack) {
         boolean[] canDo = new boolean[2];
         if (stack.getItem() instanceof SpellHoldingItem) {
             stack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP, null).ifPresent(cap -> {

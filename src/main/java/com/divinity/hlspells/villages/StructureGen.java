@@ -1,12 +1,12 @@
 package com.divinity.hlspells.villages;
 
 import com.divinity.hlspells.HLSpells;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.registry.DynamicRegistries;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.world.gen.feature.jigsaw.JigsawPattern;
-import net.minecraft.world.gen.feature.jigsaw.JigsawPiece;
-import net.minecraft.world.gen.feature.jigsaw.LegacySingleJigsawPiece;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.Registry;
+import net.minecraft.world.level.levelgen.structure.pools.LegacySinglePoolElement;
+import net.minecraft.world.level.levelgen.structure.pools.StructurePoolElement;
+import net.minecraft.world.level.levelgen.structure.pools.StructureTemplatePool;
 import net.minecraftforge.fml.common.Mod;
 
 import java.util.ArrayList;
@@ -17,7 +17,7 @@ public class StructureGen {
 
     private static final ResourceLocation mainMageHouse = new ResourceLocation(HLSpells.MODID, "villages/mage_house_plains");
 
-    public static void setupVillageWorldGen(DynamicRegistries dynamicRegistries) {
+    public static void setupVillageWorldGen(RegistryAccess dynamicRegistries) {
         // Add Houses to Vanilla Villages.
         addMageHouseToVillageConfig(dynamicRegistries, "village/plains/houses", mainMageHouse, 4);
         addMageHouseToVillageConfig(dynamicRegistries, "village/savanna/houses", new ResourceLocation(HLSpells.MODID, "villages/mage_house_savanna"), 4);
@@ -35,12 +35,12 @@ public class StructureGen {
         addMageHouseToVillageConfig(dynamicRegistries, "repurposed_structures:village/swamp/houses", mainMageHouse, 4);
     }
 
-    private static void addMageHouseToVillageConfig(DynamicRegistries dynamicRegistries, String villagePiece, ResourceLocation newHouseRL, int weight) {
-        LegacySingleJigsawPiece piece = JigsawPiece.legacy(newHouseRL.toString()).apply(JigsawPattern.PlacementBehaviour.RIGID);
-        JigsawPattern pool = dynamicRegistries.registryOrThrow(Registry.TEMPLATE_POOL_REGISTRY).getOptional(new ResourceLocation(villagePiece)).orElse(null);
+    private static void addMageHouseToVillageConfig(RegistryAccess dynamicRegistries, String villagePiece, ResourceLocation newHouseRL, int weight) {
+        LegacySinglePoolElement piece = StructurePoolElement.legacy(newHouseRL.toString()).apply(StructureTemplatePool.Projection.RIGID);
+        StructureTemplatePool pool = dynamicRegistries.registryOrThrow(Registry.TEMPLATE_POOL_REGISTRY).getOptional(new ResourceLocation(villagePiece)).orElse(null);
         if (pool != null) {
             // Pretty sure this can be an immutable list (when datapacked) so gotta make a copy to be safe.
-            List<JigsawPiece> listOfPieces = new ArrayList<>(pool.templates);
+            List<StructurePoolElement> listOfPieces = new ArrayList<>(pool.templates);
             for (int i = 0; i < weight; i++) {
                 listOfPieces.add(piece);
             }

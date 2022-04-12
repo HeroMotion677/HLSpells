@@ -3,11 +3,11 @@ package com.divinity.hlspells.loot;
 import com.divinity.hlspells.init.ItemInit;
 import com.google.common.collect.Lists;
 import com.google.gson.JsonObject;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.loot.LootContext;
-import net.minecraft.loot.conditions.ILootCondition;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
 import net.minecraftforge.common.loot.LootModifier;
 
@@ -16,7 +16,7 @@ import java.util.List;
 
 public class EvokerLootModifier extends LootModifier {
 
-    protected EvokerLootModifier(ILootCondition[] conditionsIn) {
+    protected EvokerLootModifier(LootItemCondition[] conditionsIn) {
         super(conditionsIn);
     }
 
@@ -34,7 +34,7 @@ public class EvokerLootModifier extends LootModifier {
 
     public static class Serializer extends GlobalLootModifierSerializer<EvokerLootModifier> {
         @Override
-        public EvokerLootModifier read(ResourceLocation location, JsonObject object, ILootCondition[] conditions) {
+        public EvokerLootModifier read(ResourceLocation location, JsonObject object, LootItemCondition[] conditions) {
             return new EvokerLootModifier(conditions);
         }
 

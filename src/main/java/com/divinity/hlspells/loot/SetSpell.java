@@ -4,20 +4,20 @@ import com.divinity.hlspells.items.capabilities.spellholdercap.SpellHolderProvid
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
-import net.minecraft.item.ItemStack;
-import net.minecraft.loot.LootContext;
-import net.minecraft.loot.LootFunction;
-import net.minecraft.loot.LootFunctionType;
-import net.minecraft.loot.conditions.ILootCondition;
-import net.minecraft.util.JSONUtils;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.functions.LootItemConditionalFunction;
+import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
+import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
+import net.minecraft.util.GsonHelper;
 
 /**
  * Sets the spell for the given stack
  */
-public class SetSpell extends LootFunction {
+public class SetSpell extends LootItemConditionalFunction {
     private final String spell;
 
-    private SetSpell(ILootCondition[] conditions, String spell) {
+    private SetSpell(LootItemCondition[] conditions, String spell) {
         super(conditions);
         this.spell = spell;
     }
@@ -29,11 +29,11 @@ public class SetSpell extends LootFunction {
     }
 
     @Override
-    public LootFunctionType getType() {
-        return LootTableHandler.SET_SPELL;
+    public LootItemFunctionType getType() {
+        return EventLoot.SET_SPELL;
     }
 
-    public static class Serializer extends LootFunction.Serializer<SetSpell> {
+    public static class Serializer extends LootItemConditionalFunction.Serializer<SetSpell> {
         @Override
         public void serialize(JsonObject object, SetSpell setSpell, JsonSerializationContext context) {
             super.serialize(object, setSpell, context);
@@ -41,8 +41,8 @@ public class SetSpell extends LootFunction {
         }
 
         @Override
-        public SetSpell deserialize(JsonObject pObject, JsonDeserializationContext pDeserializationContext, ILootCondition[] pConditions) {
-            String spell = JSONUtils.getAsString(pObject, "spell");
+        public SetSpell deserialize(JsonObject pObject, JsonDeserializationContext pDeserializationContext, LootItemCondition[] pConditions) {
+            String spell = GsonHelper.getAsString(pObject, "spell");
             return new SetSpell(pConditions, spell);
         }
     }

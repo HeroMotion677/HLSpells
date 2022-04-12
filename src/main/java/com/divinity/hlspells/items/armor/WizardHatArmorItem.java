@@ -1,13 +1,13 @@
 package com.divinity.hlspells.items.armor;
 
 import com.divinity.hlspells.models.WizardHatModel;
-import net.minecraft.client.renderer.entity.model.BipedModel;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ArmorItem;
-import net.minecraft.item.IArmorMaterial;
-import net.minecraft.item.ItemStack;
+import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.ArmorMaterial;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -15,22 +15,17 @@ import javax.annotation.Nullable;
 
 import static com.divinity.hlspells.HLSpells.MODID;
 
+import net.minecraft.world.item.Item.Properties;
+
 public class WizardHatArmorItem extends ArmorItem {
-    public WizardHatArmorItem(IArmorMaterial material, EquipmentSlotType type, Properties properties) {
+    public WizardHatArmorItem(ArmorMaterial material, EquipmentSlot type, Properties properties) {
         super(material, type, properties);
     }
 
     @Nullable
     @Override
-    public String getArmorTexture(ItemStack stack, Entity entity, EquipmentSlotType slot, String type) {
+    public String getArmorTexture(ItemStack stack, Entity entity, EquipmentSlot slot, String type) {
         return MODID  + ":" + "textures/armor/wizard_hat.png";
     }
 
-    @SuppressWarnings("unchecked")
-    @Nullable
-    @Override
-    @OnlyIn(Dist.CLIENT)
-    public <A extends BipedModel<?>> A getArmorModel(LivingEntity entityLiving, ItemStack itemStack, EquipmentSlotType armorSlot, A defaultModel) {
-        return armorSlot == EquipmentSlotType.HEAD ? (A) new WizardHatModel(1.0F) : super.getArmorModel(entityLiving, itemStack, armorSlot, defaultModel);
-    }
 }

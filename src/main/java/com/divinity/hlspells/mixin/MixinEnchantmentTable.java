@@ -5,12 +5,12 @@ import com.divinity.hlspells.init.ItemInit;
 import com.divinity.hlspells.items.capabilities.spellholdercap.SpellHolderProvider;
 import com.divinity.hlspells.spell.Spell;
 import com.divinity.hlspells.util.SpellUtils;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.container.EnchantmentContainer;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.Container;
+import net.minecraft.world.inventory.EnchantmentMenu;
+import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -21,17 +21,17 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.Map;
 
 
-@Mixin(EnchantmentContainer.class)
+@Mixin(EnchantmentMenu.class)
 public class MixinEnchantmentTable {
     @Shadow
     @Final
-    private IInventory enchantSlots;
+    private Container enchantSlots;
 
     /**
      * Converts spell enchants to SpellBookObject NBT
      */
-    @Inject(method = "clickMenuButton(Lnet/minecraft/entity/player/PlayerEntity;I)Z", at = @At("TAIL"), cancellable = true)
-    public void clickMenuButton(PlayerEntity player, int value, CallbackInfoReturnable<Boolean> cir) {
+    @Inject(method = "clickMenuButton(Lnet/minecraft/world/entity/player/Player;I)Z", at = @At("TAIL"), cancellable = true)
+    public void clickMenuButton(Player player, int value, CallbackInfoReturnable<Boolean> cir) {
         ItemStack stack = enchantSlots.getItem(0);
         if (stack.getItem() == ItemInit.SPELL_BOOK.get() && !player.level.isClientSide()) {
             Map<Enchantment, Integer> enchantmentMap = EnchantmentHelper.getEnchantments(stack);
@@ -40,7 +40,7 @@ public class MixinEnchantmentTable {
                 if (enchantment instanceof ISpell) {
                     Spell spell = SpellUtils.getSpellByID(((ISpell) enchantment).getSpellRegistryName());
                     stack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP).ifPresent(cap -> {
-                        cap.addSpell(spell.getRegistryName().toString());
+                        cap.addSpell(spell.getRegistryName() != null ? spell.getRegistryName().toString() : "");
                         // By default empty spell is added to the empty spell book in creative inventory
                     });
                     stack.getEnchantmentTags().remove(!stack.getEnchantmentTags().isEmpty() ? stack.getEnchantmentTags().size() - 1 : 0);

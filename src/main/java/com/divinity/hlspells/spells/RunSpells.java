@@ -6,20 +6,21 @@ import com.divinity.hlspells.items.capabilities.spellholdercap.SpellHolderProvid
 import com.divinity.hlspells.spell.Spell;
 import com.divinity.hlspells.spell.SpellType;
 import com.divinity.hlspells.util.SpellUtils;
-import net.minecraft.enchantment.*;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.EnchantedBookItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.EnchantedBookItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 import java.util.Random;
+
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.Enchantments;
 
 /**
  * This class is responsible for firing spell actions
@@ -29,8 +30,8 @@ public class RunSpells {
     static int xpTickCounter;
     static int durabilityTickCounter;
 
-    public static void doCastSpell(PlayerEntity player, World world, ItemStack itemStack) {
-        if (itemStack.getItem() instanceof SpellHoldingItem) {
+    public static void doCastSpell(Player player, Level world, ItemStack itemStack) {
+        if (itemStack.getItem() instanceof SpellHoldingItem && player != null && world != null) {
             itemStack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP)
                     .filter(cap -> !cap.getSpells().isEmpty())
                     .ifPresent(cap -> {
@@ -38,7 +39,7 @@ public class RunSpells {
                         if (spell.getType() == SpellType.CAST && spell.hasCost() && SpellUtils.checkXpReq(player, spell)) {
                             if (spell.getSpellAction().test(player, world)) {
                                 if (!player.level.isClientSide() && !player.isCreative())
-                                    itemStack.hurt(getSpellHoldingItemCalculation(itemStack), player.getRandom(), (ServerPlayerEntity) player);
+                                    itemStack.hurt(getSpellHoldingItemCalculation(itemStack), player.getRandom(), (ServerPlayer) player);
                                 if (HLSpells.CONFIG.spellsUseXP.get() && !player.isCreative())
                                     player.giveExperiencePoints(-SpellUtils.getXpReq(player, spell));
                             }
@@ -50,11 +51,11 @@ public class RunSpells {
     @SubscribeEvent
     public static void doHeldSpell(TickEvent.PlayerTickEvent event) {
         if (event.player.isAlive()) {
-            PlayerEntity player = event.player;
-            Hand hand = player.getUsedItemHand();
-            if (hand == Hand.MAIN_HAND || hand == Hand.OFF_HAND) {
+            Player player = event.player;
+            InteractionHand hand = player.getUsedItemHand();
+            if (hand == InteractionHand.MAIN_HAND || hand == InteractionHand.OFF_HAND) {
                 ItemStack stack = player.getItemInHand(hand);
-                if (stack.getItem() instanceof SpellHoldingItem && player.isUsingItem()) {
+                if (stack.getItem() instanceof SpellHoldingItem && player != null && player.level != null && player.isUsingItem()) {
                     stack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP)
                             .filter(cap -> !cap.getSpells().isEmpty())
                             .ifPresent(cap -> {
@@ -69,7 +70,7 @@ public class RunSpells {
                                                 xpTickCounter = 0;
                                             }
                                             if (durabilityTickCounter == 15 && !player.level.isClientSide() && !player.isCreative()) {
-                                                stack.hurt(getSpellHoldingItemCalculation(stack), player.getRandom(), (ServerPlayerEntity) player);
+                                                stack.hurt(getSpellHoldingItemCalculation(stack), player.getRandom(), (ServerPlayer) player);
                                                 durabilityTickCounter = 0;
                                             }
                                         }
@@ -113,7 +114,7 @@ public class RunSpells {
         return random <= (level - 1) ? 0 : 1;
     }
 
-    public static void reset(PlayerEntity player) {
+    public static void reset(Player player) {
         xpTickCounter = 0;
         durabilityTickCounter = 0;
         SpellActions.resetEffects(player);

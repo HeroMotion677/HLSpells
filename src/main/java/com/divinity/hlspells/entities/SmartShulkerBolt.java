@@ -1,89 +1,37 @@
 package com.divinity.hlspells.entities;
 
 import com.google.common.collect.Lists;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.projectile.ProjectileHelper;
-import net.minecraft.entity.projectile.ShulkerBulletEntity;
-import net.minecraft.network.IPacket;
-import net.minecraft.particles.ParticleTypes;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.EntityRayTraceResult;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
-import net.minecraftforge.fml.network.NetworkHooks;
+import net.minecraft.core.Vec3i;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.ProjectileUtil;
+import net.minecraft.world.entity.projectile.ShulkerBullet;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.core.Direction;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.util.Mth;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.Level;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraftforge.network.NetworkHooks;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class SmartShulkerBolt extends ShulkerBulletEntity {
+public class SmartShulkerBolt extends ShulkerBullet {
 
-    public SmartShulkerBolt(World world, LivingEntity entity, Entity targetEntity, Direction.Axis direction) {
+    public SmartShulkerBolt(Level world, LivingEntity entity, Entity targetEntity, Direction.Axis direction) {
         super(world, entity, targetEntity, direction);
     }
 
     @Override
     public void tick() {
-        if (!this.level.isClientSide) {
-            if (this.finalTarget == null && this.targetId != null) {
-                this.finalTarget = ((ServerWorld) this.level).getEntity(this.targetId);
-                if (this.finalTarget == null) {
-                    this.targetId = null;
-                }
-            }
-
-            if (this.finalTarget == null || !this.finalTarget.isAlive() || this.finalTarget instanceof PlayerEntity && this.finalTarget.isSpectator()) {
-                if (!this.isNoGravity()) {
-                    this.setDeltaMovement(this.getDeltaMovement().add(0.0D, -0.04D, 0.0D));
-                }
-            } else {
-                this.targetDeltaX = MathHelper.clamp(this.targetDeltaX * 1.025D, -1.0D, 1.0D);
-                this.targetDeltaY = MathHelper.clamp(this.targetDeltaY * 1.025D, -1.0D, 1.0D);
-                this.targetDeltaZ = MathHelper.clamp(this.targetDeltaZ * 1.025D, -1.0D, 1.0D);
-                Vector3d vector3d = this.getDeltaMovement();
-                this.setDeltaMovement(vector3d.add((this.targetDeltaX - vector3d.x) * 0.5, (this.targetDeltaY - vector3d.y) * 0.5, (this.targetDeltaZ - vector3d.z) * 0.5));
-            }
-
-            RayTraceResult raytraceresult = ProjectileHelper.getHitResult(this, this::canHitEntity);
-            if (raytraceresult.getType() != RayTraceResult.Type.MISS && !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, raytraceresult)) {
-                this.onHit(raytraceresult);
-            }
-        }
-
-        this.checkInsideBlocks();
-        Vector3d vector3d1 = this.getDeltaMovement();
-        this.setPos(this.getX() + vector3d1.x, this.getY() + vector3d1.y, this.getZ() + vector3d1.z);
-        ProjectileHelper.rotateTowardsMovement(this, 0.5F);
-
-        if (this.level.isClientSide) {
-            this.level.addParticle(ParticleTypes.HAPPY_VILLAGER, this.getX() - vector3d1.x, this.getY() - vector3d1.y + 0.15D, this.getZ() - vector3d1.z, 0.0D, 0.0D, 0.0D);
-        } else if (this.finalTarget != null && !this.finalTarget.removed) {
-            if (this.flightSteps > 0) {
-                --this.flightSteps;
-                if (this.flightSteps == 0) {
-                    this.selectNextMoveDirection(this.currentMoveDirection == null ? null : this.currentMoveDirection.getAxis());
-                }
-            }
-
-            if (this.currentMoveDirection != null) {
-                BlockPos blockpos = this.blockPosition();
-                Direction.Axis axis = this.currentMoveDirection.getAxis();
-                if (this.level.loadedAndEntityCanStandOn(blockpos.relative(this.currentMoveDirection), this)) {
-                    this.selectNextMoveDirection(axis);
-                } else {
-                    BlockPos blockpos1 = this.finalTarget.blockPosition();
-                    if (axis == Direction.Axis.X && blockpos.getX() == blockpos1.getX() || axis == Direction.Axis.Z && blockpos.getZ() == blockpos1.getZ() || axis == Direction.Axis.Y && blockpos.getY() == blockpos1.getY()) {
-                        this.selectNextMoveDirection(axis);
-                    }
-                }
-            }
-        }
+        super.tick();
     }
 
     @Override
@@ -101,7 +49,7 @@ public class SmartShulkerBolt extends ShulkerBulletEntity {
         double d2 = blockpos.getY() + d0;
         double d3 = blockpos.getZ() + 0.5D;
         Direction direction = null;
-        if (!blockpos.closerThan(this.position(), 2.0D)) {
+        if (!blockpos.closerToCenterThan(this.position(), 2.0D)) {
             BlockPos blockpos1 = this.blockPosition();
             List<Direction> list = Lists.newArrayList();
             if (axis != Direction.Axis.X) {
@@ -146,7 +94,7 @@ public class SmartShulkerBolt extends ShulkerBulletEntity {
         double d6 = d1 - this.getX();
         double d7 = d2 - this.getY();
         double d4 = d3 - this.getZ();
-        double d5 = MathHelper.sqrt(d6 * d6 + d7 * d7 + d4 * d4);
+        double d5 = Math.sqrt(d6 * d6 + d7 * d7 + d4 * d4);
 
         if (d5 == 0.0D) {
             this.targetDeltaX = 0.0D;
@@ -163,12 +111,12 @@ public class SmartShulkerBolt extends ShulkerBulletEntity {
     }
 
     @Override
-    public IPacket<?> getAddEntityPacket() {
+    public Packet<?> getAddEntityPacket() {
         return NetworkHooks.getEntitySpawningPacket(this);
     }
 
     @Override
-    protected void onHitEntity(EntityRayTraceResult result) {
+    protected void onHitEntity(EntityHitResult result) {
         Entity entity = result.getEntity();
         Entity entity1 = this.getOwner();
         LivingEntity livingentity = entity1 instanceof LivingEntity ? (LivingEntity) entity1 : null;
@@ -178,8 +126,9 @@ public class SmartShulkerBolt extends ShulkerBulletEntity {
         }
         boolean flag = entity.hurt(DamageSource.indirectMobAttack(this, livingentity).setProjectile(), 8.0F);
         if (flag) {
-            this.doEnchantDamageEffects(livingentity, entity);
-            this.remove();
+            if (livingentity != null)
+                this.doEnchantDamageEffects(livingentity, entity);
+            this.remove(RemovalReason.KILLED);
         }
     }
 }

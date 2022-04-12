@@ -1,13 +1,15 @@
 package com.divinity.hlspells.enchantments;
 
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentType;
-import net.minecraft.enchantment.Enchantments;
-import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentCategory;
+import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.entity.EquipmentSlot;
+
+import net.minecraft.world.item.enchantment.Enchantment.Rarity;
 
 public class SoulBond extends Enchantment {
-    public SoulBond(EquipmentSlotType... slots) {
-        super(Rarity.VERY_RARE, EnchantmentType.BREAKABLE, slots);
+    public SoulBond(EquipmentSlot... slots) {
+        super(Rarity.VERY_RARE, EnchantmentCategory.BREAKABLE, slots);
     }
 
     @Override

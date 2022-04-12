@@ -1,15 +1,12 @@
 package com.divinity.hlspells.enchantments;
 
 import com.divinity.hlspells.init.EnchantmentInit;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.enchantment.EnchantmentType;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ArmorItem;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.EnchantmentCategory;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
@@ -19,11 +16,13 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 import static com.divinity.hlspells.HLSpells.MODID;
 
+import net.minecraft.world.item.enchantment.Enchantment.Rarity;
+
 @Mod.EventBusSubscriber(modid = MODID)
 public class SinkingCurse extends Enchantment
 {
-    public SinkingCurse(EquipmentSlotType... slots) {
-        super(Rarity.UNCOMMON, EnchantmentType.ARMOR, slots);
+    public SinkingCurse(EquipmentSlot... slots) {
+        super(Rarity.UNCOMMON, EnchantmentCategory.ARMOR, slots);
     }
 
     @SubscribeEvent
@@ -33,7 +32,7 @@ public class SinkingCurse extends Enchantment
             for (ItemStack stack : entity.getArmorSlots())  {
                 if (EnchantmentHelper.getItemEnchantmentLevel(EnchantmentInit.CURSE_OF_SINKING.get(), stack) > 0) {
                     // FluidOnEyes check whether the player is currently in a liquid. If no liquids are found, the value is null
-                    if (entity.fluidOnEyes != null && entity.getDeltaMovement().y() > -0.2D) {
+                    if (entity.isUnderWater() && entity.getDeltaMovement().y() > -0.2D) {
                         entity.setDeltaMovement(entity.getDeltaMovement().add(0, -0.2D, 0));
                     }
                 }

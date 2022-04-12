@@ -2,10 +2,10 @@ package com.divinity.hlspells.network.packets;
 
 import com.divinity.hlspells.items.SpellHoldingItem;
 import com.divinity.hlspells.items.capabilities.spellholdercap.SpellHolderProvider;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
@@ -17,18 +17,18 @@ public class WandInputPacket {
         this.key = key;
     }
 
-    public static void encode(WandInputPacket message, PacketBuffer buffer) {
+    public static void encode(WandInputPacket message, FriendlyByteBuf buffer) {
         buffer.writeInt(message.key);
     }
 
-    public static WandInputPacket decode(PacketBuffer buffer) {
+    public static WandInputPacket decode(FriendlyByteBuf buffer) {
         return new WandInputPacket(buffer.readInt());
     }
 
     public void handle(Supplier<NetworkEvent.Context> contextSupplier) {
         NetworkEvent.Context context = contextSupplier.get();
         context.enqueueWork(() -> {
-            ServerPlayerEntity player = context.getSender();
+            ServerPlayer player = context.getSender();
             if (player != null) {
                 ItemStack mainHandStack = player.getMainHandItem();
                 ItemStack offHandStack = player.getOffhandItem();

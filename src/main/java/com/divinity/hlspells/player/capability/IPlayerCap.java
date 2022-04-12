@@ -1,7 +1,7 @@
 package com.divinity.hlspells.player.capability;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.potion.Effect;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.effect.MobEffect;
 
 import javax.annotation.Nullable;
 import java.util.Map;
@@ -9,9 +9,9 @@ import java.util.Map;
 public interface IPlayerCap {
 
     @Nullable
-    Effect getEffect();
+    MobEffect getEffect();
 
-    void setEffect(@Nullable Effect effect);
+    void setEffect(@Nullable MobEffect effect);
 
     int getEffectDuration();
 

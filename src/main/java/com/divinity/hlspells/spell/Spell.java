@@ -1,11 +1,11 @@
 package com.divinity.hlspells.spell;
 
 import com.divinity.hlspells.init.SpellInit;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.Util;
-import net.minecraft.util.text.TextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.Util;
+import net.minecraft.network.chat.BaseComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 
 import javax.annotation.Nullable;
@@ -14,7 +14,7 @@ import java.util.function.Predicate;
 
 public class Spell extends ForgeRegistryEntry<Spell> {
     private final SpellType spellType;
-    private final BiPredicate<PlayerEntity, World> spellAction;
+    private final BiPredicate<Player, Level> spellAction;
     private final String displayName;
     private int xpCost;
     private int tickDelay;
@@ -22,20 +22,20 @@ public class Spell extends ForgeRegistryEntry<Spell> {
     @Nullable
     private String descriptionId;
 
-    public Spell(SpellType spellType, BiPredicate<PlayerEntity, World> spellAction, String displayName) {
+    public Spell(SpellType spellType, BiPredicate<Player, Level> spellAction, String displayName) {
         this.spellType = spellType;
         this.spellAction = spellAction;
         this.displayName = displayName;
     }
 
-    public Spell(SpellType spellType, BiPredicate<PlayerEntity, World> spellAction, String displayName, int xpCost) {
+    public Spell(SpellType spellType, BiPredicate<Player, Level> spellAction, String displayName, int xpCost) {
         this.spellType = spellType;
         this.spellAction = spellAction;
         this.displayName = displayName;
         this.xpCost = xpCost;
     }
 
-    public Spell(SpellType spellType, BiPredicate<PlayerEntity, World> spellAction, String displayName, int xpCost, int tickDelay) {
+    public Spell(SpellType spellType, BiPredicate<Player, Level> spellAction, String displayName, int xpCost, int tickDelay) {
         this.spellType = spellType;
         this.spellAction = spellAction;
         this.displayName = displayName;
@@ -74,15 +74,15 @@ public class Spell extends ForgeRegistryEntry<Spell> {
         return this.getOrCreateDescriptionId();
     }
 
-    public TextComponent getDisplayName() {
-        return new TranslationTextComponent(this.getDescriptionId());
+    public BaseComponent getDisplayName() {
+        return new TranslatableComponent(this.getDescriptionId());
     }
 
     public SpellType getType() {
         return this.spellType;
     }
 
-    public BiPredicate<PlayerEntity, World> getSpellAction() {
+    public BiPredicate<Player, Level> getSpellAction() {
         return spellAction;
     }
 

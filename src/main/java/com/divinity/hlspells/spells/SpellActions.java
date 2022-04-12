@@ -7,46 +7,40 @@ import com.divinity.hlspells.init.BlockInit;
 import com.divinity.hlspells.init.EntityInit;
 import com.divinity.hlspells.player.capability.PlayerCapProvider;
 import com.divinity.hlspells.util.Util;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.IWaterLoggable;
-import net.minecraft.block.material.Material;
-import net.minecraft.entity.*;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
-import net.minecraft.entity.ai.attributes.Attributes;
-import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
-import net.minecraft.entity.ai.goal.NearestAttackableTargetExpiringGoal;
-import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
-import net.minecraft.entity.effect.LightningBoltEntity;
-import net.minecraft.entity.monster.ZombieEntity;
-import net.minecraft.entity.passive.TameableEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.projectile.ArrowEntity;
-import net.minecraft.entity.projectile.EvokerFangsEntity;
-import net.minecraft.entity.projectile.FireballEntity;
-import net.minecraft.entity.projectile.ShulkerBulletEntity;
-import net.minecraft.fluid.FluidState;
-import net.minecraft.fluid.Fluids;
-import net.minecraft.network.IPacket;
-import net.minecraft.particles.BasicParticleType;
-import net.minecraft.particles.ParticleTypes;
-import net.minecraft.potion.Effect;
-import net.minecraft.potion.EffectInstance;
-import net.minecraft.potion.Effects;
-import net.minecraft.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.SimpleWaterloggedBlock;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.LightningBolt;
+import net.minecraft.world.entity.TamableAnimal;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.Arrow;
+import net.minecraft.world.entity.projectile.EvokerFangs;
+import net.minecraft.world.entity.projectile.LargeFireball;
+import net.minecraft.world.entity.projectile.ShulkerBullet;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.material.Fluids;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.core.particles.SimpleParticleType;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.tags.FluidTags;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.Direction;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.*;
-import net.minecraft.util.math.shapes.ISelectionContext;
-import net.minecraft.util.math.shapes.VoxelShape;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.core.Direction;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.Level;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.network.NetworkHooks;
 
 import javax.annotation.Nullable;
 import java.util.Comparator;
@@ -56,14 +50,27 @@ import java.util.stream.Collectors;
 
 import static com.divinity.hlspells.goal.SpellBookLureGoal.LURE_RANGE;
 
+import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.HitResult;
+import net.minecraftforge.network.NetworkHooks;
+
 /**
  * This class is responsible for doing specific spell actions
  */
 @Mod.EventBusSubscriber(modid = HLSpells.MODID)
 public class SpellActions {
-    public static final EffectInstance GLOWING = new EffectInstance(Effects.GLOWING, Integer.MAX_VALUE, 5, false, false);
-    public static final EffectInstance LEVITATION = new EffectInstance(Effects.LEVITATION, Integer.MAX_VALUE, 5, false, false);
-    public static final EffectInstance SLOW_FALLING = new EffectInstance(Effects.SLOW_FALLING, Integer.MAX_VALUE, 5, false, false);
+    public static final MobEffectInstance GLOWING = new MobEffectInstance(MobEffects.GLOWING, Integer.MAX_VALUE, 5, false, false);
+    public static final MobEffectInstance LEVITATION = new MobEffectInstance(MobEffects.LEVITATION, Integer.MAX_VALUE, 5, false, false);
+    public static final MobEffectInstance SLOW_FALLING = new MobEffectInstance(MobEffects.SLOW_FALLING, Integer.MAX_VALUE, 5, false, false);
     static final UUID speedUUID = UUID.fromString("05b61a62-ae84-492e-8536-f365b7143296");
     static final AttributeModifier speedModifier = new AttributeModifier(speedUUID, "Speed", 2, AttributeModifier.Operation.MULTIPLY_TOTAL);
     static int flameTimer = 0;
@@ -77,7 +84,7 @@ public class SpellActions {
     /**
      * Returns a comparator which compares entities' distances to given player
      */
-    public static Comparator<Entity> getEntityComparator(PlayerEntity player) {
+    public static Comparator<Entity> getEntityComparator(Player player) {
         return new Object() {
             Comparator<Entity> compareDistOf(double x, double y, double z) {
                 return Comparator.comparing(entity -> entity.distanceToSqr(x, y, z));
@@ -85,47 +92,47 @@ public class SpellActions {
         }.compareDistOf(player.getX(), player.getY(), player.getZ());
     }
 
-    public static boolean doBlastSpell(PlayerEntity player, World world) {
+    public static boolean doBlastSpell(Player player, Level world) {
         double x = player.getX();
         double y = player.getY();
         double z = player.getZ();
         List<Entity> entities = world.getEntitiesOfClass(Entity.class,
-                new AxisAlignedBB(x - 6, y - 6, z - 6,
-                        x + 6, y + 6, z + 6),
-                null).stream().sorted(getEntityComparator(player)).collect(Collectors.toList());
+                new AABB(x - 6, y - 6, z - 6,
+                        x + 6, y + 6, z + 6)).stream().sorted(getEntityComparator(player)).collect(Collectors.toList());
         for (Entity entity : entities) {
-            if ((entity instanceof LivingEntity) && (entity != player)) {
-                LivingEntity livingEntity = (LivingEntity) entity;
-                livingEntity.knockback(5F * 0.5F, MathHelper.sin(player.yRot * ((float) Math.PI / 180F)), -MathHelper.cos(player.yRot * ((float) Math.PI / 180F)));
+            if ((entity instanceof LivingEntity livingEntity) && (entity != player)) {
+                livingEntity.knockback(5F * 0.5F, Mth.sin(player.yRot * ((float) Math.PI / 180F)), -Mth.cos(player.yRot * ((float) Math.PI / 180F)));
                 livingEntity.hurt(DamageSource.explosion((livingEntity)), 4.0F);
                 player.setDeltaMovement(player.getDeltaMovement().multiply(0.6D, 1.0D, 0.6D));
             }
         }
         world.playSound(null, new BlockPos(x, y, z), SoundEvents.GENERIC_EXPLODE,
-                SoundCategory.WEATHER, 0.6f, 1.0f);
+                SoundSource.WEATHER, 0.6f, 1.0f);
         world.addParticle(ParticleTypes.EXPLOSION_EMITTER, x, y, z, 1.0D, 0.0D, 0.0D);
         return true;
     }
 
-    public static boolean doBoltSpell(PlayerEntity player, World world) {
+    public static boolean doBoltSpell(Player player, Level world) {
         if (Util.rayTrace(world, player, 25D) != null && player.isShiftKeyDown()) {
             Entity entity = Util.rayTrace(world, player, 25D);
-            ShulkerBulletEntity smartBullet = new SmartShulkerBolt(world, player, entity, player.getDirection().getAxis());
-            smartBullet.setPos(player.getX() + player.getViewVector(1.0F).x, player.getY() + 1.35, player.getZ() + player.getViewVector(1.0F).z);
-            world.addFreshEntity(smartBullet);
+            if (entity != null) {
+                ShulkerBullet smartBullet = new SmartShulkerBolt(world, player, entity, player.getDirection().getAxis());
+                smartBullet.setPos(player.getX() + player.getViewVector(1.0F).x, player.getY() + 1.35, player.getZ() + player.getViewVector(1.0F).z);
+                world.addFreshEntity(smartBullet);
+            }
         } else {
-            ShulkerBulletEntity dumbBullet = new ShulkerBulletEntity(EntityType.SHULKER_BULLET, world) {
+            ShulkerBullet dumbBullet = new ShulkerBullet(EntityType.SHULKER_BULLET, world) {
                 @Override
                 public void selectNextMoveDirection(@Nullable Direction.Axis axis) {
                 }
 
                 @Override
-                public void onHit(RayTraceResult result) {
-                    RayTraceResult.Type type = result.getType();
-                    if (type == RayTraceResult.Type.ENTITY) {
-                        this.onHitEntity((EntityRayTraceResult) result);
-                    } else if (type == RayTraceResult.Type.BLOCK) {
-                        this.onHitBlock((BlockRayTraceResult) result);
+                public void onHit(HitResult result) {
+                    HitResult.Type type = result.getType();
+                    if (type == HitResult.Type.ENTITY) {
+                        this.onHitEntity((EntityHitResult) result);
+                    } else if (type == HitResult.Type.BLOCK) {
+                        this.onHitBlock((BlockHitResult) result);
                     }
                 }
 
@@ -133,17 +140,17 @@ public class SpellActions {
                 public void tick() {
                     super.tick();
                     if (this.getOwner() != null && this.distanceTo(this.getOwner()) >= 40) {
-                        this.remove();
+                        this.remove(RemovalReason.KILLED);
                     }
                 }
 
                 @Override
-                public IPacket<?> getAddEntityPacket() {
+                public Packet<?> getAddEntityPacket() {
                     return NetworkHooks.getEntitySpawningPacket(this);
                 }
 
                 @Override
-                public void onHitEntity(EntityRayTraceResult result) {
+                public void onHitEntity(EntityHitResult result) {
                     Entity entity = result.getEntity();
                     Entity entity1 = this.getOwner();
                     LivingEntity livingentity = entity1 instanceof LivingEntity ? (LivingEntity) entity1 : null;
@@ -154,8 +161,9 @@ public class SpellActions {
 
                     boolean flag = entity.hurt(DamageSource.indirectMobAttack(this, livingentity).setProjectile(), 8.0F);
                     if (flag) {
-                        this.doEnchantDamageEffects(livingentity, entity);
-                        this.remove();
+                        if (livingentity != null)
+                            this.doEnchantDamageEffects(livingentity, entity);
+                        this.remove(RemovalReason.KILLED);
                     }
                 }
             };
@@ -169,14 +177,14 @@ public class SpellActions {
         return true;
     }
 
-    public static boolean doAbsorbing(PlayerEntity player, World world) {
+    public static boolean doAbsorbing(Player player, Level world) {
         boolean used = false;
-        for (BlockPos blockPos : BlockPos.betweenClosed(MathHelper.floor(player.getX() - 8.0D), MathHelper.floor(player.getY() - 8.0D), MathHelper.floor(player.getZ() - 8.0D), MathHelper.floor(player.getX() + 8.0D), MathHelper.floor(player.getY() + 8.0D), MathHelper.floor(player.getZ() + 8.0D))) {
+        for (BlockPos blockPos : BlockPos.betweenClosed(Mth.floor(player.getX() - 8.0D), Mth.floor(player.getY() - 8.0D), Mth.floor(player.getZ() - 8.0D), Mth.floor(player.getX() + 8.0D), Mth.floor(player.getY() + 8.0D), Mth.floor(player.getZ() + 8.0D))) {
             BlockState blockState = world.getBlockState(blockPos);
             FluidState fluidState = world.getFluidState(blockPos);
             if (fluidState.is(FluidTags.WATER)) {
                 used = true;
-                if (blockState.getBlock() instanceof IWaterLoggable && ((IWaterLoggable) blockState.getBlock()).takeLiquid(world, blockPos, blockState) != Fluids.EMPTY) {
+                if (blockState.getBlock() instanceof SimpleWaterloggedBlock && !((SimpleWaterloggedBlock) blockState.getBlock()).canPlaceLiquid(world, blockPos, blockState, Fluids.WATER)) {
                     world.setBlock(blockPos, blockState.setValue(BlockStateProperties.WATERLOGGED, Boolean.FALSE), 3);
                 } else {
                     world.setBlock(blockPos, Blocks.AIR.defaultBlockState(), 3);
@@ -186,7 +194,7 @@ public class SpellActions {
         return used;
     }
 
-    public static boolean doFlamingBolt(PlayerEntity player, World world) {
+    public static boolean doFlamingBolt(Player player, Level world) {
         FlamingBoltEntity flamingBolt = new FlamingBoltEntity(EntityInit.FLAMING_BOLT_ENTITY.get(), world);
         flamingBolt.setOwner(player);
         flamingBolt.setPos(player.getX() + player.getViewVector(1.0F).x, player.getY() + 1.35, player.getZ() + player.getViewVector(1.0F).z);
@@ -195,7 +203,7 @@ public class SpellActions {
         return true;
     }
 
-    public static boolean doAquaBolt(PlayerEntity player, World world) {
+    public static boolean doAquaBolt(Player player, Level world) {
         AquaBoltEntity aquaBolt = new AquaBoltEntity(EntityInit.AQUA_BOLT_ENTITY.get(), world);
         aquaBolt.setOwner(player);
         aquaBolt.setPos(player.getX() + player.getViewVector(1.0F).x, player.getY() + 1.35, player.getZ() + player.getViewVector(1.0F).z);
@@ -204,7 +212,7 @@ public class SpellActions {
         return true;
     }
 
-    public static boolean doPiercingBolt(PlayerEntity player, World world) {
+    public static boolean doPiercingBolt(Player player, Level world) {
         PiercingBoltEntity piercingBullet = new PiercingBoltEntity(EntityInit.PIERCING_BOLT_ENTITY.get(), world);
         piercingBullet.setOwner(player);
         piercingBullet.setPos(player.getX() + player.getViewVector(1.0F).x, player.getY() + 1.35, player.getZ() + player.getViewVector(1.0F).z);
@@ -213,17 +221,17 @@ public class SpellActions {
         return true;
     }
 
-    public static boolean doFireBallSpell(PlayerEntity player, World world) {
-        Vector3d vector3d = player.getViewVector(1.0F);
-        FireballEntity fireballEntity = new FireballEntity(world, player, vector3d.x, vector3d.y, vector3d.z);
+    public static boolean doFireBallSpell(Player player, Level world) {
+        Vec3 vector3d = player.getViewVector(1.0F);
+        LargeFireball fireballEntity = new LargeFireball(world, player, vector3d.x, vector3d.y, vector3d.z, 0);
         fireballEntity.setPos(player.getX() + vector3d.x * 1.5D, player.getY() + 0.5, player.getZ() + vector3d.z * 1.5D);
         fireballEntity.setOwner(player);
         world.addFreshEntity(fireballEntity);
         return true;
     }
 
-    public static boolean doKnockBackBolt(PlayerEntity player, World world) {
-        ShulkerBulletEntity entity = new ShulkerBulletEntity(EntityType.SHULKER_BULLET, world) {
+    public static boolean doKnockBackBolt(Player player, Level world) {
+        ShulkerBullet entity = new ShulkerBullet(EntityType.SHULKER_BULLET, world) {
             @Override
             public void selectNextMoveDirection(@Nullable Direction.Axis axis) {
             }
@@ -232,12 +240,12 @@ public class SpellActions {
             public void tick() {
                 super.tick();
                 if (this.getOwner() != null && this.distanceTo(this.getOwner()) >= 40) {
-                    this.remove();
+                    this.remove(RemovalReason.KILLED);
                 }
             }
 
             @Override
-            public void onHitEntity(EntityRayTraceResult result) {
+            public void onHitEntity(EntityHitResult result) {
                 Entity entity = result.getEntity();
                 Entity entity1 = this.getOwner();
                 LivingEntity livingentity = entity1 instanceof LivingEntity ? (LivingEntity) entity1 : null;
@@ -249,7 +257,7 @@ public class SpellActions {
                 boolean flag = entity.hurt(DamageSource.indirectMobAttack(this, livingentity).setProjectile(), 0.0F);
                 if (flag) {
                     entity.setDeltaMovement(this.getLookAngle().reverse().multiply(5.0D, 0, 5.0D));
-                    this.remove();
+                    this.remove(RemovalReason.KILLED);
                 }
             }
         };
@@ -260,14 +268,14 @@ public class SpellActions {
         return true;
     }
 
-    public static boolean doLightningBolt(PlayerEntity player, World world) {
-        RayTraceResult rayTraceResult = Util.lookAt(player, 25D, 1F, false);
-        Vector3d location = rayTraceResult.getLocation();
+    public static boolean doLightningBolt(Player player, Level world) {
+        HitResult rayTraceResult = Util.lookAt(player, 25D, 1F, false);
+        Vec3 location = rayTraceResult.getLocation();
         int stepX = 0;
         int stepY = 0;
         int stepZ = 0;
-        if (rayTraceResult instanceof BlockRayTraceResult) {
-            Direction rayTraceDirection = ((BlockRayTraceResult) rayTraceResult).getDirection();
+        if (rayTraceResult instanceof BlockHitResult) {
+            Direction rayTraceDirection = ((BlockHitResult) rayTraceResult).getDirection();
             stepX = rayTraceDirection.getStepX();
             stepY = rayTraceDirection.getStepY();
             stepZ = rayTraceDirection.getStepZ();
@@ -277,24 +285,23 @@ public class SpellActions {
         double dy = location.y() + stepY - 1;
         double dz = location.z() + stepZ;
 
-        LightningBoltEntity lightning = new LightningBoltEntity(EntityType.LIGHTNING_BOLT, world);
+        LightningBolt lightning = new LightningBolt(EntityType.LIGHTNING_BOLT, world);
         lightning.moveTo(dx, dy, dz);
         world.addFreshEntity(lightning);
         return true;
     }
 
     // Add config option for this
-    public static boolean doBondSpell(PlayerEntity player, World world) {
+    public static boolean doBondSpell(Player player, Level world) {
         Entity targetEntity = Util.rayTrace(world, player, 20D);
-        if (targetEntity instanceof TameableEntity) {
-            TameableEntity entity = (TameableEntity) targetEntity;
+        if (targetEntity instanceof TamableAnimal entity) {
             entity.tame(player);
             return true;
         }
         return false;
     }
 
-    public static boolean doLightingChain(PlayerEntity player, World world) {
+    public static boolean doLightingChain(Player player, Level world) {
         InvisibleTargetingEntity stormBullet = new InvisibleTargetingEntity(EntityInit.INVISIBLE_TARGETING_ENTITY.get(), world);
         stormBullet.setHomePosition(player.position());
         stormBullet.setOwner(player);
@@ -304,7 +311,7 @@ public class SpellActions {
         return true;
     }
 
-    public static boolean doPullSpell(PlayerEntity player, World world) {
+    public static boolean doPullSpell(Player player, Level world) {
         if (Util.rayTrace(world, player, 35D) != null) {
             Entity targetEntity = Util.rayTrace(world, player, 35D);
             if (targetEntity != null && targetEntity.distanceTo(player) > 5) {
@@ -315,15 +322,15 @@ public class SpellActions {
         return false;
     }
 
-    public static boolean doTeleport(PlayerEntity player, World world) {
-        RayTraceResult rayTraceResult = Util.lookAt(player, HLSpells.CONFIG.teleportRange.get(), 1F, false);
-        Vector3d location = rayTraceResult.getLocation();
+    public static boolean doTeleport(Player player, Level world) {
+        HitResult rayTraceResult = Util.lookAt(player, HLSpells.CONFIG.teleportRange.get(), 1F, false);
+        Vec3 location = rayTraceResult.getLocation();
         int stepX = 0;
         int stepY = 1;
         int stepZ = 0;
-        if ((rayTraceResult instanceof BlockRayTraceResult)
+        if ((rayTraceResult instanceof BlockHitResult)
                 && world.getBlockState(new BlockPos(location).above()).getMaterial() != Material.AIR) {
-            Direction rayTraceDirection = ((BlockRayTraceResult) rayTraceResult).getDirection();
+            Direction rayTraceDirection = ((BlockHitResult) rayTraceResult).getDirection();
             stepX = rayTraceDirection.getStepX();
             stepY = rayTraceDirection.getStepY();
             stepZ = rayTraceDirection.getStepZ();
@@ -337,7 +344,7 @@ public class SpellActions {
         return true;
     }
 
-    public static boolean doSummonSpell(PlayerEntity player, World world) {
+    public static boolean doSummonSpell(Player player, Level world) {
         for (int i = 0; i < 4; ++i) {
             BlockPos blockpos = player.blockPosition().offset(-2 + world.random.nextInt(5), 1, -2 + world.random.nextInt(5));
             SummonedVexEntity vexEntity = new SummonedVexEntity(EntityInit.SUMMONED_VEX_ENTITY.get(), world);
@@ -345,22 +352,21 @@ public class SpellActions {
             vexEntity.setSummonedOwner(player);
             vexEntity.setLimitedLife(20 * (30 + world.random.nextInt(50)));
 
-            if (world instanceof ServerWorld) {
-                ServerWorld serverWorld = (ServerWorld) world;
-                vexEntity.finalizeSpawn(serverWorld, serverWorld.getCurrentDifficultyAt(blockpos), SpawnReason.MOB_SUMMONED, null, null);
+            if (world instanceof ServerLevel serverWorld) {
+                vexEntity.finalizeSpawn(serverWorld, serverWorld.getCurrentDifficultyAt(blockpos), MobSpawnType.MOB_SUMMONED, null, null);
                 serverWorld.addFreshEntityWithPassengers(vexEntity);
             }
         }
         return true;
     }
 
-    public static void doParticles(PlayerEntity player) {
+    public static void doParticles(Player player) {
         doBookParticles(player.level, new BlockPos(player.getX(), (player.getY() + 1), player.getZ()), 100);
         player.level.playSound(null, new BlockPos(player.getX(), player.getY(), player.getZ()), SoundEvents.ENCHANTMENT_TABLE_USE,
-                SoundCategory.AMBIENT, 0.6f, 1.0f);
+                SoundSource.AMBIENT, 0.6f, 1.0f);
     }
 
-    public static void doBookParticles(World world, BlockPos pos, int number) {
+    public static void doBookParticles(Level world, BlockPos pos, int number) {
         for (int l = 0; l < number; l++) {
             double d0 = (pos.getX() + world.random.nextFloat());
             double d1 = (pos.getY() + world.random.nextFloat());
@@ -372,8 +378,8 @@ public class SpellActions {
         }
     }
 
-    public static boolean doFangsSpell(PlayerEntity player, World world) {
-        float f = (float) MathHelper.atan2(player.getZ(), player.getX());
+    public static boolean doFangsSpell(Player player, Level world) {
+        float f = (float) Mth.atan2(player.getZ(), player.getX());
         if (!player.isShiftKeyDown()) {
             InvisibleTargetingEntity stormBullet = new InvisibleTargetingEntity(EntityInit.INVISIBLE_TARGETING_ENTITY.get(), world);
             stormBullet.setHomePosition(player.position());
@@ -381,25 +387,25 @@ public class SpellActions {
             stormBullet.setOwner(player);
             stormBullet.setPos(player.getX(), player.getY(), player.getZ());
             stormBullet.shootFromRotation(player, player.xRot, player.yRot, 1.2F, 1.2F, 1.2F);
-            stormBullet.setDeltaMovement(MathHelper.cos((float) Math.toRadians(player.yRot + 90)), 0, MathHelper.sin((float) Math.toRadians(player.yRot + 90)));
+            stormBullet.setDeltaMovement(Mth.cos((float) Math.toRadians(player.yRot + 90)), 0, Mth.sin((float) Math.toRadians(player.yRot + 90)));
             world.addFreshEntity(stormBullet);
         } else {
             for (int i = 0; i < 5; ++i) {
                 float f1 = f + i * (float) Math.PI * 0.4F;
-                createFangsEntity(player, world, player.getX() + MathHelper.cos(f1) * 1.5D, player.getZ() + MathHelper.sin(f1) * 1.5D, player.getY(), f1, 0);
+                createFangsEntity(player, world, player.getX() + Mth.cos(f1) * 1.5D, player.getZ() + Mth.sin(f1) * 1.5D, player.getY(), f1, 0);
             }
             for (int k = 0; k < 8; ++k) {
                 float f2 = f + k * (float) Math.PI * 2.0F / 8.0F + 1.2566371F;
-                createFangsEntity(player, world, player.getX() + MathHelper.cos(f2) * 2.5D, player.getZ() + MathHelper.sin(f2) * 2.5D, player.getY(), f2, 3);
+                createFangsEntity(player, world, player.getX() + Mth.cos(f2) * 2.5D, player.getZ() + Mth.sin(f2) * 2.5D, player.getY(), f2, 3);
             }
         }
         return true;
     }
 
     // Slow Fall
-    public static boolean doSlowFall(PlayerEntity player, World world) {
+    public static boolean doSlowFall(Player player, Level world) {
         if (player.getDeltaMovement().y <= 0) {
-            EffectInstance effect = player.getEffect(Effects.SLOW_FALLING);
+            MobEffectInstance effect = player.getEffect(MobEffects.SLOW_FALLING);
             if (effect != null && effect.isVisible()) {
                 player.getCapability(PlayerCapProvider.PLAYER_CAP).ifPresent(cap -> {
                     if (cap.getEffect() == null) {
@@ -420,22 +426,22 @@ public class SpellActions {
     }
 
     // Frost Path (Code is from FrostWalkerEnchantment onEntityMoved())
-    public static boolean doFrostPath(PlayerEntity player, World world) {
+    public static boolean doFrostPath(Player player, Level world) {
         BlockPos pos = player.blockPosition();
         BlockState blockstate = BlockInit.CUSTOM_FROSTED_ICE.get().defaultBlockState();
         float f = 3;
-        BlockPos.Mutable mutablePos = new BlockPos.Mutable();
+        BlockPos.MutableBlockPos mutablePos = new BlockPos.MutableBlockPos();
         boolean used = false;
         for (BlockPos blockpos : BlockPos.betweenClosed(pos.offset((-f), -1.0D, (-f)), pos.offset(f, -1.0D, f))) {
-            if (blockpos.closerThan(player.position(), f)) {
+            if (blockpos.closerToCenterThan(player.position(), f)) {
                 mutablePos.set(blockpos.getX(), blockpos.getY() + 1, blockpos.getZ());
                 BlockState mutableState = world.getBlockState(mutablePos);
-                if (mutableState.isAir(world, mutablePos)) {
+                if (mutableState.isAir()) {
                     BlockState state = world.getBlockState(blockpos);
-                    if (state.getMaterial().isReplaceable() && blockstate.canSurvive(world, blockpos) && world.isUnobstructed(blockstate, blockpos, ISelectionContext.empty()) && !net.minecraftforge.event.ForgeEventFactory.onBlockPlace(player, net.minecraftforge.common.util.BlockSnapshot.create(world.dimension(), world, blockpos), net.minecraft.util.Direction.UP)) {
+                    if (state.getMaterial().isReplaceable() && blockstate.canSurvive(world, blockpos) && world.isUnobstructed(blockstate, blockpos, CollisionContext.empty()) && !net.minecraftforge.event.ForgeEventFactory.onBlockPlace(player, net.minecraftforge.common.util.BlockSnapshot.create(world.dimension(), world, blockpos), net.minecraft.core.Direction.UP)) {
                         used = true;
                         world.setBlockAndUpdate(blockpos, blockstate);
-                        world.getBlockTicks().scheduleTick(blockpos, BlockInit.CUSTOM_FROSTED_ICE.get(), MathHelper.nextInt(player.getRandom(), 60, 120));
+                        world.scheduleTick(blockpos, BlockInit.CUSTOM_FROSTED_ICE.get(), Mth.nextInt(player.getRandom(), 60, 120));
                     }
                 }
             }
@@ -445,8 +451,8 @@ public class SpellActions {
 
 
     // Lure
-    public static boolean doLure(PlayerEntity player, World world) {
-        EffectInstance effect = player.getEffect(Effects.GLOWING);
+    public static boolean doLure(Player player, Level world) {
+        MobEffectInstance effect = player.getEffect(MobEffects.GLOWING);
         if (effect != null && effect.isVisible()) {
             player.getCapability(PlayerCapProvider.PLAYER_CAP).ifPresent(cap -> {
                 if (cap.getEffect() == null) {
@@ -458,11 +464,11 @@ public class SpellActions {
         }
         player.addEffect(GLOWING);
 
-        List<MobEntity> mobEntities = world.getEntitiesOfClass(MobEntity.class,
-                        new AxisAlignedBB(player.getX() - LURE_RANGE, player.getY() - LURE_RANGE, player.getZ() - LURE_RANGE,
-                                player.getX() + LURE_RANGE, player.getY() + LURE_RANGE, player.getZ() + LURE_RANGE), null)
+        List<Mob> mobEntities = world.getEntitiesOfClass(Mob.class,
+                        new AABB(player.getX() - LURE_RANGE, player.getY() - LURE_RANGE, player.getZ() - LURE_RANGE,
+                                player.getX() + LURE_RANGE, player.getY() + LURE_RANGE, player.getZ() + LURE_RANGE))
                 .stream().sorted(getEntityComparator(player)).collect(Collectors.toList());
-        for (MobEntity mob : mobEntities) {
+        for (Mob mob : mobEntities) {
             List<? extends String> blacklistedMobs = HLSpells.CONFIG.sapientMobsList.get();
             boolean predicate = false;
             for (String id : blacklistedMobs) {
@@ -500,10 +506,10 @@ public class SpellActions {
     }*/
 
     // Flaming Circle
-    public static boolean doFlamingCircle(PlayerEntity player, World world) {
+    public static boolean doFlamingCircle(Player player, Level world) {
         List<LivingEntity> livingEntities = world.getEntitiesOfClass(LivingEntity.class,
-                        new AxisAlignedBB(player.getX() - 6, player.getY() + 1, player.getZ() - 6,
-                                player.getX() + 6, player.getY() - 1, player.getZ() + 6), null)
+                        new AABB(player.getX() - 6, player.getY() + 1, player.getZ() - 6,
+                                player.getX() + 6, player.getY() - 1, player.getZ() + 6))
                 .stream().sorted(getEntityComparator(player)).collect(Collectors.toList());
 
         flameTimer++;
@@ -521,7 +527,7 @@ public class SpellActions {
         return true;
     }
 
-    private static void doEnchantParticleInterior(PlayerEntity player, World world) {
+    private static void doEnchantParticleInterior(Player player, Level world) {
         for (int x = -6; x <= 6; x++) {
             for (int z = -6; z <= 6; z++) {
                 world.addParticle(ParticleTypes.ENCHANT, player.getX() + x + world.random.nextFloat(), player.getY() + 0.2, player.getZ() + z + world.random.nextFloat(), 0, 0, 0);
@@ -530,7 +536,7 @@ public class SpellActions {
     }
 
     // Adds the given particle in a circle around the player
-    private static void doOuterRingParticles(BasicParticleType type, PlayerEntity player, World world) {
+    private static void doOuterRingParticles(SimpleParticleType type, Player player, Level world) {
         world.addParticle(type, player.getX() - 1, player.getY() + 1.2, player.getZ() - 6, 0, 0, 0);
         world.addParticle(type, player.getX(), player.getY() + 1.2, player.getZ() - 6, 0, 0, 0);
         world.addParticle(type, player.getX() + 1, player.getY() + 1.2, player.getZ() - 6, 0, 0, 0);
@@ -582,13 +588,13 @@ public class SpellActions {
     }
 
     // Protection Circle
-    public static boolean doProtectionCircle(PlayerEntity player, World world) {
+    public static boolean doProtectionCircle(Player player, Level world) {
         List<Entity> entities = world.getEntitiesOfClass(Entity.class,
-                        new AxisAlignedBB(player.getX() - 6, player.getY() - 6, player.getZ() - 6,
-                                player.getX() + 6, player.getY() + 6, player.getZ() + 6), null)
+                        new AABB(player.getX() - 6, player.getY() - 6, player.getZ() - 6,
+                                player.getX() + 6, player.getY() + 6, player.getZ() + 6))
                 .stream().sorted(getEntityComparator(player)).collect(Collectors.toList());
         for (Entity entity : entities) {
-            if (!(entity instanceof PlayerEntity)) {
+            if (!(entity instanceof Player)) {
                 entity.setDeltaMovement(entity.getLookAngle().reverse().multiply(0.3D, 0D, 0.3D));
             }
         }
@@ -600,9 +606,8 @@ public class SpellActions {
     }
 
     // Levitation
-    public static boolean doLevitation(PlayerEntity player, World world) {
-        if (player.getDeltaMovement().y >= 0) {
-            EffectInstance effect = player.getEffect(Effects.LEVITATION);
+    public static boolean doLevitation(Player player, Level world) {
+        MobEffectInstance effect = player.getEffect(MobEffects.LEVITATION);
             if (effect != null && effect.isVisible()) {
                 player.getCapability(PlayerCapProvider.PLAYER_CAP).ifPresent(cap -> {
                     if (cap.getEffect() == null) {
@@ -620,12 +625,10 @@ public class SpellActions {
                         player.getZ(), 0, player.getDeltaMovement().y, 0);
             }
             return true;
-        }
-        return false;
     }
 
     // Arrow Rain
-    public static boolean doArrowRain(PlayerEntity player, World world) {
+    public static boolean doArrowRain(Player player, Level world) {
         if (world.isClientSide()) {
             if (arrowRainCloudSpawnBoolean)
                 doCloudParticles(player, world);
@@ -648,18 +651,18 @@ public class SpellActions {
         return true;
     }
 
-    public static boolean doArrowSpawn(PlayerEntity player, World world) {
-        ArrowEntity arrowEntity = new ArrowEntity(world,
+    public static boolean doArrowSpawn(Player player, Level world) {
+        Arrow arrowEntity = new Arrow(world,
                 player.getX() + (world.random.nextDouble() - 0.5D) * player.getBbWidth(),
                 player.getY() + 4, player.getZ() + (world.random.nextDouble() - 0.5D) * player.getBbWidth());
 
         arrowEntity.shootFromRotation(player, player.xRot, player.yRot, 1.0F, 1.0F, 1.0F);
-        arrowEntity.setDeltaMovement(MathHelper.cos((float) Math.toRadians(player.yRot + 90)) + (world.random.nextFloat() - 0.5F) * player.getBbWidth(), -0.6, MathHelper.sin((float) Math.toRadians(player.yRot + 90)) + (world.random.nextFloat() - 0.5F) * player.getBbWidth());
+        arrowEntity.setDeltaMovement(Mth.cos((float) Math.toRadians(player.yRot + 90)) + (world.random.nextFloat() - 0.5F) * player.getBbWidth(), -0.6, Mth.sin((float) Math.toRadians(player.yRot + 90)) + (world.random.nextFloat() - 0.5F) * player.getBbWidth());
         world.addFreshEntity(arrowEntity);
         return true;
     }
 
-    public static void doCloudParticles(PlayerEntity player, World world) {
+    public static void doCloudParticles(Player player, Level world) {
         for (int i = 0; i < 5; i++) {
             world.addParticle(ParticleTypes.CLOUD, player.getX(), player.getY() + 5, player.getZ(), 0, 0, 0);
             world.addParticle(ParticleTypes.CLOUD, player.getX() + 0.45, player.getY() + 5, player.getZ(), 0, 0, 0);
@@ -674,10 +677,10 @@ public class SpellActions {
     }
 
     // Healing Circle
-    public static boolean doHealingCircle(PlayerEntity player, World world) {
+    public static boolean doHealingCircle(Player player, Level world) {
         List<LivingEntity> livingEntities = world.getEntitiesOfClass(LivingEntity.class,
-                        new AxisAlignedBB(player.getX() - 6, player.getY() - 6, player.getZ() - 6,
-                                player.getX() + 6, player.getY() + 6, player.getZ() + 6), null)
+                        new AABB(player.getX() - 6, player.getY() - 6, player.getZ() - 6,
+                                player.getX() + 6, player.getY() + 6, player.getZ() + 6))
                 .stream().sorted(getEntityComparator(player)).collect(Collectors.toList());
         healingTimer++;
         if (healingTimer % 10 == 0) {
@@ -700,7 +703,7 @@ public class SpellActions {
         return true;
     }
 
-    public static void doHealingCircleEntityParticle(LivingEntity livingEntity, World world) {
+    public static void doHealingCircleEntityParticle(LivingEntity livingEntity, Level world) {
         double d0 = (livingEntity.getX() + world.random.nextFloat());
         double d1 = (livingEntity.getY() + world.random.nextFloat());
         double d2 = (livingEntity.getZ() + world.random.nextFloat());
@@ -720,8 +723,8 @@ public class SpellActions {
     }
 
     // Speed
-    public static boolean doSpeed(PlayerEntity player, World world) {
-        ModifiableAttributeInstance speedAttribute = player.getAttribute(Attributes.MOVEMENT_SPEED);
+    public static boolean doSpeed(Player player, Level world) {
+        AttributeInstance speedAttribute = player.getAttribute(Attributes.MOVEMENT_SPEED);
         if (speedAttribute != null && speedAttribute.getModifier(speedUUID) == null) {
             speedAttribute.addPermanentModifier(speedModifier);
         }
@@ -729,13 +732,13 @@ public class SpellActions {
     }
 
     // Respiration
-    public static boolean doRespiration(PlayerEntity player, World world) {
-        List<PlayerEntity> players = world.getEntitiesOfClass(PlayerEntity.class,
-                        new AxisAlignedBB(player.getX() - 10, player.getY() - 4, player.getZ() - 10,
-                                player.getX() + 10, player.getY() + 4, player.getZ() + 10), null)
+    public static boolean doRespiration(Player player, Level world) {
+        List<Player> players = world.getEntitiesOfClass(Player.class,
+                        new AABB(player.getX() - 10, player.getY() - 4, player.getZ() - 10,
+                                player.getX() + 10, player.getY() + 4, player.getZ() + 10))
                 .stream().sorted(getEntityComparator(player)).collect(Collectors.toList());
         airTimer++;
-        for (PlayerEntity p : players) {
+        for (Player p : players) {
             if (p.isUnderWater() && airTimer == 10) {
                 p.setAirSupply(p.getAirSupply() + 15);
                 if (p.getAirSupply() > p.getMaxAirSupply()) {
@@ -748,7 +751,7 @@ public class SpellActions {
     }
 
     //(Code is from EvokerEntity$AttackSpellGoal createSpellEntity)
-    public static void createFangsEntity(LivingEntity entity, World world, double x, double z, double y, float yaw, int warmup) {
+    public static void createFangsEntity(LivingEntity entity, Level world, double x, double z, double y, float yaw, int warmup) {
         BlockPos blockpos = new BlockPos(x, y, z);
         boolean flag = false;
         double d0 = 0.0D;
@@ -769,26 +772,26 @@ public class SpellActions {
             }
 
             blockpos = blockpos.below();
-        } while (blockpos.getY() >= MathHelper.floor(y + 1) - 1);
+        } while (blockpos.getY() >= Mth.floor(y + 1) - 1);
 
         if (flag) {
-            world.addFreshEntity(new EvokerFangsEntity(world, x, blockpos.getY() + d0, z, yaw, warmup, entity));
+            world.addFreshEntity(new EvokerFangs(world, x, blockpos.getY() + d0, z, yaw, warmup, entity));
         }
     }
 
-    public static void resetEffects(PlayerEntity playerEntity) {
+    public static void resetEffects(Player playerEntity) {
         arrowRainArrowSpawnTimer = 0;
         arrowRainCloudSpawnTimer = 0;
         healingTimer = 0;
         protectionCircleTimer = 0;
         airTimer = 0;
-        ModifiableAttributeInstance speedAttribute = playerEntity.getAttribute(Attributes.MOVEMENT_SPEED);
+        AttributeInstance speedAttribute = playerEntity.getAttribute(Attributes.MOVEMENT_SPEED);
         if (speedAttribute != null && speedAttribute.getModifier(speedUUID) != null) {
             speedAttribute.removeModifier(speedModifier);
         }
-        EffectInstance instance = playerEntity.getEffect(Effects.GLOWING);
-        EffectInstance instance2 = playerEntity.getEffect(Effects.LEVITATION);
-        EffectInstance instance3 = playerEntity.getEffect(Effects.SLOW_FALLING);
+        MobEffectInstance instance = playerEntity.getEffect(MobEffects.GLOWING);
+        MobEffectInstance instance2 = playerEntity.getEffect(MobEffects.LEVITATION);
+        MobEffectInstance instance3 = playerEntity.getEffect(MobEffects.SLOW_FALLING);
 
         /* Check if the player has any one of these effects while they're not holding down a spell item, should prevent
         a bug where if you quickly tap the spell item and switch to a different one the infinite effect is applied to the player
@@ -806,9 +809,9 @@ public class SpellActions {
 
         // Reapplies the old effect to the player (if applicable)
         playerEntity.getCapability(PlayerCapProvider.PLAYER_CAP).ifPresent(c -> {
-            Effect effect = c.getEffect();
+            MobEffect effect = c.getEffect();
             if (effect != null) {
-                playerEntity.addEffect(new EffectInstance(effect, c.getEffectDuration(), c.getEffectAmplifier()));
+                playerEntity.addEffect(new MobEffectInstance(effect, c.getEffectDuration(), c.getEffectAmplifier()));
                 c.resetEffect();
             }
         });

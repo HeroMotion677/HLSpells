@@ -7,11 +7,11 @@ import com.divinity.hlspells.items.capabilities.spellholdercap.ISpellHolder;
 import com.divinity.hlspells.items.capabilities.spellholdercap.SpellHolderProvider;
 import com.divinity.hlspells.spell.Spell;
 import com.divinity.hlspells.spell.SpellType;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -41,21 +41,21 @@ public class SpellUtils {
         else return item == ItemInit.STAFF.get() && existingSpells.size() < 6;
     }
 
-    public static boolean checkXpReq(PlayerEntity player, Spell spell) {
+    public static boolean checkXpReq(Player player, Spell spell) {
         return player.isCreative() || !HLSpells.CONFIG.spellsUseXP.get() || player.totalExperience >= getXpReq(player, spell);
     }
 
-    public static int getTickDelay(PlayerEntity player, Spell spell) {
+    public static int getTickDelay(Player player, Spell spell) {
         int tickDelay = spell.getTickDelay();
-        if (player.getItemBySlot(EquipmentSlotType.HEAD).getItem() == ItemInit.WIZARD_HAT.get()) {
+        if (player.getItemBySlot(EquipmentSlot.HEAD).getItem() == ItemInit.WIZARD_HAT.get()) {
             tickDelay = tickDelay + 4;
         }
         return tickDelay;
     }
 
-    public static int getXpReq(PlayerEntity player, Spell spell) {
+    public static int getXpReq(Player player, Spell spell) {
         int xpToRemove = spell.getXpCost();
-        if (spell.getType() == SpellType.CAST && player.getItemBySlot(EquipmentSlotType.HEAD).getItem() == ItemInit.WIZARD_HAT.get()) {
+        if (spell.getType() == SpellType.CAST && player.getItemBySlot(EquipmentSlot.HEAD).getItem() == ItemInit.WIZARD_HAT.get()) {
             xpToRemove *= 0.7;
         }
         return xpToRemove;

@@ -2,9 +2,9 @@ package com.divinity.hlspells.mixin;
 
 import com.divinity.hlspells.items.SpellHoldingItem;
 import com.divinity.hlspells.items.capabilities.spellholdercap.SpellHolderProvider;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.container.GrindstoneContainer;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.Container;
+import net.minecraft.world.inventory.GrindstoneMenu;
+import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -17,11 +17,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
  * Mixin to remove spells in the wand item
  */
 
-@Mixin(GrindstoneContainer.class)
+@Mixin(GrindstoneMenu.class)
 public class MixinGrindstoneContainer {
     @Shadow
     @Final
-    private IInventory repairSlots;
+    private Container repairSlots;
 
     /**
      * Modifies the local variable to allow wand item to not have empty result
@@ -40,7 +40,7 @@ public class MixinGrindstoneContainer {
     }
 
 
-    @Inject(method = "removeNonCurses(Lnet/minecraft/item/ItemStack;II)Lnet/minecraft/item/ItemStack;", at = @At(value = "RETURN"), cancellable = true)
+    @Inject(method = "removeNonCurses(Lnet/minecraft/world/item/ItemStack;II)Lnet/minecraft/world/item/ItemStack;", at = @At(value = "RETURN"), cancellable = true)
     public void removeSpells(ItemStack stack, int pDamage, int pCount, CallbackInfoReturnable<ItemStack> cir) {
         ItemStack output = cir.getReturnValue();
         if (output.getItem() instanceof SpellHoldingItem && ((SpellHoldingItem) output.getItem()).isWand()) {

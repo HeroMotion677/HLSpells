@@ -4,19 +4,17 @@ import com.divinity.hlspells.HLSpells;
 import com.divinity.hlspells.spell.Spell;
 import com.divinity.hlspells.spell.SpellType;
 import com.divinity.hlspells.spells.SpellActions;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.RegistryObject;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.IForgeRegistry;
-import net.minecraftforge.registries.IForgeRegistryEntry;
-import net.minecraftforge.registries.RegistryBuilder;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
+import net.minecraftforge.registries.*;
 
 import java.util.Objects;
 import java.util.function.Supplier;
 
 public class SpellInit {
 
-    public static final DeferredRegister<Spell> SPELLS_DEFERRED_REGISTER = DeferredRegister.create(Spell.class, HLSpells.MODID);
+    public static final DeferredRegister<Spell> SPELLS_DEFERRED_REGISTER = DeferredRegister.create(new ResourceLocation("spell"), HLSpells.MODID);
+
     public static final RegistryObject<Spell> EMPTY = register("empty", () -> new Spell(SpellType.CAST, (p, w) -> false, "No Spell"));
     public static final RegistryObject<Spell> SLOW_FALL = register("slow_fall", () -> new Spell(SpellType.HELD, SpellActions::doSlowFall, "Slow Falling", 1, 15));
     public static final RegistryObject<Spell> BLAST = register("blast", () -> new Spell(SpellType.CAST, SpellActions::doBlastSpell, "Blast", 6));
@@ -45,8 +43,9 @@ public class SpellInit {
     public static final RegistryObject<Spell> FLAMING_CIRCLE = register("flaming_circle", () -> new Spell(SpellType.HELD, SpellActions::doFlamingCircle, "Flaming Circle", 1, 6));
     public static final RegistryObject<Spell> FROST_PATH =  register("frost_path", () -> new Spell(SpellType.HELD, SpellActions::doFrostPath, "Frost Path", 1, 6));
 
-    public static Supplier<IForgeRegistry<Spell>> SPELLS_REGISTRY = SPELLS_DEFERRED_REGISTER.makeRegistry("spell", () ->
-            new RegistryBuilder<Spell>().setMaxID(Integer.MAX_VALUE - 1).onAdd((owner, stage, id, obj, oldObj) -> {})
+    public static Supplier<IForgeRegistry<Spell>> SPELLS_REGISTRY = SPELLS_DEFERRED_REGISTER.makeRegistry(Spell.class, () ->
+            new RegistryBuilder<Spell>().setMaxID(Integer.MAX_VALUE - 1).onAdd((owner, stage, id, obj, oldObj) -> {
+                    })
                     .setDefaultKey(new ResourceLocation(HLSpells.MODID, "empty")));
 
     public static <T extends IForgeRegistryEntry<?>> ResourceLocation getName(T type) {

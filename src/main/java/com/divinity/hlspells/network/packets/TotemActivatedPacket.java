@@ -1,12 +1,12 @@
 package com.divinity.hlspells.network.packets;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.particles.ParticleTypes;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraftforge.network.NetworkEvent;
 
 import java.util.UUID;
 import java.util.function.Supplier;
@@ -20,12 +20,12 @@ public class TotemActivatedPacket {
         this.stack = stack;
     }
 
-    public static void encode(TotemActivatedPacket msg, PacketBuffer buffer) {
+    public static void encode(TotemActivatedPacket msg, FriendlyByteBuf buffer) {
         buffer.writeUUID(msg.player);
         buffer.writeItemStack(msg.stack, true);
     }
 
-    public static TotemActivatedPacket decode(PacketBuffer buffer) {
+    public static TotemActivatedPacket decode(FriendlyByteBuf buffer) {
         return new TotemActivatedPacket(buffer.readUUID(), buffer.readItem());
     }
 
@@ -34,7 +34,7 @@ public class TotemActivatedPacket {
         if (context.getDirection().getReceptionSide() == LogicalSide.CLIENT) {
             context.enqueueWork(() -> {
                 Minecraft mc = Minecraft.getInstance();
-                PlayerEntity totemActivatedPlayer = mc.level != null ? mc.level.getPlayerByUUID(player) : null;
+                Player totemActivatedPlayer = mc.level != null ? mc.level.getPlayerByUUID(player) : null;
                 if (totemActivatedPlayer != null) {
                     mc.particleEngine.createTrackingEmitter(totemActivatedPlayer, ParticleTypes.TOTEM_OF_UNDYING, 30);
                     if (mc.player != null && mc.player.getUUID().equals(player)) {

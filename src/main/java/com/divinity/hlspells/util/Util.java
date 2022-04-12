@@ -1,16 +1,19 @@
 package com.divinity.hlspells.util;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.particles.ParticleTypes;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.*;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.Level;
 
-import java.util.function.Predicate;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.HitResult;
 
 public class Util {
 
@@ -22,17 +25,17 @@ public class Util {
      * @param entity
      */
 
-    public static void teleportToLocation(World world, BlockPos pos, BlockPos teleportPos, Entity entity) {
+    public static void teleportToLocation(Level world, BlockPos pos, BlockPos teleportPos, Entity entity) {
         entity.teleportTo(teleportPos.getX(), teleportPos.getY(), teleportPos.getZ());
         doTeleportParticles(world, pos, 150);
         doTeleportParticles(world, teleportPos, 150);
-        world.playSound(null, pos, SoundEvents.ENDERMAN_TELEPORT, SoundCategory.NEUTRAL, 0.6F, 1.0F);
+        world.playSound(null, pos, SoundEvents.ENDERMAN_TELEPORT, SoundSource.NEUTRAL, 0.6F, 1.0F);
     }
 
     /**
      * Spawns teleportToLocation particles at the given location
      */
-    public static void doTeleportParticles(World world, BlockPos pos, int number) {
+    public static void doTeleportParticles(Level world, BlockPos pos, int number) {
         for (int l = 0; l < number; l++) {
             double d0 = (pos.getX() + world.random.nextFloat());
             double d1 = (pos.getY() + world.random.nextFloat());
@@ -53,25 +56,25 @@ public class Util {
      * @param includeFluids Defines if fluids count
      * @return The RayTraceResult
      */
-    public static RayTraceResult lookAt(Entity entity, double range, float height, boolean includeFluids) {
-        Vector3d vector3d = entity.getEyePosition(height);
-        Vector3d vector3d1 = entity.getViewVector(height);
-        Vector3d vector3d2 = vector3d.add(vector3d1.x * range, vector3d1.y * range, vector3d1.z * range);
-        return entity.level.clip(new RayTraceContext(vector3d, vector3d2, RayTraceContext.BlockMode.OUTLINE, includeFluids ? RayTraceContext.FluidMode.ANY : RayTraceContext.FluidMode.NONE, entity));
+    public static HitResult lookAt(Entity entity, double range, float height, boolean includeFluids) {
+        Vec3 vector3d = entity.getEyePosition(height);
+        Vec3 vector3d1 = entity.getViewVector(height);
+        Vec3 vector3d2 = vector3d.add(vector3d1.x * range, vector3d1.y * range, vector3d1.z * range);
+        return entity.level.clip(new ClipContext(vector3d, vector3d2, ClipContext.Block.OUTLINE, includeFluids ? ClipContext.Fluid.ANY : ClipContext.Fluid.NONE, entity));
     }
 
     /**
      * Raytrace the player look vector to return what entity is looked at. Returns null if not found
      */
-    public static Entity rayTrace(World world, PlayerEntity player, double range) {
-        Vector3d pos = player.position();
-        Vector3d cam1 = player.getLookAngle();
-        Vector3d cam2 = cam1.add(cam1.x * range, cam1.y * range, cam1.z * range);
-        AxisAlignedBB aabb = player.getBoundingBox().expandTowards(cam1.scale(range)).inflate(1.0F, 1.0F, 1.0F);
-        EntityRayTraceResult ray = findEntity(world, player, pos, cam2, aabb, null, range);
+    public static Entity rayTrace(Level world, Player player, double range) {
+        Vec3 pos = player.position();
+        Vec3 cam1 = player.getLookAngle();
+        Vec3 cam2 = cam1.add(cam1.x * range, cam1.y * range, cam1.z * range);
+        AABB aabb = player.getBoundingBox().expandTowards(cam1.scale(range)).inflate(1.0F, 1.0F, 1.0F);
+        EntityHitResult ray = findEntity(world, player, pos, cam2, aabb, range);
 
-        if (ray != null && ray.getType() == RayTraceResult.Type.ENTITY) {
-            return ray.getEntity() instanceof LivingEntity && !(ray.getEntity() instanceof PlayerEntity) ? ray.getEntity() : null;
+        if (ray != null && ray.getType() == HitResult.Type.ENTITY) {
+            return ray.getEntity() instanceof LivingEntity && !(ray.getEntity() instanceof Player) ? ray.getEntity() : null;
         }
         return null;
     }
@@ -79,27 +82,27 @@ public class Util {
     /**
      * Raytrace the player look vector to return EntityRayTraceResult
      */
-    private static EntityRayTraceResult findEntity(World world, PlayerEntity player, Vector3d pos, Vector3d look, AxisAlignedBB aabb, Predicate<Entity> filter, double range) {
-        for (Entity entity1 : world.getEntities(player, aabb, filter)) {
-            AxisAlignedBB mob = entity1.getBoundingBox().inflate(1.0F);
+    private static EntityHitResult findEntity(Level world, Player player, Vec3 pos, Vec3 look, AABB aabb, double range) {
+        for (Entity entity1 : world.getEntities(player, aabb)) {
+            AABB mob = entity1.getBoundingBox().inflate(1.0F);
             if (intersect(pos, look, mob, range)) {
-                return new EntityRayTraceResult(entity1);
+                return new EntityHitResult(entity1);
             }
         }
         return null;
     }
 
-    private static boolean intersect(Vector3d pos, Vector3d look, AxisAlignedBB mob, double range) {
-        Vector3d invDir = new Vector3d(1f / look.x, 1f / look.y, 1f / look.z);
+    private static boolean intersect(Vec3 pos, Vec3 look, AABB mob, double range) {
+        Vec3 invDir = new Vec3(1f / look.x, 1f / look.y, 1f / look.z);
 
         boolean signDirX = invDir.x < 0;
         boolean signDirY = invDir.y < 0;
         boolean signDirZ = invDir.z < 0;
 
-        Vector3d max = new Vector3d(mob.maxX, mob.maxY, mob.maxZ);
-        Vector3d min = new Vector3d(mob.minX, mob.minY, mob.minZ);
+        Vec3 max = new Vec3(mob.maxX, mob.maxY, mob.maxZ);
+        Vec3 min = new Vec3(mob.minX, mob.minY, mob.minZ);
 
-        Vector3d bbox = signDirX ? max : min;
+        Vec3 bbox = signDirX ? max : min;
         double tmin = (bbox.x - pos.x) * invDir.x;
         bbox = signDirX ? min : max;
         double tmax = (bbox.x - pos.x) * invDir.x;

@@ -1,14 +1,14 @@
 package com.divinity.hlspells.player.capability;
 
 import com.google.common.collect.Maps;
-import net.minecraft.item.ItemStack;
-import net.minecraft.potion.Effect;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.effect.MobEffect;
 
 import java.util.Map;
 
 public class PlayerCap implements IPlayerCap {
 
-    private Effect effect;
+    private MobEffect effect;
     private int effectDuration;
     private int effectAmplifier;
     private final Map<Integer, ItemStack> soulBondStacks;
@@ -21,12 +21,12 @@ public class PlayerCap implements IPlayerCap {
     }
 
     @Override
-    public Effect getEffect() {
+    public MobEffect getEffect() {
         return this.effect;
     }
 
     @Override
-    public void setEffect(Effect effect) {
+    public void setEffect(MobEffect effect) {
         this.effect = effect;
     }
 
