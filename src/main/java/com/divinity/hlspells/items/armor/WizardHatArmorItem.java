@@ -14,15 +14,10 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.IItemRenderProperties;
 import org.jetbrains.annotations.NotNull;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
 import java.util.function.Consumer;
-
 import static com.divinity.hlspells.HLSpells.MODID;
-
-
 
 public class WizardHatArmorItem extends ArmorItem implements IItemRenderProperties {
     public WizardHatArmorItem(ArmorMaterial material, EquipmentSlot type, Properties properties) {
@@ -45,7 +40,6 @@ public class WizardHatArmorItem extends ArmorItem implements IItemRenderProperti
                 if (armorModel != null) {
                     armorModel.head.visible = armorSlot == EquipmentSlot.HEAD;
                 }
-                System.out.println(armorModel == null);
                 return armorModel;
             }
         });

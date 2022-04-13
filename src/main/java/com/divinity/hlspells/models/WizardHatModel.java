@@ -26,15 +26,15 @@ public class WizardHatModel<T extends LivingEntity> extends HumanoidModel<T> {
         MeshDefinition meshdefinition = HumanoidModel.createMesh(new CubeDeformation(0), 0);
         PartDefinition partdefinition = meshdefinition.getRoot();
 
-        PartDefinition hat_main = partdefinition.addOrReplaceChild("hat_main", CubeListBuilder.create(),
+        PartDefinition hat_main = partdefinition.getChild("head").addOrReplaceChild("hat_main", CubeListBuilder.create(),
                 PartPose.offset(0.0F, -6.0F, 0.0F));
-        hat_main.addOrReplaceChild("cube_r1", CubeListBuilder.create().texOffs(0, 59)
+        PartDefinition cube_r1 = hat_main.addOrReplaceChild("cube_r1", CubeListBuilder.create().texOffs(0, 59)
                 .addBox(-6.0F, -1F, -6.25F, 12.0F, 2.0F, 12.0F, new CubeDeformation(0.0F)),
                 PartPose.offsetAndRotation(0F, 0F, 0F, -0.1309F, 0.0F, 0.0F));
         PartDefinition main = hat_main.addOrReplaceChild("main", CubeListBuilder.create().texOffs(0, 73)
                 .addBox(-4.0F, -7.75F, -4.5F, 8.0F, 8.0F, 9.0F, new CubeDeformation(0.0F)),
                 PartPose.offsetAndRotation(0F, -0.25F, -0.5F,-0.3054F, 0.0F, 0.0F));
-        main.addOrReplaceChild("rotator", CubeListBuilder.create().texOffs(27, 83)
+        PartDefinition rotator = main.addOrReplaceChild("rotator", CubeListBuilder.create().texOffs(27, 83)
                 .addBox(-2.5F, 0.95F, 0.35F, 5.0F, 4.0F, 7.0F, new CubeDeformation(0.0F)),
                 PartPose.offsetAndRotation( 0.0F, -8.75F, 4.5F,-0.3491F, 0.0F, 0.0F));
         return LayerDefinition.create(meshdefinition, 64, 128);
@@ -46,15 +46,14 @@ public class WizardHatModel<T extends LivingEntity> extends HumanoidModel<T> {
             super.setupAnim(entity, 0, 0, 0, 0, 0);
         } else {
             head.copyFrom(super.head);
-            hat.copyFrom(super.hat);
             super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
         }
     }
 
     @Override
     public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-        head.render(poseStack, buffer, packedLight, packedOverlay);
-        hat.render(poseStack, buffer, packedLight, packedOverlay);
+        head.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+        hat.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
     }
 
     private void setRotationAngle(ModelPart modelRenderer, float x, float y, float z) {
