@@ -10,7 +10,6 @@ import net.minecraftforge.network.NetworkEvent;
 import java.util.function.Supplier;
 
 public class WandInputPacket {
-
     private int key;
 
     public WandInputPacket(int key) {
@@ -32,8 +31,8 @@ public class WandInputPacket {
             if (player != null) {
                 ItemStack mainHandStack = player.getMainHandItem();
                 ItemStack offHandStack = player.getOffhandItem();
-                boolean mainHandWand = mainHandStack.getItem() instanceof SpellHoldingItem && ((SpellHoldingItem) mainHandStack.getItem()).isWand();
-                boolean offHandWand = offHandStack.getItem() instanceof SpellHoldingItem && ((SpellHoldingItem) offHandStack.getItem()).isWand();
+                boolean mainHandWand = mainHandStack.getItem() instanceof SpellHoldingItem item && item.isWand();
+                boolean offHandWand = offHandStack.getItem() instanceof SpellHoldingItem item && item.isWand();
                 if (mainHandWand) {
                     mainHandStack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP, null).ifPresent(p -> p.setCurrentSpellCycle(p.getCurrentSpellCycle() + 1));
                 } else if (offHandWand) {

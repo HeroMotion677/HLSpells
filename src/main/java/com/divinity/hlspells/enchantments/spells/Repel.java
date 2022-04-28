@@ -1,11 +1,5 @@
 package com.divinity.hlspells.enchantments.spells;
 
-import com.divinity.hlspells.HLSpells;
-import com.divinity.hlspells.enchantments.ISpell;
-import com.divinity.hlspells.init.ItemInit;
-import com.divinity.hlspells.init.SpellInit;
-import com.divinity.hlspells.util.SpellUtils;
-
 /*
 public class Repel extends Enchantment implements ISpell {
     public Repel(EquipmentSlotType... slots) {

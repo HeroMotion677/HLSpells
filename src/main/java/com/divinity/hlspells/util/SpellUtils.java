@@ -1,12 +1,12 @@
 package com.divinity.hlspells.util;
 
 import com.divinity.hlspells.HLSpells;
-import com.divinity.hlspells.init.ItemInit;
-import com.divinity.hlspells.init.SpellInit;
+import com.divinity.hlspells.setup.init.ItemInit;
+import com.divinity.hlspells.setup.init.SpellInit;
 import com.divinity.hlspells.items.capabilities.spellholdercap.ISpellHolder;
 import com.divinity.hlspells.items.capabilities.spellholdercap.SpellHolderProvider;
 import com.divinity.hlspells.spell.Spell;
-import com.divinity.hlspells.spell.SpellType;
+import com.divinity.hlspells.spell.SpellTypes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.Item;
@@ -55,7 +55,7 @@ public class SpellUtils {
 
     public static int getXpReq(Player player, Spell spell) {
         int xpToRemove = spell.getXpCost();
-        if (spell.getType() == SpellType.CAST && player.getItemBySlot(EquipmentSlot.HEAD).getItem() == ItemInit.WIZARD_HAT.get()) {
+        if (spell.getType() == SpellTypes.CAST && player.getItemBySlot(EquipmentSlot.HEAD).getItem() == ItemInit.WIZARD_HAT.get()) {
             xpToRemove *= 0.7;
         }
         return xpToRemove;

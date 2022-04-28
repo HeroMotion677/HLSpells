@@ -1,10 +1,11 @@
 package com.divinity.hlspells.loot;
 
-import com.divinity.hlspells.init.ItemInit;
+import com.divinity.hlspells.setup.init.ItemInit;
 import com.google.common.collect.Lists;
 import com.google.gson.JsonObject;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.resources.ResourceLocation;
@@ -13,6 +14,7 @@ import net.minecraftforge.common.loot.LootModifier;
 
 import javax.annotation.Nonnull;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class EvokerLootModifier extends LootModifier {
 
@@ -26,7 +28,13 @@ public class EvokerLootModifier extends LootModifier {
         float rand = context.getRandom().nextFloat();
         if (rand > 0.5) {
             List<Item> totems = Lists.newArrayList(ItemInit.TOTEM_OF_ESCAPING.get(), ItemInit.TOTEM_OF_GRIEFING.get(), ItemInit.TOTEM_OF_KEEPING.get(), ItemInit.TOTEM_OF_RETURNING.get());
-            generatedLoot.clear();
+            List<ItemStack> toRemove = Lists.newArrayList();
+            for (ItemStack stack : generatedLoot) {
+                if (stack.getItem() == Items.TOTEM_OF_UNDYING) {
+                    toRemove.add(stack);
+                }
+            }
+            generatedLoot.removeAll(toRemove);
             generatedLoot.add(new ItemStack(totems.get(context.getRandom().nextInt(4))));
         }
         return generatedLoot;

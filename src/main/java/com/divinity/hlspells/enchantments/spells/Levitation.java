@@ -2,16 +2,14 @@ package com.divinity.hlspells.enchantments.spells;
 
 import com.divinity.hlspells.HLSpells;
 import com.divinity.hlspells.enchantments.ISpell;
-import com.divinity.hlspells.init.ItemInit;
-import com.divinity.hlspells.init.SpellInit;
+import com.divinity.hlspells.setup.init.ItemInit;
+import com.divinity.hlspells.setup.init.SpellInit;
 import com.divinity.hlspells.util.SpellUtils;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentCategory;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.resources.ResourceLocation;
-
-import net.minecraft.world.item.enchantment.Enchantment.Rarity;
 
 public class Levitation extends Enchantment implements ISpell {
     public Levitation(EquipmentSlot... slots) {

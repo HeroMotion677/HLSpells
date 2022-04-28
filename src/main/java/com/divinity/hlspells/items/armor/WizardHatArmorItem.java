@@ -1,20 +1,15 @@
 package com.divinity.hlspells.items.armor;
 
-import com.divinity.hlspells.models.WizardHatModel;
-import com.divinity.hlspells.renderers.RenderRegistry;
+import com.divinity.hlspells.setup.client.RenderRegistry;
 import net.minecraft.client.model.HumanoidModel;
-import net.minecraft.client.model.Model;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.IItemRenderProperties;
-import org.jetbrains.annotations.NotNull;
-import javax.annotation.Nonnull;
+
 import javax.annotation.Nullable;
 import java.util.function.Consumer;
 import static com.divinity.hlspells.HLSpells.MODID;

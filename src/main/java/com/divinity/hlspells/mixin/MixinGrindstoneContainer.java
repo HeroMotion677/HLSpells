@@ -21,7 +21,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class MixinGrindstoneContainer {
     @Shadow
     @Final
-    private Container repairSlots;
+    Container repairSlots;
 
     /**
      * Modifies the local variable to allow wand item to not have empty result
@@ -44,8 +44,7 @@ public class MixinGrindstoneContainer {
     public void removeSpells(ItemStack stack, int pDamage, int pCount, CallbackInfoReturnable<ItemStack> cir) {
         ItemStack output = cir.getReturnValue();
         if (output.getItem() instanceof SpellHoldingItem && ((SpellHoldingItem) output.getItem()).isWand()) {
-            output.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP, null).ifPresent(iWandCap ->
-            {
+            output.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP, null).ifPresent(iWandCap -> {
                 //get all the spells present and remove them all
                 if (!iWandCap.getSpells().isEmpty())
                     iWandCap.getSpells().clear();

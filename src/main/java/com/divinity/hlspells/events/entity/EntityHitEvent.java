@@ -1,7 +1,7 @@
 package com.divinity.hlspells.events.entity;
 
 import com.divinity.hlspells.HLSpells;
-import com.divinity.hlspells.init.EnchantmentInit;
+import com.divinity.hlspells.setup.init.EnchantmentInit;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;

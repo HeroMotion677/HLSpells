@@ -1,4 +1,4 @@
-package com.divinity.hlspells.blocks;
+package com.divinity.hlspells.world.blocks;
 
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;

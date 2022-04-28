@@ -1,6 +1,6 @@
 package com.divinity.hlspells.items.capabilities.spellholdercap;
 
-import com.divinity.hlspells.init.SpellInit;
+import com.divinity.hlspells.setup.init.SpellInit;
 
 import java.util.ArrayList;
 import java.util.List;

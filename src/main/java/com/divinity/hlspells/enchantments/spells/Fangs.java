@@ -2,8 +2,8 @@ package com.divinity.hlspells.enchantments.spells;
 
 import com.divinity.hlspells.HLSpells;
 import com.divinity.hlspells.enchantments.ISpell;
-import com.divinity.hlspells.init.ItemInit;
-import com.divinity.hlspells.init.SpellInit;
+import com.divinity.hlspells.setup.init.ItemInit;
+import com.divinity.hlspells.setup.init.SpellInit;
 import com.divinity.hlspells.util.SpellUtils;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentCategory;

@@ -1,8 +1,8 @@
 package com.divinity.hlspells;
 
 import com.divinity.hlspells.compat.CuriosCompat;
-import com.divinity.hlspells.init.ConfigData;
-import com.divinity.hlspells.setup.RegistryHandler;
+import com.divinity.hlspells.setup.ModRegistry;
+import com.divinity.hlspells.setup.init.ConfigData;
 import com.divinity.hlspells.setup.client.ClientSetup;
 import com.divinity.hlspells.villages.StructureGen;
 import com.divinity.hlspells.villages.Villagers;
@@ -16,11 +16,9 @@ import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLDedicatedServerSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fml.loading.targets.FMLServerUserdevLaunchHandler;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -40,13 +38,16 @@ public class HLSpells {
     }
 
     public HLSpells() {
+        IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
         // Init the RegistryHandler class
-        RegistryHandler.init();
+        ModRegistry.init();
         // Registers an event with the mod specific event bus. This is needed to register new stuff.
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::sendImc);
-        // Only registers client setup on client only
-        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientSetup::init));
-        registerAllDeferredRegistryObjects(FMLJavaModLoadingContext.get().getModEventBus());
+        bus.addListener(this::sendImc);
+        // Only registers client setup on the client only
+        if (FMLEnvironment.dist == Dist.CLIENT) {
+            bus.addListener(ClientSetup::init);
+        }
+        registerAllDeferredRegistryObjects(bus);
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.addListener(this::setupMageHouses);
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, CONFIG_SPEC);

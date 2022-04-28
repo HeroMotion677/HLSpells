@@ -1,9 +1,9 @@
 package com.divinity.hlspells.villages;
 
 import com.divinity.hlspells.HLSpells;
-import com.divinity.hlspells.init.EnchantmentInit;
-import com.divinity.hlspells.init.ItemInit;
-import com.divinity.hlspells.init.SpellInit;
+import com.divinity.hlspells.setup.init.EnchantmentInit;
+import com.divinity.hlspells.setup.init.ItemInit;
+import com.divinity.hlspells.setup.init.SpellInit;
 import com.divinity.hlspells.items.capabilities.spellholdercap.SpellHolderProvider;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.world.item.enchantment.EnchantmentInstance;

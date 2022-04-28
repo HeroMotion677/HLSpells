@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "hlspells:block/altar_of_attunement", "y" : 180 },
+    "facing=east": { "model": "hlspells:block/altar_of_attunement", "y": 270 },
+    "facing=south": { "model": "hlspells:block/altar_of_attunement" },
+    "facing=west": { "model": "hlspells:block/altar_of_attunement", "y": 90 }
+  }
+}

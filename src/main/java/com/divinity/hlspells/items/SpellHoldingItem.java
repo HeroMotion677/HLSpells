@@ -2,11 +2,11 @@ package com.divinity.hlspells.items;
 
 import com.divinity.hlspells.HLSpells;
 import com.divinity.hlspells.enchantments.ISpell;
-import com.divinity.hlspells.init.SpellInit;
+import com.divinity.hlspells.setup.init.SpellInit;
 import com.divinity.hlspells.items.capabilities.spellholdercap.ISpellHolder;
 import com.divinity.hlspells.items.capabilities.spellholdercap.SpellHolderProvider;
 import com.divinity.hlspells.spell.Spell;
-import com.divinity.hlspells.spell.SpellType;
+import com.divinity.hlspells.spell.SpellTypes;
 import com.divinity.hlspells.spells.RunSpells;
 import com.divinity.hlspells.spells.SpellActions;
 import com.divinity.hlspells.util.SpellUtils;
@@ -18,21 +18,16 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.util.*;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.ChatFormatting;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
 import java.util.List;
-import java.util.Objects;
 import java.util.function.Predicate;
-
-import net.minecraft.world.item.Item.Properties;
 
 import net.minecraft.core.NonNullList;
 import net.minecraft.sounds.SoundEvents;
@@ -53,6 +48,8 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
         super(properties);
         this.isSpellBook = isSpellBook;
     }
+
+
 
     public boolean isSpellBook() {
         return isSpellBook;
@@ -130,6 +127,8 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
         }
     }
 
+
+
     @Override
     public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand) {
         ItemStack itemstack = player.getItemInHand(hand);
@@ -149,7 +148,7 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
                 world.playSound(null, player.blockPosition(), SoundEvents.BOOK_PAGE_TURN, SoundSource.NEUTRAL, 0.6F, 1.0F);
 
             Spell spell = SpellUtils.getSpell(itemstack);
-            if (spell != SpellInit.EMPTY.get() && spell.getType() == SpellType.HELD) {
+            if (spell != SpellInit.EMPTY.get() && spell.getType() == SpellTypes.HELD) {
                 world.playSound(null, player.blockPosition(), SoundEvents.EVOKER_PREPARE_SUMMON, SoundSource.NEUTRAL, 0.6F, 1.0F);
             }
         }
@@ -163,8 +162,7 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 
     @Override
     public void inventoryTick(ItemStack stack, Level world, Entity entity, int pItemSlot, boolean pIsSelected) {
-        if (entity instanceof Player && stack.getItem() instanceof SpellHoldingItem) {
-            Player player = (Player) entity;
+        if (entity instanceof Player player && stack.getItem() instanceof SpellHoldingItem) {
             stack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP).ifPresent(cap -> {
                 if (cap.isHeldActive()) {
                     for (InteractionHand hand : InteractionHand.values()) {
@@ -185,15 +183,13 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
             capability.ifPresent(cap -> cap.setHeldActive(false));
             if (!world.isClientSide() && !isSpellBook ? (player.getUseItemRemainingTicks() < (72000 - (HLSpells.CONFIG.spellCastTime.get() * 20))) : player.getUseItemRemainingTicks() < 71988) {
                 RunSpells.doCastSpell(player, world, stack);
-                capability.filter(p -> !(p.getSpells().isEmpty()))
-                        .ifPresent(cap -> {
-                            world.playSound(null, player.blockPosition(), SoundEvents.EVOKER_CAST_SPELL, SoundSource.NEUTRAL, 0.6F, 1.0F);
-                            SpellActions.doParticles(player);
-                        });
+                capability.filter(p -> !(p.getSpells().isEmpty())).ifPresent(cap -> {
+                    world.playSound(null, player.blockPosition(), SoundEvents.EVOKER_CAST_SPELL, SoundSource.NEUTRAL, 0.6F, 1.0F);
+                    SpellActions.doParticles(player);
+                });
             }
         }
     }
-
 
     @Override
     public int getUseDuration(ItemStack pStack) {

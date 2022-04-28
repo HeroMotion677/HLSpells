@@ -18,12 +18,9 @@ public class MixinSmithingRecipe {
     @Inject(method = "assemble", at = @At(value = "INVOKE", target = "net/minecraft/world/item/ItemStack.setTag(Lnet/minecraft/nbt/CompoundTag;)V", shift = At.Shift.AFTER), locals = LocalCapture.CAPTURE_FAILHARD)
     public void addCap(Container pInv, CallbackInfoReturnable<ItemStack> cir, ItemStack itemStack, CompoundTag compoundNBT) {
         if (itemStack.getItem() instanceof SpellHoldingItem)
-            pInv.getItem(0).getCapability(SpellHolderProvider.SPELL_HOLDER_CAP).ifPresent(cap -> {
-                cap.getSpells().forEach(spell -> {
-                    itemStack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP).ifPresent(outCap -> {
-                        outCap.addSpell(spell);
-                    });
-                });
-            });
+            pInv.getItem(0).getCapability(SpellHolderProvider.SPELL_HOLDER_CAP)
+                    .ifPresent(cap -> cap.getSpells()
+                            .forEach(spell -> itemStack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP)
+                                    .ifPresent(outCap -> outCap.addSpell(spell))));
     }
 }

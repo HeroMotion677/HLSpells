@@ -1,7 +1,7 @@
 package com.divinity.hlspells.mixin;
 
 import com.divinity.hlspells.enchantments.ISpell;
-import com.divinity.hlspells.init.ItemInit;
+import com.divinity.hlspells.setup.init.ItemInit;
 import com.divinity.hlspells.items.capabilities.spellholdercap.SpellHolderProvider;
 import com.divinity.hlspells.spell.Spell;
 import com.divinity.hlspells.util.SpellUtils;

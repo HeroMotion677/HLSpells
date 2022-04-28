@@ -1,34 +1,34 @@
 package com.divinity.hlspells.setup.client;
 
 import com.divinity.hlspells.HLSpells;
-import com.divinity.hlspells.init.EntityInit;
-import com.divinity.hlspells.init.ItemInit;
-import com.divinity.hlspells.init.SpellInit;
+import com.divinity.hlspells.setup.client.screen.AltarOfAttunementScreen;
+import com.divinity.hlspells.setup.init.BlockInit;
+import com.divinity.hlspells.setup.init.ItemInit;
+import com.divinity.hlspells.setup.init.MenuTypeInit;
+import com.divinity.hlspells.setup.init.SpellInit;
 import com.divinity.hlspells.items.SpellHoldingItem;
 import com.divinity.hlspells.items.capabilities.spellholdercap.SpellHolderProvider;
 import com.divinity.hlspells.items.capabilities.totemcap.ITotemCap;
 import com.divinity.hlspells.items.capabilities.totemcap.TotemItemProvider;
 import com.divinity.hlspells.network.NetworkManager;
 import com.divinity.hlspells.network.packets.WandInputPacket;
-import com.divinity.hlspells.renderers.BaseBoltRenderer;
-import com.divinity.hlspells.renderers.StormBoltRenderer;
 import com.divinity.hlspells.spell.Spell;
 import com.divinity.hlspells.util.SpellUtils;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.model.EntityModel;
-import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
-import net.minecraft.client.renderer.entity.VexRenderer;
 import net.minecraft.client.KeyMapping;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.Direction;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
@@ -54,13 +54,14 @@ import top.theillusivec4.curios.api.client.ICurioRenderer;
 @Mod.EventBusSubscriber(modid = HLSpells.MODID, value = Dist.CLIENT)
 public class ClientSetup {
     public static final KeyMapping WAND_BINDING = new KeyMapping("Wand Cycle", KeyConflictContext.UNIVERSAL, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_G, "HLSpells");
-    static boolean buttonPressedFlag;
+    private static boolean buttonPressedFlag;
 
     public static void init(final FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
             registerItemModel(ItemInit.SPELL_BOOK.get(), new ResourceLocation("using"), 3, 0.2F, 0.4F, 0.6F, 0.8F, 1F);
             registerItemModel(ItemInit.WAND.get(), new ResourceLocation("pull"), 3, 0.2F, 0.4F, 0.6F, 0.8F, 1F);
             registerItemModel(ItemInit.STAFF.get(), new ResourceLocation("pull"), 3, 0.2F, 0.4F, 0.6F, 0.8F, 1F);
+
         });
         ItemProperties.register(ItemInit.TOTEM_OF_RETURNING.get(), new ResourceLocation("used"), (stack, world, living, integer) -> {
             if (living instanceof Player) {
@@ -72,7 +73,6 @@ public class ClientSetup {
             return 0;
         });
         ClientRegistry.registerKeyBinding(WAND_BINDING);
-
         // Curios Renderer Registration
         ICurioRenderer renderer = new ICurioRenderer() {
             @Override
@@ -94,15 +94,18 @@ public class ClientSetup {
         CuriosRendererRegistry.register(ItemInit.TOTEM_OF_KEEPING.get(), () -> renderer);
         CuriosRendererRegistry.register(ItemInit.TOTEM_OF_ESCAPING.get(), () -> renderer);
         CuriosRendererRegistry.register(ItemInit.TOTEM_OF_GRIEFING.get(), () -> renderer);
+        MenuScreens.register(MenuTypeInit.ALTAR_CONTAINER.get(), AltarOfAttunementScreen::new);
+        ItemBlockRenderTypes.setRenderLayer(BlockInit.ALTAR_OF_ATTUNEMENT_BLOCK.get(), RenderType.cutout());
+        BlockEntityRenderers.register(BlockInit.ALTAR_BE.get(), AltarItemRenderer::new);
     }
 
     /**
-     * Registers the model of a given item
+     * Registers the model of a given item that pulls back like a bow
      *
      * @param item                    The item to register the model of
      * @param location                The resource location of the model predicate
      * @param useItemRemainTickOffset The tick offset at which the item will change models at
-     * @param values                  The values to return for each model
+     * @param values                  The amount of model increments at which it changes at
      */
     private static void registerItemModel(Item item, ResourceLocation location, int useItemRemainTickOffset, float... values) {
         ItemProperties.register(item, location, (stack, world, living, integer) -> {
@@ -130,15 +133,14 @@ public class ClientSetup {
                     ItemStack stack = ItemStack.EMPTY;
                     ItemStack mainHand = player.getMainHandItem();
                     ItemStack offHand = player.getOffhandItem();
-                    boolean mainHandWand = mainHand.getItem() instanceof SpellHoldingItem && ((SpellHoldingItem) mainHand.getItem()).isWand();
-                    boolean offHandWand = offHand.getItem() instanceof SpellHoldingItem && ((SpellHoldingItem) offHand.getItem()).isWand();
+                    boolean mainHandWand = mainHand.getItem() instanceof SpellHoldingItem sItem && sItem.isWand();
+                    boolean offHandWand = offHand.getItem() instanceof SpellHoldingItem item && item.isWand();
                     if (mainHandWand)
                         stack = mainHand;
                     else if (offHandWand)
                         stack = offHand;
                     if (!stack.isEmpty()) {
-                        stack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP, null).ifPresent(cap ->
-                        {
+                        stack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP, null).ifPresent(cap -> {
                             if (!cap.getSpells().isEmpty()) {
                                 cap.setCurrentSpellCycle(cap.getCurrentSpellCycle() + 1);
                                 Spell spell = SpellUtils.getSpellByID(cap.getCurrentSpell());
@@ -164,7 +166,7 @@ public class ClientSetup {
     public static void onInput(MovementInputUpdateEvent event) {
         LocalPlayer player = (LocalPlayer) event.getPlayer();
         InteractionHand hand = player.getUsedItemHand();
-        // Don't remove this even if it complaints it can't be null it can be null
+        // Don't remove this even if it complains if it can be null it can be null
         if (hand != null) {
             ItemStack stack = player.getItemInHand(hand);
             if (player.isUsingItem() && !player.isPassenger() && stack.getItem() instanceof SpellHoldingItem) {

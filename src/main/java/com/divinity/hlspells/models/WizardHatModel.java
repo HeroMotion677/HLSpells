@@ -18,6 +18,7 @@ public class WizardHatModel<T extends LivingEntity> extends HumanoidModel<T> {
 
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation(HLSpells.MODID, "wizard_hat"), "main");
 
+
     public WizardHatModel(ModelPart root) {
         super(root);
     }
@@ -53,12 +54,5 @@ public class WizardHatModel<T extends LivingEntity> extends HumanoidModel<T> {
     @Override
     public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
         head.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        hat.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-    }
-
-    private void setRotationAngle(ModelPart modelRenderer, float x, float y, float z) {
-        modelRenderer.xRot = x;
-        modelRenderer.yRot = y;
-        modelRenderer.zRot = z;
     }
 }

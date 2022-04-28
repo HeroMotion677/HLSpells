@@ -1,4 +1,4 @@
-package com.divinity.hlspells.init;
+package com.divinity.hlspells.setup.init;
 
 import com.google.common.collect.Lists;
 import net.minecraftforge.common.ForgeConfigSpec;

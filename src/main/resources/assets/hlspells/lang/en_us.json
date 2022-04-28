@@ -68,5 +68,10 @@
   "spell.hlspells.torpedo": "Torpedo",
   "item.hlspells.wand": "Wand",
   "item.hlspells.staff": "Staff",
-  "item.hlspells.wizard_hat": "Wizard Hat"
+  "item.hlspells.wizard_hat": "Wizard Hat",
+  "container.spell.clue": "%s",
+  "container.spell.level.requirement": "Level Requirement: %s",
+  "container.spell.material.one": "1 %s",
+  "container.spell.material.many" : "%s %s",
+  "block.hlspells.altar_of_attunement": "Altar of Attunement"
 }

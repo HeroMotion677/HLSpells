@@ -71,7 +71,7 @@ mixin {
 }
 
 dependencies {
-    minecraft "net.minecraftforge:forge:1.18.2-40.0.44"
+    minecraft "net.minecraftforge:forge:1.18.2-40.1.0"
     // Compile against the API but do not include it at runtime
     compileOnly fg.deobf("mezz.jei:jei-${jei_mc_version}:${jei_version}:api")
     compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}:api")

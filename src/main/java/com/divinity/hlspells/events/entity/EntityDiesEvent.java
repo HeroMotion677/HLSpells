@@ -2,8 +2,8 @@ package com.divinity.hlspells.events.entity;
 
 import com.divinity.hlspells.HLSpells;
 import com.divinity.hlspells.compat.CuriosCompat;
-import com.divinity.hlspells.init.EnchantmentInit;
-import com.divinity.hlspells.init.ItemInit;
+import com.divinity.hlspells.setup.init.EnchantmentInit;
+import com.divinity.hlspells.setup.init.ItemInit;
 import com.divinity.hlspells.items.ModTotemItem;
 import com.divinity.hlspells.items.capabilities.totemcap.ITotemCap;
 import com.divinity.hlspells.items.capabilities.totemcap.TotemItemProvider;
@@ -11,6 +11,7 @@ import com.divinity.hlspells.network.NetworkManager;
 import com.divinity.hlspells.network.packets.TotemActivatedPacket;
 import com.divinity.hlspells.player.capability.PlayerCapProvider;
 import com.divinity.hlspells.util.Util;
+import net.minecraft.client.Minecraft;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;

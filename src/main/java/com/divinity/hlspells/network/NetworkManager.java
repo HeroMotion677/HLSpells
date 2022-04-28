@@ -1,6 +1,7 @@
 package com.divinity.hlspells.network;
 
 import com.divinity.hlspells.HLSpells;
+import com.divinity.hlspells.network.packets.SpellCluePacket;
 import com.divinity.hlspells.network.packets.TotemActivatedPacket;
 import com.divinity.hlspells.network.packets.WandInputPacket;
 import net.minecraft.resources.ResourceLocation;
@@ -23,5 +24,6 @@ public class NetworkManager {
     public static void registerNetworkStuff(FMLCommonSetupEvent event) {
         INSTANCE.registerMessage(index++, WandInputPacket.class, WandInputPacket::encode, WandInputPacket::decode, WandInputPacket::handle);
         INSTANCE.registerMessage(index++, TotemActivatedPacket.class, TotemActivatedPacket::encode, TotemActivatedPacket::decode, TotemActivatedPacket::handle);
+        INSTANCE.registerMessage(index++, SpellCluePacket.class, SpellCluePacket::encode, SpellCluePacket::decode, SpellCluePacket::handle);
     }
 }

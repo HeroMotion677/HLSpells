@@ -1,4 +1,4 @@
-package com.divinity.hlspells.init;
+package com.divinity.hlspells.setup.init;
 
 import com.divinity.hlspells.HLSpells;
 import com.divinity.hlspells.items.ModTotemItem;
@@ -8,6 +8,7 @@ import com.divinity.hlspells.items.WizardArmorMaterial;
 import com.divinity.hlspells.items.armor.WizardHatArmorItem;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraftforge.registries.DeferredRegister;
@@ -25,4 +26,5 @@ public class ItemInit {
     public static final RegistryObject<Item> WAND = ITEMS.register("wand", () -> new SpellHoldingItem(new Item.Properties().tab(CreativeModeTab.TAB_TOOLS).durability(700), false));
     public static final RegistryObject<Item> STAFF = ITEMS.register("staff", () -> new StaffItem(new Item.Properties().tab(CreativeModeTab.TAB_TOOLS).durability(1300)));
     public static final RegistryObject<ArmorItem> WIZARD_HAT = ITEMS.register("wizard_hat", () -> new WizardHatArmorItem(WizardArmorMaterial.WIZHAT, EquipmentSlot.HEAD, new Item.Properties().tab(CreativeModeTab.TAB_COMBAT)));
+    public static final RegistryObject<BlockItem> ALTAR_ITEM = ITEMS.register("altar_of_attunement", () -> new BlockItem(BlockInit.ALTAR_OF_ATTUNEMENT_BLOCK.get(), new Item.Properties().tab(CreativeModeTab.TAB_DECORATIONS)));
 }

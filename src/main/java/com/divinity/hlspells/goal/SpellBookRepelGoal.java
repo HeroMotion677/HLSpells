@@ -1,16 +1,5 @@
 package com.divinity.hlspells.goal;
 
-import com.divinity.hlspells.init.SpellInit;
-import com.divinity.hlspells.items.SpellHoldingItem;
-import com.divinity.hlspells.items.capabilities.spellholdercap.SpellHolderProvider;
-import com.divinity.hlspells.util.SpellUtils;
-
-import javax.annotation.Nullable;
-import java.util.EnumSet;
-import java.util.Random;
-import java.util.function.Predicate;
-import java.util.function.ToDoubleFunction;
-
 
 /*public class SpellBookRepelGoal extends Goal {
     private static final EntityPredicate TEMP_TARGETING = (new EntityPredicate()).range(15.0D).allowInvulnerable().allowSameTeam().allowNonAttackable().allowUnseeable();

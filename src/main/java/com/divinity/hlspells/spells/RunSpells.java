@@ -4,7 +4,7 @@ import com.divinity.hlspells.HLSpells;
 import com.divinity.hlspells.items.SpellHoldingItem;
 import com.divinity.hlspells.items.capabilities.spellholdercap.SpellHolderProvider;
 import com.divinity.hlspells.spell.Spell;
-import com.divinity.hlspells.spell.SpellType;
+import com.divinity.hlspells.spell.SpellTypes;
 import com.divinity.hlspells.util.SpellUtils;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.server.level.ServerPlayer;
@@ -36,7 +36,7 @@ public class RunSpells {
                     .filter(cap -> !cap.getSpells().isEmpty())
                     .ifPresent(cap -> {
                         Spell spell = SpellUtils.getSpellByID(cap.getCurrentSpell());
-                        if (spell.getType() == SpellType.CAST && spell.hasCost() && SpellUtils.checkXpReq(player, spell)) {
+                        if (spell.getType() == SpellTypes.CAST && spell.hasCost() && SpellUtils.checkXpReq(player, spell)) {
                             if (spell.getSpellAction().test(player, world)) {
                                 if (!player.level.isClientSide() && !player.isCreative())
                                     itemStack.hurt(getSpellHoldingItemCalculation(itemStack), player.getRandom(), (ServerPlayer) player);
@@ -55,13 +55,12 @@ public class RunSpells {
             InteractionHand hand = player.getUsedItemHand();
             if (hand == InteractionHand.MAIN_HAND || hand == InteractionHand.OFF_HAND) {
                 ItemStack stack = player.getItemInHand(hand);
+                //noinspection ConstantConditions
                 if (stack.getItem() instanceof SpellHoldingItem && player != null && player.level != null && player.isUsingItem()) {
-                    stack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP)
-                            .filter(cap -> !cap.getSpells().isEmpty())
-                            .ifPresent(cap -> {
+                    stack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP).filter(cap -> !cap.getSpells().isEmpty()).ifPresent(cap -> {
                                 if (cap.isHeldActive()) {
                                     Spell spell = SpellUtils.getSpellByID(cap.getCurrentSpell());
-                                    if (spell.getType() == SpellType.HELD && spell.hasCost() && SpellUtils.checkXpReq(player, spell)) {
+                                    if (spell.getType() == SpellTypes.HELD && spell.hasCost() && SpellUtils.checkXpReq(player, spell)) {
                                         if (spell.getSpellAction().test(player, player.level)) {
                                             xpTickCounter++;
                                             durabilityTickCounter++;
@@ -93,8 +92,14 @@ public class RunSpells {
         if (event != null) {
             if (event.getRight().getItem() instanceof EnchantedBookItem) {
                 ItemStack book = event.getRight();
-                if (EnchantedBookItem.getEnchantments(book).getString(0).contains("minecraft:mending")) {
-                    if (event.getLeft().getItem() instanceof SpellHoldingItem && !((SpellHoldingItem) event.getLeft().getItem()).isSpellBook()) {
+                boolean hasMending = false;
+                for (int i = 0; i < EnchantedBookItem.getEnchantments(book).size(); i++) {
+                    if (EnchantedBookItem.getEnchantments(book).getString(i).contains("minecraft:mending")) {
+                        hasMending = true;
+                    }
+                }
+                if (hasMending) {
+                    if (event.getLeft().getItem() instanceof SpellHoldingItem item && !item.isSpellBook()) {
                         if (EnchantmentHelper.getItemEnchantmentLevel(Enchantments.MENDING, event.getLeft()) == 0) {
                             event.setCost(6);
                             ItemStack copy = event.getLeft().copy();

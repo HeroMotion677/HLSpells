@@ -1,4 +1,4 @@
-package com.divinity.hlspells.init;
+package com.divinity.hlspells.setup.init;
 
 import com.divinity.hlspells.HLSpells;
 import com.divinity.hlspells.entities.*;

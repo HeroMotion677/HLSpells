@@ -1,10 +1,9 @@
 package com.divinity.hlspells.goal;
 
-import com.divinity.hlspells.init.SpellInit;
+import com.divinity.hlspells.setup.init.SpellInit;
 import com.divinity.hlspells.items.SpellHoldingItem;
 import com.divinity.hlspells.items.capabilities.spellholdercap.SpellHolderProvider;
 import com.divinity.hlspells.util.SpellUtils;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.Goal;
