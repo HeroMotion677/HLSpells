@@ -211,11 +211,10 @@ public class EntityDiesEvent {
 
     @SubscribeEvent
     public static void onEntityDrops(LivingDropsEvent event) {
-        if (event.getEntity() instanceof Player) {
-            Player player = (Player) event.getEntity();
+        if (event.getEntity() instanceof Player player) {
             // If true the inventory is loaded back and drops are removed
             boolean[] keepingTotem = new boolean[1];
-            for (Iterator<ItemEntity> itemEntityIterator = event.getDrops().iterator(); itemEntityIterator.hasNext(); ) {
+            for (Iterator<ItemEntity> itemEntityIterator = event.getDrops().iterator(); itemEntityIterator.hasNext();) {
                 ItemStack stack = itemEntityIterator.next().getItem();
                 // TOTEM OF KEEPING (Reloads player inventory even after dying and disables inventory from spilling)
                 if (stack.getItem() == ItemInit.TOTEM_OF_KEEPING.get() && !keepingTotem[0]) {
@@ -240,8 +239,7 @@ public class EntityDiesEvent {
                 }
                 // TOTEM OF RETURNING (Sets BlockPos to teleportToLocation to and sets the slot the totem should be in)
                 if (stack.getItem() == ItemInit.TOTEM_OF_RETURNING.get()) {
-                    stack.getCapability(TotemItemProvider.TOTEM_CAP).filter(ITotemCap::getHasDied).ifPresent(cap ->
-                    {
+                    stack.getCapability(TotemItemProvider.TOTEM_CAP).filter(ITotemCap::getHasDied).ifPresent(cap -> {
                         InteractionHand hand = cap.getTotemInHand();
                         boolean returnInCurio = false;
                         if (HLSpells.isCurioLoaded && cap.diedTotemInCurios()) {
@@ -265,7 +263,7 @@ public class EntityDiesEvent {
                     });
                 }
             }
-            for (Iterator<ItemEntity> itemEntityIterator = event.getDrops().iterator(); itemEntityIterator.hasNext(); ) {
+            for (Iterator<ItemEntity> itemEntityIterator = event.getDrops().iterator(); itemEntityIterator.hasNext();) {
                 ItemStack stack = itemEntityIterator.next().getItem();
                 // SOUL BOND
                 if (EnchantmentHelper.getItemEnchantmentLevel(EnchantmentInit.SOUL_BOND.get(), stack) > 0 && !keepingTotem[0]) {

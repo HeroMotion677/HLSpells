@@ -1,0 +1,12 @@
+{
+  "parent": "forge:item/default",
+  "loader": "forge:separate-perspective",
+  "base": {
+    "parent": "hlspells:item/staff/wood/lapis/wood_staff_3"
+  },
+  "perspectives": {
+    "gui": {
+      "parent": "hlspells:item/staff/wood/lapis/gui/wood_staff_gui_3"
+    }
+  }
+}

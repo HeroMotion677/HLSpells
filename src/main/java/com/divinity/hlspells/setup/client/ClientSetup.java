@@ -60,8 +60,8 @@ public class ClientSetup {
         event.enqueueWork(() -> {
             registerItemModel(ItemInit.SPELL_BOOK.get(), new ResourceLocation("using"), 3, 0.2F, 0.4F, 0.6F, 0.8F, 1F);
             registerItemModel(ItemInit.WAND.get(), new ResourceLocation("pull"), 3, 0.2F, 0.4F, 0.6F, 0.8F, 1F);
-            registerItemModel(ItemInit.STAFF.get(), new ResourceLocation("pull"), 3, 0.2F, 0.4F, 0.6F, 0.8F, 1F);
-
+            registerItemModel(ItemInit.AMETHYST_WAND.get(), new ResourceLocation("pull"), 3, 0.2F, 0.4F, 0.6F, 0.8F, 1F);
+            ItemInit.STAFFS.forEach(staff -> registerItemModel(staff.get(), new ResourceLocation("pull"), 3, 0.2F, 0.4F, 0.6F, 0.8F, 1F));
         });
         ItemProperties.register(ItemInit.TOTEM_OF_RETURNING.get(), new ResourceLocation("used"), (stack, world, living, integer) -> {
             if (living instanceof Player) {
@@ -76,7 +76,14 @@ public class ClientSetup {
         // Curios Renderer Registration
         ICurioRenderer renderer = new ICurioRenderer() {
             @Override
-            public <T extends LivingEntity, M extends EntityModel<T>> void render(ItemStack stack, SlotContext slotContext, PoseStack matrixStack, RenderLayerParent<T, M> renderLayerParent, MultiBufferSource renderTypeBuffer, int light, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
+            public <T extends LivingEntity, M extends EntityModel<T>> void render
+                   (ItemStack stack, SlotContext slotContext, PoseStack matrixStack,
+                   RenderLayerParent<T, M> renderLayerParent,
+                   MultiBufferSource renderTypeBuffer,
+                   int light, float limbSwing, float limbSwingAmount,
+                   float partialTicks, float ageInTicks,
+                   float netHeadYaw, float headPitch) {
+
                 LocalPlayer clientPlayer = Minecraft.getInstance().player;
                 if (clientPlayer != null) {
                     ICurioRenderer.translateIfSneaking(matrixStack, clientPlayer);
@@ -90,10 +97,7 @@ public class ClientSetup {
                                 matrixStack, renderTypeBuffer, 1);
             }
         };
-        CuriosRendererRegistry.register(ItemInit.TOTEM_OF_RETURNING.get(), () -> renderer);
-        CuriosRendererRegistry.register(ItemInit.TOTEM_OF_KEEPING.get(), () -> renderer);
-        CuriosRendererRegistry.register(ItemInit.TOTEM_OF_ESCAPING.get(), () -> renderer);
-        CuriosRendererRegistry.register(ItemInit.TOTEM_OF_GRIEFING.get(), () -> renderer);
+        ItemInit.TOTEMS.forEach(totem -> CuriosRendererRegistry.register(totem.get(), () -> renderer));
         MenuScreens.register(MenuTypeInit.ALTAR_CONTAINER.get(), AltarOfAttunementScreen::new);
         ItemBlockRenderTypes.setRenderLayer(BlockInit.ALTAR_OF_ATTUNEMENT_BLOCK.get(), RenderType.cutout());
         BlockEntityRenderers.register(BlockInit.ALTAR_BE.get(), AltarItemRenderer::new);
@@ -108,7 +112,7 @@ public class ClientSetup {
      * @param values                  The amount of model increments at which it changes at
      */
     private static void registerItemModel(Item item, ResourceLocation location, int useItemRemainTickOffset, float... values) {
-        ItemProperties.register(item, location, (stack, world, living, integer) -> {
+        ItemProperties.register(item, location, (stack, world, living, seed) -> {
             if (living instanceof Player && living.isUsingItem() && living.getUseItem() == stack) {
                 int useDuration = item.getUseDuration(item.getDefaultInstance());
                 int minUseAmount = useDuration - (useItemRemainTickOffset * (values.length - 1));
@@ -151,7 +155,6 @@ public class ClientSetup {
                 }
                 buttonPressedFlag = true;
             }
-
             if (!WAND_BINDING.isDown() && buttonPressedFlag) {
                 buttonPressedFlag = false;
             }

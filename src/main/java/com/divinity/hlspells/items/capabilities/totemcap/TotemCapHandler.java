@@ -16,8 +16,8 @@ import static com.divinity.hlspells.HLSpells.MODID;
 public class TotemCapHandler {
     @SubscribeEvent
     public static void onAttachCapabilities(AttachCapabilitiesEvent<ItemStack> event) {
-        Item item = event.getObject().getItem();
-        if (item == ItemInit.TOTEM_OF_RETURNING.get() || item == ItemInit.TOTEM_OF_KEEPING.get()) {
+        ItemStack item = event.getObject();
+        if (item.getItem() == ItemInit.TOTEM_OF_RETURNING.get() || item.getItem() == ItemInit.TOTEM_OF_KEEPING.get()) {
             event.addCapability(new ResourceLocation(MODID, "totemcap"), new TotemItemProvider());
         }
         if (HLSpells.isCurioLoaded) {

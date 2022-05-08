@@ -1,0 +1,6 @@
+{
+  "parent": "hlspells:item/staff/wood/amethyst/wood_staff_1",
+  "textures": {
+    "layer0": "hlspells:items/staff/wood/amethyst/model/wood_staff_5"
+  }
+}

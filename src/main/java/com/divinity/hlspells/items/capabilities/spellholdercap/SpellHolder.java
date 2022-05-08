@@ -1,6 +1,7 @@
 package com.divinity.hlspells.items.capabilities.spellholdercap;
 
 import com.divinity.hlspells.setup.init.SpellInit;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +18,7 @@ public class SpellHolder implements ISpellHolder {
     }
 
     @Override
-    public List<String> getSpells() {
+    public @NotNull List<String> getSpells() {
         return this.spells;
     }
 
@@ -31,6 +32,9 @@ public class SpellHolder implements ISpellHolder {
     @Override
     public void removeSpell(String spell) {
         this.spells.remove(spell);
+        if (!(this.currentSpellCycle < spells.size())) {
+            this.setCurrentSpellCycle(this.getSpells().size() - 1);
+        }
     }
 
     @Override
@@ -52,11 +56,13 @@ public class SpellHolder implements ISpellHolder {
     private void cycleSpellCheck() {
         if (this.currentSpellCycle > this.getSpells().size() - 1) {
             this.currentSpellCycle = 0;
+        } else if (this.currentSpellCycle < 0) {
+            this.currentSpellCycle = 0;
         }
     }
 
     @Override
-    public String getCurrentSpell() {
+    public @NotNull String getCurrentSpell() {
         return getCurrentSpellCycle() < spells.size() ? spells.get(getCurrentSpellCycle()) : SpellInit.EMPTY.get().getRegistryName().toString();
     }
 

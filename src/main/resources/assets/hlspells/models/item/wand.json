@@ -2,7 +2,7 @@
   "credit": "Made with Blockbench",
   "parent": "item/generated",
   "textures": {
-    "layer0": "hlspells:items/wand"
+    "layer0": "hlspells:items/wand/lapis/wand"
   },
   "overrides": [
     {
@@ -15,42 +15,42 @@
       "predicate": {
         "pull": 0.2
       },
-      "model": "hlspells:item/wand_2"
+      "model": "hlspells:item/wand/lapis/wand_2"
     },
     {
       "predicate": {
         "pull": 0.4
       },
-      "model": "hlspells:item/wand_3"
+      "model": "hlspells:item/wand/lapis/wand_3"
     },
     {
       "predicate": {
         "pull": 0.6
       },
-      "model": "hlspells:item/wand_4"
+      "model": "hlspells:item/wand/lapis/wand_4"
     },
     {
       "predicate": {
         "pull": 0.8
       },
-      "model": "hlspells:item/wand_5"
+      "model": "hlspells:item/wand/lapis/wand_5"
     },
     {
       "predicate": {
         "pull": 1
       },
-      "model": "hlspells:item/wand_6"
+      "model": "hlspells:item/wand/lapis/wand_6"
     }
   ],
   "display": {
     "thirdperson_righthand": {
       "rotation": [-80, -90, -40],
-      "translation": [-0.25, 0, 1.75],
+      "translation": [0, 0.5, 1.75],
       "scale": [0.77, 0.77, 0.77]
     },
     "thirdperson_lefthand": {
       "rotation": [-80, 90, 40],
-      "translation": [-0.25, 0, 1.75],
+      "translation": [0, 0.5, 1.75],
       "scale": [0.77, 0.77, 0.77]
     },
     "firstperson_righthand": {

@@ -15,6 +15,10 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
+
 public class Util {
 
     /**
@@ -138,5 +142,26 @@ public class Util {
             tmax = tzmax;
         }
         return (tmin < range) && (tmax > 0);
+    }
+
+    /**
+     * Returns a comparator which compares entities' distances to a given LivingEntity
+     */
+    public static Comparator<Entity> getEntityComparator(LivingEntity other) {
+        return new Object() {
+            Comparator<Entity> compareDistOf(double x, double y, double z) {
+                return Comparator.comparing(entity -> entity.distanceToSqr(x, y, z));
+            }
+        }.compareDistOf(other.getX(), other.getY(), other.getZ());
+    }
+
+    /**
+     * Returns a list of entities (targets) from a relative entity within the specified x, y, and z bounds.
+     */
+    public static <T extends LivingEntity> List<T> getEntitiesInRange (LivingEntity relativeEntity, Class<T> targets, double xBound, double yBound, double zBound) {
+        return relativeEntity.level.getEntitiesOfClass(targets,
+                        new AABB(relativeEntity.getX() - xBound, relativeEntity.getY() - yBound, relativeEntity.getZ() - zBound,
+                                relativeEntity.getX() + xBound, relativeEntity.getY() + yBound, relativeEntity.getZ() + zBound))
+                .stream().sorted(getEntityComparator(relativeEntity)).collect(Collectors.toList());
     }
 }

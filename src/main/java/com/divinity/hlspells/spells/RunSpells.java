@@ -6,6 +6,8 @@ import com.divinity.hlspells.items.capabilities.spellholdercap.SpellHolderProvid
 import com.divinity.hlspells.spell.Spell;
 import com.divinity.hlspells.spell.SpellTypes;
 import com.divinity.hlspells.util.SpellUtils;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.EnchantedBookItem;
@@ -21,6 +23,7 @@ import java.util.Random;
 
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
+import org.lwjgl.system.CallbackI;
 
 /**
  * This class is responsible for firing spell actions
@@ -87,29 +90,10 @@ public class RunSpells {
         }
     }
 
-    @SubscribeEvent
-    public static void applyEnchantments(AnvilUpdateEvent event) {
-        if (event != null) {
-            if (event.getRight().getItem() instanceof EnchantedBookItem) {
-                ItemStack book = event.getRight();
-                boolean hasMending = false;
-                for (int i = 0; i < EnchantedBookItem.getEnchantments(book).size(); i++) {
-                    if (EnchantedBookItem.getEnchantments(book).getString(i).contains("minecraft:mending")) {
-                        hasMending = true;
-                    }
-                }
-                if (hasMending) {
-                    if (event.getLeft().getItem() instanceof SpellHoldingItem item && !item.isSpellBook()) {
-                        if (EnchantmentHelper.getItemEnchantmentLevel(Enchantments.MENDING, event.getLeft()) == 0) {
-                            event.setCost(6);
-                            ItemStack copy = event.getLeft().copy();
-                            copy.enchant(Enchantments.MENDING, 1);
-                            event.setOutput(copy);
-                        }
-                    }
-                }
-            }
-        }
+    public static void reset(Player player) {
+        xpTickCounter = 0;
+        durabilityTickCounter = 0;
+        SpellActions.resetEffects(player);
     }
 
     private static int getSpellHoldingItemCalculation(ItemStack itemStack) {
@@ -117,11 +101,5 @@ public class RunSpells {
         if (level < 1) return 1;
         int random = new Random().nextInt(5);
         return random <= (level - 1) ? 0 : 1;
-    }
-
-    public static void reset(Player player) {
-        xpTickCounter = 0;
-        durabilityTickCounter = 0;
-        SpellActions.resetEffects(player);
     }
 }

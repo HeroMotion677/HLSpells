@@ -22,7 +22,7 @@ public class WizardHatArmorItem extends ArmorItem implements IItemRenderProperti
     @Nullable
     @Override
     public String getArmorTexture(ItemStack stack, Entity entity, EquipmentSlot slot, String type) {
-        return slot == EquipmentSlot.HEAD ? MODID  + ":" + "textures/models/armor/wizard_hat.png" : null;
+        return slot == EquipmentSlot.HEAD ? MODID  + ":" + "textures/items/armor/model/wizard_hat.png" : null;
     }
 
     @Override

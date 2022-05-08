@@ -1,0 +1,6 @@
+{
+  "parent": "hlspells:item/staff/golden/amethyst/golden_staff_1",
+  "textures": {
+    "layer0": "hlspells:items/staff/golden/amethyst/model/golden_staff_3"
+  }
+}

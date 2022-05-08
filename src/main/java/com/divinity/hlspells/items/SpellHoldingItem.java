@@ -10,7 +10,8 @@ import com.divinity.hlspells.spell.SpellTypes;
 import com.divinity.hlspells.spells.RunSpells;
 import com.divinity.hlspells.spells.SpellActions;
 import com.divinity.hlspells.util.SpellUtils;
-import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.*;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
@@ -27,18 +28,15 @@ import net.minecraftforge.common.util.LazyOptional;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 import net.minecraft.core.NonNullList;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.EnchantedBookItem;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.ProjectileWeaponItem;
-import net.minecraft.world.item.UseAnim;
 
 public class SpellHoldingItem extends ProjectileWeaponItem {
     private final boolean isSpellBook;
@@ -48,8 +46,6 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
         super(properties);
         this.isSpellBook = isSpellBook;
     }
-
-
 
     public boolean isSpellBook() {
         return isSpellBook;
@@ -127,8 +123,6 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
         }
     }
 
-
-
     @Override
     public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand) {
         ItemStack itemstack = player.getItemInHand(hand);
@@ -181,11 +175,18 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
         if (entity instanceof Player player) {
             LazyOptional<ISpellHolder> capability = stack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP);
             capability.ifPresent(cap -> cap.setHeldActive(false));
-            if (!world.isClientSide() && !isSpellBook ? (player.getUseItemRemainingTicks() < (72000 - (HLSpells.CONFIG.spellCastTime.get() * 20))) : player.getUseItemRemainingTicks() < 71988) {
+            if (!world.isClientSide() && castTimeCondition(player, stack)) {
                 RunSpells.doCastSpell(player, world, stack);
                 capability.filter(p -> !(p.getSpells().isEmpty())).ifPresent(cap -> {
                     world.playSound(null, player.blockPosition(), SoundEvents.EVOKER_CAST_SPELL, SoundSource.NEUTRAL, 0.6F, 1.0F);
                     SpellActions.doParticles(player);
+                    if (stack.getItem() instanceof StaffItem item) {
+                        if (item.isGemAmethyst() && SpellUtils.getSpellByID(cap.getCurrentSpell()).getMarkerType() == SpellTypes.MarkerTypes.COMBAT) {
+                            player.getCooldowns().addCooldown(stack.getItem(), (int) (HLSpells.CONFIG.cooldownDuration.get() * 20));
+                        } else if (!item.isGemAmethyst() && SpellUtils.getSpellByID(cap.getCurrentSpell()).getMarkerType() == SpellTypes.MarkerTypes.UTILITY) {
+                            player.getCooldowns().addCooldown(stack.getItem(), (int) (HLSpells.CONFIG.cooldownDuration.get() * 20));
+                        }
+                    }
                 });
             }
         }
@@ -208,8 +209,25 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 
     @Override
     public boolean isBookEnchantable(ItemStack stack, ItemStack book) {
-        return !isSpellBook && EnchantedBookItem.getEnchantments(book).getString(0).contains("minecraft:unbreaking") &&
-        EnchantmentHelper.getItemEnchantmentLevel(Enchantments.UNBREAKING, stack) < Integer.parseInt(String.valueOf(EnchantedBookItem.getEnchantments(book).getString(0).charAt(5)));
+        if (EnchantedBookItem.getEnchantments(book).size() > 0) {
+            for (int i = 0; i < EnchantedBookItem.getEnchantments(book).size(); i++) {
+                CompoundTag tag = EnchantedBookItem.getEnchantments(book).getCompound(i);
+                ResourceLocation enchantment = EnchantmentHelper.getEnchantmentId(tag);
+                if (enchantment != null) {
+                    if (enchantment.toString().contains("minecraft:mending") && EnchantmentHelper.getItemEnchantmentLevel(Enchantments.MENDING, stack) == 0) {
+                        return !isSpellBook || stack.getItem() instanceof StaffItem;
+                    }
+                    else if (enchantment.toString().contains("minecraft:unbreaking")) {
+                        if (EnchantmentHelper.getItemEnchantmentLevel(Enchantments.UNBREAKING, stack) <= EnchantmentHelper.getEnchantmentLevel(tag)) {
+                            if (EnchantmentHelper.getItemEnchantmentLevel(Enchantments.UNBREAKING, stack) != 3) {
+                                return !isSpellBook || stack.getItem() instanceof StaffItem;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     @Override
@@ -248,5 +266,14 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
                 stack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP).ifPresent(spellHolder -> stack.deserializeNBT(nbt));
             }
         }
+    }
+
+    private boolean castTimeCondition(Player player, ItemStack stack) {
+        if (stack.getItem() instanceof StaffItem item) {
+            return player.getUseItemRemainingTicks() < (72000 - (item.getCastDelay()));
+        } else if (!isSpellBook) {
+            return player.getUseItemRemainingTicks() < (72000 - (HLSpells.CONFIG.spellCastTime.get() * 20));
+        }
+        return player.getUseItemRemainingTicks() < 71988;
     }
 }

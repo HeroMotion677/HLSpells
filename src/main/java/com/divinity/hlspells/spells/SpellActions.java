@@ -7,8 +7,11 @@ import com.divinity.hlspells.setup.init.BlockInit;
 import com.divinity.hlspells.setup.init.EntityInit;
 import com.divinity.hlspells.player.capability.PlayerCapProvider;
 import com.divinity.hlspells.util.Util;
+import com.google.common.collect.Lists;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.monster.Evoker;
+import net.minecraft.world.entity.monster.Slime;
 import net.minecraft.world.entity.projectile.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
@@ -44,6 +47,8 @@ import javax.annotation.Nullable;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import static com.divinity.hlspells.goal.SpellBookLureGoal.LURE_RANGE;
@@ -74,28 +79,15 @@ public class SpellActions {
     static int healingTimer = 0;
     static int airTimer = 0;
 
-    /**
-     * Returns a comparator which compares entities' distances to given player
-     */
-    public static Comparator<Entity> getEntityComparator(Player player) {
-        return new Object() {
-            Comparator<Entity> compareDistOf(double x, double y, double z) {
-                return Comparator.comparing(entity -> entity.distanceToSqr(x, y, z));
-            }
-        }.compareDistOf(player.getX(), player.getY(), player.getZ());
-    }
-
     public static boolean doBlastSpell(Player player, Level world) {
         double x = player.getX();
         double y = player.getY();
         double z = player.getZ();
-        List<Entity> entities = world.getEntitiesOfClass(Entity.class,
-                new AABB(x - 6, y - 6, z - 6,
-                        x + 6, y + 6, z + 6)).stream().sorted(getEntityComparator(player)).collect(Collectors.toList());
-        for (Entity entity : entities) {
-            if ((entity instanceof LivingEntity livingEntity) && (entity != player)) {
-                livingEntity.knockback(5F * 0.5F, Mth.sin(player.yRot * ((float) Math.PI / 180F)), -Mth.cos(player.yRot * ((float) Math.PI / 180F)));
-                livingEntity.hurt(DamageSource.explosion((livingEntity)), 4.0F);
+        List<LivingEntity> entities = Util.getEntitiesInRange(player, LivingEntity.class, 6, 6, 6);
+        for (LivingEntity entity : entities) {
+            if (entity != player) {
+                entity.knockback(5F * 0.5F, Mth.sin(player.yRot * ((float) Math.PI / 180F)), -Mth.cos(player.yRot * ((float) Math.PI / 180F)));
+                entity.hurt(DamageSource.explosion((entity)), 4.0F);
                 player.setDeltaMovement(player.getDeltaMovement().multiply(0.6D, 1.0D, 0.6D));
             }
         }
@@ -146,7 +138,7 @@ public class SpellActions {
                 public void onHitEntity(EntityHitResult result) {
                     Entity entity = result.getEntity();
                     Entity entity1 = this.getOwner();
-                    LivingEntity livingentity = entity1 instanceof LivingEntity ? (LivingEntity) entity1 : null;
+                    LivingEntity livingentity = entity1 instanceof LivingEntity entity2 ? entity2 : null;
 
                     if (result.getEntity() == this.getOwner()) {
                         return;
@@ -160,7 +152,6 @@ public class SpellActions {
                     }
                 }
             };
-
             dumbBullet.setNoGravity(true);
             dumbBullet.setOwner(player);
             dumbBullet.setPos(player.getX() + player.getViewVector(1.0F).x, player.getY() + 1.35, player.getZ() + player.getViewVector(1.0F).z);
@@ -177,7 +168,7 @@ public class SpellActions {
             FluidState fluidState = world.getFluidState(blockPos);
             if (fluidState.is(FluidTags.WATER)) {
                 used = true;
-                if (blockState.getBlock() instanceof SimpleWaterloggedBlock && !((SimpleWaterloggedBlock) blockState.getBlock()).canPlaceLiquid(world, blockPos, blockState, Fluids.WATER)) {
+                if (blockState.getBlock() instanceof SimpleWaterloggedBlock block && !block.canPlaceLiquid(world, blockPos, blockState, Fluids.WATER)) {
                     world.setBlock(blockPos, blockState.setValue(BlockStateProperties.WATERLOGGED, Boolean.FALSE), 3);
                 } else {
                     world.setBlock(blockPos, Blocks.AIR.defaultBlockState(), 3);
@@ -321,9 +312,9 @@ public class SpellActions {
         int stepX = 0;
         int stepY = 1;
         int stepZ = 0;
-        if ((rayTraceResult instanceof BlockHitResult)
+        if ((rayTraceResult instanceof BlockHitResult result)
                 && world.getBlockState(new BlockPos(location).above()).getMaterial() != Material.AIR) {
-            Direction rayTraceDirection = ((BlockHitResult) rayTraceResult).getDirection();
+            Direction rayTraceDirection = result.getDirection();
             stepX = rayTraceDirection.getStepX();
             stepY = rayTraceDirection.getStepY();
             stepZ = rayTraceDirection.getStepZ();
@@ -409,9 +400,10 @@ public class SpellActions {
                 });
             }
             player.addEffect(SLOW_FALLING);
-            for (int i = 0; i < 3; i++) {
-                world.addParticle(ParticleTypes.CLOUD, player.getX(), player.getY() - 1,
-                        player.getZ(), 0, player.getDeltaMovement().y, 0);
+            if (world.getBlockState(player.blockPosition().below()).getBlock() == Blocks.AIR) {
+                for (int i = 0; i < 3; i++) {
+                    world.addParticle(ParticleTypes.CLOUD, player.getX(), player.getY() - 1, player.getZ(), 0, player.getDeltaMovement().y, 0);
+                }
             }
             return true;
         }
@@ -494,11 +486,7 @@ public class SpellActions {
             });
         }
         player.addEffect(GLOWING);
-
-        List<Mob> mobEntities = world.getEntitiesOfClass(Mob.class,
-                        new AABB(player.getX() - LURE_RANGE, player.getY() - LURE_RANGE, player.getZ() - LURE_RANGE,
-                                player.getX() + LURE_RANGE, player.getY() + LURE_RANGE, player.getZ() + LURE_RANGE))
-                .stream().sorted(getEntityComparator(player)).collect(Collectors.toList());
+        List<Mob> mobEntities = Util.getEntitiesInRange(player, Mob.class, LURE_RANGE, LURE_RANGE, LURE_RANGE);
         for (Mob mob : mobEntities) {
             List<? extends String> blacklistedMobs = HLSpells.CONFIG.sapientMobsList.get();
             boolean predicate = false;
@@ -538,11 +526,7 @@ public class SpellActions {
 
     // Flaming Circle
     public static boolean doFlamingCircle(Player player, Level world) {
-        List<LivingEntity> livingEntities = world.getEntitiesOfClass(LivingEntity.class,
-                        new AABB(player.getX() - 6, player.getY() + 1, player.getZ() - 6,
-                                player.getX() + 6, player.getY() - 1, player.getZ() + 6))
-                .stream().sorted(getEntityComparator(player)).collect(Collectors.toList());
-
+        List<LivingEntity> livingEntities = Util.getEntitiesInRange(player, LivingEntity.class, 6, -1, 6);
         flameTimer++;
         if (flameTimer % 10 == 0) {
             doEnchantParticleInterior(player, world);
@@ -620,11 +604,8 @@ public class SpellActions {
 
     // Protection Circle
     public static boolean doProtectionCircle(Player player, Level world) {
-        List<Entity> entities = world.getEntitiesOfClass(Entity.class,
-                        new AABB(player.getX() - 6, player.getY() - 6, player.getZ() - 6,
-                                player.getX() + 6, player.getY() + 6, player.getZ() + 6))
-                .stream().sorted(getEntityComparator(player)).collect(Collectors.toList());
-        for (Entity entity : entities) {
+        List<LivingEntity> entities = Util.getEntitiesInRange(player, LivingEntity.class, 6, 6, 6);
+        for (LivingEntity entity : entities) {
             if (!(entity instanceof Player)) {
                 entity.setDeltaMovement(entity.getLookAngle().reverse().multiply(0.3D, 0D, 0.3D));
             }
@@ -709,10 +690,7 @@ public class SpellActions {
 
     // Healing Circle
     public static boolean doHealingCircle(Player player, Level world) {
-        List<LivingEntity> livingEntities = world.getEntitiesOfClass(LivingEntity.class,
-                        new AABB(player.getX() - 6, player.getY() - 6, player.getZ() - 6,
-                                player.getX() + 6, player.getY() + 6, player.getZ() + 6))
-                .stream().sorted(getEntityComparator(player)).collect(Collectors.toList());
+        List<LivingEntity> livingEntities = Util.getEntitiesInRange(player, LivingEntity.class, 6, 6, 6);
         healingTimer++;
         if (healingTimer % 10 == 0) {
             doEnchantParticleInterior(player, world);
@@ -764,10 +742,7 @@ public class SpellActions {
 
     // Respiration
     public static boolean doRespiration(Player player, Level world) {
-        List<Player> players = world.getEntitiesOfClass(Player.class,
-                        new AABB(player.getX() - 10, player.getY() - 4, player.getZ() - 10,
-                                player.getX() + 10, player.getY() + 4, player.getZ() + 10))
-                .stream().sorted(getEntityComparator(player)).collect(Collectors.toList());
+        List<Player> players = Util.getEntitiesInRange(player, Player.class, 10, 4, 10);
         airTimer++;
         for (Player p : players) {
             if (p.isUnderWater() && airTimer == 10) {
@@ -820,23 +795,15 @@ public class SpellActions {
         if (speedAttribute != null && speedAttribute.getModifier(speedUUID) != null) {
             speedAttribute.removeModifier(speedModifier);
         }
-        MobEffectInstance instance = playerEntity.getEffect(MobEffects.GLOWING);
-        MobEffectInstance instance2 = playerEntity.getEffect(MobEffects.LEVITATION);
-        MobEffectInstance instance3 = playerEntity.getEffect(MobEffects.SLOW_FALLING);
 
         /* Check if the player has any one of these effects while they're not holding down a spell item, should prevent
         a bug where if you quickly tap the spell item and switch to a different one the infinite effect is applied to the player
         MIGHT have repercussions on other mods that have these effects and are not visible. */
 
-        if (instance != null && !instance.isVisible() && instance.getAmplifier() >= 5) {
-            playerEntity.removeEffect(instance.getEffect());
-        }
-        if (instance2 != null && !instance2.isVisible() && instance2.getAmplifier() >= 5) {
-            playerEntity.removeEffect(instance2.getEffect());
-        }
-        if (instance3 != null && !instance3.isVisible() && instance3.getAmplifier() >= 5) {
-            playerEntity.removeEffect(instance3.getEffect());
-        }
+        Lists.newArrayList(MobEffects.GLOWING, MobEffects.LEVITATION, MobEffects.SLOW_FALLING)
+                .stream().map(playerEntity::getEffect)
+                .filter(p -> p != null && !p.isVisible() && p.getAmplifier() >= 5)
+                .forEach(p -> playerEntity.removeEffect(p.getEffect()));
 
         // Reapplies the old effect to the player (if applicable)
         playerEntity.getCapability(PlayerCapProvider.PLAYER_CAP).ifPresent(c -> {

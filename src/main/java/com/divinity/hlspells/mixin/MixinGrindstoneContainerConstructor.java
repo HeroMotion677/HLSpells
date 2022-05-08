@@ -1,6 +1,7 @@
 package com.divinity.hlspells.mixin;
 
 import com.divinity.hlspells.items.SpellHoldingItem;
+import com.divinity.hlspells.items.capabilities.spellholdercap.SpellHolderProvider;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.spongepowered.asm.mixin.Mixin;

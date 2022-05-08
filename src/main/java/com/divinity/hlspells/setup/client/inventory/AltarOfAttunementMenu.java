@@ -38,16 +38,15 @@ import java.util.*;
 
 public class AltarOfAttunementMenu extends AbstractContainerMenu implements ContainerListener {
     private final Player playerEntity;
-    public AltarOfAttunementBE blockEntity;
-    private IItemHandler playerInventory;
+    private final Random random = new Random();
     private final ContainerLevelAccess levelAccess;
     private final DataSlot enchantmentSeed = DataSlot.standalone();
+    public AltarOfAttunementBE blockEntity;
     public final int[] costs = new int[3];
     public String[] spellClues = new String[]{"", "", ""};
     public List<Spell> topSpellSlot;
     public List<Spell> middleSpellSlot;
     public List<Spell> bottomSpellSlot;
-    private final Random random = new Random();
 
     public AltarOfAttunementMenu(int id, Inventory playerInventory, Player player, FriendlyByteBuf extraData) {
         this(id, playerInventory, player, playerInventory.player.level.getBlockEntity(extraData.readBlockPos()), ContainerLevelAccess.NULL);
@@ -58,10 +57,10 @@ public class AltarOfAttunementMenu extends AbstractContainerMenu implements Cont
         checkContainerSize(playerInventory, 4);
         this.levelAccess = levelAccess;
         this.blockEntity = ((AltarOfAttunementBE) blockEntity);
-        this.playerInventory = new InvWrapper(playerInventory);
+        IItemHandler playerInv = new InvWrapper(playerInventory);
         if (blockEntity != null) {
             blockEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(h -> {
-                this.addSlot(new SlotItemHandler(h, 0, 18, 40) {
+                this.addSlot(new SlotItemHandler(h, 0, 17, 25) {
                     @Override
                     public boolean mayPlace(ItemStack pStack) {
                         return pStack.getItem() instanceof SpellHoldingItem;
@@ -71,7 +70,7 @@ public class AltarOfAttunementMenu extends AbstractContainerMenu implements Cont
                         return 1;
                     }
                 });
-                this.addSlot(new SlotItemHandler(h, 1, 17, 78) {
+                this.addSlot(new SlotItemHandler(h, 1, 17, 62) {
                     @Override
                     public boolean mayPlace(ItemStack pStack) {
                         return pStack.getItem() instanceof SpellHoldingItem;
@@ -84,7 +83,7 @@ public class AltarOfAttunementMenu extends AbstractContainerMenu implements Cont
                 });
 
                 // Attunement slots
-                this.addSlot(new SlotItemHandler(h, 2, 143, 77) {
+                this.addSlot(new SlotItemHandler(h, 2, 143, 62) {
                     @Override
                     public boolean mayPlace(ItemStack pStack) {
                         return pStack.getItem() == Items.LAPIS_LAZULI || pStack.getItem() == Items.AMETHYST_SHARD;
@@ -96,7 +95,7 @@ public class AltarOfAttunementMenu extends AbstractContainerMenu implements Cont
                     }
                 });
 
-                this.addSlot(new SlotItemHandler(h, 3, 143, 52) {
+                this.addSlot(new SlotItemHandler(h, 3, 143, 37) {
                     @Override
                     public boolean mayPlace(ItemStack pStack) {
                         return pStack.getItem() instanceof SpellHoldingItem;
@@ -117,13 +116,13 @@ public class AltarOfAttunementMenu extends AbstractContainerMenu implements Cont
         // Add Inventory
         for(int i = 0; i < 3; ++i) {
             for(int j = 0; j < 9; ++j) {
-                this.addSlot(new SlotItemHandler(this.playerInventory, j + i * 9 + 9, 7 + j * 18, 119 + i * 18));
+                this.addSlot(new SlotItemHandler(playerInv, j + i * 9 + 9, 8 + j * 18, 105 + i * 18));
             }
         }
 
         // Add Hotbar
         for(int k = 0; k < 9; ++k) {
-            this.addSlot(new SlotItemHandler(this.playerInventory, k, 7 + k * 18, 177));
+            this.addSlot(new SlotItemHandler(playerInv, k, 8 + k * 18, 163));
         }
         this.addDataSlot(this.enchantmentSeed).set(player.getEnchantmentSeed());
         this.addDataSlot(DataSlot.shared(this.costs, 0));
@@ -137,16 +136,6 @@ public class AltarOfAttunementMenu extends AbstractContainerMenu implements Cont
         return blockEntity.getLevel() != null && stillValid(ContainerLevelAccess.create(blockEntity.getLevel(), blockEntity.getBlockPos()), playerEntity, BlockInit.ALTAR_OF_ATTUNEMENT_BLOCK.get());
     }
 
-
-    private void updateInfo() {
-        for(int i = 0; i < 3; ++i) {
-            this.costs[i] = 0;
-        }
-        for (int x = 0; x < 3; ++x) {
-            this.spellClues[x] = "";
-        }
-    }
-
     @Override
     public void slotsChanged(@Nullable Container pInventory) {
         ItemStack materialSlot = blockEntity.itemHandler.getStackInSlot(2);
@@ -158,7 +147,7 @@ public class AltarOfAttunementMenu extends AbstractContainerMenu implements Cont
                         for (int i = 0; i < costs.length; ++i) {
                             this.costs[i] = 5 * (i + 1);
                         }
-                        SpellTypes.MarkerTypes markerType =  materialSlot.getItem() == Items.LAPIS_LAZULI ? SpellTypes.MarkerTypes.COMBAT : SpellTypes.MarkerTypes.UTILITY;
+                        SpellTypes.MarkerTypes markerType = materialSlot.getItem() == Items.LAPIS_LAZULI ? SpellTypes.MarkerTypes.COMBAT : SpellTypes.MarkerTypes.UTILITY;
                         this.random.setSeed(this.enchantmentSeed.get());
                         this.topSpellSlot = getSpellResultForSlot(this.random, markerType, SpellTypes.SpellTiers.TIER_ONE);
                         this.middleSpellSlot = getSpellResultForSlot(this.random, markerType, SpellTypes.SpellTiers.TIER_TWO);
@@ -169,23 +158,24 @@ public class AltarOfAttunementMenu extends AbstractContainerMenu implements Cont
                         this.broadcastChanges();
                     });
                 } else {
-                    updateInfo();
+                    resetSpellSlots();
                 }
             });
         } else {
-            updateInfo();
+            resetSpellSlots();
         }
         if (this.playerEntity instanceof ServerPlayer player) {
             NetworkManager.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), new SpellCluePacket(player.getUUID(), this.spellClues));
         }
     }
 
-    @Override
-    public void broadcastChanges() {
-        if (this.playerEntity instanceof ServerPlayer player) {
-            NetworkManager.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), new SpellCluePacket(player.getUUID(), this.spellClues));
+    private void resetSpellSlots() {
+        for(int i = 0; i < 3; ++i) {
+            this.costs[i] = 0;
         }
-        super.broadcastChanges();
+        for (int x = 0; x < 3; ++x) {
+            this.spellClues[x] = "";
+        }
     }
 
     @Override
@@ -214,11 +204,10 @@ public class AltarOfAttunementMenu extends AbstractContainerMenu implements Cont
                 return false;
             } else {
                 this.levelAccess.execute((level, blockPos) -> {
-                    ItemStack transformedSpellItem = spellItemSlot;
                     Spell singular = pId == 0 ? topSpellSlot.get(0) : pId == 1 ? middleSpellSlot.get(0) : pId == 2 ? bottomSpellSlot.get(0) : null;
-                    if (transformedSpellItem.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP).isPresent() && (singular != null)) {
-                        pPlayer.onEnchantmentPerformed(transformedSpellItem, i);
-                        transformedSpellItem.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP).ifPresent(spellHolder -> {
+                    if (spellItemSlot.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP).isPresent() && (singular != null)) {
+                        pPlayer.onEnchantmentPerformed(spellItemSlot, i);
+                        spellItemSlot.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP).ifPresent(spellHolder -> {
                             if (singular.getRegistryName() != null) {
                                 spellHolder.addSpell(singular.getRegistryName().toString());
                             }
@@ -230,8 +219,8 @@ public class AltarOfAttunementMenu extends AbstractContainerMenu implements Cont
                             }
                         }
                         pPlayer.awardStat(Stats.ENCHANT_ITEM);
-                        if (pPlayer instanceof ServerPlayer) {
-                            CriteriaTriggers.ENCHANTED_ITEM.trigger((ServerPlayer) pPlayer, transformedSpellItem, i);
+                        if (pPlayer instanceof ServerPlayer player) {
+                            CriteriaTriggers.ENCHANTED_ITEM.trigger(player, spellItemSlot, i);
                         }
                         blockEntity.setChanged();
                         this.enchantmentSeed.set(pPlayer.getEnchantmentSeed());

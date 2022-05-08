@@ -1,0 +1,6 @@
+{
+  "parent": "hlspells:item/staff/netherite/lapis/netherite_staff_1",
+  "textures": {
+    "layer0": "hlspells:items/staff/netherite/lapis/model/netherite_staff_4"
+  }
+}

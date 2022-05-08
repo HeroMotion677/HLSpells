@@ -1,7 +1,7 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "hlspells:items/totem_of_returning"
+    "layer0": "hlspells:items/totems/totem_of_returning"
   },
   "overrides": [
     {

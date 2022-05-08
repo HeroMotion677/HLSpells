@@ -1,0 +1,18 @@
+{
+  "parent": "hlspells:item/wand_amethyst",
+  "textures": {
+    "layer0": "hlspells:items/wand/amethyst/wand_5"
+  },
+  "display": {
+    "thirdperson_righthand": {
+      "rotation": [-126, -90, -40],
+      "translation": [0, 0, -1.25],
+      "scale": [0.77, 0.77, 0.77]
+    },
+    "thirdperson_lefthand": {
+      "rotation": [-126, 90, 40],
+      "translation": [0, 0, -1.25],
+      "scale": [0.77, 0.77, 0.77]
+    }
+  }
+}

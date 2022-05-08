@@ -8,6 +8,8 @@
     "MixinGrindstoneContainer",
     "MixinGrindstoneContainerConstructor",
     "MixinGrindstoneExperience",
+    "MixinItemRenderer",
+    "MixinPose",
     "MixinSmithingRecipe"
   ],
   "minVersion": "0.8",

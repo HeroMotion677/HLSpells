@@ -31,7 +31,6 @@ public class ModTotemItem extends Item {
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
     public boolean isFoil(ItemStack itemstack) {
         return false;
     }

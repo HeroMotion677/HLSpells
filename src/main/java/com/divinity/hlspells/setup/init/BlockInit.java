@@ -4,6 +4,7 @@ import com.divinity.hlspells.HLSpells;
 import com.divinity.hlspells.world.blocks.blockentities.AltarOfAttunementBE;
 import com.divinity.hlspells.world.blocks.AltarOfAttunementBlock;
 import com.divinity.hlspells.world.blocks.CustomFrostedIce;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.Block;
@@ -13,6 +14,9 @@ import net.minecraft.world.level.material.MaterialColor;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
+
+import javax.annotation.Nullable;
+import java.util.function.Supplier;
 
 public class BlockInit {
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, HLSpells.MODID);

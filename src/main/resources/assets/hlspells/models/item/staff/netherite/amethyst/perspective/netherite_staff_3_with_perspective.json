@@ -1,0 +1,12 @@
+{
+  "parent": "forge:item/default",
+  "loader": "forge:separate-perspective",
+  "base": {
+    "parent": "hlspells:item/staff/netherite/amethyst/netherite_staff_3"
+  },
+  "perspectives": {
+    "gui": {
+      "parent": "hlspells:item/staff/netherite/amethyst/gui/netherite_staff_gui_3"
+    }
+  }
+}

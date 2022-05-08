@@ -124,4 +124,8 @@ public class Spell extends ForgeRegistryEntry<Spell> {
     public SpellTypes.SpellTiers getSpellTier() {
         return this.spellTier;
     }
+
+    public int rarityAsInt() {
+        return this.getSpellRarity() == SpellTypes.SpellRarities.COMMON ? 1 : this.getSpellRarity() == SpellTypes.SpellRarities.UNCOMMON ? 2 : this.getSpellRarity() == SpellTypes.SpellRarities.RARE ? 3 : 0;
+    }
 }

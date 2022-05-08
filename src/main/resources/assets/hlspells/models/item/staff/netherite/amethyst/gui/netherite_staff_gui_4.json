@@ -1,0 +1,6 @@
+{
+  "parent": "hlspells:item/staff/netherite/amethyst/gui/netherite_staff_gui_1",
+  "textures": {
+    "layer0": "hlspells:items/staff/netherite/amethyst/gui/netherite_staff_gui_4"
+  }
+}

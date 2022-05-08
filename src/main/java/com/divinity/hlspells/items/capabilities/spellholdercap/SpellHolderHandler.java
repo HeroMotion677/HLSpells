@@ -17,7 +17,7 @@ public class SpellHolderHandler {
 
     @SubscribeEvent
     public static void anvilUpdateEvent(AnvilUpdateEvent event) {
-        ItemStack wandItem = event.getLeft().getItem() instanceof SpellHoldingItem && ((SpellHoldingItem) event.getLeft().getItem()).isWand() ? event.getLeft() : null;
+        ItemStack wandItem = event.getLeft().getItem() instanceof SpellHoldingItem item && item.isWand() ? event.getLeft() : null;
         ItemStack spellBook = event.getRight().getItem() == ItemInit.SPELL_BOOK.get() ? event.getRight() : null;
         if (wandItem != null && spellBook != null) {
             ItemStack transformedItem = wandItem.copy();

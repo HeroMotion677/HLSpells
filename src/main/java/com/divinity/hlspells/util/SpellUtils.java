@@ -1,12 +1,14 @@
 package com.divinity.hlspells.util;
 
 import com.divinity.hlspells.HLSpells;
+import com.divinity.hlspells.items.StaffItem;
 import com.divinity.hlspells.setup.init.ItemInit;
 import com.divinity.hlspells.setup.init.SpellInit;
 import com.divinity.hlspells.items.capabilities.spellholdercap.ISpellHolder;
 import com.divinity.hlspells.items.capabilities.spellholdercap.SpellHolderProvider;
 import com.divinity.hlspells.spell.Spell;
 import com.divinity.hlspells.spell.SpellTypes;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.Item;
@@ -38,7 +40,7 @@ public class SpellUtils {
             return true;
         else if (item == ItemInit.WAND.get() && existingSpells.size() < 3)
             return true;
-        else return item == ItemInit.STAFF.get() && existingSpells.size() < 6;
+        else return item instanceof StaffItem && existingSpells.size() < 6;
     }
 
     public static boolean checkXpReq(Player player, Spell spell) {
@@ -48,7 +50,7 @@ public class SpellUtils {
     public static int getTickDelay(Player player, Spell spell) {
         int tickDelay = spell.getTickDelay();
         if (player.getItemBySlot(EquipmentSlot.HEAD).getItem() == ItemInit.WIZARD_HAT.get()) {
-            tickDelay = tickDelay + 4;
+            tickDelay += 4;
         }
         return tickDelay;
     }

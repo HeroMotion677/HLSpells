@@ -23,10 +23,7 @@ public class SpellHolderProvider implements ICapabilityProvider, INBTSerializabl
 
     @Nonnull
     private ISpellHolder createSpellCap() {
-        if (spellHolder == null) {
-            spellHolder = new SpellHolder();
-        }
-        return spellHolder;
+        return spellHolder == null ? new SpellHolder() : spellHolder;
     }
 
     @Nonnull

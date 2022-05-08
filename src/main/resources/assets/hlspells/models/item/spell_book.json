@@ -5,8 +5,7 @@
     32
   ],
   "textures": {
-    "0": "hlspells:other/book",
-    "particle": "hlspells:other/book"
+    "0": "hlspells:items/spellbook/book"
   },
   "overrides": [
     {

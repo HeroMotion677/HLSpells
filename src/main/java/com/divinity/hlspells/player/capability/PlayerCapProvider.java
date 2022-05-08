@@ -78,8 +78,8 @@ public class PlayerCapProvider implements ICapabilityProvider, INBTSerializable<
                 for (int i = 0; i < soulBondItemsSize; i++) {
                     Tag slot = slotsNBT.get(i);
                     Tag stack = stacksNBT.get(i);
-                    if (slot instanceof IntTag && stack instanceof CompoundTag) {
-                        cap.addSoulBondItem(((IntTag) slot).getAsInt(), ItemStack.of(((CompoundTag) stack)));
+                    if (slot instanceof IntTag intTag && stack instanceof CompoundTag compoundTag) {
+                        cap.addSoulBondItem(intTag.getAsInt(), ItemStack.of(compoundTag));
                     }
                 }
             });

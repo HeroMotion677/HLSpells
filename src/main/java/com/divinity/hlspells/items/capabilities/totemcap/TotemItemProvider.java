@@ -22,10 +22,7 @@ public class TotemItemProvider implements ICapabilityProvider, INBTSerializable<
 
     @Nonnull
     private ITotemCap createTotemCap() {
-        if (totemCap == null) {
-            totemCap = new TotemCap();
-        }
-        return totemCap;
+        return totemCap == null ? new TotemCap() : totemCap;
     }
 
     @Nonnull

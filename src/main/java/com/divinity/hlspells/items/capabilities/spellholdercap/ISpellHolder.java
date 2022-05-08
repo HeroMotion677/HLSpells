@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 public interface ISpellHolder {
-    List<String> getSpells();
+    @NotNull List<String> getSpells();
 
     /**
      * Do your own check to see if the spell can be added

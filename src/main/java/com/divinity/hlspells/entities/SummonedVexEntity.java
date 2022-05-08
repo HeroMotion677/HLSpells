@@ -1,6 +1,7 @@
 package com.divinity.hlspells.entities;
 
 import com.divinity.hlspells.spells.SpellActions;
+import com.divinity.hlspells.util.Util;
 import net.minecraft.world.entity.ai.control.MoveControl;
 import net.minecraft.world.entity.monster.Vex;
 import net.minecraft.world.entity.player.Player;
@@ -200,10 +201,7 @@ public class SummonedVexEntity extends Vex {
         @Override
         public boolean canUse() {
             int scanRange = 15;
-            List<Mob> mobEntities = SummonedVexEntity.this.level.getEntitiesOfClass(Mob.class,
-                            new AABB(SummonedVexEntity.this.getX() - scanRange, SummonedVexEntity.this.getY() - scanRange, SummonedVexEntity.this.getZ() - scanRange,
-                            SummonedVexEntity.this.getX() + scanRange, SummonedVexEntity.this.getY() + scanRange, SummonedVexEntity.this.getZ() + scanRange))
-                    .stream().sorted(SpellActions.getEntityComparator(SummonedVexEntity.this.playerOwner)).collect(Collectors.toList());
+            List<Mob> mobEntities = Util.getEntitiesInRange(SummonedVexEntity.this, Mob.class, scanRange, scanRange, scanRange);
             for (Mob mob : mobEntities) {
                 if (mob != null && !(mob instanceof SummonedVexEntity)) {
                     if (mob.getTarget() == SummonedVexEntity.this.playerOwner) {

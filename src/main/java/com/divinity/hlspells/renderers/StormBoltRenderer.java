@@ -20,6 +20,6 @@ public class StormBoltRenderer extends EntityRenderer<InvisibleTargetingEntity> 
 
     @Override
     public ResourceLocation getTextureLocation(InvisibleTargetingEntity pEntity) {
-        return new ResourceLocation(HLSpells.MODID, "textures");
+        return new ResourceLocation("");
     }
 }

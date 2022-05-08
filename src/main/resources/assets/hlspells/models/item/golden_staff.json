@@ -1,0 +1,22 @@
+{
+  "parent": "forge:item/default",
+  "loader": "forge:separate-perspective",
+  "base": {
+    "parent": "hlspells:item/staff/golden/lapis/golden_staff_1"
+  },
+  "perspectives": {
+    "gui": {
+      "parent": "hlspells:item/staff/golden/lapis/gui/golden_staff_gui_1"
+    },
+    "ground": {
+      "parent": "hlspells:item/staff/golden/lapis/gui/golden_staff_gui_1"
+    }
+  },
+  "overrides": [
+    {"predicate": {"pull": 0.2}, "model": "hlspells:item/staff/golden/lapis/perspective/golden_staff_2_with_perspective"},
+    {"predicate": {"pull": 0.4}, "model": "hlspells:item/staff/golden/lapis/perspective/golden_staff_3_with_perspective"},
+    {"predicate": {"pull": 0.6}, "model": "hlspells:item/staff/golden/lapis/perspective/golden_staff_4_with_perspective"},
+    {"predicate": {"pull": 0.8}, "model": "hlspells:item/staff/golden/lapis/perspective/golden_staff_5_with_perspective"},
+    {"predicate": {"pull": 1.0}, "model": "hlspells:item/staff/golden/lapis/perspective/golden_staff_6_with_perspective"}
+  ]
+}

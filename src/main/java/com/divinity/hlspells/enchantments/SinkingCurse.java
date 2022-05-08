@@ -27,7 +27,8 @@ public class SinkingCurse extends Enchantment
             for (ItemStack stack : entity.getArmorSlots())  {
                 if (EnchantmentHelper.getItemEnchantmentLevel(EnchantmentInit.CURSE_OF_SINKING.get(), stack) > 0) {
                     // FluidOnEyes check whether the player is currently in a liquid. If no liquids are found, the value is null
-                    if (entity.isUnderWater() && entity.getDeltaMovement().y() > -0.2D) {
+                    // noinspection ConstantConditions
+                    if (entity.fluidOnEyes != null && entity.getDeltaMovement().y() > -0.2D) {
                         entity.setDeltaMovement(entity.getDeltaMovement().add(0, -0.2D, 0));
                     }
                 }

@@ -1,0 +1,80 @@
+{
+  "credit": "Made with Blockbench",
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "hlspells:items/wand/amethyst/wand"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "pull": 0
+      },
+      "model": "hlspells:item/wand_amethyst"
+    },
+    {
+      "predicate": {
+        "pull": 0.2
+      },
+      "model": "hlspells:item/wand/amethyst/wand_2"
+    },
+    {
+      "predicate": {
+        "pull": 0.4
+      },
+      "model": "hlspells:item/wand/amethyst/wand_3"
+    },
+    {
+      "predicate": {
+        "pull": 0.6
+      },
+      "model": "hlspells:item/wand/amethyst/wand_4"
+    },
+    {
+      "predicate": {
+        "pull": 0.8
+      },
+      "model": "hlspells:item/wand/amethyst/wand_5"
+    },
+    {
+      "predicate": {
+        "pull": 1
+      },
+      "model": "hlspells:item/wand/amethyst/wand_6"
+    }
+  ],
+  "display": {
+    "thirdperson_righthand": {
+      "rotation": [-80, -90, -40],
+      "translation": [0, 0.5, 1.75],
+      "scale": [0.77, 0.77, 0.77]
+    },
+    "thirdperson_lefthand": {
+      "rotation": [-80, 90, 40],
+      "translation": [0, 0.5, 1.75],
+      "scale": [0.77, 0.77, 0.77]
+    },
+    "firstperson_righthand": {
+      "rotation": [-10, -82, 80],
+      "translation": [2.77, 1.25, 1.75],
+      "scale": [0.68, 0.68, 0.68]
+    },
+    "firstperson_lefthand": {
+      "rotation": [-10, 82, -80],
+      "translation": [2.77, 1.25, 1.75],
+      "scale": [0.68, 0.68, 0.68]
+    },
+    "ground": {
+      "translation": [0, 3.75, 0],
+      "scale": [0.5, 0.5, 0.5]
+    },
+    "head": {
+      "rotation": [0, 0, -44],
+      "translation": [1.25, 1.75, 0],
+      "scale": [1.5, 1.5, 1.5]
+    },
+    "fixed": {
+      "rotation": [-180, 0, -180],
+      "translation": [0, 0, -1]
+    }
+  }
+}
