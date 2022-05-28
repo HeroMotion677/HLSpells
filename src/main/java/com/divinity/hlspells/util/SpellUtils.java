@@ -1,14 +1,13 @@
 package com.divinity.hlspells.util;
 
 import com.divinity.hlspells.HLSpells;
-import com.divinity.hlspells.items.StaffItem;
+import com.divinity.hlspells.items.spellitems.StaffItem;
 import com.divinity.hlspells.setup.init.ItemInit;
 import com.divinity.hlspells.setup.init.SpellInit;
-import com.divinity.hlspells.items.capabilities.spellholdercap.ISpellHolder;
-import com.divinity.hlspells.items.capabilities.spellholdercap.SpellHolderProvider;
+import com.divinity.hlspells.capabilities.spellholdercap.ISpellHolder;
+import com.divinity.hlspells.capabilities.spellholdercap.SpellHolderProvider;
 import com.divinity.hlspells.spell.Spell;
-import com.divinity.hlspells.spell.SpellTypes;
-import net.minecraft.client.renderer.RenderType;
+import com.divinity.hlspells.spell.SpellAttributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.Item;
@@ -18,7 +17,9 @@ import net.minecraft.resources.ResourceLocation;
 import javax.annotation.Nonnull;
 import java.util.List;
 
-public class SpellUtils {
+public final class SpellUtils {
+
+    private SpellUtils() {} // No instances of this class should be created
 
     /**
      * Returns the current active spell if not found return empty
@@ -57,7 +58,7 @@ public class SpellUtils {
 
     public static int getXpReq(Player player, Spell spell) {
         int xpToRemove = spell.getXpCost();
-        if (spell.getType() == SpellTypes.CAST && player.getItemBySlot(EquipmentSlot.HEAD).getItem() == ItemInit.WIZARD_HAT.get()) {
+        if (spell.getSpellType() == SpellAttributes.Type.CAST && player.getItemBySlot(EquipmentSlot.HEAD).getItem() == ItemInit.WIZARD_HAT.get()) {
             xpToRemove *= 0.7;
         }
         return xpToRemove;

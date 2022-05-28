@@ -1,7 +1,7 @@
 package com.divinity.hlspells.mixin;
 
-import com.divinity.hlspells.items.SpellHoldingItem;
-import com.divinity.hlspells.items.capabilities.spellholdercap.SpellHolderProvider;
+import com.divinity.hlspells.items.spellitems.SpellHoldingItem;
+import com.divinity.hlspells.capabilities.spellholdercap.SpellHolderProvider;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.UpgradeRecipe;

@@ -1,10 +1,9 @@
 package com.divinity.hlspells.mixin;
 
-import com.divinity.hlspells.items.SpellHoldingItem;
-import com.divinity.hlspells.items.StaffItem;
+import com.divinity.hlspells.items.spellitems.SpellHoldingItem;
+import com.divinity.hlspells.items.spellitems.StaffItem;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelPart;
-import net.minecraft.client.renderer.ItemInHandRenderer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import org.spongepowered.asm.mixin.Final;
@@ -14,8 +13,10 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+// Keeping this here until PlayerRenderEvent allows you to change the rotation of the player's arm (currently it doesn't, so a mixin is the only way)
 @Mixin(HumanoidModel.class)
 public class MixinPose {
+
     @Shadow @Final public ModelPart rightArm;
 
     @Shadow @Final public ModelPart leftArm;
@@ -35,7 +36,8 @@ public class MixinPose {
                 this.leftArm.yRot = 0.80F;
                 this.rightArm.xRot = (-(float) Math.PI / 2F) + 0.2F;
                 this.leftArm.xRot = (-(float) Math.PI / 2F) + 0.2F;
-            } else if (useItem instanceof SpellHoldingItem item && item.isWand()) {
+            }
+            else if (useItem instanceof SpellHoldingItem item && item.isWand()) {
                 this.rightArm.yRot = -0.1F + this.head.yRot;
                 this.rightArm.xRot = (-(float) Math.PI / 2F) + this.head.xRot;
                 this.leftArm.xRot = 0;
@@ -53,7 +55,8 @@ public class MixinPose {
                 this.leftArm.yRot = 0.80F;
                 this.rightArm.xRot = (-(float) Math.PI / 2F) + 0.2F;
                 this.leftArm.xRot = (-(float) Math.PI / 2F) + 0.2F;
-            } else if (useItem instanceof SpellHoldingItem item && item.isWand()) {
+            }
+            else if (useItem instanceof SpellHoldingItem item && item.isWand()) {
                 this.leftArm.yRot = -0.1F + this.head.yRot;
                 this.leftArm.xRot = (-(float) Math.PI / 2F) + this.head.xRot;
                 this.rightArm.xRot = 0;

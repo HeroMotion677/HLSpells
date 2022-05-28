@@ -1,7 +1,6 @@
 package com.divinity.hlspells.mixin;
 
-import com.divinity.hlspells.items.SpellHoldingItem;
-import com.divinity.hlspells.items.StaffItem;
+import com.divinity.hlspells.items.spellitems.SpellHoldingItem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Vector3f;
 import net.minecraft.client.player.AbstractClientPlayer;
@@ -35,7 +34,7 @@ public abstract class MixinItemRenderer {
             boolean flag = pHand == InteractionHand.MAIN_HAND;
             HumanoidArm humanoidarm = flag ? pPlayer.getMainArm() : pPlayer.getMainArm().getOpposite();
             boolean flag3 = humanoidarm == HumanoidArm.RIGHT;
-            if (pStack.getItem() instanceof StaffItem || (pStack.getItem() instanceof SpellHoldingItem item && item.isWand())) {
+            if (pStack.getItem() instanceof SpellHoldingItem item && !item.isSpellBook()) {
                 pMatrixStack.pushPose();
                 if (pPlayer.isUsingItem() && pPlayer.getUseItemRemainingTicks() > 0 && pPlayer.getUsedItemHand() == pHand) {
                     this.applyItemArmTransform(pMatrixStack, humanoidarm, 0);
@@ -43,9 +42,9 @@ public abstract class MixinItemRenderer {
                 else if (pPlayer.isAutoSpinAttack()) {
                     this.applyItemArmTransform(pMatrixStack, humanoidarm, pEquippedProgress);
                     int j = flag3 ? 1 : -1;
-                    pMatrixStack.translate((float) j * -0.4F, 0.8F, 0.3F);
-                    pMatrixStack.mulPose(Vector3f.YP.rotationDegrees((float) j * 65.0F));
-                    pMatrixStack.mulPose(Vector3f.ZP.rotationDegrees((float) j * -85.0F));
+                    pMatrixStack.translate((float)j * -0.4F, 0.8F, 0.3F);
+                    pMatrixStack.mulPose(Vector3f.YP.rotationDegrees((float)j * 65.0F));
+                    pMatrixStack.mulPose(Vector3f.ZP.rotationDegrees((float)j * -85.0F));
                 }
                 else {
                     float f5 = -0.4F * Mth.sin(Mth.sqrt(pSwingProgress) * (float) Math.PI);
@@ -58,9 +57,7 @@ public abstract class MixinItemRenderer {
                 }
                 this.renderItem(pPlayer, pStack, flag3 ? ItemTransforms.TransformType.FIRST_PERSON_RIGHT_HAND : ItemTransforms.TransformType.FIRST_PERSON_LEFT_HAND, !flag3, pMatrixStack, pBuffer, pCombinedLight);
                 pMatrixStack.popPose();
-                if (ci.isCancellable()) {
-                    ci.cancel();
-                }
+                if (ci.isCancellable()) ci.cancel();
             }
         }
     }

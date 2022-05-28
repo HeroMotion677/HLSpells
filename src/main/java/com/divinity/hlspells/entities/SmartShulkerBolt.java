@@ -20,6 +20,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.network.NetworkHooks;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
@@ -30,21 +31,14 @@ public class SmartShulkerBolt extends ShulkerBullet {
     }
 
     @Override
-    public void tick() {
-        super.tick();
-    }
-
-    @Override
     public void selectNextMoveDirection(@Nullable Direction.Axis axis) {
         double d0 = 0.5D;
         BlockPos blockpos;
-        if (this.finalTarget == null) {
-            blockpos = this.blockPosition().below();
-        } else {
+        if (this.finalTarget == null) blockpos = this.blockPosition().below();
+        else {
             d0 = this.finalTarget.getBbHeight() * 0.5D;
             blockpos = new BlockPos(this.finalTarget.getX(), this.finalTarget.getY() + d0, this.finalTarget.getZ());
         }
-
         double d1 = blockpos.getX() + 0.5D;
         double d2 = blockpos.getY() + d0;
         double d3 = blockpos.getZ() + 0.5D;
@@ -55,79 +49,60 @@ public class SmartShulkerBolt extends ShulkerBullet {
             if (axis != Direction.Axis.X) {
                 if (blockpos1.getX() < blockpos.getX() && this.level.isEmptyBlock(blockpos1.east())) {
                     list.add(Direction.EAST);
-                } else if (blockpos1.getX() > blockpos.getX() && this.level.isEmptyBlock(blockpos1.west())) {
+                }
+                else if (blockpos1.getX() > blockpos.getX() && this.level.isEmptyBlock(blockpos1.west())) {
                     list.add(Direction.WEST);
                 }
             }
-
             if (axis != Direction.Axis.Y) {
-                if (blockpos1.getY() < blockpos.getY() && this.level.isEmptyBlock(blockpos1.above())) {
-                    list.add(Direction.UP);
-                } else if (blockpos1.getY() > blockpos.getY() && this.level.isEmptyBlock(blockpos1.below())) {
-                    list.add(Direction.DOWN);
-                }
+                if (blockpos1.getY() < blockpos.getY() && this.level.isEmptyBlock(blockpos1.above())) list.add(Direction.UP);
+                else if (blockpos1.getY() > blockpos.getY() && this.level.isEmptyBlock(blockpos1.below())) list.add(Direction.DOWN);
             }
-
             if (axis != Direction.Axis.Z) {
-                if (blockpos1.getZ() < blockpos.getZ() && this.level.isEmptyBlock(blockpos1.south())) {
-                    list.add(Direction.SOUTH);
-                } else if (blockpos1.getZ() > blockpos.getZ() && this.level.isEmptyBlock(blockpos1.north())) {
-                    list.add(Direction.NORTH);
-                }
+                if (blockpos1.getZ() < blockpos.getZ() && this.level.isEmptyBlock(blockpos1.south())) list.add(Direction.SOUTH);
+                else if (blockpos1.getZ() > blockpos.getZ() && this.level.isEmptyBlock(blockpos1.north())) list.add(Direction.NORTH);
             }
-
             direction = Direction.getRandom(this.random);
             if (list.isEmpty()) {
                 for (int i = 1; !this.level.isEmptyBlock(blockpos1.relative(direction)) && i > 0; --i) {
                     direction = Direction.getRandom(this.random);
                 }
-            } else {
-                direction = list.get(this.random.nextInt(list.size()));
             }
-
+            else direction = list.get(this.random.nextInt(list.size()));
             d1 = this.getX() + direction.getStepX();
             d2 = this.getY() + direction.getStepY();
             d3 = this.getZ() + direction.getStepZ();
         }
-
         this.setMoveDirection(direction);
         double d6 = d1 - this.getX();
         double d7 = d2 - this.getY();
         double d4 = d3 - this.getZ();
         double d5 = Math.sqrt(d6 * d6 + d7 * d7 + d4 * d4);
-
         if (d5 == 0.0D) {
             this.targetDeltaX = 0.0D;
             this.targetDeltaY = 0.0D;
             this.targetDeltaZ = 0.0D;
-        } else {
+        }
+        else {
             this.targetDeltaX = d6 / d5 * 0.38D;
             this.targetDeltaY = d7 / d5 * 0.38D;
             this.targetDeltaZ = d4 / d5 * 0.38D;
         }
-
         this.hasImpulse = true;
         this.flightSteps = 10;
     }
 
-    @Override
-    public Packet<?> getAddEntityPacket() {
-        return NetworkHooks.getEntitySpawningPacket(this);
-    }
+    @Override @Nonnull public Packet<?> getAddEntityPacket() { return NetworkHooks.getEntitySpawningPacket(this); }
 
     @Override
     protected void onHitEntity(EntityHitResult result) {
         Entity entity = result.getEntity();
         Entity entity1 = this.getOwner();
-        LivingEntity livingentity = entity1 instanceof LivingEntity ? (LivingEntity) entity1 : null;
-
-        if (result.getEntity() == this.getOwner()) {
-            return;
-        }
+        LivingEntity livingentity = entity1 instanceof LivingEntity livingEntity ? livingEntity : null;
+        if (result.getEntity() == this.getOwner()) return;
         boolean flag = entity.hurt(DamageSource.indirectMobAttack(this, livingentity).setProjectile(), 8.0F);
         if (flag) {
-            if (livingentity != null)
-                this.doEnchantDamageEffects(livingentity, entity);
+            if (livingentity != null) this.doEnchantDamageEffects(livingentity, entity);
             this.remove(RemovalReason.KILLED);
         }
     }

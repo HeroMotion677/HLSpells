@@ -1,7 +1,7 @@
 package com.divinity.hlspells.world.blocks.blockentities;
 
 import com.divinity.hlspells.setup.init.BlockInit;
-import com.divinity.hlspells.setup.client.inventory.AltarOfAttunementMenu;
+import com.divinity.hlspells.world.blocks.blockentities.inventory.AltarOfAttunementMenu;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -36,20 +36,6 @@ public class AltarOfAttunementBE extends EnchantmentTableBlockEntity implements 
         super(pWorldPosition, pBlockState);
     }
 
-    private ItemStackHandler createHandler() {
-        return new ItemStackHandler(4) {
-            @Override
-            protected void onContentsChanged(int slot) {
-                setChanged();
-            }
-        };
-    }
-
-    @Override
-    public BlockEntityType<?> getType() {
-        return BlockInit.ALTAR_BE.get();
-    }
-
     @Override
     public void setRemoved() {
         super.setRemoved();
@@ -62,23 +48,12 @@ public class AltarOfAttunementBE extends EnchantmentTableBlockEntity implements 
         handler.invalidate();
     }
 
-    @Nullable
-    @Override
-    public Packet<ClientGamePacketListener> getUpdatePacket() {
-        return ClientboundBlockEntityDataPacket.create(this);
-    }
-
     @Override
     public void setChanged() {
         super.setChanged();
         if (this.level != null) {
             this.level.sendBlockUpdated(this.worldPosition, this.getBlockState(), this.getBlockState(), 3);
         }
-    }
-
-    @Override
-    public Component getDisplayName() {
-        return new TextComponent("Attune & Transfer");
     }
 
     @Override
@@ -106,15 +81,24 @@ public class AltarOfAttunementBE extends EnchantmentTableBlockEntity implements 
         super.saveAdditional(pTag);
     }
 
-    @Override
-    public CompoundTag getUpdateTag() {
-        return this.saveWithoutMetadata();
-    }
-
     @Nullable
     @Override
     public AbstractContainerMenu createMenu(int pContainerId, Inventory pInventory, Player pPlayer) {
         return this.level != null ? new AltarOfAttunementMenu(pContainerId, pInventory, pPlayer, this, ContainerLevelAccess.create(this.level, this.getBlockPos())) : null;
+    }
+
+    @Nullable @Override public Packet<ClientGamePacketListener> getUpdatePacket() { return ClientboundBlockEntityDataPacket.create(this); }
+
+    @Override public BlockEntityType<?> getType() {
+        return BlockInit.ALTAR_BE.get();
+    }
+
+    @Override public CompoundTag getUpdateTag() {
+        return this.saveWithoutMetadata();
+    }
+
+    @Override public Component getDisplayName() {
+        return new TextComponent("Attune & Transfer");
     }
 
     public void dropContents() {
@@ -122,8 +106,14 @@ public class AltarOfAttunementBE extends EnchantmentTableBlockEntity implements 
         for (int i = 0; i < itemHandler.getSlots(); i++) {
             inventory.setItem(i, itemHandler.getStackInSlot(i));
         }
-        if (this.level != null) {
-            Containers.dropContents(this.level, this.getBlockPos(), inventory);
-        }
+        if (this.level != null) Containers.dropContents(this.level, this.getBlockPos(), inventory);
+    }
+
+    private ItemStackHandler createHandler() {
+        return new ItemStackHandler(4) {
+            @Override protected void onContentsChanged(int slot) {
+                setChanged();
+            }
+        };
     }
 }

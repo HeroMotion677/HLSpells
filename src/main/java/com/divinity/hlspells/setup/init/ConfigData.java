@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ConfigData {
+
     public final ForgeConfigSpec.BooleanValue spellsUseXP;
     public final ForgeConfigSpec.BooleanValue lootOnlyMode;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> fireMobsList;

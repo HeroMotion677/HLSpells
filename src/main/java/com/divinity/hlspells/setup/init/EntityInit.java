@@ -2,17 +2,12 @@ package com.divinity.hlspells.setup.init;
 
 import com.divinity.hlspells.HLSpells;
 import com.divinity.hlspells.entities.*;
-import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.monster.Vex;
-import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.minecraft.world.entity.MobCategory;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
-@Mod.EventBusSubscriber(modid = HLSpells.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class EntityInit {
     public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(ForgeRegistries.ENTITIES, HLSpells.MODID);
 
@@ -34,9 +29,4 @@ public class EntityInit {
     public static final RegistryObject<EntityType<SummonedVexEntity>> SUMMONED_VEX_ENTITY = ENTITIES.register("summoned_vex", () ->
             EntityType.Builder.of(SummonedVexEntity::new, MobCategory.MONSTER).fireImmune().sized(0.4F, 0.8F)
                     .clientTrackingRange(8).build(HLSpells.MODID + "summoned_vex"));
-
-    @SubscribeEvent
-    public static void attributeCreation(EntityAttributeCreationEvent event) {
-        event.put(SUMMONED_VEX_ENTITY.get(), Vex.createAttributes().build());
-    }
 }

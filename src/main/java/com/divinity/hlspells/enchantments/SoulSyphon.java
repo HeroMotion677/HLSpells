@@ -9,8 +9,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SwordItem;
 
 import net.minecraft.world.item.enchantment.Enchantment.Rarity;
+import org.jetbrains.annotations.NotNull;
 
 public class SoulSyphon extends Enchantment {
+
     public SoulSyphon(EquipmentSlot... slots) {
         super(Rarity.VERY_RARE, EnchantmentCategory.WEAPON, slots);
     }
@@ -26,11 +28,6 @@ public class SoulSyphon extends Enchantment {
     }
 
     @Override
-    protected boolean checkCompatibility(Enchantment enchantment) {
-        return enchantment != Enchantments.VANISHING_CURSE && enchantment != Enchantments.BINDING_CURSE;
-    }
-
-    @Override
     public boolean isTreasureOnly() {
         return false;
     }
@@ -43,5 +40,10 @@ public class SoulSyphon extends Enchantment {
     @Override
     public boolean isAllowedOnBooks() {
         return true;
+    }
+
+    @Override
+    protected boolean checkCompatibility(@NotNull Enchantment enchantment) {
+        return enchantment != Enchantments.VANISHING_CURSE && enchantment != Enchantments.BINDING_CURSE;
     }
 }

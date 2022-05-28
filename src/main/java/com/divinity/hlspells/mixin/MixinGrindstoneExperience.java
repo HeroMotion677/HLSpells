@@ -1,7 +1,7 @@
 package com.divinity.hlspells.mixin;
 
-import com.divinity.hlspells.items.SpellHoldingItem;
-import com.divinity.hlspells.items.capabilities.spellholdercap.SpellHolderProvider;
+import com.divinity.hlspells.items.spellitems.SpellHoldingItem;
+import com.divinity.hlspells.capabilities.spellholdercap.SpellHolderProvider;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -13,7 +13,7 @@ public class MixinGrindstoneExperience {
 
     @Inject(method = "getExperienceFromItem(Lnet/minecraft/world/item/ItemStack;)I", at = @At(value = "RETURN"), cancellable = true)
     public void getExperienceFromItem(ItemStack stack, CallbackInfoReturnable<Integer> cir) {
-        if (stack.getItem() instanceof SpellHoldingItem && ((SpellHoldingItem) stack.getItem()).isWand()) {
+        if (stack.getItem() instanceof SpellHoldingItem item && !item.isSpellBook()) {
             int spellSize = stack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP).map(m -> m.getSpells().size()).orElse(0);
             cir.setReturnValue(5 * spellSize);
         }

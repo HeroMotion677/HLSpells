@@ -27,28 +27,23 @@ public class EvokerLootModifier extends LootModifier {
     protected List<ItemStack> doApply(List<ItemStack> generatedLoot, LootContext context) {
         float rand = context.getRandom().nextFloat();
         if (rand > 0.5) {
-            List<Item> totems = Lists.newArrayList(ItemInit.TOTEM_OF_ESCAPING.get(), ItemInit.TOTEM_OF_GRIEFING.get(), ItemInit.TOTEM_OF_KEEPING.get(), ItemInit.TOTEM_OF_RETURNING.get());
             List<ItemStack> toRemove = Lists.newArrayList();
             for (ItemStack stack : generatedLoot) {
-                if (stack.getItem() == Items.TOTEM_OF_UNDYING) {
-                    toRemove.add(stack);
-                }
+                if (stack.getItem() == Items.TOTEM_OF_UNDYING) toRemove.add(stack);
             }
             generatedLoot.removeAll(toRemove);
-            generatedLoot.add(new ItemStack(totems.get(context.getRandom().nextInt(4))));
+            generatedLoot.add(new ItemStack(ItemInit.TOTEMS.get(context.getRandom().nextInt(4)).get()));
         }
         return generatedLoot;
     }
 
     public static class Serializer extends GlobalLootModifierSerializer<EvokerLootModifier> {
+
         @Override
         public EvokerLootModifier read(ResourceLocation location, JsonObject object, LootItemCondition[] conditions) {
             return new EvokerLootModifier(conditions);
         }
 
-        @Override
-        public JsonObject write(EvokerLootModifier instance) {
-            return this.makeConditions(instance.conditions);
-        }
+        @Override public JsonObject write(EvokerLootModifier instance) { return this.makeConditions(instance.conditions); }
     }
 }

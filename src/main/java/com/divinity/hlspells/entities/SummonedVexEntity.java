@@ -1,6 +1,7 @@
 package com.divinity.hlspells.entities;
 
-import com.divinity.hlspells.spells.SpellActions;
+import com.divinity.hlspells.HLSpells;
+import com.divinity.hlspells.setup.init.EntityInit;
 import com.divinity.hlspells.util.Util;
 import net.minecraft.world.entity.ai.control.MoveControl;
 import net.minecraft.world.entity.monster.Vex;
@@ -11,7 +12,6 @@ import net.minecraft.world.item.Items;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
@@ -20,7 +20,6 @@ import net.minecraft.world.level.Level;
 
 import java.util.EnumSet;
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 import net.minecraft.world.entity.Entity;
@@ -33,9 +32,16 @@ import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.target.TargetGoal;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
+import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.network.NetworkHooks;
+import org.jetbrains.annotations.NotNull;
 
+@Mod.EventBusSubscriber(modid = HLSpells.MODID, bus = Bus.MOD)
 public class SummonedVexEntity extends Vex {
+
     protected Player playerOwner;
 
     public SummonedVexEntity(EntityType<? extends Vex> entityType, Level world) {
@@ -44,9 +50,9 @@ public class SummonedVexEntity extends Vex {
         this.xpReward = 0;
     }
 
-    @Override
-    public boolean isAlliedTo(Entity entity) {
-        return entity instanceof SummonedVexEntity || entity == this.playerOwner;
+    @SubscribeEvent
+    public static void attributeCreation(EntityAttributeCreationEvent event) {
+        event.put(EntityInit.SUMMONED_VEX_ENTITY.get(), Vex.createAttributes().build());
     }
 
     @Override
@@ -65,24 +71,25 @@ public class SummonedVexEntity extends Vex {
                 this.teleportTo(ownerPos.getX(), ownerPos.getY(), ownerPos.getZ());
                 this.moveControl.setWantedPosition(ownerPos.getX(), ownerPos.getY(), ownerPos.getZ(), 0.6D);
             }
-        } else this.kill();
+        }
+        if (this.playerOwner == null && this.isAlive()) this.kill();
     }
 
     @Override
     public void readAdditionalSaveData(CompoundTag nbt) {
-        if (nbt.contains("Owner")) {
-            this.setSummonedOwner(this.level.getPlayerByUUID(nbt.getUUID("Owner")));
-        }
+        if (nbt.contains("Owner")) this.setSummonedOwner(this.level.getPlayerByUUID(nbt.getUUID("Owner")));
         super.readAdditionalSaveData(nbt);
     }
 
     @Override
-    public void addAdditionalSaveData(CompoundTag nbt) {
-        if (this.getSummonedOwner() != null) {
-            nbt.putUUID("Owner", this.getSummonedOwner().getUUID());
-        }
+    public void addAdditionalSaveData(@NotNull CompoundTag nbt) {
+        if (this.getSummonedOwner() != null) nbt.putUUID("Owner", this.getSummonedOwner().getUUID());
         super.addAdditionalSaveData(nbt);
     }
+
+    @Override @NotNull public Packet<?> getAddEntityPacket() { return NetworkHooks.getEntitySpawningPacket(this); }
+
+    @Override public boolean isAlliedTo(@NotNull Entity entity) { return entity instanceof SummonedVexEntity || entity == this.playerOwner; }
 
     @Override
     protected void registerGoals() {
@@ -95,30 +102,19 @@ public class SummonedVexEntity extends Vex {
         this.targetSelector.addGoal(1, new AttackedOwnerEnemyGoal(this));
     }
 
-    public Player getSummonedOwner() {
-        return this.playerOwner;
-    }
-
-    public void setSummonedOwner(Player owner) {
-        this.playerOwner = owner;
-    }
-
     @Override
-    protected void populateDefaultEquipmentSlots(DifficultyInstance instance) {
-        if (this.random.nextInt(2) == 0) {
-            this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.IRON_SWORD));
-        } else {
-            this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.IRON_AXE));
-        }
+    protected void populateDefaultEquipmentSlots(@NotNull DifficultyInstance instance) {
+        if (this.random.nextInt(2) == 0) this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.IRON_SWORD));
+        else this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.IRON_AXE));
         this.setDropChance(EquipmentSlot.MAINHAND, 0.0F);
     }
 
-    @Override
-    public Packet<?> getAddEntityPacket() {
-        return NetworkHooks.getEntitySpawningPacket(this);
-    }
+    public Player getSummonedOwner() { return this.playerOwner; }
+
+    public void setSummonedOwner(Player owner) { this.playerOwner = owner; }
 
     class ChargeAttackGoal extends Goal {
+
         public ChargeAttackGoal() {
             this.setFlags(EnumSet.of(Goal.Flag.MOVE));
         }
@@ -126,9 +122,8 @@ public class SummonedVexEntity extends Vex {
         public boolean canUse() {
             if (SummonedVexEntity.this.getTarget() != null && !SummonedVexEntity.this.getMoveControl().hasWanted() && SummonedVexEntity.this.random.nextInt(2) == 0) {
                 return SummonedVexEntity.this.distanceToSqr(SummonedVexEntity.this.getTarget()) > 2.0D;
-            } else {
-                return false;
             }
+            return false;
         }
 
         @Override
@@ -172,6 +167,7 @@ public class SummonedVexEntity extends Vex {
     }
 
     class CopyOwnerTargetGoal extends TargetGoal {
+
         private final TargetingConditions copyOwnerTargeting = (new TargetingConditions(true)).ignoreInvisibilityTesting();
 
         public CopyOwnerTargetGoal(PathfinderMob mob) {
@@ -191,6 +187,7 @@ public class SummonedVexEntity extends Vex {
     }
 
     class AttackedOwnerEnemyGoal extends TargetGoal {
+
         private final TargetingConditions attackedOwnerTargeting = (new TargetingConditions(true)).ignoreInvisibilityTesting();
         private Mob entity;
 
@@ -205,7 +202,7 @@ public class SummonedVexEntity extends Vex {
             for (Mob mob : mobEntities) {
                 if (mob != null && !(mob instanceof SummonedVexEntity)) {
                     if (mob.getTarget() == SummonedVexEntity.this.playerOwner) {
-                        entity = mob;
+                        this.entity = mob;
                         return SummonedVexEntity.this.getTarget() == null && SummonedVexEntity.this.playerOwner != null && this.canAttack(mob, this.attackedOwnerTargeting);
                     }
                 }
@@ -215,17 +212,19 @@ public class SummonedVexEntity extends Vex {
 
         @Override
         public void start() {
-            SummonedVexEntity.this.setTarget(entity);
+            SummonedVexEntity.this.setTarget(this.entity);
             super.start();
         }
     }
 
     class MoveHelperController extends MoveControl {
+
         public MoveHelperController(Vex vexEntity) {
             super(vexEntity);
         }
 
         @Override
+        @SuppressWarnings("all")
         public void tick() {
             if (this.operation == MoveControl.Operation.MOVE_TO) {
                 Vec3 vector3d = new Vec3(this.wantedX - SummonedVexEntity.this.getX(), this.wantedY - SummonedVexEntity.this.getY(), this.wantedZ - SummonedVexEntity.this.getZ());
@@ -233,13 +232,14 @@ public class SummonedVexEntity extends Vex {
                 if (d0 < SummonedVexEntity.this.getBoundingBox().getSize()) {
                     this.operation = MoveControl.Operation.WAIT;
                     SummonedVexEntity.this.setDeltaMovement(SummonedVexEntity.this.getDeltaMovement().scale(0.5D));
-                } else {
+                }
+                else {
                     SummonedVexEntity.this.setDeltaMovement(SummonedVexEntity.this.getDeltaMovement().add(vector3d.scale(this.speedModifier * 0.05D / d0)));
-
                     if (SummonedVexEntity.this.getTarget() == null) {
                         Vec3 vector3d1 = SummonedVexEntity.this.getDeltaMovement();
                         SummonedVexEntity.this.yRot = -((float) Mth.atan2(vector3d1.x, vector3d1.z)) * (180F / (float) Math.PI);
-                    } else {
+                    }
+                    else {
                         double d2 = SummonedVexEntity.this.getTarget().getX() - SummonedVexEntity.this.getX();
                         double d1 = SummonedVexEntity.this.getTarget().getZ() - SummonedVexEntity.this.getZ();
                         SummonedVexEntity.this.yRot = -((float) Mth.atan2(d2, d1)) * (180F / (float) Math.PI);
@@ -251,6 +251,7 @@ public class SummonedVexEntity extends Vex {
     }
 
     class MoveRandomGoal extends Goal {
+
         public MoveRandomGoal() {
             this.setFlags(EnumSet.of(Goal.Flag.MOVE));
         }

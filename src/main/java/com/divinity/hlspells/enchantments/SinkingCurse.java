@@ -14,8 +14,8 @@ import net.minecraftforge.fml.common.Mod;
 import static com.divinity.hlspells.HLSpells.MODID;
 
 @Mod.EventBusSubscriber(modid = MODID)
-public class SinkingCurse extends Enchantment
-{
+public class SinkingCurse extends Enchantment {
+
     public SinkingCurse(EquipmentSlot... slots) {
         super(Rarity.UNCOMMON, EnchantmentCategory.ARMOR, slots);
     }

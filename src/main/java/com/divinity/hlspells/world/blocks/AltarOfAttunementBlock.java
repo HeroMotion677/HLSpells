@@ -2,7 +2,7 @@ package com.divinity.hlspells.world.blocks;
 
 import com.divinity.hlspells.setup.init.BlockInit;
 import com.divinity.hlspells.world.blocks.blockentities.AltarOfAttunementBE;
-import com.divinity.hlspells.setup.client.inventory.AltarOfAttunementMenu;
+import com.divinity.hlspells.world.blocks.blockentities.inventory.AltarOfAttunementMenu;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
@@ -23,9 +23,12 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.network.NetworkHooks;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 
+@SuppressWarnings("deprecation")
 public class AltarOfAttunementBlock extends EnchantmentTableBlock {
 
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
@@ -34,15 +37,62 @@ public class AltarOfAttunementBlock extends EnchantmentTableBlock {
         super(properties);
     }
 
-    @Nullable
     @Override
+    @ParametersAreNonnullByDefault
+    @Nullable
     public BlockEntity newBlockEntity(BlockPos pPos, BlockState pState) {
         return new AltarOfAttunementBE(pPos, pState);
     }
 
     @Override
+    @ParametersAreNonnullByDefault
+    @NotNull
     public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
         return makeShape(pState.getValue(FACING));
+    }
+
+    /* BLOCK ENTITY */
+
+    @Override
+    @ParametersAreNonnullByDefault
+    @Nullable
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level pLevel, BlockState pState, BlockEntityType<T> pBlockEntityType) {
+        return pLevel.isClientSide ? createTickerHelper(pBlockEntityType, BlockInit.ALTAR_BE.get(), AltarOfAttunementBE::bookAnimationTick) : null;
+    }
+
+    @Override
+    @ParametersAreNonnullByDefault
+    @NotNull
+    public InteractionResult use(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
+        if (pLevel.getBlockEntity(pPos) instanceof AltarOfAttunementBE blockEntity) {
+            if (pLevel.isClientSide) return InteractionResult.SUCCESS;
+            NetworkHooks.openGui((ServerPlayer) pPlayer, blockEntity, pPos);
+            if (pPlayer.containerMenu instanceof AltarOfAttunementMenu menu) menu.slotsChanged(null);
+            return InteractionResult.CONSUME;
+        }
+        return InteractionResult.PASS;
+    }
+
+    @Override
+    @ParametersAreNonnullByDefault
+    public void onRemove(BlockState pState, Level pLevel, BlockPos pPos, BlockState pNewState, boolean pIsMoving) {
+        if (pState.getBlock() != pNewState.getBlock()) {
+            BlockEntity blockEntity = pLevel.getBlockEntity(pPos);
+            if (blockEntity instanceof AltarOfAttunementBE be) be.dropContents();
+        }
+        super.onRemove(pState, pLevel, pPos, pNewState, pIsMoving);
+    }
+
+    @Override
+    @NotNull
+    public RenderShape getRenderShape(@NotNull BlockState pState) {
+        return RenderShape.MODEL;
+    }
+
+    @Override
+    @NotNull
+    public BlockState rotate(BlockState pState, Rotation pRotation) {
+        return pState.setValue(FACING, pRotation.rotate(pState.getValue(FACING)));
     }
 
     @Override
@@ -50,59 +100,9 @@ public class AltarOfAttunementBlock extends EnchantmentTableBlock {
         return this.defaultBlockState().setValue(FACING, pContext.getHorizontalDirection().getOpposite());
     }
 
-    @Override
-    public BlockState rotate(BlockState pState, Rotation pRotation) {
-        return pState.setValue(FACING, pRotation.rotate(pState.getValue(FACING)));
-    }
+    @Override @NotNull public BlockState mirror(BlockState pState, Mirror pMirror) { return pState.rotate(pMirror.getRotation(pState.getValue(FACING))); }
 
-    @Override
-    public BlockState mirror(BlockState pState, Mirror pMirror) {
-        return pState.rotate(pMirror.getRotation(pState.getValue(FACING)));
-    }
-
-    @Override
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> pBuilder) {
-        pBuilder.add(FACING);
-    }
-
-    /* BLOCK ENTITY */
-
-    @Override
-    public RenderShape getRenderShape(BlockState pState) {
-        return RenderShape.MODEL;
-    }
-
-    @Override
-    public void onRemove(BlockState pState, Level pLevel, BlockPos pPos, BlockState pNewState, boolean pIsMoving) {
-        if (pState.getBlock() != pNewState.getBlock()) {
-            BlockEntity blockEntity = pLevel.getBlockEntity(pPos);
-            if (blockEntity instanceof AltarOfAttunementBE be) {
-                 be.dropContents();
-            }
-        }
-        super.onRemove(pState, pLevel, pPos, pNewState, pIsMoving);
-    }
-
-    @Nullable
-    @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level pLevel, BlockState pState, BlockEntityType<T> pBlockEntityType) {
-        return pLevel.isClientSide ? createTickerHelper(pBlockEntityType, BlockInit.ALTAR_BE.get(), AltarOfAttunementBE::bookAnimationTick) : null;
-    }
-
-    @Override
-    public InteractionResult use(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
-        if (pLevel.getBlockEntity(pPos) instanceof AltarOfAttunementBE blockEntity) {
-            if (pLevel.isClientSide) {
-                return InteractionResult.SUCCESS;
-            }
-           NetworkHooks.openGui((ServerPlayer) pPlayer, blockEntity, pPos);
-            if (pPlayer.containerMenu instanceof AltarOfAttunementMenu menu) {
-                menu.slotsChanged(null);
-            }
-            return InteractionResult.CONSUME;
-        }
-        return InteractionResult.PASS;
-    }
+    @Override protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> pBuilder) { pBuilder.add(FACING); }
 
     public static VoxelShape makeShape(Direction property) {
         VoxelShape shape = Shapes.empty();

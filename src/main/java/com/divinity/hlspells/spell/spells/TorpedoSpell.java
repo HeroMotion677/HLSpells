@@ -1,0 +1,50 @@
+package com.divinity.hlspells.spell.spells;
+
+import com.divinity.hlspells.spell.Spell;
+import com.divinity.hlspells.spell.SpellAttributes;
+import com.divinity.hlspells.spell.SpellConsumer;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.MoverType;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.enchantment.TridentRiptideEnchantment;
+import net.minecraft.world.phys.Vec3;
+
+public class TorpedoSpell extends Spell {
+
+    public TorpedoSpell(String displayName, int xpCost, boolean treasureOnly) {
+        super(SpellAttributes.Type.CAST, SpellAttributes.Rarity.RARE, SpellAttributes.Tier.TWO, SpellAttributes.Marker.UTILITY, displayName, xpCost, treasureOnly);
+    }
+
+    @Override
+    public SpellConsumer<Player> getAction() {
+        return p -> {
+            if (p != null && !p.level.isClientSide()) {
+                int i = p.getUseItem().getUseDuration();
+                if (i >= 10) {
+                    int j = 2;
+                    float f7 = p.getYRot();
+                    float f = p.getXRot();
+                    float f1 = -Mth.sin(f7 * ((float)Math.PI / 180F)) * Mth.cos(f * ((float)Math.PI / 180F));
+                    float f2 = -Mth.sin(f * ((float)Math.PI / 180F));
+                    float f3 = Mth.cos(f7 * ((float)Math.PI / 180F)) * Mth.cos(f * ((float)Math.PI / 180F));
+                    float f4 = Mth.sqrt(f1 * f1 + f2 * f2 + f3 * f3);
+                    float f5 = 3.0F * ((1.0F + (float)j) / 4.0F);
+                    f1 *= f5 / f4;
+                    f2 *= f5 / f4;
+                    f3 *= f5 / f4;
+                    p.push(f1, f2, f3);
+                    p.startAutoSpinAttack(20);
+                    if (p.isOnGround()) {
+                        p.move(MoverType.SELF, new Vec3(0.0D, 1.1999999F, 0.0D));
+                    }
+                    SoundEvent soundevent = SoundEvents.TRIDENT_RIPTIDE_1;
+                    p.level.playSound(null, p, soundevent, SoundSource.PLAYERS, 1.0F, 1.0F);
+                }
+            }
+            return true;
+        };
+    }
+}
