@@ -10,6 +10,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 @Mod.EventBusSubscriber(modid = HLSpells.MODID, bus = Bus.MOD)
 public class ModRegistry {
+
     public static void init() {
         final IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
         EnchantmentInit.ENCHANTMENTS.register(bus);

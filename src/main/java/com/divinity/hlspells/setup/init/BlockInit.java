@@ -26,6 +26,6 @@ public class BlockInit {
 
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITIES, HLSpells.MODID);
 
-    @SuppressWarnings("all")
+    @SuppressWarnings("ConstantConditions")
     public static final RegistryObject<BlockEntityType<AltarOfAttunementBE>> ALTAR_BE = BLOCK_ENTITIES.register("altar_of_attunement", () -> BlockEntityType.Builder.of(AltarOfAttunementBE::new, ALTAR_OF_ATTUNEMENT_BLOCK.get()).build(null));
 }

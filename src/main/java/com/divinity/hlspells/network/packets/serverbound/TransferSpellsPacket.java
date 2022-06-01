@@ -12,6 +12,7 @@ import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
+@SuppressWarnings("unused")
 public class TransferSpellsPacket {
 
     public TransferSpellsPacket() {}

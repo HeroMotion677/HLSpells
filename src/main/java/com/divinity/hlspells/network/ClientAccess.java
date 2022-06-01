@@ -27,7 +27,7 @@ public class ClientAccess {
         if (totemActivatedPlayer != null) {
             mc.particleEngine.createTrackingEmitter(totemActivatedPlayer, ParticleTypes.TOTEM_OF_UNDYING, 30);
             if (mc.player != null && mc.player.getUUID().equals(player)) {
-                Minecraft.getInstance().gameRenderer.displayItemActivation(stack);
+                mc.gameRenderer.displayItemActivation(stack);
             }
         }
     }

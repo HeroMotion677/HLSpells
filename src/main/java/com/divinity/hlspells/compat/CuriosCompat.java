@@ -89,12 +89,8 @@ public final class CuriosCompat {
     public static void attachCapabilities(AttachCapabilitiesEvent<ItemStack> evt) {
         if (evt.getObject().getItem() instanceof ITotem) {
             ICurio curio = new ICurio() {
-                @Override public ItemStack getStack() {
-                    return evt.getObject();
-                }
-                @Override public boolean canEquipFromUse(SlotContext ctx) {
-                    return true;
-                }
+                @Override public ItemStack getStack() { return evt.getObject(); }
+                @Override public boolean canEquipFromUse(SlotContext ctx) { return true; }
             };
             ICapabilityProvider provider = new ICapabilityProvider() {
                 private final LazyOptional<ICurio> instance = LazyOptional.of(() -> curio);

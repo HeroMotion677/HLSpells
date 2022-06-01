@@ -5,7 +5,7 @@ import com.divinity.hlspells.capabilities.spellholdercap.SpellHolderProvider;
 import com.divinity.hlspells.capabilities.totemcap.ITotemCap;
 import com.divinity.hlspells.capabilities.totemcap.TotemItemProvider;
 import com.divinity.hlspells.compat.CuriosCompat;
-import com.divinity.hlspells.entities.InvisibleTargetingEntity;
+import com.divinity.hlspells.entities.projectile.InvisibleTargetingEntity;
 import com.divinity.hlspells.items.spellitems.SpellHoldingItem;
 import com.divinity.hlspells.client.models.BaseBoltModel;
 import com.divinity.hlspells.client.models.WizardHatModel;
@@ -23,6 +23,7 @@ import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
@@ -31,18 +32,22 @@ import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.VexRenderer;
+import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.ClientRegistry;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.MovementInputUpdateEvent;
+import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.client.settings.KeyConflictContext;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.TickEvent;
@@ -113,6 +118,8 @@ public class ClientEvents {
         event.registerEntityRenderer(EntityInit.PIERCING_BOLT_ENTITY.get(), ctx -> new BaseBoltRenderer<>(ctx, new ResourceLocation(HLSpells.MODID, "textures/entity/bolt/green_bolt.png")));
         event.registerEntityRenderer(EntityInit.FLAMING_BOLT_ENTITY.get(), ctx -> new BaseBoltRenderer<>(ctx, new ResourceLocation(HLSpells.MODID, "textures/entity/bolt/orange_bolt.png")));
         event.registerEntityRenderer(EntityInit.AQUA_BOLT_ENTITY.get(), ctx -> new BaseBoltRenderer<>(ctx, new ResourceLocation(HLSpells.MODID, "textures/entity/bolt/blue_bolt.png")));
+        event.registerEntityRenderer(EntityInit.FREEZING_BOLT_ENTITY.get(), ctx -> new BaseBoltRenderer<>(ctx, new ResourceLocation(HLSpells.MODID, "textures/entity/bolt/white_bolt.png")));
+        event.registerEntityRenderer(EntityInit.CHORUS_BOLT_ENTITY.get(), ctx -> new BaseBoltRenderer<>(ctx, new ResourceLocation(HLSpells.MODID, "textures/entity/bolt/purple_bolt.png")));
         event.registerEntityRenderer(EntityInit.SUMMONED_VEX_ENTITY.get(), VexRenderer::new);
     }
 
@@ -151,21 +158,18 @@ public class ClientEvents {
                 if (WAND_BINDING.isDown() && !buttonPressedFlag) {
                     if (player != null && !player.isUsingItem()) {
                         NetworkManager.INSTANCE.sendToServer(new WandInputPacket(WAND_BINDING.getKey().getValue()));
-                        ItemStack stack = ItemStack.EMPTY;
-                        ItemStack mainHand = player.getMainHandItem();
-                        ItemStack offHand = player.getOffhandItem();
-                        boolean mainHandWand = mainHand.getItem() instanceof SpellHoldingItem sItem && sItem.isWand();
-                        boolean offHandWand = offHand.getItem() instanceof SpellHoldingItem item && item.isWand();
-                        if (mainHandWand) stack = mainHand;
-                        else if (offHandWand) stack = offHand;
-                        if (!stack.isEmpty()) {
-                            stack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP, null).ifPresent(cap -> {
-                                if (!cap.getSpells().isEmpty()) {
-                                    cap.setCurrentSpellCycle(cap.getCurrentSpellCycle() + 1);
-                                    Spell spell = SpellUtils.getSpellByID(cap.getCurrentSpell());
-                                    player.displayClientMessage(new TextComponent("Spell : " + spell.getTrueDisplayName()).withStyle(ChatFormatting.GOLD), true);
-                                }
-                            });
+                        for (InteractionHand hand : InteractionHand.values()) {
+                            ItemStack carriedItem = player.getItemInHand(hand);
+                            if (carriedItem.getItem() instanceof SpellHoldingItem item && !item.isSpellBook()) {
+                                carriedItem.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP).ifPresent(cap -> {
+                                    if (!cap.getSpells().isEmpty()) {
+                                        cap.incrementCurrentSpellCycle();
+                                        Spell spell = SpellUtils.getSpellByID(cap.getCurrentSpell());
+                                        player.displayClientMessage(new TextComponent("Spell : " + spell.getTrueDisplayName()).withStyle(ChatFormatting.GOLD), true);
+                                    }
+                                });
+                                break;
+                            }
                         }
                     }
                     buttonPressedFlag = true;

@@ -17,8 +17,8 @@ public class VillagerInit {
 
     public static final DeferredRegister<PoiType> POI = DeferredRegister.create(ForgeRegistries.POI_TYPES, HLSpells.MODID);
     public static final DeferredRegister<VillagerProfession> PROFESSIONS = DeferredRegister.create(ForgeRegistries.PROFESSIONS, HLSpells.MODID);
-    public static final RegistryObject<PoiType> MAGE_POI = POI.register("mage",
-            () -> new PoiType("mage", getAllStates(), 1, 1));
+
+    public static final RegistryObject<PoiType> MAGE_POI = POI.register("mage", () -> new PoiType("mage", getAllStates(), 1, 1));
     public static final RegistryObject<VillagerProfession> MAGE = PROFESSIONS.register("mage", () ->
             new VillagerProfession(HLSpells.MODID + ":" + "mage", MAGE_POI.get(), ImmutableSet.of(),
                     ImmutableSet.of(), SoundEvents.ENCHANTMENT_TABLE_USE));

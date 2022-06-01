@@ -29,7 +29,7 @@ public abstract class Spell extends ForgeRegistryEntry<Spell> {
     private final boolean treasureOnly;
 
     @Nullable
-    private final String descriptionId;
+    private String descriptionId;
 
     public Spell(SpellAttributes.Type type, SpellAttributes.Rarity rarity, SpellAttributes.Tier tier, SpellAttributes.Marker marker, String displayName, int xpCost, boolean treasureOnly) {
         this.spellType = type;
@@ -39,7 +39,6 @@ public abstract class Spell extends ForgeRegistryEntry<Spell> {
         this.displayName = displayName;
         this.xpCost = xpCost;
         this.treasureOnly = treasureOnly;
-        this.descriptionId = this.createDescriptionId();
     }
 
     public Spell(SpellAttributes.Type type, SpellAttributes.Rarity rarity, SpellAttributes.Tier tier, SpellAttributes.Marker marker, String displayName, int xpCost, int tickDelay, boolean treasureOnly) {
@@ -66,7 +65,7 @@ public abstract class Spell extends ForgeRegistryEntry<Spell> {
     }
 
     public String getDescriptionId() {
-        return this.createDescriptionId();
+        return this.getOrCreateDescriptionId();
     }
 
     public BaseComponent getDisplayName() {
@@ -103,9 +102,13 @@ public abstract class Spell extends ForgeRegistryEntry<Spell> {
         }
     }
 
-    protected String createDescriptionId() {
-        return this.descriptionId == null ? net.minecraft.Util.makeDescriptionId("spell", SpellInit.SPELLS_REGISTRY.get().getKey(this)) : descriptionId;
+    protected String getOrCreateDescriptionId() {
+        if (this.descriptionId == null) {
+            this.descriptionId = net.minecraft.Util.makeDescriptionId("spell", SpellInit.SPELLS_REGISTRY.get().getKey(this));
+        }
+        return this.descriptionId;
     }
+
 
     private Consumer<Player> onAfterExecute(Spell spell, ItemStack stack) {
         return player -> {

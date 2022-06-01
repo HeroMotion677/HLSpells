@@ -25,7 +25,8 @@ public class ArrowRainSpell extends Spell {
                     if (cap.getSpellTimer() % 15 == 0) {
                         doCloudParticles(p, p.level);
                     }
-                } else {
+                }
+                else {
                     if (cap.getSpellTimer() % 15 == 0) {
                         for (int i = 0; i < 5; i++) {
                             doArrowSpawn(p, p.level);

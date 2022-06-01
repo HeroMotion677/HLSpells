@@ -49,6 +49,7 @@ public class PlayerCapProvider implements ICapabilitySerializable<CompoundTag> {
                 tag.putInt("spellTimer", cap.getSpellTimer());
                 tag.putInt("spellXpTickCounter", cap.getSpellXpTickCounter());
                 tag.putInt("durabilityTickCounter", cap.getDurabilityTickCounter());
+                tag.putBoolean("phasingActive", cap.getPhasingActive());
             });
         }
         return tag;
@@ -77,6 +78,7 @@ public class PlayerCapProvider implements ICapabilitySerializable<CompoundTag> {
                 cap.setSpellTimer(nbt.getInt("spellTimer"));
                 cap.setSpellXpTickCounter(nbt.getInt("spellXpTickCounter"));
                 cap.setDurabilityTickCounter(nbt.getInt("durabilityTickCounter"));
+                cap.setPhasingActive(nbt.getBoolean("phasingActive"));
             });
         }
     }

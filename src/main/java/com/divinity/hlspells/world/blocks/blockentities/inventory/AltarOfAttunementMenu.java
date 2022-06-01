@@ -12,6 +12,7 @@ import com.divinity.hlspells.spell.SpellAttributes;
 import com.divinity.hlspells.world.blocks.blockentities.AltarOfAttunementBE;
 import com.google.common.collect.Lists;
 import net.minecraft.advancements.CriteriaTriggers;
+import net.minecraft.client.renderer.entity.IllusionerRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
@@ -19,6 +20,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.Container;
+import net.minecraft.world.entity.monster.Illusioner;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.*;
@@ -153,8 +155,7 @@ public class AltarOfAttunementMenu extends AbstractContainerMenu implements Cont
         }
     }
 
-    @Override
-    public void dataChanged(@NotNull AbstractContainerMenu pContainerMenu, int pDataSlotIndex, int pValue) {}
+    @Override public void dataChanged(@NotNull AbstractContainerMenu pContainerMenu, int pDataSlotIndex, int pValue) {}
 
     @Override
     public boolean clickMenuButton(@NotNull Player pPlayer, int pId) {

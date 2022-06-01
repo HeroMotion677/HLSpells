@@ -8,6 +8,7 @@
     "MixinGrindstoneContainerConstructor",
     "MixinGrindstoneExperience",
     "MixinItemRenderer",
+    "MixinPhasing",
     "MixinPose",
     "MixinSmithingRecipe"
   ],

@@ -1,4 +1,4 @@
-package com.divinity.hlspells.entities;
+package com.divinity.hlspells.entities.living;
 
 import com.divinity.hlspells.HLSpells;
 import com.divinity.hlspells.setup.init.EntityInit;

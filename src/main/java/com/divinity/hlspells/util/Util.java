@@ -1,10 +1,15 @@
 package com.divinity.hlspells.util;
 
+import com.divinity.hlspells.capabilities.playercap.PlayerCapProvider;
 import com.divinity.hlspells.network.NetworkManager;
 import com.divinity.hlspells.network.packets.clientbound.TotemActivatedPacket;
-import com.divinity.hlspells.capabilities.playercap.PlayerCapProvider;
 import com.google.common.collect.Lists;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -15,19 +20,15 @@ import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.level.Level;
-
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.network.PacketDistributor;
 
 import java.util.Comparator;
@@ -106,6 +107,7 @@ public final class Util {
                                 relativeEntity.getX() + xBound, relativeEntity.getY() + yBound, relativeEntity.getZ() + zBound))
                 .stream().sorted(getEntityComparator(relativeEntity)).collect(Collectors.toList());
     }
+
     // For totem
     public static void randomTeleport(LivingEntity entity) {
         double d0 = entity.getX();
@@ -158,11 +160,17 @@ public final class Util {
             cap.setSpellTimer(0);
             cap.setDurabilityTickCounter(0);
             cap.setSpellXpTickCounter(0);
+            cap.setPhasingActive(false);
         });
+        if (playerEntity.noPhysics) {
+            playerEntity.noPhysics = false;
+        }
     }
 
     public static void doParticles(Player player) {
-        doBookParticles(player.level, new BlockPos(player.getX(), (player.getY() + 1), player.getZ()), 100);
+        if (player.level instanceof ClientLevel level) {
+            doBookParticles(level, new BlockPos(player.getX(), (player.getY() + 1), player.getZ()), 100);
+        }
         player.level.playSound(null, new BlockPos(player.getX(), player.getY(), player.getZ()), SoundEvents.ENCHANTMENT_TABLE_USE,
                 SoundSource.AMBIENT, 0.6f, 1.0f);
     }
@@ -173,7 +181,7 @@ public final class Util {
         entity.removeAllEffects();
         entity.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 900, 1));
         entity.addEffect(new MobEffectInstance(MobEffects.ABSORPTION, 100, 1));
-        Util.displayActivation(entity, animationItem);
+        displayActivation(entity, animationItem);
         entity.level.playSound(null, entity.getX(), entity.getY(), entity.getZ(), SoundEvents.TOTEM_USE, SoundSource.PLAYERS, 1.0F, 1.0F);
         entity.playSound(SoundEvents.TOTEM_USE, 1.0F, 1.0F);
     }
@@ -243,15 +251,11 @@ public final class Util {
      * Returns a comparator which compares entities' distances to a given LivingEntity
      */
     private static Comparator<Entity> getEntityComparator(LivingEntity other) {
-        return new Object() {
-            Comparator<Entity> compareDistOf(double x, double y, double z) {
-                return Comparator.comparing(entity -> entity.distanceToSqr(x, y, z));
-            }
-        }.compareDistOf(other.getX(), other.getY(), other.getZ());
+        return Comparator.comparing(entity -> entity.distanceToSqr(other.getX(), other.getY(), other.getZ()));
     }
 
     @SuppressWarnings("all")
-    private static void doBookParticles(Level world, BlockPos pos, int number) {
+    private static void doBookParticles(ClientLevel world, BlockPos pos, int number) {
         for (int l = 0; l < number; l++) {
             double d0 = (pos.getX() + world.random.nextFloat());
             double d1 = (pos.getY() + world.random.nextFloat());

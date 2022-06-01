@@ -37,4 +37,8 @@ public interface IPlayerCap {
     int getDurabilityTickCounter();
 
     void setDurabilityTickCounter(int durabilityTickCounter);
+
+    boolean getPhasingActive();
+
+    void setPhasingActive(boolean phasingActive);
 }

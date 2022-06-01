@@ -11,12 +11,10 @@ public class SpellHolder implements ISpellHolder {
 
     private final List<String> spells;
     private int currentSpellCycle;
-    private boolean isHeld;
 
     public SpellHolder() {
         spells = new ArrayList<>();
         currentSpellCycle = 0;
-        isHeld = false;
     }
 
     @Override
@@ -46,36 +44,24 @@ public class SpellHolder implements ISpellHolder {
 
     @Override
     public void incrementCurrentSpellCycle() {
-        this.currentSpellCycle += 1;
+        this.setCurrentSpellCycle(this.getCurrentSpellCycle() + 1);
     }
 
     @Override
     public void setCurrentSpellCycle(int currentSpellCycle) {
         this.currentSpellCycle = currentSpellCycle;
-        cycleSpellCheck();
+        this.cycleSpellCheck();
     }
 
     @Override
-    public @NotNull String getCurrentSpell() {
+    @NotNull
+    public String getCurrentSpell() {
         return getCurrentSpellCycle() < spells.size() ? spells.get(getCurrentSpellCycle()) : Objects.requireNonNull(SpellInit.EMPTY.get().getRegistryName()).toString();
     }
 
-    @Override
-    public boolean isHeldActive() {
-        return isHeld;
-    }
-
     private void cycleSpellCheck() {
-        if (this.currentSpellCycle > this.getSpells().size() - 1) {
+        if (this.currentSpellCycle < 0 || this.currentSpellCycle > this.getSpells().size() - 1) {
             this.currentSpellCycle = 0;
         }
-        else if (this.currentSpellCycle < 0) {
-            this.currentSpellCycle = 0;
-        }
-    }
-
-    @Override
-    public void setHeldActive(boolean held) {
-        this.isHeld = held;
     }
 }

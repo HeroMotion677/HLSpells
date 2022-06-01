@@ -15,8 +15,6 @@ import org.jetbrains.annotations.NotNull;
 
 public class AltarItemRenderer implements BlockEntityRenderer<AltarOfAttunementBE> {
 
-    public AltarItemRenderer() { super(); }
-
     @SuppressWarnings("deprecation")
     @Override
     public void render(AltarOfAttunementBE tileEntityIn, float partialTicks, PoseStack matrixStackIn, @NotNull MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {

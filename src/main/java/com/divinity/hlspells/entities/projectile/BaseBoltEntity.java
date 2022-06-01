@@ -1,4 +1,4 @@
-package com.divinity.hlspells.entities;
+package com.divinity.hlspells.entities.projectile;
 
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.particles.SimpleParticleType;

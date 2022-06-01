@@ -1,4 +1,4 @@
-package com.divinity.hlspells.entities;
+package com.divinity.hlspells.entities.projectile;
 
 import com.divinity.hlspells.spell.spells.FangsSpell;
 import net.minecraft.core.particles.ParticleTypes;

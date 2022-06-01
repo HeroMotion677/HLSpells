@@ -97,3 +97,4 @@ jar {
     }
     rename 'mixin.refmap.json', 'hlspells.refmap.json'
 }
+publish.dependsOn('reobfJar')

@@ -1,27 +1,21 @@
-package com.divinity.hlspells.entities;
+package com.divinity.hlspells.entities.projectile;
 
 import com.divinity.hlspells.HLSpells;
-import net.minecraft.core.particles.SimpleParticleType;
-import net.minecraft.util.Mth;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.Blocks;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.projectile.Arrow;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
-import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.Difficulty;
-import net.minecraft.world.level.Level;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraftforge.network.NetworkHooks;
+import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.living.LivingEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -59,7 +53,7 @@ public class AquaBoltEntity extends BaseBoltEntity {
     protected void onHitBlock(@NotNull BlockHitResult result) {
         if (this.level instanceof ServerLevel level) {
             BlockState airState = Blocks.AIR.defaultBlockState();
-            for (BlockPos blockPos : BlockPos.withinManhattan(this.blockPosition(), 2, 1, 2)) {
+            for (BlockPos blockPos : BlockPos.withinManhattan(this.blockPosition(), 1, 0, 1)) {
                 if (this.level.getBlockState(blockPos).getBlock() == Blocks.FIRE) {
                     this.level.setBlockAndUpdate(blockPos, airState);
                 }

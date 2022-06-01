@@ -1,6 +1,6 @@
 package com.divinity.hlspells.spell.spells;
 
-import com.divinity.hlspells.entities.InvisibleTargetingEntity;
+import com.divinity.hlspells.entities.projectile.InvisibleTargetingEntity;
 import com.divinity.hlspells.setup.init.EntityInit;
 import com.divinity.hlspells.spell.Spell;
 import com.divinity.hlspells.spell.SpellAttributes;

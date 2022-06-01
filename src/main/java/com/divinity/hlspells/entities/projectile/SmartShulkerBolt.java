@@ -1,4 +1,4 @@
-package com.divinity.hlspells.entities;
+package com.divinity.hlspells.entities.projectile;
 
 import com.google.common.collect.Lists;
 import net.minecraft.core.Vec3i;

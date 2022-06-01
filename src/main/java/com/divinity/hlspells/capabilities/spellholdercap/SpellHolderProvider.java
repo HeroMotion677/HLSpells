@@ -41,7 +41,6 @@ public class SpellHolderProvider implements ICapabilitySerializable<CompoundTag>
                     }
                 }
                 tag.putInt(CURRENT_SPELL_CYCLE_NBT, cap.getCurrentSpellCycle());
-                tag.putBoolean("isHeld", cap.isHeldActive());
             });
         }
         return tag;
@@ -55,7 +54,6 @@ public class SpellHolderProvider implements ICapabilitySerializable<CompoundTag>
                     cap.addSpell(nbt.getString(SPELL_NBT + i));
                 }
                 cap.setCurrentSpellCycle(nbt.getInt(CURRENT_SPELL_CYCLE_NBT));
-                cap.setHeldActive(nbt.getBoolean("isHeld"));
             });
         }
     }

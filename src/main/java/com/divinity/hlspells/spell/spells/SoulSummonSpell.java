@@ -1,6 +1,6 @@
 package com.divinity.hlspells.spell.spells;
 
-import com.divinity.hlspells.entities.SummonedVexEntity;
+import com.divinity.hlspells.entities.living.SummonedVexEntity;
 import com.divinity.hlspells.setup.init.EntityInit;
 import com.divinity.hlspells.spell.Spell;
 import com.divinity.hlspells.spell.SpellAttributes;
@@ -25,7 +25,6 @@ public class SoulSummonSpell extends Spell {
                 vexEntity.moveTo(blockpos, 0.0F, 0.0F);
                 vexEntity.setSummonedOwner(p);
                 vexEntity.setLimitedLife(20 * (30 + p.level.random.nextInt(50)));
-
                 if (p.level instanceof ServerLevel serverWorld) {
                     vexEntity.finalizeSpawn(serverWorld, serverWorld.getCurrentDifficultyAt(blockpos), MobSpawnType.MOB_SUMMONED, null, null);
                     serverWorld.addFreshEntityWithPassengers(vexEntity);

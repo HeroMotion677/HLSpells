@@ -3,6 +3,7 @@ package com.divinity.hlspells.items.spellitems;
 import com.divinity.hlspells.HLSpells;
 import com.divinity.hlspells.capabilities.spellholdercap.ISpellHolder;
 import com.divinity.hlspells.capabilities.spellholdercap.SpellHolderProvider;
+import com.divinity.hlspells.network.ClientAccess;
 import com.divinity.hlspells.setup.init.EnchantmentInit;
 import com.divinity.hlspells.setup.init.SpellInit;
 import com.divinity.hlspells.spell.Spell;
@@ -10,6 +11,8 @@ import com.divinity.hlspells.spell.SpellAttributes;
 import com.divinity.hlspells.util.SpellUtils;
 import com.divinity.hlspells.util.Util;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -19,7 +22,6 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
@@ -27,12 +29,10 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -41,51 +41,14 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
 
-@Mod.EventBusSubscriber(modid = HLSpells.MODID)
 public class SpellHoldingItem extends ProjectileWeaponItem {
 
     private final boolean isSpellBook;
+    private boolean wasHolding;
 
     public SpellHoldingItem(Properties properties, boolean isSpellBook) {
         super(properties);
         this.isSpellBook = isSpellBook;
-    }
-
-    // This is needed to prevent a loophole where using a held spell then switching to another slot doesn't proc the cooldown
-    @SubscribeEvent
-    public static void onLivingEquipChange(LivingEquipmentChangeEvent event) {
-        if (event.getEntity() instanceof Player player) {
-            if (event.getSlot().getType() == EquipmentSlot.Type.HAND) {
-                ItemStack next = event.getTo();
-                ItemStack previous = event.getFrom();
-                if (next.getItem() instanceof SpellHoldingItem item && !item.isSpellBook()) {
-                    next.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP).filter(cap -> !cap.getSpells().isEmpty()).ifPresent(cap -> {
-                        Spell spell = SpellUtils.getSpellByID(cap.getCurrentSpell());
-                        player.displayClientMessage(new TextComponent("Spell : " + spell.getTrueDisplayName()).withStyle(ChatFormatting.GOLD), true);
-                    });
-                }
-                if (previous.getItem() instanceof SpellHoldingItem) {
-                    previous.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP).filter(cap -> !cap.getSpells().isEmpty()).ifPresent(cap -> {
-                        Spell spell = SpellUtils.getSpellByID(cap.getCurrentSpell());
-                        if (spell.getSpellType() == SpellAttributes.Type.HELD && cap.isHeldActive() && !player.isUsingItem()) {
-                            player.getCooldowns().addCooldown(previous.getItem(), ((int) (HLSpells.CONFIG.cooldownDuration.get() * 20)));
-                            cap.setHeldActive(false);
-                        }
-                    });
-                }
-            }
-        }
-    }
-
-    @SubscribeEvent
-    public static void clearEffectsAfterUse(TickEvent.PlayerTickEvent event) {
-        if (event.player != null && !event.player.level.isClientSide()) {
-            if (event.phase == TickEvent.Phase.END) {
-                if (!(event.player.getUseItem().getItem() instanceof SpellHoldingItem)) {
-                    Util.clearEffects(event.player);
-                }
-            }
-        }
     }
 
     @Override
@@ -108,7 +71,7 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
     @Override
     @ParametersAreNonnullByDefault
     public void appendHoverText(ItemStack stack, @Nullable Level pLevel, List<Component> text, TooltipFlag pFlag) {
-        stack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP, null).ifPresent(cap -> {
+        stack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP).ifPresent(cap -> {
             List<String> spells = cap.getSpells();
             if (isSpellBook) {
                 Spell spell = SpellUtils.getSpell(stack);
@@ -130,13 +93,15 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
         });
     }
 
+
+
     @Override
     @ParametersAreNonnullByDefault
     @NotNull
     public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand) {
         ItemStack itemstack = player.getItemInHand(hand);
         LazyOptional<ISpellHolder> capability = itemstack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP);
-        capability.ifPresent(cap -> cap.setHeldActive(true));
+        this.wasHolding = true;
         Spell spell = SpellUtils.getSpell(itemstack);
         List<String> spells = capability.map(ISpellHolder::getSpells).orElse(null);
         if (spells != null && !spells.isEmpty()) {
@@ -167,22 +132,24 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
     public void releaseUsing(ItemStack stack, Level world, LivingEntity entity, int power) {
         if (entity instanceof Player player) {
             LazyOptional<ISpellHolder> capability = stack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP);
-            capability.ifPresent(cap -> cap.setHeldActive(false));
+            this.wasHolding = false;
             Spell spell = SpellUtils.getSpell(stack);
-            if (!world.isClientSide() && castTimeCondition(player, stack)) {
+            if (this.castTimeCondition(player, stack)) {
                 if (spell.getSpellType() == SpellAttributes.Type.CAST) spell.execute(player, stack);
-                capability.filter(p -> !(p.getSpells().isEmpty())).ifPresent(cap -> {
-                    world.playSound(null, player.blockPosition(), SoundEvents.EVOKER_CAST_SPELL, SoundSource.NEUTRAL, 0.6F, 1.0F);
-                    Util.doParticles(player);
-                    if (stack.getItem() instanceof StaffItem item) {
-                        if (item.isGemAmethyst() && SpellUtils.getSpellByID(cap.getCurrentSpell()).getMarkerType() == SpellAttributes.Marker.COMBAT) {
-                            player.getCooldowns().addCooldown(stack.getItem(), (int) (HLSpells.CONFIG.cooldownDuration.get() * 20));
+                Util.doParticles(player);
+                if (!world.isClientSide()) {
+                    capability.filter(p -> !(p.getSpells().isEmpty())).ifPresent(cap -> {
+                        world.playSound(null, player.blockPosition(), SoundEvents.EVOKER_CAST_SPELL, SoundSource.NEUTRAL, 0.6F, 1.0F);
+                        if (stack.getItem() instanceof StaffItem item) {
+                            if (item.isGemAmethyst() && SpellUtils.getSpellByID(cap.getCurrentSpell()).getMarkerType() == SpellAttributes.Marker.COMBAT) {
+                                player.getCooldowns().addCooldown(stack.getItem(), (int) (HLSpells.CONFIG.cooldownDuration.get() * 20));
+                            }
+                            else if (!item.isGemAmethyst() && SpellUtils.getSpellByID(cap.getCurrentSpell()).getMarkerType() == SpellAttributes.Marker.UTILITY) {
+                                player.getCooldowns().addCooldown(stack.getItem(), (int) (HLSpells.CONFIG.cooldownDuration.get() * 20));
+                            }
                         }
-                        else if (!item.isGemAmethyst() && SpellUtils.getSpellByID(cap.getCurrentSpell()).getMarkerType() == SpellAttributes.Marker.UTILITY) {
-                            player.getCooldowns().addCooldown(stack.getItem(), (int) (HLSpells.CONFIG.cooldownDuration.get() * 20));
-                        }
-                    }
-                });
+                    });
+                }
             }
         }
     }
@@ -239,6 +206,7 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
         stackTag.put("spellCap", capTag);
         return stackTag;
     }
+
     @Override
     public void readShareTag(ItemStack stack, @Nullable CompoundTag nbt) {
         stack.setTag(nbt);
@@ -250,9 +218,7 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
         }
     }
 
-    @Override @NotNull public Predicate<ItemStack> getAllSupportedProjectiles() {
-        return ARROW_ONLY;
-    }
+    @Override @NotNull public Predicate<ItemStack> getAllSupportedProjectiles() { return ARROW_ONLY; }
 
     @Override @NotNull public UseAnim getUseAnimation(@NotNull ItemStack pStack) { return isSpellBook ? UseAnim.CROSSBOW : UseAnim.BOW; }
 
@@ -278,6 +244,14 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
      */
     public boolean isWand() {
         return !isSpellBook;
+    }
+
+    public boolean isWasHolding() {
+        return this.wasHolding;
+    }
+
+    public void setWasHolding(boolean wasHolding) {
+        this.wasHolding = wasHolding;
     }
 
     private boolean castTimeCondition(Player player, ItemStack stack) {

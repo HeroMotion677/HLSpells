@@ -3,11 +3,14 @@ package com.divinity.hlspells.network.packets.serverbound;
 import com.divinity.hlspells.capabilities.spellholdercap.ISpellHolder;
 import com.divinity.hlspells.items.spellitems.SpellHoldingItem;
 import com.divinity.hlspells.capabilities.spellholdercap.SpellHolderProvider;
+import com.divinity.hlspells.spell.Spell;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.network.NetworkEvent;
 
+import java.util.Arrays;
 import java.util.function.Supplier;
 
 public class WandInputPacket {
@@ -31,15 +34,12 @@ public class WandInputPacket {
         context.enqueueWork(() -> {
             ServerPlayer player = context.getSender();
             if (player != null) {
-                ItemStack mainHandStack = player.getMainHandItem();
-                ItemStack offHandStack = player.getOffhandItem();
-                boolean mainHandWand = mainHandStack.getItem() instanceof SpellHoldingItem item && item.isWand();
-                boolean offHandWand = offHandStack.getItem() instanceof SpellHoldingItem item && item.isWand();
-                if (mainHandWand) {
-                    mainHandStack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP, null).ifPresent(ISpellHolder::incrementCurrentSpellCycle);
-                }
-                else if (offHandWand) {
-                    offHandStack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP, null).ifPresent(ISpellHolder::incrementCurrentSpellCycle);
+                for (InteractionHand hand : InteractionHand.values()) {
+                    ItemStack carriedItem = player.getItemInHand(hand);
+                    if (carriedItem.getItem() instanceof SpellHoldingItem item && !item.isSpellBook()) {
+                        carriedItem.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP).ifPresent(ISpellHolder::incrementCurrentSpellCycle);
+                        break;
+                    }
                 }
             }
         });

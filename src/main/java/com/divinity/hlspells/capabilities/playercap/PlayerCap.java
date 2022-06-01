@@ -15,6 +15,7 @@ public class PlayerCap implements IPlayerCap {
     private int spellTimer;
     private int xpTickCounter;
     private int durabilityTickCounter;
+    private boolean phasingActive;
 
     public PlayerCap() {
         this.effect = null;
@@ -24,6 +25,7 @@ public class PlayerCap implements IPlayerCap {
         this.spellTimer = 0;
         this.xpTickCounter = 0;
         this.durabilityTickCounter = 0;
+        this.phasingActive = false;
     }
 
     @Override
@@ -101,5 +103,15 @@ public class PlayerCap implements IPlayerCap {
     @Override
     public void setDurabilityTickCounter(int durabilityTickCounter) {
         this.durabilityTickCounter = durabilityTickCounter;
+    }
+
+    @Override
+    public boolean getPhasingActive() {
+        return this.phasingActive;
+    }
+
+    @Override
+    public void setPhasingActive(boolean phasingActive) {
+        this.phasingActive = phasingActive;
     }
 }

@@ -59,7 +59,8 @@ public class HealingCircleSpell extends Spell {
             for (int i = 0; i < 5; i++) {
                 world.addParticle(ParticleTypes.SMOKE, d0, d1, d2, d3, d4, d5);
             }
-        } else if (livingEntity.getHealth() < livingEntity.getMaxHealth()) {
+        }
+        else if (livingEntity.getHealth() < livingEntity.getMaxHealth()) {
             d0 -= 0.5;
             d1 -= 0.3;
             d2 -= 0.5;

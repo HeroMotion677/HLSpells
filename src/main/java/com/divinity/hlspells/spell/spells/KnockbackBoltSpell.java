@@ -27,6 +27,7 @@ public class KnockbackBoltSpell extends Spell {
     public SpellConsumer<Player> getAction() {
         return p -> {
             ShulkerBullet entity = new ShulkerBullet(EntityType.SHULKER_BULLET, p.level) {
+
                 @Override
                 public void selectNextMoveDirection(@Nullable Direction.Axis axis) {}
 

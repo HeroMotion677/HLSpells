@@ -22,8 +22,4 @@ public interface ISpellHolder {
     void setCurrentSpellCycle(int currentSpellCycle);
 
     @NotNull String getCurrentSpell();
-
-    boolean isHeldActive();
-
-    void setHeldActive(boolean held);
 }
