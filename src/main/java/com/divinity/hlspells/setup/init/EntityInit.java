@@ -1,7 +1,8 @@
 package com.divinity.hlspells.setup.init;
 
 import com.divinity.hlspells.HLSpells;
-import com.divinity.hlspells.entities.living.SummonedVexEntity;
+import com.divinity.hlspells.entities.living.summoned.SummonedSkeletonEntity;
+import com.divinity.hlspells.entities.living.summoned.SummonedVexEntity;
 import com.divinity.hlspells.entities.projectile.*;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
@@ -38,4 +39,8 @@ public class EntityInit {
     public static final RegistryObject<EntityType<SummonedVexEntity>> SUMMONED_VEX_ENTITY = ENTITIES.register("summoned_vex", () ->
             EntityType.Builder.of(SummonedVexEntity::new, MobCategory.MONSTER).fireImmune().sized(0.4F, 0.8F)
                     .clientTrackingRange(8).build(HLSpells.MODID + "summoned_vex"));
+
+    public static final RegistryObject<EntityType<SummonedSkeletonEntity>> SUMMONED_SKELETON_ENTITY = ENTITIES.register("summoned_skeleton", () ->
+            EntityType.Builder.of(SummonedSkeletonEntity::new, MobCategory.MONSTER).sized(0.6F, 1.99F)
+                    .clientTrackingRange(8).build(HLSpells.MODID + "summoned_skeleton"));
 }

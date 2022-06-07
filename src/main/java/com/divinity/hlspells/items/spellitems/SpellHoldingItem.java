@@ -59,7 +59,8 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
                 for (Spell spell : SpellInit.SPELLS_REGISTRY.get()) {
                     ItemStack stack = new ItemStack(this);
                     stack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP).ifPresent(cap -> {
-                        if (spell != SpellInit.EMPTY.get()) cap.addSpell(Objects.requireNonNull(spell.getRegistryName()).toString());
+                        if (spell != SpellInit.EMPTY.get())
+                            cap.addSpell(Objects.requireNonNull(spell.getRegistryName()).toString());
                     });
                     pItems.add(stack);
                 }
@@ -92,8 +93,6 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
             }
         });
     }
-
-
 
     @Override
     @ParametersAreNonnullByDefault

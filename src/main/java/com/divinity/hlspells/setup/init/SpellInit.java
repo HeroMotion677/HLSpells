@@ -43,6 +43,7 @@ public class SpellInit {
     public static final RegistryObject<Spell> FREEZING_BOLT = register("freezing_bolt", () -> new FreezingBoltSpell("Freezing Bolt", 7, false));
     public static final RegistryObject<Spell> CHORUS_BOLT = register("chorus_bolt",() -> new ChorusBoltSpell("Chorus Bolt", 7, false));
     public static final RegistryObject<Spell> PHASING = register("phasing", () -> new PhasingSpell("Phasing", 1, 6, false));
+    public static final RegistryObject<Spell> NECROMANCY = register("necromancy", () -> new NecromancySpell("Necromancy", 16, false));
 
     //public static final RegistryObject<Spell> REPEL = register("repel", () -> new Spell(SpellAttributes.HELD, SpellActions::doRepel, "Repel", 1, 3));
     //public static final RegistryObject<Spell> PROTECTION_CIRCLE = register("protection_circle", () -> new Spell(SpellAttributes.HELD, SpellActions::doProtectionCircle, "Protection Circle", 1, 6));

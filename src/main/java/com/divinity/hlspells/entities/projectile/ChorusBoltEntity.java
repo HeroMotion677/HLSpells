@@ -35,21 +35,7 @@ public class ChorusBoltEntity extends BaseBoltEntity {
                 if (entity instanceof LivingEntity livingEntity) {
                     Level livingLevel = livingEntity.level;
                     if (!livingLevel.isClientSide) {
-                        double d0 = livingEntity.getX();
-                        double d1 = livingEntity.getY();
-                        double d2 = livingEntity.getZ();
-                        for (int i = 0; i < 16; ++i) {
-                            double d3 = livingEntity.getX() + (livingEntity.getRandom().nextDouble() - 0.5D) * 16.0D;
-                            double d4 = Mth.clamp(livingEntity.getY() + (double) (livingEntity.getRandom().nextInt(16) - 8), livingLevel.getMinBuildHeight(), livingLevel.getMinBuildHeight() + ((ServerLevel) livingLevel).getLogicalHeight() - 1);
-                            double d5 = livingEntity.getZ() + (livingEntity.getRandom().nextDouble() - 0.5D) * 16.0D;
-                            if (livingEntity.isPassenger()) livingEntity.stopRiding();
-                            if (livingEntity.randomTeleport(d3, d4, d5, true)) {
-                                SoundEvent soundevent = livingEntity instanceof Fox ? SoundEvents.FOX_TELEPORT : SoundEvents.CHORUS_FRUIT_TELEPORT;
-                                livingEntity.level.playSound(null, d0, d1, d2, soundevent, SoundSource.PLAYERS, 1.0F, 1.0F);
-                                livingEntity.playSound(soundevent, 1.0F, 1.0F);
-                                break;
-                            }
-                        }
+                        this.doChorusTeleport(livingEntity, livingLevel);
                     }
                     this.doEnchantDamageEffects(livingentity, entity);
                 }
@@ -64,6 +50,24 @@ public class ChorusBoltEntity extends BaseBoltEntity {
             level.sendParticles(ParticleTypes.CRIT, this.getX(), this.getY(), this.getZ(), 2, 0.2D, 0.2D, 0.2D, 0.0D);
             this.playSound(SoundEvents.SHULKER_BULLET_HIT, 1.0F, 1.0F);
             this.remove(RemovalReason.KILLED);
+        }
+    }
+
+    private void doChorusTeleport(LivingEntity livingEntity, Level livingLevel) {
+        double d0 = livingEntity.getX();
+        double d1 = livingEntity.getY();
+        double d2 = livingEntity.getZ();
+        for (int i = 0; i < 16; ++i) {
+            double d3 = livingEntity.getX() + (livingEntity.getRandom().nextDouble() - 0.5D) * 16.0D;
+            double d4 = Mth.clamp(livingEntity.getY() + (double) (livingEntity.getRandom().nextInt(16) - 8), livingLevel.getMinBuildHeight(), livingLevel.getMinBuildHeight() + ((ServerLevel) livingLevel).getLogicalHeight() - 1);
+            double d5 = livingEntity.getZ() + (livingEntity.getRandom().nextDouble() - 0.5D) * 16.0D;
+            if (livingEntity.isPassenger()) livingEntity.stopRiding();
+            if (livingEntity.randomTeleport(d3, d4, d5, true)) {
+                SoundEvent soundevent = livingEntity instanceof Fox ? SoundEvents.FOX_TELEPORT : SoundEvents.CHORUS_FRUIT_TELEPORT;
+                livingEntity.level.playSound(null, d0, d1, d2, soundevent, SoundSource.PLAYERS, 1.0F, 1.0F);
+                livingEntity.playSound(soundevent, 1.0F, 1.0F);
+                break;
+            }
         }
     }
 }

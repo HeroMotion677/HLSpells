@@ -1,8 +1,11 @@
-package com.divinity.hlspells.entities.living;
+package com.divinity.hlspells.entities.living.summoned;
 
 import com.divinity.hlspells.HLSpells;
+import com.divinity.hlspells.entities.Summonable;
+import com.divinity.hlspells.entities.goal.AttackedOwnerEnemyGoal;
+import com.divinity.hlspells.entities.goal.CopyOwnerTargetGoal;
+import com.divinity.hlspells.entities.goal.FollowOwnerGoal;
 import com.divinity.hlspells.setup.init.EntityInit;
-import com.divinity.hlspells.util.Util;
 import net.minecraft.world.entity.ai.control.MoveControl;
 import net.minecraft.world.entity.monster.Vex;
 import net.minecraft.world.entity.player.Player;
@@ -19,19 +22,15 @@ import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.level.Level;
 
 import java.util.EnumSet;
-import java.util.List;
 
 
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
-import net.minecraft.world.entity.ai.goal.target.TargetGoal;
-import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -40,7 +39,7 @@ import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 
 @Mod.EventBusSubscriber(modid = HLSpells.MODID, bus = Bus.MOD)
-public class SummonedVexEntity extends Vex {
+public class SummonedVexEntity extends Vex implements Summonable {
 
     protected Player playerOwner;
 
@@ -56,26 +55,6 @@ public class SummonedVexEntity extends Vex {
     }
 
     @Override
-    public void tick() {
-        super.tick();
-        if (this.playerOwner != null && this.isAlive()) {
-            this.setBoundOrigin(this.playerOwner.blockPosition());
-            if (this.distanceTo(this.playerOwner) > 12.0D && this.distanceTo(this.playerOwner) <= 50.0D) {
-                BlockPos ownerPos = this.playerOwner.blockPosition().offset(-2 + this.playerOwner.level.random.nextInt(5),
-                        1, -2 + this.playerOwner.level.random.nextInt(5));
-                this.moveControl.setWantedPosition(ownerPos.getX(), ownerPos.getY(), ownerPos.getZ(), 0.75D);
-            }
-            else if (this.distanceTo(this.playerOwner) > 50D) {
-                BlockPos ownerPos = this.playerOwner.blockPosition().offset(-2 + this.playerOwner.level.random.nextInt(5),
-                        1, -2 + this.playerOwner.level.random.nextInt(5));
-                this.teleportTo(ownerPos.getX(), ownerPos.getY(), ownerPos.getZ());
-                this.moveControl.setWantedPosition(ownerPos.getX(), ownerPos.getY(), ownerPos.getZ(), 0.6D);
-            }
-        }
-        if (this.playerOwner == null && this.isAlive()) this.kill();
-    }
-
-    @Override
     public void readAdditionalSaveData(CompoundTag nbt) {
         if (nbt.contains("Owner")) this.setSummonedOwner(this.level.getPlayerByUUID(nbt.getUUID("Owner")));
         super.readAdditionalSaveData(nbt);
@@ -83,23 +62,27 @@ public class SummonedVexEntity extends Vex {
 
     @Override
     public void addAdditionalSaveData(@NotNull CompoundTag nbt) {
-        if (this.getSummonedOwner() != null) nbt.putUUID("Owner", this.getSummonedOwner().getUUID());
+        if (this.playerOwner != null) nbt.putUUID("Owner", this.playerOwner.getUUID());
         super.addAdditionalSaveData(nbt);
     }
 
     @Override @NotNull public Packet<?> getAddEntityPacket() { return NetworkHooks.getEntitySpawningPacket(this); }
 
-    @Override public boolean isAlliedTo(@NotNull Entity entity) { return entity instanceof SummonedVexEntity || entity == this.playerOwner; }
+    @Override
+    public boolean isAlliedTo(@NotNull Entity entity) {
+        return entity instanceof Summonable || entity == this.playerOwner;
+    }
 
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(4, new ChargeAttackGoal());
-        this.goalSelector.addGoal(8, new MoveRandomGoal());
-        this.goalSelector.addGoal(9, new LookAtPlayerGoal(this, Player.class, 3.0F, 1.0F));
-        this.goalSelector.addGoal(10, new LookAtPlayerGoal(this, Mob.class, 8.0F));
-        this.targetSelector.addGoal(0, new CopyOwnerTargetGoal(this));
-        this.targetSelector.addGoal(1, new AttackedOwnerEnemyGoal(this));
+        this.goalSelector.addGoal(1, new FollowOwnerGoal(this));
+        this.goalSelector.addGoal(2, new ChargeAttackGoal());
+        this.goalSelector.addGoal(3, new MoveRandomGoal());
+        this.goalSelector.addGoal(4, new LookAtPlayerGoal(this, Player.class, 3.0F, 0.7F));
+        this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, LivingEntity.class, 8.0F, 0.5F));
+        this.targetSelector.addGoal(0, new CopyOwnerTargetGoal(this, false));
+        this.targetSelector.addGoal(1, new AttackedOwnerEnemyGoal(this, false));
     }
 
     @Override
@@ -109,9 +92,15 @@ public class SummonedVexEntity extends Vex {
         this.setDropChance(EquipmentSlot.MAINHAND, 0.0F);
     }
 
-    public Player getSummonedOwner() { return this.playerOwner; }
+    @Override
+    public Player getSummonedOwner() {
+        return this.playerOwner;
+    }
 
-    public void setSummonedOwner(Player owner) { this.playerOwner = owner; }
+    @Override
+    public void setSummonedOwner(Player owner) {
+        this.playerOwner = owner;
+    }
 
     class ChargeAttackGoal extends Goal {
 
@@ -163,57 +152,6 @@ public class SummonedVexEntity extends Vex {
                     }
                 }
             }
-        }
-    }
-
-    class CopyOwnerTargetGoal extends TargetGoal {
-
-        private final TargetingConditions copyOwnerTargeting = (new TargetingConditions(true)).ignoreInvisibilityTesting();
-
-        public CopyOwnerTargetGoal(PathfinderMob mob) {
-            super(mob, false);
-        }
-
-        @Override
-        public boolean canUse() {
-            return SummonedVexEntity.this.getTarget() == null && SummonedVexEntity.this.playerOwner != null && SummonedVexEntity.this.playerOwner.getLastHurtMob() != null && this.canAttack(SummonedVexEntity.this.playerOwner.getLastHurtMob(), this.copyOwnerTargeting) && !(SummonedVexEntity.this.playerOwner.getLastHurtMob() instanceof SummonedVexEntity) && !(SummonedVexEntity.this.playerOwner.getLastHurtMob() instanceof Player);
-        }
-
-        @Override
-        public void start() {
-            SummonedVexEntity.this.setTarget(SummonedVexEntity.this.playerOwner.getLastHurtMob());
-            super.start();
-        }
-    }
-
-    class AttackedOwnerEnemyGoal extends TargetGoal {
-
-        private final TargetingConditions attackedOwnerTargeting = (new TargetingConditions(true)).ignoreInvisibilityTesting();
-        private Mob entity;
-
-        public AttackedOwnerEnemyGoal(PathfinderMob mob) {
-            super(mob, false);
-        }
-
-        @Override
-        public boolean canUse() {
-            int scanRange = 15;
-            List<Mob> mobEntities = Util.getEntitiesInRange(SummonedVexEntity.this, Mob.class, scanRange, scanRange, scanRange);
-            for (Mob mob : mobEntities) {
-                if (mob != null && !(mob instanceof SummonedVexEntity)) {
-                    if (mob.getTarget() == SummonedVexEntity.this.playerOwner) {
-                        this.entity = mob;
-                        return SummonedVexEntity.this.getTarget() == null && SummonedVexEntity.this.playerOwner != null && this.canAttack(mob, this.attackedOwnerTargeting);
-                    }
-                }
-            }
-            return false;
-        }
-
-        @Override
-        public void start() {
-            SummonedVexEntity.this.setTarget(this.entity);
-            super.start();
         }
     }
 

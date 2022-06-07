@@ -32,7 +32,7 @@ public class WizardHatArmorItem extends ArmorItem implements IItemRenderProperti
             @Nullable
             @Override
             public HumanoidModel<?> getArmorModel(LivingEntity entityLiving, ItemStack itemStack, EquipmentSlot armorSlot, HumanoidModel<?> _default) {
-                HumanoidModel<LivingEntity> armorModel = ClientEvents.armorModel.get(itemStack.getItem());
+                var armorModel = ClientEvents.armorModel.get(itemStack.getItem());
                 if (armorModel != null) armorModel.head.visible = (armorSlot == EquipmentSlot.HEAD);
                 return armorModel;
             }

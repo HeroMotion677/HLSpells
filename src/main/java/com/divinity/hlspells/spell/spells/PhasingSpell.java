@@ -23,15 +23,13 @@ public class PhasingSpell extends Spell {
     @Override
     public SpellConsumer<Player> getAction() {
         return p -> {
-            p.noPhysics = true;
             p.getCapability(PlayerCapProvider.PLAYER_CAP).ifPresent(cap -> cap.setPhasingActive(true));
-            if (isInWall(p)) System.out.println("Is In wall");
-            if (p instanceof LocalPlayer player) {
-                if (!player.level.getBlockState(player.getOnPos()).isAir()) {
-                    if (!player.input.jumping) {
-                        player.setDeltaMovement(player.getDeltaMovement().multiply(1.0D, 0.0D, 1.0D));
-                    }
-
+            p.noPhysics = true;
+            if (p instanceof LocalPlayer localPlayer) {
+                if (!localPlayer.level.getBlockState(localPlayer.getOnPos()).isAir()) {
+                    if (!localPlayer.input.jumping)
+                        localPlayer.setDeltaMovement(localPlayer.getDeltaMovement().x, 0, localPlayer.getDeltaMovement().z);
+                        localPlayer.resetFallDistance();
                 }
             }
             return true;

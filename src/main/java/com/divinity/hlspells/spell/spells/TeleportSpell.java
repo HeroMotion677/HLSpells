@@ -27,8 +27,7 @@ public class TeleportSpell extends Spell {
             int stepX = 0;
             int stepY = 1;
             int stepZ = 0;
-            if ((rayTraceResult instanceof BlockHitResult result)
-                    && p.level.getBlockState(new BlockPos(location).above()).getMaterial() != Material.AIR) {
+            if ((rayTraceResult instanceof BlockHitResult result) && p.level.getBlockState(new BlockPos(location).above()).getMaterial() != Material.AIR) {
                 Direction rayTraceDirection = result.getDirection();
                 stepX = rayTraceDirection.getStepX();
                 stepY = rayTraceDirection.getStepY();

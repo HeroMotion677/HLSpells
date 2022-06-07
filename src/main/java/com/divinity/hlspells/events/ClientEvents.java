@@ -31,6 +31,7 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.entity.SkeletonRenderer;
 import net.minecraft.client.renderer.entity.VexRenderer;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.client.renderer.item.ItemProperties;
@@ -76,15 +77,17 @@ public class ClientEvents {
             ItemInit.STAFFS.forEach(staff -> registerItemModel(staff.get(), new ResourceLocation("pull"), 3, 0.2F, 0.4F, 0.6F, 0.8F, 1F));
             ItemProperties.register(ItemInit.TOTEM_OF_RETURNING.get(), new ResourceLocation("used"), (stack, world, living, integer) -> {
                 if (living instanceof Player) {
-                    LazyOptional<ITotemCap> totemCap = stack.getCapability(TotemItemProvider.TOTEM_CAP);
-                    if (totemCap.isPresent()) return totemCap.map(ITotemCap::getHasDied).orElse(false) ? 1 : 0;
+                    var totemCap = stack.getCapability(TotemItemProvider.TOTEM_CAP);
+                    if (totemCap.isPresent())
+                        return totemCap.map(ITotemCap::getHasDied).orElse(false) ? 1 : 0;
                 }
                 return 0;
             });
         });
         ClientRegistry.registerKeyBinding(WAND_BINDING);
         // Curios Renderer Registration
-        if (HLSpells.isCurioLoaded) CuriosCompat.renderCuriosTotems(ItemInit.TOTEMS);
+        if (HLSpells.isCurioLoaded)
+            CuriosCompat.renderCuriosTotems(ItemInit.TOTEMS);
         MenuScreens.register(MenuTypeInit.ALTAR_CONTAINER.get(), AltarOfAttunementScreen::new);
         ItemBlockRenderTypes.setRenderLayer(BlockInit.ALTAR_OF_ATTUNEMENT_BLOCK.get(), RenderType.cutout());
         BlockEntityRenderers.register(BlockInit.ALTAR_BE.get(), ctx -> new AltarItemRenderer());
@@ -104,7 +107,7 @@ public class ClientEvents {
                 Minecraft.getInstance().getResourceManager(),
                 Minecraft.getInstance().getEntityModels(),
                 Minecraft.getInstance().font);
-        WizardHatModel<LivingEntity> model = new WizardHatModel<>(context.bakeLayer(WizardHatModel.LAYER_LOCATION));
+        var model = new WizardHatModel<>(context.bakeLayer(WizardHatModel.LAYER_LOCATION));
         armorModel.put(ItemInit.WIZARD_HAT.get(), model);
     }
 
@@ -115,12 +118,17 @@ public class ClientEvents {
             @Override public boolean shouldRender(InvisibleTargetingEntity pLivingEntity, Frustum pCamera, double pCamX, double pCamY, double pCamZ) { return false; }
             @Override public ResourceLocation getTextureLocation(InvisibleTargetingEntity pEntity) { return new ResourceLocation(""); }
         });
-        event.registerEntityRenderer(EntityInit.PIERCING_BOLT_ENTITY.get(), ctx -> new BaseBoltRenderer<>(ctx, new ResourceLocation(HLSpells.MODID, "textures/entity/bolt/green_bolt.png")));
-        event.registerEntityRenderer(EntityInit.FLAMING_BOLT_ENTITY.get(), ctx -> new BaseBoltRenderer<>(ctx, new ResourceLocation(HLSpells.MODID, "textures/entity/bolt/orange_bolt.png")));
-        event.registerEntityRenderer(EntityInit.AQUA_BOLT_ENTITY.get(), ctx -> new BaseBoltRenderer<>(ctx, new ResourceLocation(HLSpells.MODID, "textures/entity/bolt/blue_bolt.png")));
-        event.registerEntityRenderer(EntityInit.FREEZING_BOLT_ENTITY.get(), ctx -> new BaseBoltRenderer<>(ctx, new ResourceLocation(HLSpells.MODID, "textures/entity/bolt/white_bolt.png")));
-        event.registerEntityRenderer(EntityInit.CHORUS_BOLT_ENTITY.get(), ctx -> new BaseBoltRenderer<>(ctx, new ResourceLocation(HLSpells.MODID, "textures/entity/bolt/purple_bolt.png")));
+        event.registerEntityRenderer(EntityInit.PIERCING_BOLT_ENTITY.get(), ctx -> new BaseBoltRenderer<>(ctx, getBoltLocation("textures/entity/bolt/green_bolt.png")));
+        event.registerEntityRenderer(EntityInit.FLAMING_BOLT_ENTITY.get(), ctx -> new BaseBoltRenderer<>(ctx, getBoltLocation("textures/entity/bolt/orange_bolt.png")));
+        event.registerEntityRenderer(EntityInit.AQUA_BOLT_ENTITY.get(), ctx -> new BaseBoltRenderer<>(ctx, getBoltLocation("textures/entity/bolt/blue_bolt.png")));
+        event.registerEntityRenderer(EntityInit.FREEZING_BOLT_ENTITY.get(), ctx -> new BaseBoltRenderer<>(ctx, getBoltLocation("textures/entity/bolt/white_bolt.png")));
+        event.registerEntityRenderer(EntityInit.CHORUS_BOLT_ENTITY.get(), ctx -> new BaseBoltRenderer<>(ctx, getBoltLocation("textures/entity/bolt/purple_bolt.png")));
         event.registerEntityRenderer(EntityInit.SUMMONED_VEX_ENTITY.get(), VexRenderer::new);
+        event.registerEntityRenderer(EntityInit.SUMMONED_SKELETON_ENTITY.get(), SkeletonRenderer::new);
+    }
+
+    private static ResourceLocation getBoltLocation(String location) {
+        return new ResourceLocation(HLSpells.MODID, location);
     }
 
     /**

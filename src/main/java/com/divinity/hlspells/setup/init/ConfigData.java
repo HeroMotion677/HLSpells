@@ -10,6 +10,7 @@ public class ConfigData {
 
     public final ForgeConfigSpec.BooleanValue spellsUseXP;
     public final ForgeConfigSpec.BooleanValue lootOnlyMode;
+    public final ForgeConfigSpec.BooleanValue summonsAttackPlayers;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> fireMobsList;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> sapientMobsList;
     public final ForgeConfigSpec.DoubleValue spellCastTime;
@@ -20,9 +21,10 @@ public class ConfigData {
     public final ForgeConfigSpec.DoubleValue cooldownDuration;
 
     public ConfigData(ForgeConfigSpec.Builder builder) {
-        builder.push("Config");
+        builder.push("HLSpells Config");
         spellsUseXP = builder.comment("Should the spells use experience?").define("spellsUseXP", true);
         lootOnlyMode = builder.comment("Should the spells only be obtainable from loot?").define("lootOnlyMode", false);
+        summonsAttackPlayers = builder.comment("Should summoned entities from spells be able to attack players?").define("summonsAttackPlayers", true);
         ArrayList<String> defaultFireMobsList = Lists.newArrayList("minecraft:blaze", "minecraft:magma_cube");
         fireMobsList = builder.comment("List of mobs which should take extra damage from aqua bolt")
                 .defineList("fireMobsList", defaultFireMobsList, String.class::isInstance);

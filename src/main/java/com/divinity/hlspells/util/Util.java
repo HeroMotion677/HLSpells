@@ -162,9 +162,6 @@ public final class Util {
             cap.setSpellXpTickCounter(0);
             cap.setPhasingActive(false);
         });
-        if (playerEntity.noPhysics) {
-            playerEntity.noPhysics = false;
-        }
     }
 
     public static void doParticles(Player player) {

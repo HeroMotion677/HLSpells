@@ -65,9 +65,11 @@ public class AltarOfAttunementBlock extends EnchantmentTableBlock {
     @NotNull
     public InteractionResult use(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
         if (pLevel.getBlockEntity(pPos) instanceof AltarOfAttunementBE blockEntity) {
-            if (pLevel.isClientSide) return InteractionResult.SUCCESS;
+            if (pLevel.isClientSide)
+                return InteractionResult.SUCCESS;
             NetworkHooks.openGui((ServerPlayer) pPlayer, blockEntity, pPos);
-            if (pPlayer.containerMenu instanceof AltarOfAttunementMenu menu) menu.slotsChanged(null);
+            if (pPlayer.containerMenu instanceof AltarOfAttunementMenu menu)
+                menu.slotsChanged(null);
             return InteractionResult.CONSUME;
         }
         return InteractionResult.PASS;
@@ -78,7 +80,8 @@ public class AltarOfAttunementBlock extends EnchantmentTableBlock {
     public void onRemove(BlockState pState, Level pLevel, BlockPos pPos, BlockState pNewState, boolean pIsMoving) {
         if (pState.getBlock() != pNewState.getBlock()) {
             BlockEntity blockEntity = pLevel.getBlockEntity(pPos);
-            if (blockEntity instanceof AltarOfAttunementBE be) be.dropContents();
+            if (blockEntity instanceof AltarOfAttunementBE be)
+                be.dropContents();
         }
         super.onRemove(pState, pLevel, pPos, pNewState, pIsMoving);
     }
