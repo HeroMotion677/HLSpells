@@ -3,6 +3,7 @@ package com.divinity.hlspells.capabilities.playercap;
 import net.minecraft.nbt.*;
 import net.minecraft.core.Direction;
 import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.entity.monster.Phantom;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.capabilities.*;
 import net.minecraftforge.common.util.LazyOptional;
@@ -83,7 +84,8 @@ public class PlayerCapProvider implements ICapabilitySerializable<CompoundTag> {
         }
     }
 
-    @Nonnull private IPlayerCap createPlayerCap() {
+    @Nonnull
+    private IPlayerCap createPlayerCap() {
         return playerCap == null ? new PlayerCap() : playerCap;
     }
 }

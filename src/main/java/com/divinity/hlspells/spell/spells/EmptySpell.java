@@ -7,8 +7,8 @@ import net.minecraft.world.entity.player.Player;
 
 public class EmptySpell extends Spell {
 
-    public EmptySpell(String displayName, int xpCost, boolean treasureOnly) {
-        super(SpellAttributes.Type.CAST, SpellAttributes.Rarity.COMMON, SpellAttributes.Tier.ONE, SpellAttributes.Marker.UTILITY, displayName, xpCost, treasureOnly);
+    public EmptySpell(SpellAttributes.Type type, SpellAttributes.Rarity rarity, SpellAttributes.Tier tier, SpellAttributes.Marker marker, String displayName, int xpCost, boolean treasureOnly, int maxSpellLevel) {
+        super(type, rarity, tier, marker, displayName, xpCost, treasureOnly, maxSpellLevel);
     }
 
     @Override

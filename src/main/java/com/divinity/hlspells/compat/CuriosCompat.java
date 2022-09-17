@@ -15,6 +15,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.client.event.RenderTooltipEvent;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
@@ -56,7 +57,7 @@ public final class CuriosCompat {
     @SuppressWarnings("ConstantConditions")
     public static ListTag getCuriosInv(Player player) {
         ListTag list = new ListTag();
-        LazyOptional<ICuriosItemHandler> optional = CuriosApi.getCuriosHelper().getCuriosHandler(player);
+        var optional = CuriosApi.getCuriosHelper().getCuriosHandler(player);
         if (optional.isPresent()) {
             // If optional is present the orElseGet won't be called anyways, so it's fine to pass null here
             list = optional.orElseGet(null).saveInventory(false);

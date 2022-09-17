@@ -17,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 public class FlamingBoltEntity extends BaseBoltEntity {
 
     public FlamingBoltEntity(EntityType<? extends FlamingBoltEntity> type, Level world) {
-        super(type, world, false, ParticleTypes.FLAME, ParticleTypes.SMOKE);
+        super(type, world, ParticleTypes.FLAME, ParticleTypes.SMOKE);
     }
 
     @Override

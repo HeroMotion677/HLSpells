@@ -23,8 +23,8 @@ import javax.annotation.Nullable;
 
 public class BoltSpell extends Spell {
 
-    public BoltSpell(String displayName, int xpCost, boolean treasureOnly) {
-        super(SpellAttributes.Type.CAST, SpellAttributes.Rarity.COMMON, SpellAttributes.Tier.ONE, SpellAttributes.Marker.COMBAT, displayName, xpCost, treasureOnly);
+    public BoltSpell(SpellAttributes.Type type, SpellAttributes.Rarity rarity, SpellAttributes.Tier tier, SpellAttributes.Marker marker, String displayName, int xpCost, boolean treasureOnly, int maxSpellLevel) {
+        super(type, rarity, tier, marker, displayName, xpCost, treasureOnly, maxSpellLevel);
     }
 
     @Override

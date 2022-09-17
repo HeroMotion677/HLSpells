@@ -14,8 +14,8 @@ import net.minecraft.world.phys.Vec3;
 
 public class LightningBoltSpell extends Spell {
 
-    public LightningBoltSpell(String displayName, int xpCost, boolean treasureOnly) {
-        super(SpellAttributes.Type.CAST, SpellAttributes.Rarity.RARE, SpellAttributes.Tier.THREE, SpellAttributes.Marker.COMBAT, displayName, xpCost, treasureOnly);
+    public LightningBoltSpell(SpellAttributes.Type type, SpellAttributes.Rarity rarity, SpellAttributes.Tier tier, SpellAttributes.Marker marker, String displayName, int xpCost, boolean treasureOnly, int maxSpellLevel) {
+        super(type, rarity, tier, marker, displayName, xpCost, treasureOnly, maxSpellLevel);
     }
 
     @Override

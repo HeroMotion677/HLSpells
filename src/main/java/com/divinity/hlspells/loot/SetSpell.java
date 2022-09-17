@@ -1,7 +1,8 @@
 package com.divinity.hlspells.loot;
 
 import com.divinity.hlspells.capabilities.spellholdercap.SpellHolderProvider;
-import com.divinity.hlspells.events.LootEvents;
+import com.divinity.hlspells.events.ForgeEventHandler;
+import com.divinity.hlspells.events.ModEventHandler;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
@@ -34,7 +35,7 @@ public class SetSpell extends LootItemConditionalFunction {
         return pStack;
     }
 
-    @Override @NotNull public LootItemFunctionType getType() { return LootEvents.SET_SPELL; }
+    @Override @NotNull public LootItemFunctionType getType() { return ModEventHandler.SET_SPELL; }
 
     public static class Serializer extends LootItemConditionalFunction.Serializer<SetSpell> {
 

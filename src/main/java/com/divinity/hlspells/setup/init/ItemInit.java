@@ -26,34 +26,34 @@ public class ItemInit {
     public static final RegistryObject<Item> TOTEM_OF_GRIEFING = ITEMS.register("totem_of_griefing", GriefingTotem::new);
     public static final RegistryObject<Item> TOTEM_OF_KEEPING = ITEMS.register("totem_of_keeping", KeepingTotem::new);
     public static final RegistryObject<Item> SPELL_BOOK = ITEMS.register("spell_book", () -> new SpellHoldingItem(new Item.Properties().tab(CreativeModeTab.TAB_TOOLS).durability(300), true));
-    public static final RegistryObject<Item> WAND = ITEMS.register("wand", () -> new SpellHoldingItem(new Item.Properties().tab(CreativeModeTab.TAB_TOOLS).durability(700), false));
-    public static final RegistryObject<Item> AMETHYST_WAND = ITEMS.register("wand_amethyst", () -> new SpellHoldingItem(new Item.Properties().tab(CreativeModeTab.TAB_TOOLS).durability(700), false));
+    public static final RegistryObject<Item> WAND = ITEMS.register("lapis_wand", () -> new SpellHoldingItem(new Item.Properties().tab(CreativeModeTab.TAB_TOOLS).durability(700), false));
+    public static final RegistryObject<Item> AMETHYST_WAND = ITEMS.register("amethyst_wand", () -> new SpellHoldingItem(new Item.Properties().tab(CreativeModeTab.TAB_TOOLS).durability(700), false));
     public static final RegistryObject<ArmorItem> WIZARD_HAT = ITEMS.register("wizard_hat", () -> new WizardHatArmorItem(WizardArmorMaterial.WIZHAT, EquipmentSlot.HEAD, new Item.Properties().tab(CreativeModeTab.TAB_COMBAT)));
     public static final RegistryObject<BlockItem> ALTAR_ITEM = ITEMS.register("altar_of_attunement", () -> new BlockItem(BlockInit.ALTAR_OF_ATTUNEMENT_BLOCK.get(), new Item.Properties().tab(CreativeModeTab.TAB_DECORATIONS)));
 
     // Staffs
-    public static final RegistryObject<Item> WOODEN_STAFF = ITEMS.register("wood_staff", () ->
+    public static final RegistryObject<Item> WOODEN_STAFF = ITEMS.register("wooden_lapis_staff", () ->
             new StaffItem(new Item.Properties().tab(CreativeModeTab.TAB_TOOLS).durability(70),
                     2D, -3.231D, HLSpells.CONFIG.woodStaffCastTime.get() * 20, false));
 
-    public static final RegistryObject<Item> GOLDEN_STAFF = ITEMS.register("golden_staff", () ->
+    public static final RegistryObject<Item> GOLDEN_STAFF = ITEMS.register("golden_lapis_staff", () ->
             new StaffItem(new Item.Properties().tab(CreativeModeTab.TAB_TOOLS).durability(170),
                     5D, -2.572D, HLSpells.CONFIG.goldStaffCastTime.get() * 20, false));
 
-    public static final RegistryObject<Item> NETHER_STAFF = ITEMS.register("netherite_staff", () ->
+    public static final RegistryObject<Item> NETHER_STAFF = ITEMS.register("netherite_lapis_staff", () ->
             new StaffItem(new Item.Properties().tab(CreativeModeTab.TAB_TOOLS).durability(700),
                     7D, -3D, HLSpells.CONFIG.netheriteStaffCastTime.get() * 20, false));
 
     // Amethyst Variants
-    public static final RegistryObject<Item> WOODEN_STAFF_AMETHYST = ITEMS.register("wood_staff_amethyst", () ->
+    public static final RegistryObject<Item> WOODEN_STAFF_AMETHYST = ITEMS.register("wooden_amethyst_staff", () ->
             new StaffItem(new Item.Properties().tab(CreativeModeTab.TAB_TOOLS).durability(70),
                     2D, -3.231D, HLSpells.CONFIG.woodStaffCastTime.get() * 20, true));
 
-    public static final RegistryObject<Item> GOLDEN_STAFF_AMETHYST = ITEMS.register("golden_staff_amethyst", () ->
+    public static final RegistryObject<Item> GOLDEN_STAFF_AMETHYST = ITEMS.register("golden_amethyst_staff", () ->
             new StaffItem(new Item.Properties().tab(CreativeModeTab.TAB_TOOLS).durability(170),
                     5D, -2.572D, HLSpells.CONFIG.goldStaffCastTime.get() * 20, true));
 
-    public static final RegistryObject<Item> NETHER_STAFF_AMETHYST = ITEMS.register("netherite_staff_amethyst", () ->
+    public static final RegistryObject<Item> NETHER_STAFF_AMETHYST = ITEMS.register("netherite_amethyst_staff", () ->
             new StaffItem(new Item.Properties().tab(CreativeModeTab.TAB_TOOLS).durability(700),
                     7D, -3D, HLSpells.CONFIG.netheriteStaffCastTime.get() * 20, true));
 

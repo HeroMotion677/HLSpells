@@ -11,14 +11,14 @@ import java.util.List;
 
 public class RespirationSpell extends Spell {
 
-    public RespirationSpell(String displayName, int xpCost, int tickDelay, boolean treasureOnly) {
-        super(SpellAttributes.Type.HELD, SpellAttributes.Rarity.UNCOMMON, SpellAttributes.Tier.ONE, SpellAttributes.Marker.UTILITY, displayName, xpCost, tickDelay, treasureOnly);
+    public RespirationSpell(SpellAttributes.Type type, SpellAttributes.Rarity rarity, SpellAttributes.Tier tier, SpellAttributes.Marker marker, String displayName, int xpCost, int tickDelay, boolean treasureOnly, int maxSpellLevel) {
+        super(type, rarity, tier, marker, displayName, xpCost, tickDelay, treasureOnly, maxSpellLevel);
     }
 
     @Override
     public SpellConsumer<Player> getAction() {
         return p -> {
-            List<Player> players = Util.getEntitiesInRange(p, Player.class, 10, 4, 10);
+            var players = Util.getEntitiesInRange(p, Player.class, 10, 4, 10);
             p.getCapability(PlayerCapProvider.PLAYER_CAP).ifPresent(cap -> {
                 cap.setSpellTimer(cap.getSpellTimer() + 1);
                 for (Player player : players) {

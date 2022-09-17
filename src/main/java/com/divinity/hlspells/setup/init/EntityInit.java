@@ -16,6 +16,9 @@ public class EntityInit {
     public static final RegistryObject<EntityType<InvisibleTargetingEntity>> INVISIBLE_TARGETING_ENTITY = ENTITIES.register("invisible_targeting_entity", () ->
             EntityType.Builder.of(InvisibleTargetingEntity::new, MobCategory.MISC).build(HLSpells.MODID + "invisible_targeting_entity"));
 
+    public static final RegistryObject<EntityType<KnockbackBoltEntity>> KNOCKBACK_BOLT_ENTITY = ENTITIES.register("knockback_bolt", () ->
+            EntityType.Builder.of(KnockbackBoltEntity::new, MobCategory.MISC).build(HLSpells.MODID + "knockback_bolt"));
+
     public static final RegistryObject<EntityType<PiercingBoltEntity>> PIERCING_BOLT_ENTITY = ENTITIES.register("piercing_bolt", () ->
             EntityType.Builder.of(PiercingBoltEntity::new, MobCategory.MISC).sized(0.3125F, 0.3125F).build
                     (HLSpells.MODID + "piercing_bolt"));

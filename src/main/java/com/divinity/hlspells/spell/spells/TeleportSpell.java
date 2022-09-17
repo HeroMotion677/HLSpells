@@ -15,8 +15,8 @@ import net.minecraft.world.phys.Vec3;
 
 public class TeleportSpell extends Spell {
 
-    public TeleportSpell(String displayName, int xpCost, boolean treasureOnly) {
-        super(SpellAttributes.Type.CAST, SpellAttributes.Rarity.RARE, SpellAttributes.Tier.TWO, SpellAttributes.Marker.UTILITY, displayName, xpCost, treasureOnly);
+    public TeleportSpell(SpellAttributes.Type type, SpellAttributes.Rarity rarity, SpellAttributes.Tier tier, SpellAttributes.Marker marker, String displayName, int xpCost, boolean treasureOnly, int maxSpellLevel) {
+        super(type, rarity, tier, marker, displayName, xpCost, treasureOnly, maxSpellLevel);
     }
 
     @Override

@@ -17,21 +17,24 @@ import javax.annotation.Nullable;
 import java.util.Random;
 import java.util.function.Consumer;
 
-public abstract class Spell extends ForgeRegistryEntry<Spell> {
+public abstract class Spell extends ForgeRegistryEntry<Spell> implements Cloneable {
 
-    private final SpellAttributes.Type spellType;
-    private final SpellAttributes.Rarity spellRarity;
-    private final SpellAttributes.Marker spellMarkerType;
-    private final SpellAttributes.Tier spellTier;
-    private final String displayName;
-    private final int xpCost;
-    private int tickDelay;
-    private final boolean treasureOnly;
+    protected final SpellAttributes.Type spellType;
+    protected final SpellAttributes.Rarity spellRarity;
+    protected final SpellAttributes.Tier spellTier;
+    protected final SpellAttributes.Marker spellMarkerType;
+    protected String displayName;
+    protected final int xpCost;
+    protected final boolean treasureOnly;
+    protected int spellLevel;
+    protected int maxSpellLevel;
+    protected int tickDelay;
+    protected boolean canUse;
 
     @Nullable
     private String descriptionId;
 
-    public Spell(SpellAttributes.Type type, SpellAttributes.Rarity rarity, SpellAttributes.Tier tier, SpellAttributes.Marker marker, String displayName, int xpCost, boolean treasureOnly) {
+    public Spell(SpellAttributes.Type type, SpellAttributes.Rarity rarity, SpellAttributes.Tier tier, SpellAttributes.Marker marker, String displayName, int xpCost, boolean treasureOnly, int maxSpellLevel) {
         this.spellType = type;
         this.spellRarity = rarity;
         this.spellTier = tier;
@@ -39,10 +42,13 @@ public abstract class Spell extends ForgeRegistryEntry<Spell> {
         this.displayName = displayName;
         this.xpCost = xpCost;
         this.treasureOnly = treasureOnly;
+        this.spellLevel = 1;
+        this.maxSpellLevel = maxSpellLevel;
+        this.canUse = false;
     }
 
-    public Spell(SpellAttributes.Type type, SpellAttributes.Rarity rarity, SpellAttributes.Tier tier, SpellAttributes.Marker marker, String displayName, int xpCost, int tickDelay, boolean treasureOnly) {
-        this(type, rarity, tier, marker, displayName, xpCost, treasureOnly);
+    public Spell(SpellAttributes.Type type, SpellAttributes.Rarity rarity, SpellAttributes.Tier tier, SpellAttributes.Marker marker, String displayName, int xpCost, int tickDelay, boolean treasureOnly, int maxSpellLevel) {
+        this(type, rarity, tier, marker, displayName, xpCost, treasureOnly, maxSpellLevel);
         this.tickDelay = tickDelay;
     }
 
@@ -50,6 +56,19 @@ public abstract class Spell extends ForgeRegistryEntry<Spell> {
 
     public boolean isTreasureOnly() {
         return this.treasureOnly;
+    }
+
+    public int getSpellLevel() {
+        return this.spellLevel;
+    }
+
+    public Spell setSpellLevel(int spellLevel) {
+        this.spellLevel = spellLevel;
+        return this;
+    }
+
+    public int getMaxSpellLevel() {
+        return this.maxSpellLevel;
     }
 
     public int getXpCost() {
@@ -62,6 +81,11 @@ public abstract class Spell extends ForgeRegistryEntry<Spell> {
 
     public String getTrueDisplayName() {
         return this.displayName;
+    }
+
+    public Spell setTrueDisplayName(String displayName) {
+        this.displayName = displayName;
+        return this;
     }
 
     public String getDescriptionId() {
@@ -93,13 +117,41 @@ public abstract class Spell extends ForgeRegistryEntry<Spell> {
     }
 
     public int rarityAsInt() {
-        return this.getSpellRarity() == SpellAttributes.Rarity.COMMON ? 1 : this.getSpellRarity() == SpellAttributes.Rarity.UNCOMMON ? 2 : this.getSpellRarity() == SpellAttributes.Rarity.RARE ? 3 : 0;
+        return switch (this.getSpellRarity()) {
+            case COMMON -> 1;
+            case UNCOMMON -> 2;
+            case RARE -> 3;
+            default -> 0;
+        };
+    }
+
+    public String getNameForLevel(int level) {
+        return this.getRegistryName() + " " + "I".repeat(level);
+    }
+
+    // Meant for spells that have their implementation in other/multiple places
+    public boolean canUseSpell() {
+        return this.canUse;
     }
 
     public final void execute(Player player, ItemStack stack) {
         if (SpellUtils.checkXpReq(player, this) && this.getAction() != null) {
             this.getAction().andThenIfCast(this.onAfterExecute(this, stack)).accept(player);
         }
+        else this.canUse = false;
+    }
+
+    // This is mainly for spell registration use
+    @Override
+    @Nullable
+    public Spell clone() {
+        try {
+            return (Spell) super.clone();
+        }
+        catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     protected String getOrCreateDescriptionId() {
@@ -108,7 +160,6 @@ public abstract class Spell extends ForgeRegistryEntry<Spell> {
         }
         return this.descriptionId;
     }
-
 
     private Consumer<Player> onAfterExecute(Spell spell, ItemStack stack) {
         return player -> {
@@ -129,7 +180,7 @@ public abstract class Spell extends ForgeRegistryEntry<Spell> {
                                 player.giveExperiencePoints(-SpellUtils.getXpReq(player, spell));
                                 playerCap.setSpellXpTickCounter(0);
                             }
-                            if (durabilityTickCounter == 15 && !player.level.isClientSide()) {
+                            if (durabilityTickCounter % 15 == 0 && !player.level.isClientSide()) {
                                 stack.hurt(getSpellHoldingItemCalculation(stack), player.getRandom(), (ServerPlayer) player);
                                 playerCap.setDurabilityTickCounter(0);
                             }

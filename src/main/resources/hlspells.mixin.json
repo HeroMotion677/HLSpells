@@ -9,7 +9,6 @@
     "MixinGrindstoneExperience",
     "MixinItemRenderer",
     "MixinPhasing",
-    "MixinPlayerPhasing",
     "MixinPose",
     "MixinSmithingRecipe"
   ],

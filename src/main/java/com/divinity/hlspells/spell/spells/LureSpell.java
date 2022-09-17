@@ -20,8 +20,8 @@ public class LureSpell extends Spell {
 
     private static final MobEffectInstance GLOWING = new MobEffectInstance(MobEffects.GLOWING, Integer.MAX_VALUE, 5, false, false);
 
-    public LureSpell(String displayName, int xpCost, int tickDelay, boolean treasureOnly) {
-        super(SpellAttributes.Type.HELD, SpellAttributes.Rarity.RARE, SpellAttributes.Tier.ONE, SpellAttributes.Marker.UTILITY, displayName, xpCost, tickDelay, treasureOnly);
+    public LureSpell(SpellAttributes.Type type, SpellAttributes.Rarity rarity, SpellAttributes.Tier tier, SpellAttributes.Marker marker, String displayName, int xpCost, int tickDelay, boolean treasureOnly, int maxSpellLevel) {
+        super(type, rarity, tier, marker, displayName, xpCost, tickDelay, treasureOnly, maxSpellLevel);
     }
 
     @Override
@@ -38,7 +38,7 @@ public class LureSpell extends Spell {
                 });
             }
             p.addEffect(GLOWING);
-            List<Mob> mobEntities = Util.getEntitiesInRange(p, Mob.class, LURE_RANGE, LURE_RANGE, LURE_RANGE);
+            var mobEntities = Util.getEntitiesInRange(p, Mob.class, LURE_RANGE, LURE_RANGE, LURE_RANGE);
             for (Mob mob : mobEntities) {
                 List<? extends String> blacklistedMobs = HLSpells.CONFIG.sapientMobsList.get();
                 boolean predicate = false;

@@ -1,16 +1,17 @@
 package com.divinity.hlspells.network.packets.serverbound;
 
 import com.divinity.hlspells.capabilities.spellholdercap.ISpellHolder;
-import com.divinity.hlspells.items.spellitems.SpellHoldingItem;
 import com.divinity.hlspells.capabilities.spellholdercap.SpellHolderProvider;
-import com.divinity.hlspells.spell.Spell;
+import com.divinity.hlspells.items.spellitems.SpellHoldingItem;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.monster.Phantom;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.level.block.TorchBlock;
 import net.minecraftforge.network.NetworkEvent;
 
-import java.util.Arrays;
 import java.util.function.Supplier;
 
 public class WandInputPacket {
@@ -30,7 +31,7 @@ public class WandInputPacket {
     }
 
     public void handle(Supplier<NetworkEvent.Context> contextSupplier) {
-        NetworkEvent.Context context = contextSupplier.get();
+        var context = contextSupplier.get();
         context.enqueueWork(() -> {
             ServerPlayer player = context.getSender();
             if (player != null) {

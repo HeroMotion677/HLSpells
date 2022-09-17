@@ -57,7 +57,7 @@ public abstract class MixinItemRenderer {
                 }
                 this.renderItem(pPlayer, pStack, flag3 ? ItemTransforms.TransformType.FIRST_PERSON_RIGHT_HAND : ItemTransforms.TransformType.FIRST_PERSON_LEFT_HAND, !flag3, pMatrixStack, pBuffer, pCombinedLight);
                 pMatrixStack.popPose();
-                if (ci.isCancellable()) ci.cancel();
+                ci.cancel();
             }
         }
     }

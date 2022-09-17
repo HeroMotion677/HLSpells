@@ -15,8 +15,8 @@ import net.minecraftforge.event.ForgeEventFactory;
 
 public class FrostPathSpell extends Spell {
 
-    public FrostPathSpell(String displayName, int xpCost, int tickDelay, boolean treasureOnly) {
-        super(SpellAttributes.Type.HELD, SpellAttributes.Rarity.COMMON, SpellAttributes.Tier.THREE, SpellAttributes.Marker.UTILITY, displayName, xpCost, tickDelay, treasureOnly);
+    public FrostPathSpell(SpellAttributes.Type type, SpellAttributes.Rarity rarity, SpellAttributes.Tier tier, SpellAttributes.Marker marker, String displayName, int xpCost, int tickDelay, boolean treasureOnly, int maxSpellLevel) {
+        super(type, rarity, tier, marker, displayName, xpCost, tickDelay, treasureOnly, maxSpellLevel);
     }
 
     @Override

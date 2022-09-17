@@ -99,10 +99,10 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
     @NotNull
     public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand) {
         ItemStack itemstack = player.getItemInHand(hand);
-        LazyOptional<ISpellHolder> capability = itemstack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP);
+        var capability = itemstack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP);
         this.wasHolding = true;
         Spell spell = SpellUtils.getSpell(itemstack);
-        List<String> spells = capability.map(ISpellHolder::getSpells).orElse(null);
+        var spells = capability.map(ISpellHolder::getSpells).orElse(null);
         if (spells != null && !spells.isEmpty()) {
             player.startUsingItem(hand);
             if (!world.isClientSide()) {
@@ -122,7 +122,8 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
     public void onUsingTick(ItemStack stack, LivingEntity livingEntity, int count) {
         if (livingEntity instanceof Player player) {
             Spell spell = SpellUtils.getSpell(stack);
-            if (spell.getSpellType() == SpellAttributes.Type.HELD) spell.execute(player, stack);
+            if (spell.getSpellType() == SpellAttributes.Type.HELD)
+                spell.execute(player, stack);
         }
     }
 
@@ -130,11 +131,12 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
     @ParametersAreNonnullByDefault
     public void releaseUsing(ItemStack stack, Level world, LivingEntity entity, int power) {
         if (entity instanceof Player player) {
-            LazyOptional<ISpellHolder> capability = stack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP);
+            var capability = stack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP);
             this.wasHolding = false;
             Spell spell = SpellUtils.getSpell(stack);
             if (this.castTimeCondition(player, stack)) {
-                if (spell.getSpellType() == SpellAttributes.Type.CAST) spell.execute(player, stack);
+                if (spell.getSpellType() == SpellAttributes.Type.CAST)
+                    spell.execute(player, stack);
                 Util.doParticles(player);
                 if (!world.isClientSide()) {
                     capability.filter(p -> !(p.getSpells().isEmpty())).ifPresent(cap -> {
@@ -185,7 +187,7 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 
     @Override
     public boolean isFoil(ItemStack pStack) {
-        List<String> spells = pStack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP).map(ISpellHolder::getSpells).orElse(null);
+        var spells = pStack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP).map(ISpellHolder::getSpells).orElse(null);
         return isSpellBook && SpellUtils.getSpell(pStack) != SpellInit.EMPTY.get() || !isSpellBook && spells != null && !spells.isEmpty() || super.isFoil(pStack);
     }
 
@@ -194,7 +196,7 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
     @Override
     public CompoundTag getShareTag(ItemStack stack) {
         CompoundTag capTag = new CompoundTag();
-        LazyOptional<ISpellHolder> spellHolder = stack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP);
+        var spellHolder = stack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP);
         if (spellHolder.isPresent()) {
             spellHolder.ifPresent(cap -> capTag.put("spellHolder", stack.serializeNBT()));
         }

@@ -23,16 +23,10 @@ public class AttackedOwnerEnemyGoal extends TargetGoal {
     public boolean canUse() {
         int scanRange = 15;
         if (this.mob instanceof Summonable summonable) {
-            var mobEntities = Util.getEntitiesInRange(this.mob, LivingEntity.class, scanRange, scanRange, scanRange);
+            var mobEntities = Util.getEntitiesInRange(this.mob, LivingEntity.class, scanRange, scanRange, scanRange, m -> !(m instanceof Summonable));
             for (LivingEntity mob : mobEntities) {
-                if (mob != null && !(mob instanceof Summonable)) {
-                    if (mob instanceof NeutralMob neutralMob) {
-                        if (neutralMob.getTarget() == summonable.getSummonedOwner()) {
-                            this.entityToAttack = mob;
-                            return this.mob.getTarget() == null && summonable.getSummonedOwner() != null && this.canAttack(mob, this.attackedOwnerTargeting);
-                        }
-                    }
-                    else if (mob instanceof Mob regularMob) {
+                if (mob != null) {
+                    if (mob instanceof Mob regularMob) {
                         if (regularMob.getTarget() == summonable.getSummonedOwner()) {
                             this.entityToAttack = mob;
                             return this.mob.getTarget() == null && summonable.getSummonedOwner() != null && this.canAttack(mob, this.attackedOwnerTargeting);

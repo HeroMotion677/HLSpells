@@ -61,6 +61,8 @@ public class HLSpells {
     }
 
     private void sendImc(final InterModEnqueueEvent event) {
-        if (ModList.get().isLoaded("curios")) CuriosCompat.sendImc();
+        if (ModList.get().isLoaded("curios")) {
+            CuriosCompat.sendImc();
+        }
     }
 }

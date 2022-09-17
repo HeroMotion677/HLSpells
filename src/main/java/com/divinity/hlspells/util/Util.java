@@ -1,6 +1,7 @@
 package com.divinity.hlspells.util;
 
 import com.divinity.hlspells.capabilities.playercap.PlayerCapProvider;
+import com.divinity.hlspells.entities.projectile.InvisibleTargetingEntity;
 import com.divinity.hlspells.network.NetworkManager;
 import com.divinity.hlspells.network.packets.clientbound.TotemActivatedPacket;
 import com.google.common.collect.Lists;
@@ -20,6 +21,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.Arrow;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -34,6 +36,7 @@ import net.minecraftforge.network.PacketDistributor;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public final class Util {
@@ -108,6 +111,10 @@ public final class Util {
                 .stream().sorted(getEntityComparator(relativeEntity)).collect(Collectors.toList());
     }
 
+    public static <T extends LivingEntity> List<T> getEntitiesInRange(LivingEntity relativeEntity, Class<T> targets, double xBound, double yBound, double zBound, Predicate<T> filter) {
+        return getEntitiesInRange(relativeEntity, targets, xBound, yBound, zBound).stream().filter(filter).collect(Collectors.toList());
+    }
+
     // For totem
     public static void randomTeleport(LivingEntity entity) {
         double d0 = entity.getX();
@@ -128,6 +135,7 @@ public final class Util {
             }
         }
     }
+
     /**
      * Method to hide the client side call to show totem activation and/or particles
      */
@@ -181,6 +189,16 @@ public final class Util {
         displayActivation(entity, animationItem);
         entity.level.playSound(null, entity.getX(), entity.getY(), entity.getZ(), SoundEvents.TOTEM_USE, SoundSource.PLAYERS, 1.0F, 1.0F);
         entity.playSound(SoundEvents.TOTEM_USE, 1.0F, 1.0F);
+    }
+
+    public static <T extends Projectile, U extends Entity> void shootSpellRelative(U entity, T projectile, Vec3 position, float zRot, float velocity, float inaccuracy, boolean ignoreVerticalMovement) {
+        projectile.setOwner(entity);
+        projectile.setPos(position.x(), position.y(), position.z());
+        projectile.shootFromRotation(entity, entity.xRot, entity.yRot, zRot, velocity, inaccuracy);
+        if (ignoreVerticalMovement) {
+            projectile.setDeltaMovement(Mth.cos((float) Math.toRadians(entity.yRot + 90)), 0, Mth.sin((float) Math.toRadians(entity.yRot + 90)));
+        }
+        entity.level.addFreshEntity(projectile);
     }
 
     /**

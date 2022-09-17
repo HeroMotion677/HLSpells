@@ -9,17 +9,17 @@ import net.minecraft.world.entity.player.Player;
 
 public class PullSpell extends Spell {
 
-    public PullSpell(String displayName, int xpCost, boolean treasureOnly) {
-        super(SpellAttributes.Type.CAST, SpellAttributes.Rarity.UNCOMMON, SpellAttributes.Tier.ONE, SpellAttributes.Marker.UTILITY, displayName, xpCost, treasureOnly);
+    public PullSpell(SpellAttributes.Type type, SpellAttributes.Rarity rarity, SpellAttributes.Tier tier, SpellAttributes.Marker marker, String displayName, int xpCost, boolean treasureOnly, int maxSpellLevel) {
+        super(type, rarity, tier, marker, displayName, xpCost, treasureOnly, maxSpellLevel);
     }
 
     @Override
     public SpellConsumer<Player> getAction() {
         return p -> {
-            if (Util.rayTrace(p.level, p, 35D) != null) {
-                Entity targetEntity = Util.rayTrace(p.level, p, 35D);
-                if (targetEntity != null && targetEntity.distanceTo(p) > 5) {
-                    targetEntity.setDeltaMovement(p.getLookAngle().reverse().multiply(5, 5, 5));
+            var entity = Util.rayTrace(p.level, p, 35D);
+            if (entity != null) {
+                if (entity.distanceTo(p) > 5) {
+                    entity.setDeltaMovement(p.getLookAngle().reverse().multiply(5, 5, 5));
                     return true;
                 }
             }

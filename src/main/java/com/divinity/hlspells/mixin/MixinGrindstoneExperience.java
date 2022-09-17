@@ -3,6 +3,7 @@ package com.divinity.hlspells.mixin;
 import com.divinity.hlspells.items.spellitems.SpellHoldingItem;
 import com.divinity.hlspells.capabilities.spellholdercap.SpellHolderProvider;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.StairBlock;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;

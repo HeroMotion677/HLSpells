@@ -28,6 +28,10 @@ repositories {
         name = "Curios maven"
         url = "https://maven.theillusivec4.top/"
     }
+    maven {
+        name = "Modding Legacy Maven"
+        url = "https://maven.moddinglegacy.com/artifactory/modding-legacy/"
+    }
     maven { url = 'https://repo.spongepowered.org/maven' }
 }
 
@@ -47,21 +51,58 @@ compileJava {
     [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 }
 
+sourceSets {
+    main {
+        resources {
+            srcDirs += 'src/generated/resources'
+            exclude '.cache'
+        }
+    }
+    datagen {
+        compileClasspath += main.compileClasspath
+        runtimeClasspath += main.runtimeClasspath
+        compileClasspath += main.output
+        runtimeClasspath += main.output
+    }
+}
+
 println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
 minecraft {
     mappings channel: 'parchment', version: '2022.03.13-1.18.2'
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
     runs {
+        all {
+            def srgToMcpFile = project.tasks.createSrgToMcp.outputs.files[0].path
+
+            property 'net.minecraftforge.gradle.GradleStart.srg.srg-mcp', srgToMcpFile
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', srgToMcpFile
+        }
         client {
-            workingDirectory project.file('run')
+            workingDirectory project.file('run/client')
             arg "-mixin.config=hlspells.mixin.json"
             property 'forge.logging.console.level', 'debug'
         }
 
         server {
-            workingDirectory project.file('run')
+            workingDirectory project.file('run/server')
             arg "-mixin.config=hlspells.mixin.json"
             property 'forge.logging.console.level', 'debug'
+        }
+        data {
+            workingDirectory project.file('run/data')
+            jvmArg '-Dterminal.ansi=true'
+
+            property 'forge.logging.console.level', 'debug'
+            args '--mod', 'hlspells', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
+            ideaModule project.name + ".datagen"
+
+            mods {
+                hlspells {
+                    source sourceSets.main
+                    source sourceSets.datagen
+                }
+            }
         }
     }
 }
@@ -75,9 +116,11 @@ dependencies {
     // Compile against the API but do not include it at runtime
     compileOnly fg.deobf("mezz.jei:jei-${jei_mc_version}:${jei_version}:api")
     compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}:api")
+    compileOnly fg.deobf("com.legacy:lucent:1.18.2-1.2.2")
     // At runtime, use the full mod jar
     runtimeOnly fg.deobf("mezz.jei:jei-${jei_mc_version}:${jei_version}")
     runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
+    runtimeOnly fg.deobf("com.legacy:lucent:1.18.2-1.2.2")
     // Processes mixin annotations
     annotationProcessor 'org.spongepowered:mixin:0.8.5-SNAPSHOT:processor'
 }

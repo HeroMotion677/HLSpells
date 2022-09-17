@@ -43,7 +43,8 @@ public class WizardHatModel<T extends LivingEntity> extends HumanoidModel<T> {
 
     @Override
     public void setupAnim(@NotNull T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-        if (entity instanceof ArmorStand) super.setupAnim(entity, 0, 0, 0, 0, 0);
+        if (entity instanceof ArmorStand)
+            super.setupAnim(entity, 0, 0, 0, 0, 0);
         else {
             this.head.copyFrom(super.head);
             super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);

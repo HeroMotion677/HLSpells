@@ -2,8 +2,8 @@ package com.divinity.hlspells.items.totems;
 
 import com.divinity.hlspells.HLSpells;
 import com.divinity.hlspells.compat.CuriosCompat;
-import com.divinity.hlspells.events.TotemEvents;
 import com.divinity.hlspells.capabilities.totemcap.TotemItemProvider;
+import com.divinity.hlspells.events.ForgeEventHandler;
 import com.divinity.hlspells.setup.init.ItemInit;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.world.InteractionHand;
@@ -41,7 +41,8 @@ public class KeepingTotem extends Item implements ITotem {
                     if (hand == InteractionHand.MAIN_HAND) cap.setTotemInHand(InteractionHand.MAIN_HAND);
                     else if (hand == InteractionHand.OFF_HAND) cap.setTotemInHand(InteractionHand.OFF_HAND);
                     cap.setInventoryNBT(player.inventory.save(new ListTag()));
-                    if (HLSpells.isCurioLoaded) cap.setCuriosNBT(CuriosCompat.getCuriosInv(player));
+                    if (HLSpells.isCurioLoaded)
+                        cap.setCuriosNBT(CuriosCompat.getCuriosInv(player));
                 });
             }
             else {
@@ -57,7 +58,7 @@ public class KeepingTotem extends Item implements ITotem {
                     });
                 });
             }
-            TotemEvents.soulBond = false;
+            ForgeEventHandler.soulBond = false;
         }
     }
 }

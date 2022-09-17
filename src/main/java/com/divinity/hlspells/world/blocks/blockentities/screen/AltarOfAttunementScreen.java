@@ -132,7 +132,8 @@ public class AltarOfAttunementScreen extends AbstractContainerScreen<AltarOfAttu
                 RenderSystem.setShaderTexture(0, GUI);
                 int cost = this.menu.costs[k];
                 RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-                if (cost == 0) this.blit(pPoseStack, distanceToEnchantSlot, j + 22 + 19 * k, 90, 202, 89, 19);
+                if (cost == 0)
+                    this.blit(pPoseStack, distanceToEnchantSlot, j + 22 + 19 * k, 90, 202, 89, 19);
                 else {
                     String costWord = String.valueOf(cost);
                     int fontWidth = 86 - this.font.width(costWord);

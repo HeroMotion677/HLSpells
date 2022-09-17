@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 public class PiercingBoltEntity extends BaseBoltEntity {
 
     public PiercingBoltEntity(EntityType<? extends PiercingBoltEntity> type, Level world) {
-        super(type, world, false, ParticleTypes.ENCHANTED_HIT, ParticleTypes.ENCHANTED_HIT);
+        super(type, world, ParticleTypes.ENCHANTED_HIT, ParticleTypes.ENCHANTED_HIT);
     }
 
     @Override

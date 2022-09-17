@@ -17,8 +17,8 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class FangsSpell extends Spell {
 
-    public FangsSpell(String displayName, int xpCost, boolean treasureOnly) {
-        super(SpellAttributes.Type.CAST, SpellAttributes.Rarity.RARE, SpellAttributes.Tier.THREE, SpellAttributes.Marker.COMBAT, displayName, xpCost, treasureOnly);
+    public FangsSpell(SpellAttributes.Type type, SpellAttributes.Rarity rarity, SpellAttributes.Tier tier, SpellAttributes.Marker marker, String displayName, int xpCost, boolean treasureOnly, int maxSpellLevel) {
+        super(type, rarity, tier, marker, displayName, xpCost, treasureOnly, maxSpellLevel);
     }
 
     @Override
@@ -26,10 +26,25 @@ public class FangsSpell extends Spell {
         return p -> {
             float f = (float) Mth.atan2(p.getZ(), p.getX());
             if (!p.isShiftKeyDown()) {
-                InvisibleTargetingEntity stormBullet = new InvisibleTargetingEntity(EntityInit.INVISIBLE_TARGETING_ENTITY.get(), p.level);
-                stormBullet.setHomePosition(p.position());
-                stormBullet.setIsLightning(false);
+                InvisibleTargetingEntity stormBullet = new InvisibleTargetingEntity(EntityInit.INVISIBLE_TARGETING_ENTITY.get(), p.level) {
+                    @Override
+                    public void tick() {
+                        super.tick();
+                        if (this.getInitialPosition() != null) {
+                            float distance = Mth.sqrt((float) distanceToSqr(this.getInitialPosition()));
+                            if (distance >= 10) {
+                                this.remove(RemovalReason.DISCARDED);
+                            }
+                            if (this.level.getGameTime() % 2 == 0) {
+                                if (this.getOwner() instanceof Player) {
+                                    createFangsEntity((LivingEntity) this.getOwner(), this.level, this.xOld, this.zOld, getY(), 0, 0);
+                                }
+                            }
+                        }
+                    }
+                };
                 stormBullet.setOwner(p);
+                stormBullet.setInitialPosition(p.position());
                 stormBullet.setPos(p.getX(), p.getY(), p.getZ());
                 stormBullet.shootFromRotation(p, p.xRot, p.yRot, 1.2F, 1.2F, 1.2F);
                 stormBullet.setDeltaMovement(Mth.cos((float) Math.toRadians(p.yRot + 90)), 0, Mth.sin((float) Math.toRadians(p.yRot + 90)));

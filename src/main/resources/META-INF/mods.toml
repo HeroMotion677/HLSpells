@@ -31,3 +31,11 @@ modId = "curios"
 mandatory = false
 versionRange = "[1.18.2-5.0.6.3,)"
 ordering = "NONE"
+
+[[dependencies.hlspells]]
+modId="lucent"
+mandatory=false
+versionRange="[1.2.0, 1.2.2]"
+ordering="NONE"
+side="BOTH"
+

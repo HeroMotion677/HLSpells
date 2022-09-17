@@ -14,16 +14,12 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.living.LivingEvent;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
 
 public class AquaBoltEntity extends BaseBoltEntity {
 
     public AquaBoltEntity(EntityType<? extends AquaBoltEntity> type, Level world) {
-        super(type, world, false, ParticleTypes.RAIN, ParticleTypes.BUBBLE);
+        super(type, world, ParticleTypes.RAIN, ParticleTypes.BUBBLE);
     }
 
     @Override
@@ -32,7 +28,7 @@ public class AquaBoltEntity extends BaseBoltEntity {
         Entity entity1 = this.getOwner();
         LivingEntity livingentity = entity1 instanceof LivingEntity livingEntity ? livingEntity : null;
         if (result.getEntity() == this.getOwner()) return;
-        List<? extends String> fireMobsList = HLSpells.CONFIG.fireMobsList.get();
+        var fireMobsList = HLSpells.CONFIG.fireMobsList.get();
         boolean predicate = false;
         for (String id : fireMobsList) {
             if (id.equals(entity.getType().getRegistryName() != null ? entity.getType().getRegistryName().toString() : "")) {

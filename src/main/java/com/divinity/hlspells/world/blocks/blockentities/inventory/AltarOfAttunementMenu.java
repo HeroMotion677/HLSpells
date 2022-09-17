@@ -1,5 +1,6 @@
 package com.divinity.hlspells.world.blocks.blockentities.inventory;
 
+import com.divinity.hlspells.HLSpells;
 import com.divinity.hlspells.items.spellitems.SpellHoldingItem;
 import com.divinity.hlspells.capabilities.spellholdercap.SpellHolderProvider;
 import com.divinity.hlspells.network.NetworkManager;
@@ -53,7 +54,6 @@ public class AltarOfAttunementMenu extends AbstractContainerMenu implements Cont
     private final Random random = new Random();
     private final ContainerLevelAccess levelAccess;
     private final DataSlot enchantmentSeed = DataSlot.standalone();
-
 
     public AltarOfAttunementMenu(int id, Inventory playerInventory, Player player, FriendlyByteBuf extraData) {
         this(id, playerInventory, player, playerInventory.player.level.getBlockEntity(extraData.readBlockPos()), ContainerLevelAccess.NULL);
@@ -217,14 +217,14 @@ public class AltarOfAttunementMenu extends AbstractContainerMenu implements Cont
                 return ItemStack.EMPTY;  // EMPTY_ITEM
             }
         }
-        else if (index >= 0  && index <= 3) {
+        else if (index >= 0 && index <= 3) {
             // This is a TE slot so merge the stack into the players inventory
             if (!moveItemStackTo(sourceStack, 4, 40, true)) {
                 return ItemStack.EMPTY;
             }
         }
         else {
-            System.out.println("Invalid slotIndex:" + index);
+            HLSpells.LOGGER.warn("Invalid slotIndex: " + index);
             return ItemStack.EMPTY;
         }
         // If stack size == 0 (the entire stack was moved) set slot contents to null

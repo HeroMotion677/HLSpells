@@ -16,8 +16,8 @@ import net.minecraft.world.level.material.Fluids;
 
 public class AbsorbingSpell extends Spell {
 
-    public AbsorbingSpell(String displayName, int xpCost, boolean treasureOnly) {
-        super(SpellAttributes.Type.CAST, SpellAttributes.Rarity.RARE, SpellAttributes.Tier.THREE, SpellAttributes.Marker.COMBAT, displayName, xpCost, treasureOnly);
+    public AbsorbingSpell(SpellAttributes.Type type, SpellAttributes.Rarity rarity, SpellAttributes.Tier tier, SpellAttributes.Marker marker, String displayName, int xpCost, boolean treasureOnly, int maxSpellLevel) {
+        super(type, rarity, tier, marker, displayName, xpCost, treasureOnly, maxSpellLevel);
     }
 
     @Override
@@ -37,5 +37,10 @@ public class AbsorbingSpell extends Spell {
             }
             return used;
         };
+    }
+
+    @Override
+    public int getMaxSpellLevel() {
+        return 1;
     }
 }

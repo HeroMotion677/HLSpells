@@ -1,8 +1,6 @@
 package com.divinity.hlspells.entities.projectile;
 
-import net.minecraft.client.gui.spectator.SpectatorMenu;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
@@ -17,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 public class FreezingBoltEntity extends BaseBoltEntity {
 
     public FreezingBoltEntity(EntityType<? extends BaseBoltEntity> entityType, Level level) {
-        super(entityType, level, false, ParticleTypes.SNOWFLAKE, ParticleTypes.SNOWFLAKE);
+        super(entityType, level, ParticleTypes.SNOWFLAKE, ParticleTypes.SNOWFLAKE);
     }
 
     @Override

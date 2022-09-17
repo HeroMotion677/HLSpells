@@ -12,8 +12,8 @@ import net.minecraft.world.level.Level;
 
 public class ArrowRainSpell extends Spell {
 
-    public ArrowRainSpell(String displayName, int xpCost, int tickDelay, boolean treasureOnly) {
-        super(SpellAttributes.Type.HELD, SpellAttributes.Rarity.COMMON, SpellAttributes.Tier.ONE, SpellAttributes.Marker.COMBAT, displayName, xpCost, tickDelay, treasureOnly);
+    public ArrowRainSpell(SpellAttributes.Type type, SpellAttributes.Rarity rarity, SpellAttributes.Tier tier, SpellAttributes.Marker marker, String displayName, int xpCost, int tickDelay, boolean treasureOnly, int maxSpellLevel) {
+        super(type, rarity, tier, marker, displayName, xpCost, tickDelay, treasureOnly, maxSpellLevel);
     }
 
     @Override

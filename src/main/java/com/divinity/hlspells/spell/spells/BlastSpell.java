@@ -17,8 +17,8 @@ import java.util.List;
 
 public class BlastSpell extends Spell {
 
-    public BlastSpell(String displayName, int xpCost, boolean treasureOnly) {
-        super(SpellAttributes.Type.CAST, SpellAttributes.Rarity.UNCOMMON, SpellAttributes.Tier.ONE, SpellAttributes.Marker.COMBAT, displayName, xpCost, treasureOnly);
+    public BlastSpell(SpellAttributes.Type type, SpellAttributes.Rarity rarity, SpellAttributes.Tier tier, SpellAttributes.Marker marker, String displayName, int xpCost, boolean treasureOnly, int maxSpellLevel) {
+        super(type, rarity, tier, marker, displayName, xpCost, treasureOnly, maxSpellLevel);
     }
 
     @Override
@@ -27,7 +27,7 @@ public class BlastSpell extends Spell {
             double x = p.getX();
             double y = p.getY();
             double z = p.getZ();
-            List<LivingEntity> entities = Util.getEntitiesInRange(p, LivingEntity.class, 6, 6, 6);
+            var entities = Util.getEntitiesInRange(p, LivingEntity.class, 6, 6, 6);
             for (LivingEntity entity : entities) {
                 if (entity != p) {
                     entity.knockback(5F * 0.5F, Mth.sin(p.yRot * ((float) Math.PI / 180F)), -Mth.cos(p.yRot * ((float) Math.PI / 180F)));

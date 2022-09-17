@@ -12,6 +12,8 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.animal.Fox;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.FenceBlock;
+import net.minecraft.world.level.block.GlassBlock;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import org.jetbrains.annotations.NotNull;
@@ -19,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 public class ChorusBoltEntity extends BaseBoltEntity {
 
     public ChorusBoltEntity(EntityType<? extends BaseBoltEntity> entityType, Level level) {
-        super(entityType, level, false, ParticleTypes.PORTAL, ParticleTypes.PORTAL);
+        super(entityType, level, ParticleTypes.PORTAL, ParticleTypes.PORTAL);
     }
 
     @Override
@@ -57,7 +59,7 @@ public class ChorusBoltEntity extends BaseBoltEntity {
         double d0 = livingEntity.getX();
         double d1 = livingEntity.getY();
         double d2 = livingEntity.getZ();
-        for (int i = 0; i < 16; ++i) {
+        for (int i = 0; i < 32; ++i) {
             double d3 = livingEntity.getX() + (livingEntity.getRandom().nextDouble() - 0.5D) * 16.0D;
             double d4 = Mth.clamp(livingEntity.getY() + (double) (livingEntity.getRandom().nextInt(16) - 8), livingLevel.getMinBuildHeight(), livingLevel.getMinBuildHeight() + ((ServerLevel) livingLevel).getLogicalHeight() - 1);
             double d5 = livingEntity.getZ() + (livingEntity.getRandom().nextDouble() - 0.5D) * 16.0D;

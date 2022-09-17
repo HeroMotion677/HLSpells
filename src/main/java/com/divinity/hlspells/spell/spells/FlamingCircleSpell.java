@@ -15,14 +15,14 @@ import java.util.List;
 
 public class FlamingCircleSpell extends Spell {
 
-    public FlamingCircleSpell(String displayName, int xpCost, int tickDelay, boolean treasureOnly) {
-        super(SpellAttributes.Type.HELD, SpellAttributes.Rarity.UNCOMMON, SpellAttributes.Tier.ONE, SpellAttributes.Marker.COMBAT, displayName, xpCost, tickDelay, treasureOnly);
+    public FlamingCircleSpell(SpellAttributes.Type type, SpellAttributes.Rarity rarity, SpellAttributes.Tier tier, SpellAttributes.Marker marker, String displayName, int xpCost, int tickDelay, boolean treasureOnly, int maxSpellLevel) {
+        super(type, rarity, tier, marker, displayName, xpCost, tickDelay, treasureOnly, maxSpellLevel);
     }
 
     @Override
     public SpellConsumer<Player> getAction() {
         return p -> {
-            List<LivingEntity> livingEntities = Util.getEntitiesInRange(p, LivingEntity.class, 6, -1, 6);
+            var livingEntities = Util.getEntitiesInRange(p, LivingEntity.class, 6, -1, 6);
             p.getCapability(PlayerCapProvider.PLAYER_CAP).ifPresent(cap -> {
                 cap.setSpellTimer(cap.getSpellTimer() + 1);
                 if (cap.getSpellTimer() % 10 == 0) {
