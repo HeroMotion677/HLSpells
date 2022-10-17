@@ -1,5 +1,6 @@
 package com.divinity.hlspells.entities.projectile;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -8,6 +9,9 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.BaseFireBlock;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import org.jetbrains.annotations.NotNull;
@@ -40,6 +44,13 @@ public class FreezingBoltEntity extends BaseBoltEntity {
         if (this.level instanceof ServerLevel level) {
             level.sendParticles(ParticleTypes.CRIT, this.getX(), this.getY(), this.getZ(), 2, 0.2D, 0.2D, 0.2D, 0.0D);
             this.playSound(SoundEvents.SHULKER_BULLET_HIT, 1.0F, 1.0F);
+            BlockPos blockpos = result.getBlockPos().relative(result.getDirection());
+            if (this.level.isEmptyBlock(blockpos)) {
+                this.level.setBlockAndUpdate(blockpos, Blocks.SNOW.defaultBlockState());
+            }
+            else if (this.level.getBlockState(blockpos).getFluidState() == Fluids.WATER.defaultFluidState()) {
+                this.level.setBlockAndUpdate(blockpos, Blocks.ICE.defaultBlockState());
+            }
             this.remove(RemovalReason.KILLED);
         }
     }

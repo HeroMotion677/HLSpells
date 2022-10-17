@@ -24,7 +24,7 @@ public class AbsorbingSpell extends Spell {
     public SpellConsumer<Player> getAction() {
         return p -> {
             boolean used = false;
-            for (BlockPos blockPos : BlockPos.betweenClosed(Mth.floor(p.getX() - 8.0D), Mth.floor(p.getY() - 8.0D), Mth.floor(p.getZ() - 8.0D), Mth.floor(p.getX() + 8.0D), Mth.floor(p.getY() + 8.0D), Mth.floor(p.getZ() + 8.0D))) {
+            for (BlockPos blockPos : BlockPos.betweenClosed(Mth.floor(p.getX() - 2.0D), Mth.floor(p.getY() - 2.0D), Mth.floor(p.getZ() - 2.0D), Mth.floor(p.getX() + 2.0D), Mth.floor(p.getY() + 2.0D), Mth.floor(p.getZ() + 2.0D))) {
                 BlockState blockState = p.level.getBlockState(blockPos);
                 FluidState fluidState = p.level.getFluidState(blockPos);
                 if (fluidState.is(FluidTags.WATER)) {

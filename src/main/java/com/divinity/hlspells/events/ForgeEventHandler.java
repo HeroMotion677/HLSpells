@@ -15,6 +15,7 @@ import com.divinity.hlspells.setup.init.ItemInit;
 import com.divinity.hlspells.setup.init.SpellInit;
 import com.divinity.hlspells.spell.Spell;
 import com.divinity.hlspells.spell.SpellAttributes;
+import com.divinity.hlspells.spell.spells.PhasingSpell;
 import com.divinity.hlspells.util.SpellUtils;
 import com.divinity.hlspells.util.Util;
 import com.mojang.blaze3d.platform.InputConstants;
@@ -49,6 +50,7 @@ import net.minecraftforge.client.settings.KeyConflictContext;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
@@ -340,10 +342,22 @@ public class ForgeEventHandler {
 
     @SubscribeEvent
     public static void clearEffectsAfterUse(TickEvent.PlayerTickEvent event) {
-        if (event.player != null && !event.player.level.isClientSide()) {
+        Player player = event.player;
+        if (player != null && !player.level.isClientSide()) {
             if (event.phase == TickEvent.Phase.END) {
-                if (!(event.player.getUseItem().getItem() instanceof SpellHoldingItem)) {
-                    Util.clearEffects(event.player);
+                if (!(player.getUseItem().getItem() instanceof SpellHoldingItem)) {
+                    Util.clearEffects(player);
+                }
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void preventPhasingSuffocation(LivingDamageEvent event) {
+        if (event.getEntityLiving() instanceof Player player) {
+            if (player.isUsingItem()) {
+                if (SpellUtils.getSpell(player.getUseItem()) instanceof PhasingSpell spell && spell.canUseSpell()) {
+                    event.setCanceled(true);
                 }
             }
         }
@@ -423,8 +437,11 @@ public class ForgeEventHandler {
 
         @SubscribeEvent
         public static void onRenderBlockOnHUD(RenderBlockOverlayEvent event) {
-            if (event.getPlayer() != null && event.getPlayer().isUsingItem()) {
-                event.setCanceled(true);
+            Player player = event.getPlayer();
+            if (player != null && player.isUsingItem()) {
+                if (SpellUtils.getSpell(player.getUseItem()) instanceof PhasingSpell spell && spell.canUseSpell()) {
+                    event.setCanceled(true);
+                }
             }
         }
 

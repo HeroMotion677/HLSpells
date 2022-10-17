@@ -19,6 +19,7 @@ public class BlockInit {
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, HLSpells.MODID);
 
     public static final RegistryObject<Block> CUSTOM_FROSTED_ICE = BLOCKS.register("frosted_ice", () -> new CustomFrostedIce(BlockBehaviour.Properties.of(Material.ICE).friction(0.98F).randomTicks().strength(0.5F).sound(SoundType.GLASS).noOcclusion()));
+
     public static final RegistryObject<Block> ALTAR_OF_ATTUNEMENT_BLOCK = BLOCKS.register("altar_of_attunement", () ->
             new AltarOfAttunementBlock((BlockBehaviour.Properties.of(Material.STONE, MaterialColor.COLOR_RED)
                     .requiresCorrectToolForDrops()

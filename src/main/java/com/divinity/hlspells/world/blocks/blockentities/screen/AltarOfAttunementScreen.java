@@ -3,6 +3,7 @@ package com.divinity.hlspells.world.blocks.blockentities.screen;
 import com.divinity.hlspells.HLSpells;
 import com.divinity.hlspells.network.NetworkManager;
 import com.divinity.hlspells.network.packets.serverbound.TransferSpellsPacket;
+import com.divinity.hlspells.setup.init.SpellInit;
 import com.divinity.hlspells.world.blocks.blockentities.inventory.AltarOfAttunementMenu;
 import com.divinity.hlspells.util.SpellUtils;
 import com.google.common.collect.Lists;

@@ -1,12 +1,14 @@
 package com.divinity.hlspells.spell.spells;
 
 import com.divinity.hlspells.entities.projectile.SmartShulkerBolt;
+import com.divinity.hlspells.setup.init.SoundInit;
 import com.divinity.hlspells.spell.Spell;
 import com.divinity.hlspells.spell.SpellAttributes;
 import com.divinity.hlspells.spell.SpellConsumer;
 import com.divinity.hlspells.util.Util;
 import net.minecraft.core.Direction;
 import net.minecraft.network.protocol.Packet;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -86,5 +88,10 @@ public class BoltSpell extends Spell {
             }
             return true;
         };
+    }
+
+    @Override
+    public SoundEvent getSpellSound() {
+        return SoundInit.CAST_BOLT.get();
     }
 }

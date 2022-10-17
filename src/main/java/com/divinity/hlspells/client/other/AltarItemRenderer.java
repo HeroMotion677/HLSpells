@@ -20,7 +20,7 @@ public class AltarItemRenderer implements BlockEntityRenderer<AltarOfAttunementB
     public void render(AltarOfAttunementBE tileEntityIn, float partialTicks, PoseStack matrixStackIn, @NotNull MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
         ItemStack itemToEnchant = tileEntityIn.itemHandler.getStackInSlot(3);
         matrixStackIn.pushPose();
-        matrixStackIn.translate(0.5F, 1.15F, 0.5F);
+        matrixStackIn.translate(0.5F, 1.05F, 0.5F);
         BakedModel model = Minecraft.getInstance().getItemRenderer().getModel(itemToEnchant, tileEntityIn.getLevel(), null, 0);
         float hoverOffset = Mth.sin((tileEntityIn.time + partialTicks) / 10.0F) * 0.1F + 0.1F;
         float modelYScale = model.getTransforms().getTransform(ItemTransforms.TransformType.GROUND).scale.y();

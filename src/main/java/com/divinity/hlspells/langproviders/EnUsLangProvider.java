@@ -26,8 +26,21 @@ public class EnUsLangProvider extends LanguageProvider {
         this.add("entity.minecraft.villager.hlspells.mage", "Mage");
         this.add("container.spell.clue","%s");
         this.add("container.spell.level.requirement" , "Level Requirement: %s");
+        this.add("container.spell.button.requirement", "Placeholder");
         this.add("container.spell.material.one", "1 %s");
         this.add("container.spell.material.many", "%s %s");
+        this.add("sounds.subtitle.altar_transfer", "Spell Transfers");
+        this.add("sounds.subtitle.cast_bolt", "Cast Bolt");
+        this.add("sounds.subtitle.cast_flame", "Cast Flame");
+        this.add("sounds.subtitle.cast_ice", "Cast Ice");
+        this.add("sounds.subtitle.cast_necromancy", "Ominous Hum");
+        this.add("sounds.subtitle.charge_combat", "Prepares Spell");
+        this.add("sounds.subtitle.charge_utility", "Prepares Spell");
+        this.add("sounds.subtitle.held_combat", "Ethereal Hum");
+        this.add("sounds.subtitle.held_illuminate", "Ethereal Hum");
+        this.add("sounds.subtitle.held_utility", "Ethereal Hum");
+        this.add("sounds.subtitle.miscast_sound", "Cast Failure");
+        this.add("sounds.subtitle.spell_attunement", "Spell Attuned");
     }
 
     private String spellNameToRegistryName(String spellName) {

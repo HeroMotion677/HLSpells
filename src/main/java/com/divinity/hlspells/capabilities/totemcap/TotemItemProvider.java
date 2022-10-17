@@ -44,6 +44,16 @@ public class TotemItemProvider implements ICapabilitySerializable<CompoundTag> {
                     case OFF_HAND -> 2;
                     default -> 0;
                 });
+                int hand = 0;
+
+                InteractionHand totemInHand = cap.getTotemInHand();
+                if (totemInHand == InteractionHand.MAIN_HAND) {
+                    hand = 1;
+                }
+                else if (totemInHand == InteractionHand.OFF_HAND) {
+                    hand = 2;
+                }
+                tag.putInt("hand", hand);
                 tag.put("playerInv", cap.getInventoryNBT());
                 tag.put("curiosInv", cap.getCuriosNBT());
                 tag.putInt("curiosSlot", cap.getCuriosSlot());
@@ -59,11 +69,12 @@ public class TotemItemProvider implements ICapabilitySerializable<CompoundTag> {
             instance.ifPresent(cap -> {
                 cap.setBlockPos(NbtUtils.readBlockPos(nbt.getCompound("blockPos")));
                 cap.hasDied(nbt.getBoolean("hasDied"));
-                cap.setTotemInHand(switch (nbt.getInt("hand")) {
-                    case 1 -> InteractionHand.MAIN_HAND;
-                    case 2 -> InteractionHand.OFF_HAND;
-                    default -> null;
-                });
+                int hand = nbt.getInt("hand");
+                switch (hand) {
+                    case 1: cap.setTotemInHand(InteractionHand.MAIN_HAND);
+                    case 2: cap.setTotemInHand(InteractionHand.OFF_HAND);
+                    default: cap.setTotemInHand(null);
+                }
                 cap.setInventoryNBT(nbt.getList("playerInv", 0));
                 cap.setCuriosNBT(nbt.getList("curiosInv", 0));
                 cap.setCuriosSlot(nbt.getInt("curiosSlot"));

@@ -1,11 +1,13 @@
 package com.divinity.hlspells.spell.spells;
 
 import com.divinity.hlspells.entities.Summonable;
+import com.divinity.hlspells.setup.init.SoundInit;
 import com.divinity.hlspells.spell.Spell;
 import com.divinity.hlspells.spell.SpellAttributes;
 import com.divinity.hlspells.spell.SpellConsumer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
@@ -64,6 +66,11 @@ public class SummonSpell<T extends Entity & Summonable> extends Spell {
             }
             return true;
         };
+    }
+
+    @Override
+    public SoundEvent getSpellSound() {
+        return SoundInit.CAST_NECROMANCY.get();
     }
 
     public SummonSpell<T> summonCount(int summonCount) {

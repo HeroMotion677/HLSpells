@@ -7,6 +7,7 @@ import com.divinity.hlspells.network.NetworkManager;
 import com.divinity.hlspells.network.packets.clientbound.SpellCluePacket;
 import com.divinity.hlspells.setup.init.BlockInit;
 import com.divinity.hlspells.setup.init.MenuTypeInit;
+import com.divinity.hlspells.setup.init.SoundInit;
 import com.divinity.hlspells.setup.init.SpellInit;
 import com.divinity.hlspells.spell.Spell;
 import com.divinity.hlspells.spell.SpellAttributes;
@@ -192,7 +193,7 @@ public class AltarOfAttunementMenu extends AbstractContainerMenu implements Cont
                         this.blockEntity.setChanged();
                         this.enchantmentSeed.set(pPlayer.getEnchantmentSeed());
                         this.slotsChanged(null);
-                        level.playSound(null, blockPos, SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.BLOCKS, 1.0F, level.random.nextFloat() * 0.1F + 0.9F);
+                        level.playSound(null, blockPos, SoundInit.SPELL_ATTUNEMENT.get(), SoundSource.BLOCKS, 1.0F, level.random.nextFloat() * 0.1F + 0.9F);
                     }
                 });
                 return true;

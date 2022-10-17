@@ -7,6 +7,8 @@ import com.divinity.hlspells.util.SpellUtils;
 import net.minecraft.network.chat.BaseComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -30,6 +32,7 @@ public abstract class Spell extends ForgeRegistryEntry<Spell> implements Cloneab
     protected int maxSpellLevel;
     protected int tickDelay;
     protected boolean canUse;
+    protected SoundEvent spellSound;
 
     @Nullable
     private String descriptionId;
@@ -45,6 +48,7 @@ public abstract class Spell extends ForgeRegistryEntry<Spell> implements Cloneab
         this.spellLevel = 1;
         this.maxSpellLevel = maxSpellLevel;
         this.canUse = false;
+        this.spellSound = SoundEvents.EVOKER_CAST_SPELL;
     }
 
     public Spell(SpellAttributes.Type type, SpellAttributes.Rarity rarity, SpellAttributes.Tier tier, SpellAttributes.Marker marker, String displayName, int xpCost, int tickDelay, boolean treasureOnly, int maxSpellLevel) {
@@ -86,6 +90,14 @@ public abstract class Spell extends ForgeRegistryEntry<Spell> implements Cloneab
     public Spell setTrueDisplayName(String displayName) {
         this.displayName = displayName;
         return this;
+    }
+
+    public SoundEvent getSpellSound() {
+        return this.spellSound;
+    }
+
+    public final SoundEvent getDefaultSpellSound() {
+        return SoundEvents.EVOKER_CAST_SPELL;
     }
 
     public String getDescriptionId() {

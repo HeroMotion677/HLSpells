@@ -1,5 +1,5 @@
 {
-  "parent": "hlspells:item/wand_amethyst",
+  "parent": "hlspells:item/amethyst_wand",
   "textures": {
     "layer0": "hlspells:items/wand/amethyst/wand_2"
   },

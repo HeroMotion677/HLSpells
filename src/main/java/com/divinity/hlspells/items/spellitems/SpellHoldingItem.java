@@ -5,9 +5,11 @@ import com.divinity.hlspells.capabilities.spellholdercap.ISpellHolder;
 import com.divinity.hlspells.capabilities.spellholdercap.SpellHolderProvider;
 import com.divinity.hlspells.network.ClientAccess;
 import com.divinity.hlspells.setup.init.EnchantmentInit;
+import com.divinity.hlspells.setup.init.SoundInit;
 import com.divinity.hlspells.setup.init.SpellInit;
 import com.divinity.hlspells.spell.Spell;
 import com.divinity.hlspells.spell.SpellAttributes;
+import com.divinity.hlspells.spell.spells.IlluminateSpell;
 import com.divinity.hlspells.util.SpellUtils;
 import com.divinity.hlspells.util.Util;
 import net.minecraft.ChatFormatting;
@@ -30,6 +32,7 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.sound.SoundSetupEvent;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fml.loading.FMLEnvironment;
@@ -109,8 +112,26 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
                 if (isSpellBook) {
                     world.playSound(null, player.blockPosition(), SoundEvents.BOOK_PAGE_TURN, SoundSource.NEUTRAL, 0.6F, 1.0F);
                 }
-                if (spell != SpellInit.EMPTY.get() && spell.getSpellType() == SpellAttributes.Type.HELD) {
-                    world.playSound(null, player.blockPosition(), SoundEvents.EVOKER_PREPARE_SUMMON, SoundSource.NEUTRAL, 0.6F, 1.0F);
+                if (spell != SpellInit.EMPTY.get()) {
+                    if (spell.getSpellType() == SpellAttributes.Type.HELD) {
+                        if (spell.getMarkerType() == SpellAttributes.Marker.COMBAT) {
+                            world.playSound(null, player.blockPosition(), SoundInit.HELD_COMBAT.get(), SoundSource.NEUTRAL, 0.6F, 1.0F);
+                        }
+                        else if (spell.getMarkerType() == SpellAttributes.Marker.UTILITY) {
+                            if (spell instanceof IlluminateSpell) {
+                                world.playSound(null, player.blockPosition(), SoundInit.HELD_ILLUMINATE.get(), SoundSource.NEUTRAL, 0.6F, 1.0F);
+                            }
+                            else {
+                                world.playSound(null, player.blockPosition(), SoundInit.HELD_UTILITY.get(), SoundSource.NEUTRAL, 0.6F, 1.0F);
+                            }
+                        }
+                    }
+                    else if (spell.getSpellType() == SpellAttributes.Type.CAST) {
+                        switch (spell.getMarkerType()) {
+                            case COMBAT: world.playSound(null, player.blockPosition(), SoundInit.CHARGE_COMBAT.get(), SoundSource.NEUTRAL, 0.6F, 1.0F);
+                            case UTILITY: world.playSound(null, player.blockPosition(), SoundInit.CHARGE_UTILITY.get(), SoundSource.NEUTRAL, 0.6F, 1.0F);
+                        }
+                    }
                 }
             }
             return InteractionResultHolder.success(itemstack);
@@ -140,7 +161,8 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
                 Util.doParticles(player);
                 if (!world.isClientSide()) {
                     capability.filter(p -> !(p.getSpells().isEmpty())).ifPresent(cap -> {
-                        world.playSound(null, player.blockPosition(), SoundEvents.EVOKER_CAST_SPELL, SoundSource.NEUTRAL, 0.6F, 1.0F);
+                        world.playSound(null, player.blockPosition(), spell.getDefaultSpellSound(), SoundSource.NEUTRAL, 0.6F, 1.0F);
+                        world.playSound(null, player.blockPosition(), spell.getSpellSound(), SoundSource.NEUTRAL, 0.6F, 1.0F);
                         if (stack.getItem() instanceof StaffItem item) {
                             if (item.isGemAmethyst() && SpellUtils.getSpellByID(cap.getCurrentSpell()).getMarkerType() == SpellAttributes.Marker.COMBAT) {
                                 player.getCooldowns().addCooldown(stack.getItem(), (int) (HLSpells.CONFIG.cooldownDuration.get() * 20));

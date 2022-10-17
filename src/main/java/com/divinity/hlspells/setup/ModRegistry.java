@@ -16,6 +16,7 @@ public class ModRegistry {
         BlockInit.BLOCK_ENTITIES.register(bus);
         MenuTypeInit.MENUS.register(bus);
         VillagerInit.POI.register(bus);
+        SoundInit.SOUNDS.register(bus);
         VillagerInit.PROFESSIONS.register(bus);
     }
 }

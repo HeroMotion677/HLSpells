@@ -1,0 +1,73 @@
+{
+  "altar_transfer": {
+    "category": "block",
+    "sounds": ["hlspells:altar_transfer"],
+    "subtitle": "sounds.subtitle.altar_transfer",
+    "type": "event"
+  },
+  "cast_bolt": {
+    "category": "player",
+    "sounds": ["hlspells:cast_bolt"],
+    "subtitle": "sounds.subtitle.cast_bolt",
+    "type": "event"
+  },
+  "cast_flame": {
+    "category": "player",
+    "sounds": ["hlspells:cast_flame"],
+    "subtitle": "sounds.subtitle.cast_flame",
+    "type": "event"
+  },
+  "cast_ice": {
+    "category": "player",
+    "sounds": ["hlspells:cast_ice"],
+    "subtitle": "sounds.subtitle.cast_ice",
+    "type": "event"
+  },
+  "cast_necromancy": {
+    "category": "player",
+    "sounds": ["hlspells:cast_necromancy"],
+    "subtitle": "sounds.subtitle.cast_necromancy",
+    "type": "event"
+  },
+  "charge_combat": {
+    "category": "player",
+    "sounds": ["hlspells:charge_combat"],
+    "subtitle": "sounds.subtitle.charge_combat",
+    "type": "event"
+  },
+  "charge_utility": {
+    "category": "player",
+    "sounds": ["hlspells:charge_utility"],
+    "subtitle": "sounds.subtitle.charge_utility",
+    "type": "event"
+  },
+  "held_combat": {
+    "category": "player",
+    "sounds": ["hlspells:held_combat"],
+    "subtitle": "sounds.subtitle.held_combat",
+    "type": "event"
+  },
+  "held_illuminate": {
+    "category": "player",
+    "sounds": ["hlspells:held_illuminate"],
+    "subtitle": "sounds.subtitle.held_illuminate",
+    "type": "event"
+  },
+  "held_utility": {
+    "sounds": ["hlspells:held_utility"],
+    "subtitle": "sounds.subtitle.held_utility",
+    "type": "event"
+  },
+  "miscast_sound": {
+    "category": "player",
+    "sounds": ["hlspells:miscast_sound"],
+    "subtitle": "sounds.subtitle.miscast_sound",
+    "type": "event"
+  },
+  "spell_attunement": {
+    "category": "block",
+    "sounds": ["hlspells:spell_attunement"],
+    "subtitle": "sounds.subtitle.spell_attunement",
+    "type": "event"
+  }
+}

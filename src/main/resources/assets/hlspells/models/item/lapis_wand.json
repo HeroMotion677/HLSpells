@@ -9,7 +9,7 @@
       "predicate": {
         "pull": 0
       },
-      "model": "hlspells:item/wand"
+      "model": "hlspells:item/lapis_wand"
     },
     {
       "predicate": {

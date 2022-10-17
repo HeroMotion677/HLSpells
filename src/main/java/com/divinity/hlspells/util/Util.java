@@ -1,9 +1,12 @@
 package com.divinity.hlspells.util;
 
 import com.divinity.hlspells.capabilities.playercap.PlayerCapProvider;
+import com.divinity.hlspells.entities.projectile.FlamingBoltEntity;
+import com.divinity.hlspells.entities.projectile.FreezingBoltEntity;
 import com.divinity.hlspells.entities.projectile.InvisibleTargetingEntity;
 import com.divinity.hlspells.network.NetworkManager;
 import com.divinity.hlspells.network.packets.clientbound.TotemActivatedPacket;
+import com.divinity.hlspells.setup.init.SoundInit;
 import com.google.common.collect.Lists;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
@@ -23,6 +26,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Arrow;
 import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.entity.projectile.WitherSkull;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ClipContext;
@@ -53,7 +57,7 @@ public final class Util {
         entity.teleportTo(teleportPos.getX(), teleportPos.getY(), teleportPos.getZ());
         doTeleportParticles(world, pos, 150);
         doTeleportParticles(world, teleportPos, 150);
-        world.playSound(null, pos, SoundEvents.ENDERMAN_TELEPORT, SoundSource.NEUTRAL, 0.6F, 1.0F);
+        world.playSound(null, pos, SoundEvents.ILLUSIONER_MIRROR_MOVE, SoundSource.NEUTRAL, 0.6F, 1.0F);
     }
 
     /**
@@ -197,6 +201,18 @@ public final class Util {
         projectile.shootFromRotation(entity, entity.xRot, entity.yRot, zRot, velocity, inaccuracy);
         if (ignoreVerticalMovement) {
             projectile.setDeltaMovement(Mth.cos((float) Math.toRadians(entity.yRot + 90)), 0, Mth.sin((float) Math.toRadians(entity.yRot + 90)));
+        }
+        if (!(projectile instanceof FreezingBoltEntity || projectile instanceof FlamingBoltEntity || projectile instanceof InvisibleTargetingEntity)) {
+            projectile.playSound(SoundInit.CAST_BOLT.get(), 1.0F, 1.0F);
+        }
+        else if (projectile instanceof FreezingBoltEntity) {
+            projectile.playSound(SoundInit.CAST_ICE.get(), 1.0F, 1.0F);
+        }
+        else if (projectile instanceof FlamingBoltEntity) {
+            projectile.playSound(SoundInit.CAST_FLAME.get(), 1.0F, 1.0F);
+        }
+        if (projectile instanceof WitherSkull) {
+            projectile.playSound(SoundInit.CAST_NECROMANCY.get(), 1.0F, 1.0F);
         }
         entity.level.addFreshEntity(projectile);
     }

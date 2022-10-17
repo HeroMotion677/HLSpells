@@ -1,5 +1,5 @@
 {
-  "parent": "hlspells:item/wand",
+  "parent": "hlspells:item/lapis_wand",
   "textures": {
     "layer0": "hlspells:items/wand/lapis/wand_2"
   },

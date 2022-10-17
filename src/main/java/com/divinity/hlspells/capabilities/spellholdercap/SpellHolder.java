@@ -1,6 +1,8 @@
 package com.divinity.hlspells.capabilities.spellholdercap;
 
 import com.divinity.hlspells.setup.init.SpellInit;
+import com.divinity.hlspells.spell.Spell;
+import com.divinity.hlspells.util.SpellUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -24,6 +26,12 @@ public class SpellHolder implements ISpellHolder {
 
     @Override
     public void addSpell(String spell) {
+        if (this.spells.contains(spell)) {
+            Spell spells = SpellUtils.getSpellByID(spell);
+            if (spells.getMaxSpellLevel() > 1) {
+
+            }
+        }
         if (!this.spells.contains(spell)) {
             this.spells.add(spell);
         }

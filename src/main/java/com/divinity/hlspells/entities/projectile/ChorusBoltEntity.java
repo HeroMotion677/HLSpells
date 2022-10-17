@@ -59,7 +59,7 @@ public class ChorusBoltEntity extends BaseBoltEntity {
         double d0 = livingEntity.getX();
         double d1 = livingEntity.getY();
         double d2 = livingEntity.getZ();
-        for (int i = 0; i < 32; ++i) {
+        for (int i = 0; i < 64; ++i) {
             double d3 = livingEntity.getX() + (livingEntity.getRandom().nextDouble() - 0.5D) * 16.0D;
             double d4 = Mth.clamp(livingEntity.getY() + (double) (livingEntity.getRandom().nextInt(16) - 8), livingLevel.getMinBuildHeight(), livingLevel.getMinBuildHeight() + ((ServerLevel) livingLevel).getLogicalHeight() - 1);
             double d5 = livingEntity.getZ() + (livingEntity.getRandom().nextDouble() - 0.5D) * 16.0D;
