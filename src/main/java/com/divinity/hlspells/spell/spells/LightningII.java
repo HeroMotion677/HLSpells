@@ -2,6 +2,7 @@ package com.divinity.hlspells.spell.spells;
 
 import com.divinity.hlspells.entities.projectile.InvisibleTargetingEntity;
 import com.divinity.hlspells.setup.init.EntityInit;
+import com.divinity.hlspells.setup.init.SpellInit;
 import com.divinity.hlspells.spell.Spell;
 import com.divinity.hlspells.spell.SpellAttributes;
 import com.divinity.hlspells.spell.SpellConsumer;
@@ -11,9 +12,11 @@ import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 
-public class LightningChainSpell extends Spell {
+import javax.annotation.Nullable;
 
-    public LightningChainSpell(SpellAttributes.Type type, SpellAttributes.Rarity rarity, SpellAttributes.Tier tier, SpellAttributes.Marker marker, String displayName, int xpCost, boolean treasureOnly, int maxSpellLevel) {
+public class LightningII extends Spell {
+
+    public LightningII(SpellAttributes.Type type, SpellAttributes.Rarity rarity, SpellAttributes.Tier tier, SpellAttributes.Marker marker, String displayName, int xpCost, boolean treasureOnly, int maxSpellLevel) {
         super(type, rarity, tier, marker, displayName, xpCost, treasureOnly, maxSpellLevel);
     }
 
@@ -44,5 +47,16 @@ public class LightningChainSpell extends Spell {
             p.level.addFreshEntity(stormBullet);
             return true;
         };
+    }
+
+    @Nullable
+    @Override
+    public Spell getUpgrade() {
+        return SpellInit.LIGHTNING_III.get();
+    }
+
+    @Override
+    public Spell getUpgradeableSpellPath() {
+        return SpellInit.LIGHTNING.get();
     }
 }

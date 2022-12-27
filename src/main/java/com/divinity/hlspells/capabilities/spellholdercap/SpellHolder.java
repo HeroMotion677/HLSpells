@@ -13,10 +13,12 @@ public class SpellHolder implements ISpellHolder {
 
     private final List<String> spells;
     private int currentSpellCycle;
+    private int spellSoundBuffer;
 
     public SpellHolder() {
         spells = new ArrayList<>();
         currentSpellCycle = 0;
+        spellSoundBuffer = 0;
     }
 
     @Override
@@ -28,11 +30,13 @@ public class SpellHolder implements ISpellHolder {
     public void addSpell(String spell) {
         if (this.spells.contains(spell)) {
             Spell spells = SpellUtils.getSpellByID(spell);
-            if (spells.getMaxSpellLevel() > 1) {
-
+            Spell upgrade = spells.getUpgrade();
+            if (upgrade != null) {
+                this.spells.remove(spell);
+                this.spells.add(upgrade.getRegistryName().toString());
             }
         }
-        if (!this.spells.contains(spell)) {
+        else if (!this.spells.contains(spell)) {
             this.spells.add(spell);
         }
     }
@@ -65,6 +69,16 @@ public class SpellHolder implements ISpellHolder {
     @NotNull
     public String getCurrentSpell() {
         return getCurrentSpellCycle() < spells.size() ? spells.get(getCurrentSpellCycle()) : Objects.requireNonNull(SpellInit.EMPTY.get().getRegistryName()).toString();
+    }
+
+    @Override
+    public int getSpellSoundBuffer() {
+        return this.spellSoundBuffer;
+    }
+
+    @Override
+    public void setSpellSoundBuffer(int spellSoundBuffer) {
+        this.spellSoundBuffer = spellSoundBuffer;
     }
 
     private void cycleSpellCheck() {

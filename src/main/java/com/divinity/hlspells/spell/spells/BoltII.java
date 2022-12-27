@@ -2,6 +2,7 @@ package com.divinity.hlspells.spell.spells;
 
 import com.divinity.hlspells.entities.projectile.SmartShulkerBolt;
 import com.divinity.hlspells.setup.init.SoundInit;
+import com.divinity.hlspells.setup.init.SpellInit;
 import com.divinity.hlspells.spell.Spell;
 import com.divinity.hlspells.spell.SpellAttributes;
 import com.divinity.hlspells.spell.SpellConsumer;
@@ -23,9 +24,9 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 
-public class BoltSpell extends Spell {
+public class BoltII extends Spell {
 
-    public BoltSpell(SpellAttributes.Type type, SpellAttributes.Rarity rarity, SpellAttributes.Tier tier, SpellAttributes.Marker marker, String displayName, int xpCost, boolean treasureOnly, int maxSpellLevel) {
+    public BoltII(SpellAttributes.Type type, SpellAttributes.Rarity rarity, SpellAttributes.Tier tier, SpellAttributes.Marker marker, String displayName, int xpCost, boolean treasureOnly, int maxSpellLevel) {
         super(type, rarity, tier, marker, displayName, xpCost, treasureOnly, maxSpellLevel);
     }
 
@@ -70,13 +71,15 @@ public class BoltSpell extends Spell {
                     @Override
                     public void onHitEntity(EntityHitResult result) {
                         Entity entity = result.getEntity();
-                        Entity entity1 = this.getOwner();
-                        LivingEntity livingentity = entity1 instanceof LivingEntity entity2 ? entity2 : null;
-                        if (result.getEntity() == this.getOwner()) return;
-                        boolean flag = entity.hurt(DamageSource.indirectMobAttack(this, livingentity).setProjectile(), 8.0F);
-                        if (flag) {
-                            if (livingentity != null) this.doEnchantDamageEffects(livingentity, entity);
-                            this.remove(RemovalReason.KILLED);
+                        if (!(entity instanceof ShulkerBullet)) {
+                            Entity entity1 = this.getOwner();
+                            LivingEntity livingentity = entity1 instanceof LivingEntity entity2 ? entity2 : null;
+                            if (result.getEntity() == this.getOwner()) return;
+                            boolean flag = entity.hurt(DamageSource.indirectMobAttack(this, livingentity).setProjectile(), 8.0F);
+                            if (flag) {
+                                if (livingentity != null) this.doEnchantDamageEffects(livingentity, entity);
+                                this.remove(RemovalReason.KILLED);
+                            }
                         }
                     }
                 };
@@ -93,5 +96,11 @@ public class BoltSpell extends Spell {
     @Override
     public SoundEvent getSpellSound() {
         return SoundInit.CAST_BOLT.get();
+    }
+
+    @Nullable
+    @Override
+    public Spell getUpgradeableSpellPath() {
+        return SpellInit.BOLT.get();
     }
 }

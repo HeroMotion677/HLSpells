@@ -2,6 +2,7 @@ package com.divinity.hlspells.capabilities.spellholdercap;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.Direction;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.capabilities.*;
 import net.minecraftforge.common.util.LazyOptional;
 
@@ -61,5 +62,10 @@ public class SpellHolderProvider implements ICapabilitySerializable<CompoundTag>
     @Nonnull
     private ISpellHolder createSpellCap() {
         return spellHolder == null ? new SpellHolder() : spellHolder;
+    }
+
+    @Nullable
+    public static ISpellHolder getSpellHolderUnwrap(ItemStack stack) {
+        return stack.getCapability(SPELL_HOLDER_CAP).orElse(null);
     }
 }

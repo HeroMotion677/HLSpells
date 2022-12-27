@@ -22,4 +22,8 @@ public interface ISpellHolder {
     void setCurrentSpellCycle(int currentSpellCycle);
 
     @NotNull String getCurrentSpell();
+
+    int getSpellSoundBuffer();
+
+    void setSpellSoundBuffer(int spellSoundBuffer);
 }

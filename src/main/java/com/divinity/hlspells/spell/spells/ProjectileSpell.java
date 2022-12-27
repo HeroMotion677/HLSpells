@@ -1,15 +1,24 @@
 package com.divinity.hlspells.spell.spells;
 
 import com.divinity.hlspells.entities.projectile.BaseBoltEntity;
+import com.divinity.hlspells.entities.projectile.FlamingBoltEntity;
+import com.divinity.hlspells.entities.projectile.FreezingBoltEntity;
+import com.divinity.hlspells.entities.projectile.InvisibleTargetingEntity;
+import com.divinity.hlspells.setup.init.SoundInit;
 import com.divinity.hlspells.spell.Spell;
 import com.divinity.hlspells.spell.SpellAttributes;
 import com.divinity.hlspells.spell.SpellConsumer;
 import com.divinity.hlspells.util.Util;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.entity.projectile.WitherSkull;
 import net.minecraft.world.phys.Vec3;
+
+import javax.annotation.Nullable;
+import java.util.function.Supplier;
 
 public class ProjectileSpell<T extends Projectile> extends Spell {
 
@@ -40,13 +49,22 @@ public class ProjectileSpell<T extends Projectile> extends Spell {
     public SpellConsumer<Player> getAction() {
         return p -> {
             Entity projectile = this.projectile.create(p.level);
-            if (projectile instanceof Projectile trueProjectile) {
+            if (projectile instanceof WitherSkull) {
+                WitherSkull witherskull = new WitherSkull(p.level, p, p.getX(), p.getY(), p.getZ());
+                witherskull.setOwner(p);
+                Vec3 viewVector = p.getViewVector(1.0F);
+                Vec3 positionVector = new Vec3(p.getX() + (viewVector.x * this.viewVectorOffset) + this.xOffset, p.getY() + this.yOffset, p.getZ() + (viewVector.z * this.viewVectorOffset) + this.zOffset);
+                Util.shootSpellRelative(p, witherskull, positionVector, this.zRot, this.velocity, this.inaccuracy, this.noVerticalMovement);
+                return true;
+            }
+            else if (projectile instanceof Projectile trueProjectile) {
                 if (trueProjectile instanceof BaseBoltEntity bolt) {
                     bolt.setInitialPosition(p.position());
                 }
                 Vec3 viewVector = p.getViewVector(1.0F);
                 Vec3 positionVector = new Vec3(p.getX() + (viewVector.x * this.viewVectorOffset) + this.xOffset, p.getY() + this.yOffset, p.getZ() + (viewVector.z * this.viewVectorOffset) + this.zOffset);
                 Util.shootSpellRelative(p, trueProjectile, positionVector, this.zRot, this.velocity, this.inaccuracy, this.noVerticalMovement);
+                playSound(trueProjectile);
                 return true;
             }
             return false;
@@ -91,5 +109,20 @@ public class ProjectileSpell<T extends Projectile> extends Spell {
     public ProjectileSpell<T> verticalMovement(boolean noVerticalMovement) {
         this.noVerticalMovement = noVerticalMovement;
         return this;
+    }
+
+    private static void playSound(Projectile projectile) {
+        if (projectile instanceof BaseBoltEntity e && !(e instanceof FreezingBoltEntity || e instanceof FlamingBoltEntity || e instanceof InvisibleTargetingEntity)) {
+            projectile.playSound(SoundInit.CAST_BOLT.get(), 1.0F, 1.0F);
+        }
+        else if (projectile instanceof FreezingBoltEntity) {
+            projectile.playSound(SoundInit.CAST_ICE.get(), 1.0F, 1.0F);
+        }
+        else if (projectile instanceof FlamingBoltEntity) {
+            projectile.playSound(SoundInit.CAST_FLAME.get(), 1.0F, 1.0F);
+        }
+        else if (projectile instanceof WitherSkull) {
+            projectile.playSound(SoundInit.CAST_NECROMANCY.get(), 1.0F, 1.0F);
+        }
     }
 }

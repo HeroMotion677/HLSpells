@@ -13,6 +13,7 @@ public class ConfigData {
     public final ForgeConfigSpec.BooleanValue summonsAttackPlayers;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> fireMobsList;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> sapientMobsList;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> lightningSpellList;
     public final ForgeConfigSpec.DoubleValue spellCastTime;
     public final ForgeConfigSpec.DoubleValue teleportRange;
     public final ForgeConfigSpec.DoubleValue woodStaffCastTime;
@@ -30,6 +31,8 @@ public class ConfigData {
                 .defineList("fireMobsList", defaultFireMobsList, String.class::isInstance);
         ArrayList<String> defaultSapientMobsList = Lists.newArrayList("minecraft:villager", "minecraft:pillager",
                 "minecraft:evoker", "minecraft:illusioner", "minecraft:vindicator", "minecraft:piglin_brute", "minecraft:piglin");
+        lightningSpellList = builder.comment("List of mobs which do not get damaged by the Lightning III spell")
+                .defineList("lightningSpellList", Lists.newArrayList(), String.class::isInstance);
         sapientMobsList = builder.comment("Lists of mobs which are immune to repel and lure spell")
                 .defineList("sapientMobsList", defaultSapientMobsList, String.class::isInstance);
         spellCastTime = builder.comment("How long should spell items be held before they cast? (seconds)")

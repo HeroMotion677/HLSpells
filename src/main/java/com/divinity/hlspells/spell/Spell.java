@@ -56,7 +56,17 @@ public abstract class Spell extends ForgeRegistryEntry<Spell> implements Cloneab
         this.tickDelay = tickDelay;
     }
 
-    public abstract SpellConsumer<Player> getAction();
+    protected abstract SpellConsumer<Player> getAction();
+
+    @Nullable
+    public Spell getUpgrade() {
+        return null;
+    }
+
+    @Nullable
+    public Spell getUpgradeableSpellPath() {
+        return null;
+    }
 
     public boolean isTreasureOnly() {
         return this.treasureOnly;

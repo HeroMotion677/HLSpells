@@ -11,6 +11,7 @@ import com.google.common.collect.Lists;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -35,8 +36,13 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.CapabilityProvider;
+import net.minecraftforge.common.capabilities.ICapabilitySerializable;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.network.PacketDistributor;
 
+import javax.annotation.Nullable;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
@@ -201,18 +207,6 @@ public final class Util {
         projectile.shootFromRotation(entity, entity.xRot, entity.yRot, zRot, velocity, inaccuracy);
         if (ignoreVerticalMovement) {
             projectile.setDeltaMovement(Mth.cos((float) Math.toRadians(entity.yRot + 90)), 0, Mth.sin((float) Math.toRadians(entity.yRot + 90)));
-        }
-        if (!(projectile instanceof FreezingBoltEntity || projectile instanceof FlamingBoltEntity || projectile instanceof InvisibleTargetingEntity)) {
-            projectile.playSound(SoundInit.CAST_BOLT.get(), 1.0F, 1.0F);
-        }
-        else if (projectile instanceof FreezingBoltEntity) {
-            projectile.playSound(SoundInit.CAST_ICE.get(), 1.0F, 1.0F);
-        }
-        else if (projectile instanceof FlamingBoltEntity) {
-            projectile.playSound(SoundInit.CAST_FLAME.get(), 1.0F, 1.0F);
-        }
-        if (projectile instanceof WitherSkull) {
-            projectile.playSound(SoundInit.CAST_NECROMANCY.get(), 1.0F, 1.0F);
         }
         entity.level.addFreshEntity(projectile);
     }

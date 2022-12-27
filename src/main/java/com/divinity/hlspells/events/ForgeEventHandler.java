@@ -62,8 +62,7 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import org.lwjgl.glfw.GLFW;
 import top.theillusivec4.curios.api.SlotResult;
 
-import java.util.Collection;
-import java.util.Iterator;
+import java.util.*;
 
 import static com.divinity.hlspells.HLSpells.MODID;
 
@@ -100,18 +99,9 @@ public class ForgeEventHandler {
         if (name.startsWith(prefix)) {
             String file = name.substring(name.indexOf(prefix) + prefix.length());
             switch (file) {
-                case "woodland_mansion":
-                case "end_city_treasure":
-                case "stronghold_library":
-                case "jungle_temple":
-                case "simple_dungeon":
-                case "desert_pyramid":
-                case "nether_bridge":
-                case "bastion_treasure":
-                    evt.getTable().addPool(getInjectPool(file));
-                    break;
-                default:
-                    break;
+                case "woodland_mansion", "end_city_treasure", "stronghold_library", "jungle_temple", "simple_dungeon", "desert_pyramid", "nether_bridge", "bastion_treasure" -> evt.getTable().addPool(getInjectPool(file));
+                default -> {
+                }
             }
         }
     }
@@ -329,6 +319,7 @@ public class ForgeEventHandler {
                 }
                 if (previous.getItem() instanceof SpellHoldingItem item) {
                     previous.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP).filter(cap -> !cap.getSpells().isEmpty()).ifPresent(cap -> {
+                        cap.setSpellSoundBuffer(0);
                         Spell spell = SpellUtils.getSpellByID(cap.getCurrentSpell());
                         if (spell.getSpellType() == SpellAttributes.Type.HELD && item.isWasHolding() && !player.isUsingItem()) {
                             player.getCooldowns().addCooldown(previous.getItem(), ((int) (HLSpells.CONFIG.cooldownDuration.get() * 20)));
@@ -485,7 +476,7 @@ public class ForgeEventHandler {
                     ItemStack stack = player.getItemInHand(hand);
                     if (player.isUsingItem() && !player.isPassenger() && stack.getItem() instanceof SpellHoldingItem) {
                         Spell spell = SpellUtils.getSpell(stack);
-                        if (spell == SpellInit.SPEED.get() || spell == SpellInit.FROST_PATH.get()) {
+                        if (spell == SpellInit.SPEED.get() || spell == SpellInit.FROST_PATH_II.get()) {
                             player.input.leftImpulse /= 0.2F;
                             player.input.forwardImpulse /= 0.2F;
                         }

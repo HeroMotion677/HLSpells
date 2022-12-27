@@ -35,7 +35,7 @@ public class SummonSpell<T extends Entity & Summonable> extends Spell {
     public SummonSpell(EntityType<T> summoned, SpellAttributes.Type type, SpellAttributes.Rarity rarity, SpellAttributes.Tier tier, SpellAttributes.Marker marker, String displayName, int xpCost, boolean treasureOnly, int maxSpellLevel) {
         super(type, rarity, tier, marker, displayName, xpCost, treasureOnly, maxSpellLevel);
         this.summoned = summoned;
-        this.summonCount = 4;
+        this.summonCount = 1;
         this.items = new ArrayList<>();
         this.attributeIncrease = 0;
         this.attributeMap = new HashMap<>();
@@ -51,11 +51,7 @@ public class SummonSpell<T extends Entity & Summonable> extends Spell {
                     mob.moveTo(blockpos, 0.0F, 0.0F);
                     summonable.setSummonedOwner(p);
                     if (p.level instanceof ServerLevel level) {
-                        if (!this.items.isEmpty()) {
-                            this.items.stream()
-                                .filter(item -> item instanceof ArmorItem || item instanceof TieredItem)
-                                .forEach(item -> mob.setItemSlot(this.getSlotForItem(new ItemStack(item)), new ItemStack(item)));
-                        }
+                        this.items.stream().filter(item -> item instanceof ArmorItem || item instanceof TieredItem).forEach(item -> mob.setItemSlot(this.getSlotForItem(new ItemStack(item)), new ItemStack(item)));
                         this.doAttributeModification(mob);
                         mob.finalizeSpawn(level, level.getCurrentDifficultyAt(blockpos), MobSpawnType.MOB_SUMMONED, null, null);
                         level.addFreshEntityWithPassengers(mob);

@@ -98,6 +98,7 @@ public class AltarOfAttunementBlock extends EnchantmentTableBlock {
         return pState.setValue(FACING, pRotation.rotate(pState.getValue(FACING)));
     }
 
+
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext pContext) {
         return this.defaultBlockState().setValue(FACING, pContext.getHorizontalDirection().getOpposite());

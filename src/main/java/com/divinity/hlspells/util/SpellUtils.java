@@ -13,9 +13,13 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.event.entity.living.LivingDropsEvent;
+import net.minecraftforge.registries.RegistryObject;
 
 import javax.annotation.Nonnull;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public final class SpellUtils {
 
@@ -36,12 +40,27 @@ public final class SpellUtils {
         else return SpellInit.EMPTY.get();
     }
 
-    public static boolean canAddSpell(Item item, List<String> existingSpells) {
-        if (item == ItemInit.SPELL_BOOK.get() && existingSpells.isEmpty())
-            return true;
-        else if (item == ItemInit.WAND.get() && existingSpells.size() < 3)
-            return true;
-        else return item instanceof StaffItem && existingSpells.size() < 6;
+    @SuppressWarnings("all")
+    public static boolean canAddSpell(ItemStack item, Spell spell) {
+        if (item != ItemStack.EMPTY) {
+            List<String> existingSpells = SpellHolderProvider.getSpellHolderUnwrap(item).getSpells();
+            Spell currentSpell = getSpell(item);
+            boolean canUpgrade = currentSpell.getUpgrade() != null && currentSpell.getRegistryName().toString().equals(spell.getRegistryName().toString());
+            if (!existingSpells.contains(spell.getRegistryName().toString())) {
+                if (currentSpell.getUpgradeableSpellPath() != null && currentSpell.getUpgradeableSpellPath() == spell.getUpgradeableSpellPath()) {
+                    return false;
+                }
+                if (item.getItem() == ItemInit.SPELL_BOOK.get() && existingSpells.isEmpty())
+                    return true;
+                else if (item.getItem() == ItemInit.WAND.get() && existingSpells.size() < 3)
+                    return true;
+                else return item.getItem() instanceof StaffItem && existingSpells.size() < 6;
+            }
+            else {
+                return canUpgrade;
+            }
+        }
+        return false;
     }
 
     public static boolean checkXpReq(Player player, Spell spell) {

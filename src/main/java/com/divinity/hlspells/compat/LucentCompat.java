@@ -1,9 +1,7 @@
 package com.divinity.hlspells.compat;
 
 import com.divinity.hlspells.HLSpells;
-import com.divinity.hlspells.setup.init.SpellInit;
-import com.divinity.hlspells.spell.Spell;
-import com.divinity.hlspells.spell.spells.IlluminateSpell;
+import com.divinity.hlspells.spell.spells.Illuminate;
 import com.divinity.hlspells.util.SpellUtils;
 import com.legacy.lucent.api.plugin.ILucentPlugin;
 import com.legacy.lucent.api.plugin.LucentPlugin;
@@ -27,7 +25,7 @@ public final class LucentCompat implements ILucentPlugin {
     public void registerEntityLightings(EntityLightingRegistry registry) {
         registry.register(EntityType.PLAYER, (Player player) -> {
             if (player instanceof AbstractClientPlayer clientPlayer) {
-                if (SpellUtils.getSpell(clientPlayer.getUseItem()) instanceof IlluminateSpell spell && spell.canUseSpell()) {
+                if (SpellUtils.getSpell(clientPlayer.getUseItem()) instanceof Illuminate spell && spell.canUseSpell()) {
                     return 15;
                 }
             }

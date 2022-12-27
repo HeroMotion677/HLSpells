@@ -3,18 +3,15 @@ package com.divinity.hlspells.items.spellitems;
 import com.divinity.hlspells.HLSpells;
 import com.divinity.hlspells.capabilities.spellholdercap.ISpellHolder;
 import com.divinity.hlspells.capabilities.spellholdercap.SpellHolderProvider;
-import com.divinity.hlspells.network.ClientAccess;
 import com.divinity.hlspells.setup.init.EnchantmentInit;
 import com.divinity.hlspells.setup.init.SoundInit;
 import com.divinity.hlspells.setup.init.SpellInit;
 import com.divinity.hlspells.spell.Spell;
 import com.divinity.hlspells.spell.SpellAttributes;
-import com.divinity.hlspells.spell.spells.IlluminateSpell;
+import com.divinity.hlspells.spell.spells.Illuminate;
 import com.divinity.hlspells.util.SpellUtils;
 import com.divinity.hlspells.util.Util;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -31,11 +28,7 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.sound.SoundSetupEvent;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fml.loading.FMLEnvironment;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -113,23 +106,10 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
                     world.playSound(null, player.blockPosition(), SoundEvents.BOOK_PAGE_TURN, SoundSource.NEUTRAL, 0.6F, 1.0F);
                 }
                 if (spell != SpellInit.EMPTY.get()) {
-                    if (spell.getSpellType() == SpellAttributes.Type.HELD) {
-                        if (spell.getMarkerType() == SpellAttributes.Marker.COMBAT) {
-                            world.playSound(null, player.blockPosition(), SoundInit.HELD_COMBAT.get(), SoundSource.NEUTRAL, 0.6F, 1.0F);
-                        }
-                        else if (spell.getMarkerType() == SpellAttributes.Marker.UTILITY) {
-                            if (spell instanceof IlluminateSpell) {
-                                world.playSound(null, player.blockPosition(), SoundInit.HELD_ILLUMINATE.get(), SoundSource.NEUTRAL, 0.6F, 1.0F);
-                            }
-                            else {
-                                world.playSound(null, player.blockPosition(), SoundInit.HELD_UTILITY.get(), SoundSource.NEUTRAL, 0.6F, 1.0F);
-                            }
-                        }
-                    }
-                    else if (spell.getSpellType() == SpellAttributes.Type.CAST) {
+                    if (spell.getSpellType() == SpellAttributes.Type.CAST) {
                         switch (spell.getMarkerType()) {
-                            case COMBAT: world.playSound(null, player.blockPosition(), SoundInit.CHARGE_COMBAT.get(), SoundSource.NEUTRAL, 0.6F, 1.0F);
-                            case UTILITY: world.playSound(null, player.blockPosition(), SoundInit.CHARGE_UTILITY.get(), SoundSource.NEUTRAL, 0.6F, 1.0F);
+                            case COMBAT: world.playSound(null, player.blockPosition(), SoundInit.CHARGE_COMBAT.get(), SoundSource.PLAYERS, 1F, 1.0F);
+                            case UTILITY: world.playSound(null, player.blockPosition(), SoundInit.CHARGE_UTILITY.get(), SoundSource.PLAYERS, 0.6F, 1.0F);
                         }
                     }
                 }
@@ -143,8 +123,28 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
     public void onUsingTick(ItemStack stack, LivingEntity livingEntity, int count) {
         if (livingEntity instanceof Player player) {
             Spell spell = SpellUtils.getSpell(stack);
-            if (spell.getSpellType() == SpellAttributes.Type.HELD)
+            ItemStack itemstack = player.getItemInHand(player.getUsedItemHand());
+            var capability = itemstack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP);
+            if (spell.getSpellType() == SpellAttributes.Type.HELD) {
                 spell.execute(player, stack);
+                capability.ifPresent(cap -> {
+                    if (cap.getSpellSoundBuffer() == 0) {
+                        if (spell instanceof Illuminate) {
+                            player.level.playSound(null, player.blockPosition(), SoundInit.HELD_ILLUMINATE.get(), SoundSource.NEUTRAL, 0.6F, 1.0F);
+                            cap.setSpellSoundBuffer(65);
+                        }
+                        else if (spell.getMarkerType() == SpellAttributes.Marker.COMBAT) {
+                            player.level.playSound(null, player.blockPosition(), SoundInit.HELD_COMBAT.get(), SoundSource.NEUTRAL, 0.6F, 1.0F);
+                            cap.setSpellSoundBuffer(47);
+                        }
+                        else if (spell.getMarkerType() == SpellAttributes.Marker.UTILITY) {
+                            player.level.playSound(null, player.blockPosition(), SoundInit.HELD_UTILITY.get(), SoundSource.NEUTRAL, 0.6F, 1.0F);
+                            cap.setSpellSoundBuffer(46);
+                        }
+                    }
+                    else cap.setSpellSoundBuffer(cap.getSpellSoundBuffer() - 1);
+                });
+            }
         }
     }
 
@@ -153,16 +153,17 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
     public void releaseUsing(ItemStack stack, Level world, LivingEntity entity, int power) {
         if (entity instanceof Player player) {
             var capability = stack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP);
+            capability.ifPresent(cap -> cap.setSpellSoundBuffer(0));
             this.wasHolding = false;
             Spell spell = SpellUtils.getSpell(stack);
             if (this.castTimeCondition(player, stack)) {
-                if (spell.getSpellType() == SpellAttributes.Type.CAST)
+                if (spell.getSpellType() == SpellAttributes.Type.CAST) {
+                    world.playSound(null, player.blockPosition(), spell.getSpellSound(), SoundSource.NEUTRAL, 0.6F, 1.0F);
                     spell.execute(player, stack);
+                }
                 Util.doParticles(player);
                 if (!world.isClientSide()) {
                     capability.filter(p -> !(p.getSpells().isEmpty())).ifPresent(cap -> {
-                        world.playSound(null, player.blockPosition(), spell.getDefaultSpellSound(), SoundSource.NEUTRAL, 0.6F, 1.0F);
-                        world.playSound(null, player.blockPosition(), spell.getSpellSound(), SoundSource.NEUTRAL, 0.6F, 1.0F);
                         if (stack.getItem() instanceof StaffItem item) {
                             if (item.isGemAmethyst() && SpellUtils.getSpellByID(cap.getCurrentSpell()).getMarkerType() == SpellAttributes.Marker.COMBAT) {
                                 player.getCooldowns().addCooldown(stack.getItem(), (int) (HLSpells.CONFIG.cooldownDuration.get() * 20));

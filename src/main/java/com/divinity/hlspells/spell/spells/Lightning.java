@@ -1,5 +1,6 @@
 package com.divinity.hlspells.spell.spells;
 
+import com.divinity.hlspells.setup.init.SpellInit;
 import com.divinity.hlspells.spell.Spell;
 import com.divinity.hlspells.spell.SpellAttributes;
 import com.divinity.hlspells.spell.SpellConsumer;
@@ -12,9 +13,9 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
-public class LightningBoltSpell extends Spell {
+public class Lightning extends Spell {
 
-    public LightningBoltSpell(SpellAttributes.Type type, SpellAttributes.Rarity rarity, SpellAttributes.Tier tier, SpellAttributes.Marker marker, String displayName, int xpCost, boolean treasureOnly, int maxSpellLevel) {
+    public Lightning(SpellAttributes.Type type, SpellAttributes.Rarity rarity, SpellAttributes.Tier tier, SpellAttributes.Marker marker, String displayName, int xpCost, boolean treasureOnly, int maxSpellLevel) {
         super(type, rarity, tier, marker, displayName, xpCost, treasureOnly, maxSpellLevel);
     }
 
@@ -40,5 +41,15 @@ public class LightningBoltSpell extends Spell {
             p.level.addFreshEntity(lightning);
             return true;
         };
+    }
+
+    @Override
+    public Spell getUpgrade() {
+        return SpellInit.LIGHTNING_II.get();
+    }
+
+    @Override
+    public Spell getUpgradeableSpellPath() {
+        return SpellInit.LIGHTNING.get();
     }
 }
