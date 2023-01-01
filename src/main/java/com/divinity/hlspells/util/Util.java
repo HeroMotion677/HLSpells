@@ -6,6 +6,7 @@ import com.divinity.hlspells.entities.projectile.FreezingBoltEntity;
 import com.divinity.hlspells.entities.projectile.InvisibleTargetingEntity;
 import com.divinity.hlspells.network.NetworkManager;
 import com.divinity.hlspells.network.packets.clientbound.TotemActivatedPacket;
+import com.divinity.hlspells.network.packets.clientbound.UpdateDimensionsPacket;
 import com.divinity.hlspells.setup.init.SoundInit;
 import com.google.common.collect.Lists;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -153,6 +154,13 @@ public final class Util {
         NetworkManager.INSTANCE.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new TotemActivatedPacket(player.getUUID(), new ItemStack(item)));
     }
 
+    public static void updateDimensions(Player entity) {
+        if (entity.level.isClientSide)
+            return;
+        entity.refreshDimensions();
+        NetworkManager.INSTANCE.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity), new UpdateDimensionsPacket(entity.getUUID()));
+    }
+
     public static void clearEffects(Player playerEntity) {
         AttributeInstance speedAttribute = playerEntity.getAttribute(Attributes.MOVEMENT_SPEED);
         if (speedAttribute != null && speedAttribute.getModifier(speedUUID) != null) {
@@ -163,7 +171,7 @@ public final class Util {
         a bug where if you quickly tap the spell item and switch to a different one the infinite effect is applied to the player
         MIGHT have repercussions on other mods that have these effects and are not visible. */
 
-        Lists.newArrayList(MobEffects.GLOWING, MobEffects.LEVITATION, MobEffects.SLOW_FALLING)
+        Lists.newArrayList(MobEffects.GLOWING, MobEffects.LEVITATION, MobEffects.SLOW_FALLING, MobEffects.INVISIBILITY)
                 .stream().map(playerEntity::getEffect)
                 .filter(p -> p != null && !p.isVisible() && p.getAmplifier() >= 5)
                 .forEach(p -> playerEntity.removeEffect(p.getEffect()));

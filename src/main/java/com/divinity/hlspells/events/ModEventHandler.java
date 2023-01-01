@@ -148,6 +148,7 @@ public class ModEventHandler {
             event.registerEntityRenderer(EntityInit.KNOCKBACK_BOLT_ENTITY.get(), ShulkerBulletRenderer::new);
             event.registerEntityRenderer(EntityInit.SUMMONED_VEX_ENTITY.get(), VexRenderer::new);
             event.registerEntityRenderer(EntityInit.SUMMONED_SKELETON_ENTITY.get(), SkeletonRenderer::new);
+            event.registerEntityRenderer(EntityInit.WITHER_SKULL_ENTITY.get(), WitherSkullRenderer::new);
         }
 
         /**

@@ -17,6 +17,7 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -107,7 +108,7 @@ public class AltarOfAttunementScreen extends AbstractContainerScreen<AltarOfAttu
                     if (!AltarOfAttunementScreen.this.handler.getStackInSlot(0).isEmpty()) {
                         List<Component> list = new ArrayList<>();
                         ItemStack stack = AltarOfAttunementScreen.this.handler.getStackInSlot(0);
-                        list.add(new TranslatableComponent("container.spell.button.requirement", SpellUtils.getSpell(stack).rarityAsInt()).withStyle(ChatFormatting.RED));
+                        list.add(new TranslatableComponent("container.spell.button.requirement", SpellUtils.getSpell(stack).rarityAsInt()).withStyle(ChatFormatting.WHITE));
                         AltarOfAttunementScreen.this.renderComponentTooltip(pPoseStack, list, pMouseX, pMouseY);
                     }
                 }

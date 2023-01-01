@@ -1,5 +1,6 @@
 package com.divinity.hlspells.capabilities.playercap;
 
+import com.divinity.hlspells.network.NetworkManager;
 import net.minecraft.nbt.*;
 import net.minecraft.core.Direction;
 import net.minecraft.world.effect.MobEffect;
@@ -7,6 +8,8 @@ import net.minecraft.world.entity.monster.Phantom;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.capabilities.*;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.network.PacketDistributor;
+import net.minecraftforge.network.simple.SimpleChannel;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -87,5 +90,9 @@ public class PlayerCapProvider implements ICapabilitySerializable<CompoundTag> {
     @Nonnull
     private IPlayerCap createPlayerCap() {
         return playerCap == null ? new PlayerCap() : playerCap;
+    }
+
+    public SimpleChannel getNetworkChannel() {
+        return NetworkManager.INSTANCE;
     }
 }

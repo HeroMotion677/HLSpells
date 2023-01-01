@@ -1,11 +1,9 @@
 package com.divinity.hlspells.entities.living.summoned;
 
-import com.divinity.hlspells.HLSpells;
 import com.divinity.hlspells.entities.Summonable;
 import com.divinity.hlspells.entities.goal.AttackedOwnerEnemyGoal;
 import com.divinity.hlspells.entities.goal.CopyOwnerTargetGoal;
 import com.divinity.hlspells.entities.goal.FollowOwnerGoal;
-import com.divinity.hlspells.setup.init.EntityInit;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
@@ -26,16 +24,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.EnumSet;
 
-@Mod.EventBusSubscriber(modid = HLSpells.MODID, bus = Bus.MOD)
 public class SummonedVexEntity extends Vex implements Summonable {
 
     protected Player playerOwner;
@@ -44,11 +37,6 @@ public class SummonedVexEntity extends Vex implements Summonable {
         super(entityType, world);
         this.moveControl = new SummonedVexEntity.MoveHelperController(this);
         this.xpReward = 0;
-    }
-
-    @SubscribeEvent
-    public static void attributeCreation(EntityAttributeCreationEvent event) {
-        event.put(EntityInit.SUMMONED_VEX_ENTITY.get(), Vex.createAttributes().build());
     }
 
     @Override

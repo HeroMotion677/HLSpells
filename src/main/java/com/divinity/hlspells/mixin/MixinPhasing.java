@@ -1,12 +1,12 @@
 package com.divinity.hlspells.mixin;
 
-import com.divinity.hlspells.spell.spells.PhasingSpell;
+import com.divinity.hlspells.spell.spells.Phasing;
+import com.divinity.hlspells.spell.spells.PhasingII;
 import com.divinity.hlspells.util.SpellUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -45,7 +45,7 @@ public abstract class MixinPhasing {
     public void getCollisionShape(BlockGetter pLevel, BlockPos pPos, CollisionContext pContext, CallbackInfoReturnable<VoxelShape> cir) {
         if (pContext instanceof EntityCollisionContext collisionContext) {
             if (collisionContext.getEntity() instanceof Player player) {
-                if (SpellUtils.getSpell(player.getUseItem()) instanceof PhasingSpell spell && spell.canUseSpell()) {
+                if (SpellUtils.getSpell(player.getUseItem()) instanceof Phasing spell && spell.canUseSpell() || SpellUtils.getSpell(player.getUseItem()) instanceof PhasingII spell2 && spell2.canUseSpell()) {
                     if (pPos.getY() >= player.getY()) { // Prevents the player from falling through the ground
                         if (player.level.getBlockState(pPos).getBlock().defaultDestroyTime() >= 0.0F) { // Check if the block is not unbreakable (aka, not bedrock)
                             cir.setReturnValue(Shapes.empty());

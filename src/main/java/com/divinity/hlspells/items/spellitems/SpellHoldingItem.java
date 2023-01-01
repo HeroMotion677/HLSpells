@@ -3,6 +3,8 @@ package com.divinity.hlspells.items.spellitems;
 import com.divinity.hlspells.HLSpells;
 import com.divinity.hlspells.capabilities.spellholdercap.ISpellHolder;
 import com.divinity.hlspells.capabilities.spellholdercap.SpellHolderProvider;
+import com.divinity.hlspells.network.NetworkManager;
+import com.divinity.hlspells.network.packets.clientbound.UpdateDimensionsPacket;
 import com.divinity.hlspells.setup.init.EnchantmentInit;
 import com.divinity.hlspells.setup.init.SoundInit;
 import com.divinity.hlspells.setup.init.SpellInit;
@@ -29,6 +31,8 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.event.ForgeEventFactory;
+import net.minecraftforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -75,7 +79,7 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
                 text.add(spell.getDisplayName().withStyle(spell.getSpellType().getTooltipFormatting()));
             }
             else {
-                text.add(1, new TextComponent(ChatFormatting.GOLD + "Spells: "));
+                text.add(1, new TextComponent(ChatFormatting.AQUA + "Spells: "));
                 if (spells.isEmpty()) text.add(new TextComponent(ChatFormatting.GRAY + "   Empty"));
                 else {
                     spells.forEach(spell -> {
@@ -103,13 +107,16 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
             player.startUsingItem(hand);
             if (!world.isClientSide()) {
                 if (isSpellBook) {
-                    world.playSound(null, player.blockPosition(), SoundEvents.BOOK_PAGE_TURN, SoundSource.NEUTRAL, 0.6F, 1.0F);
+                    world.playSound(null, player.blockPosition(), SoundEvents.BOOK_PAGE_TURN, SoundSource.NEUTRAL, 0.7F, 0.7F);
+                }
+                if (spell == SpellInit.SHRINK.get()  && spell.canUseSpell()) {
+                    Util.updateDimensions(player);
                 }
                 if (spell != SpellInit.EMPTY.get()) {
                     if (spell.getSpellType() == SpellAttributes.Type.CAST) {
                         switch (spell.getMarkerType()) {
-                            case COMBAT: world.playSound(null, player.blockPosition(), SoundInit.CHARGE_COMBAT.get(), SoundSource.PLAYERS, 1F, 1.0F);
-                            case UTILITY: world.playSound(null, player.blockPosition(), SoundInit.CHARGE_UTILITY.get(), SoundSource.PLAYERS, 0.6F, 1.0F);
+                            case COMBAT: world.playSound(null, player.blockPosition(), SoundInit.CHARGE_COMBAT.get(), SoundSource.PLAYERS, 0.7F, 0.7F);
+                            case UTILITY: world.playSound(null, player.blockPosition(), SoundInit.CHARGE_UTILITY.get(), SoundSource.PLAYERS, 0.7F, 0.7F);
                         }
                     }
                 }
@@ -130,15 +137,15 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
                 capability.ifPresent(cap -> {
                     if (cap.getSpellSoundBuffer() == 0) {
                         if (spell instanceof Illuminate) {
-                            player.level.playSound(null, player.blockPosition(), SoundInit.HELD_ILLUMINATE.get(), SoundSource.NEUTRAL, 0.6F, 1.0F);
+                            player.level.playSound(null, player.blockPosition(), SoundInit.HELD_ILLUMINATE.get(), SoundSource.NEUTRAL, 0.7F, 0.7F);
                             cap.setSpellSoundBuffer(65);
                         }
                         else if (spell.getMarkerType() == SpellAttributes.Marker.COMBAT) {
-                            player.level.playSound(null, player.blockPosition(), SoundInit.HELD_COMBAT.get(), SoundSource.NEUTRAL, 0.6F, 1.0F);
+                            player.level.playSound(null, player.blockPosition(), SoundInit.HELD_COMBAT.get(), SoundSource.NEUTRAL, 0.7F, 0.7F);
                             cap.setSpellSoundBuffer(47);
                         }
                         else if (spell.getMarkerType() == SpellAttributes.Marker.UTILITY) {
-                            player.level.playSound(null, player.blockPosition(), SoundInit.HELD_UTILITY.get(), SoundSource.NEUTRAL, 0.6F, 1.0F);
+                            player.level.playSound(null, player.blockPosition(), SoundInit.HELD_UTILITY.get(), SoundSource.NEUTRAL, 0.7F, 0.7F);
                             cap.setSpellSoundBuffer(46);
                         }
                     }
@@ -158,8 +165,11 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
             Spell spell = SpellUtils.getSpell(stack);
             if (this.castTimeCondition(player, stack)) {
                 if (spell.getSpellType() == SpellAttributes.Type.CAST) {
-                    world.playSound(null, player.blockPosition(), spell.getSpellSound(), SoundSource.NEUTRAL, 0.6F, 1.0F);
+                    world.playSound(null, player.blockPosition(), spell.getSpellSound(), SoundSource.NEUTRAL, 0.7F, 0.7F);
                     spell.execute(player, stack);
+                }
+                if (spell == SpellInit.SHRINK.get() && spell.canUseSpell()) {
+                    Util.updateDimensions(player);
                 }
                 Util.doParticles(player);
                 if (!world.isClientSide()) {

@@ -7,6 +7,7 @@ import com.divinity.hlspells.spell.SpellConsumer;
 import com.divinity.hlspells.util.Util;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobType;
+import net.minecraft.world.entity.monster.Spider;
 import net.minecraft.world.entity.player.Player;
 
 public class IlluminateII extends Spell {
@@ -18,13 +19,17 @@ public class IlluminateII extends Spell {
     @Override
     protected SpellConsumer<Player> getAction() {
         return p -> {
-            var mobList = Util.getEntitiesInRange(p, Mob.class, 15, 15, 15, m -> !(m instanceof Summonable) && m.getMobType() == MobType.UNDEAD);
+            var mobList = Util.getEntitiesInRange(p, Mob.class, 15, 15, 15, m -> !(m instanceof Summonable));
             mobList.stream().filter(m -> p != null && m != null).forEach(m -> {
-                m.setLastHurtByPlayer(p);
-                m.setSecondsOnFire(1);
+                if (m.getMobType() == MobType.UNDEAD) {
+                    m.setLastHurtByPlayer(p);
+                    m.setSecondsOnFire(1);
+                }
+                else if (m instanceof Spider spider) {
+                    spider.setTarget(null);
+                }
             });
             return true;
-
         };
     }
 }

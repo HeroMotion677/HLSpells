@@ -16,6 +16,7 @@ public class EffectSpell<T extends MobEffect> extends Spell {
     private int duration;
     private int amplifier;
     private boolean isVisible;
+    private final MobEffectInstance instance;
 
     public EffectSpell(T effect, SpellAttributes.Type type, SpellAttributes.Rarity rarity, SpellAttributes.Tier tier, SpellAttributes.Marker marker, String displayName, int xpCost, boolean treasureOnly, int maxSpellLevel) {
         super(type, rarity, tier, marker, displayName, xpCost, treasureOnly, maxSpellLevel);
@@ -23,6 +24,7 @@ public class EffectSpell<T extends MobEffect> extends Spell {
         this.duration = Integer.MAX_VALUE;
         this.amplifier = 1;
         this.isVisible = false;
+        this.instance = new MobEffectInstance(this.effect, this.duration, this.amplifier, false, false);
     }
 
     public EffectSpell(T effect, SpellAttributes.Type type, SpellAttributes.Rarity rarity, SpellAttributes.Tier tier, SpellAttributes.Marker marker, String displayName, int xpCost, int tickDelay, boolean treasureOnly, int maxSpellLevel) {
@@ -33,6 +35,7 @@ public class EffectSpell<T extends MobEffect> extends Spell {
     @Override
     public SpellConsumer<Player> getAction() {
         return p -> {
+            p.addEffect(instance);
             MobEffectInstance instance = p.getEffect(this.effect);
             if (instance != null) {
                 p.getCapability(PlayerCapProvider.PLAYER_CAP).ifPresent(cap -> {
@@ -42,9 +45,7 @@ public class EffectSpell<T extends MobEffect> extends Spell {
                         cap.setEffectAmplifier(instance.getAmplifier());
                     }
                 });
-                p.addEffect(new MobEffectInstance(this.effect, this.duration, this.amplifier, false, this.isVisible));
             }
-            else return false;
             if (p.level.getBlockState(p.blockPosition().below()).getBlock() == Blocks.AIR) {
                 for (int i = 0; i < 3; i++) {
                     p.level.addParticle(ParticleTypes.CLOUD, p.getX(), p.getY() - 1, p.getZ(), 0, p.getDeltaMovement().y, 0);

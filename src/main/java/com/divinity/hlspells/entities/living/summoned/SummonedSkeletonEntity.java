@@ -1,36 +1,31 @@
 package com.divinity.hlspells.entities.living.summoned;
 
-import com.divinity.hlspells.HLSpells;
 import com.divinity.hlspells.entities.Summonable;
 import com.divinity.hlspells.entities.goal.AttackedOwnerEnemyGoal;
 import com.divinity.hlspells.entities.goal.CopyOwnerTargetGoal;
 import com.divinity.hlspells.entities.goal.DecayGoal;
 import com.divinity.hlspells.entities.goal.FollowOwnerGoal;
-import com.divinity.hlspells.setup.init.EntityInit;
-import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.monster.AbstractSkeleton;
-import net.minecraft.world.entity.monster.Skeleton;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 
-@Mod.EventBusSubscriber(modid = HLSpells.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class SummonedSkeletonEntity extends AbstractSkeleton implements Summonable {
 
     protected Player playerOwner;
@@ -38,11 +33,6 @@ public class SummonedSkeletonEntity extends AbstractSkeleton implements Summonab
     public SummonedSkeletonEntity(EntityType<? extends AbstractSkeleton> type, Level level) {
         super(type, level);
         this.xpReward = 0;
-    }
-
-    @SubscribeEvent
-    public static void attributeCreation(EntityAttributeCreationEvent event) {
-        event.put(EntityInit.SUMMONED_SKELETON_ENTITY.get(), Skeleton.createAttributes().build());
     }
 
     @Override

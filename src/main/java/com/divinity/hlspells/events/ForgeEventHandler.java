@@ -15,7 +15,8 @@ import com.divinity.hlspells.setup.init.ItemInit;
 import com.divinity.hlspells.setup.init.SpellInit;
 import com.divinity.hlspells.spell.Spell;
 import com.divinity.hlspells.spell.SpellAttributes;
-import com.divinity.hlspells.spell.spells.PhasingSpell;
+import com.divinity.hlspells.spell.spells.Phasing;
+import com.divinity.hlspells.spell.spells.PhasingII;
 import com.divinity.hlspells.util.SpellUtils;
 import com.divinity.hlspells.util.Util;
 import com.mojang.blaze3d.platform.InputConstants;
@@ -30,7 +31,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Inventory;
@@ -50,6 +53,7 @@ import net.minecraftforge.client.settings.KeyConflictContext;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
@@ -314,7 +318,7 @@ public class ForgeEventHandler {
                 if (next.getItem() instanceof SpellHoldingItem item && !item.isSpellBook()) {
                     next.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP).filter(cap -> !cap.getSpells().isEmpty()).ifPresent(cap -> {
                         Spell spell = SpellUtils.getSpellByID(cap.getCurrentSpell());
-                        player.displayClientMessage(new TextComponent("Spell : " + spell.getTrueDisplayName()).withStyle(ChatFormatting.GOLD), true);
+                        player.displayClientMessage(new TextComponent("Spell : " + spell.getTrueDisplayName()).withStyle(ChatFormatting.AQUA), true);
                     });
                 }
                 if (previous.getItem() instanceof SpellHoldingItem item) {
@@ -326,6 +330,23 @@ public class ForgeEventHandler {
                             item.setWasHolding(false);
                         }
                     });
+                }
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void onTinyPlayer(EntityEvent.Size event) {
+        if (event.getEntity().isAddedToWorld()) {
+            if (event.getEntity() instanceof Player player) {
+                Spell spell = SpellUtils.getSpell(player.getUseItem());
+                if (spell == SpellInit.SHRINK.get() && spell.canUseSpell()) {
+                    event.setNewSize(new EntityDimensions(0.6f, 0.8f, true), false);
+                    event.setNewEyeHeight(player.isCrouching() ? 0.55F : 0.7F);
+                }
+                else if (SpellUtils.getSpell(player.getUseItem()) != SpellInit.SHRINK.get()) {
+                    event.setNewSize(event.getOldSize());
+                    event.setNewEyeHeight(event.getOldEyeHeight());
                 }
             }
         }
@@ -347,8 +368,10 @@ public class ForgeEventHandler {
     public static void preventPhasingSuffocation(LivingDamageEvent event) {
         if (event.getEntityLiving() instanceof Player player) {
             if (player.isUsingItem()) {
-                if (SpellUtils.getSpell(player.getUseItem()) instanceof PhasingSpell spell && spell.canUseSpell()) {
-                    event.setCanceled(true);
+                if (SpellUtils.getSpell(player.getUseItem()) instanceof Phasing spell && spell.canUseSpell() || SpellUtils.getSpell(player.getUseItem()) instanceof PhasingII spell2 && spell2.canUseSpell()) {
+                    if (event.getSource() == DamageSource.IN_WALL) {
+                        event.setCanceled(true);
+                    }
                 }
             }
         }
@@ -430,7 +453,7 @@ public class ForgeEventHandler {
         public static void onRenderBlockOnHUD(RenderBlockOverlayEvent event) {
             Player player = event.getPlayer();
             if (player != null && player.isUsingItem()) {
-                if (SpellUtils.getSpell(player.getUseItem()) instanceof PhasingSpell spell && spell.canUseSpell()) {
+                if (SpellUtils.getSpell(player.getUseItem()) instanceof Phasing spell && spell.canUseSpell() || SpellUtils.getSpell(player.getUseItem()) instanceof PhasingII spell2 && spell2.canUseSpell()) {
                     event.setCanceled(true);
                 }
             }

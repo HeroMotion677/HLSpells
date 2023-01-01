@@ -10,6 +10,7 @@ import com.divinity.hlspells.util.Util;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.player.Player;
 
 import java.util.List;
@@ -31,7 +32,7 @@ public class LightningIII extends Spell {
                         predicate = true;
                     }
                 }
-                return !(f instanceof Summonable) && !(f.isAlliedTo(p)) && !predicate && f != p;
+                return !(f instanceof Summonable) && !(f.isAlliedTo(p)) && !predicate && f != p && !(f instanceof ArmorStand);
             }).forEach(t -> {
                 LightningBolt lightning = new LightningBolt(EntityType.LIGHTNING_BOLT, p.level);
                 lightning.moveTo(t.getX(), t.getOnPos().getY(), t.getZ());

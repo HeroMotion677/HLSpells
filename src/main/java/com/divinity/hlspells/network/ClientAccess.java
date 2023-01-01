@@ -31,4 +31,12 @@ public class ClientAccess {
             }
         }
     }
+
+    public static void updateDimensions(UUID player) {
+        Minecraft mc = Minecraft.getInstance();
+        Player updatePlayer = mc.level != null ? mc.level.getPlayerByUUID(player) : null;
+        if (updatePlayer != null) {
+            updatePlayer.refreshDimensions();
+        }
+    }
 }
