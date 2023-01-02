@@ -22,7 +22,7 @@ public class TorpedoSpell extends Spell {
         return p -> {
             int i = p.getUseItem().getUseDuration();
             if (i >= 10) {
-                int j = 2;
+                int j = 5;
                 float f7 = p.getYRot();
                 float f = p.getXRot();
                 float f1 = -Mth.sin(f7 * ((float)Math.PI / 180F)) * Mth.cos(f * ((float)Math.PI / 180F));

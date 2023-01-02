@@ -27,7 +27,9 @@ public class FlamingCircleSpell extends Spell {
                 cap.setSpellTimer(cap.getSpellTimer() + 1);
                 if (cap.getSpellTimer() % 10 == 0) {
                     doEnchantParticleInterior(p, p.level);
-                    doOuterRingParticles(ParticleTypes.FLAME, p, p.level);
+                    for (int i = 0; i < 2; i++) {
+                        doOuterRingParticles(ParticleTypes.FLAME, p, p.level);
+                    }
                     cap.setSpellTimer(0);
                 }
                 livingEntities.stream().filter(e -> e != null && e != p).forEach(e -> {

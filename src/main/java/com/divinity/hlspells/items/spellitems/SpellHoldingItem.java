@@ -109,7 +109,7 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
                 if (isSpellBook) {
                     world.playSound(null, player.blockPosition(), SoundEvents.BOOK_PAGE_TURN, SoundSource.NEUTRAL, 0.7F, 0.7F);
                 }
-                if (spell == SpellInit.SHRINK.get()  && spell.canUseSpell()) {
+                if (spell == SpellInit.SHRINK.get() && spell.canUseSpell()) {
                     Util.updateDimensions(player);
                 }
                 if (spell != SpellInit.EMPTY.get()) {

@@ -186,27 +186,30 @@ public abstract class Spell extends ForgeRegistryEntry<Spell> implements Cloneab
     private Consumer<Player> onAfterExecute(Spell spell, ItemStack stack) {
         return player -> {
             if (!player.isCreative()) {
-                switch (spell.getSpellType()) {
-                    case CAST:
-                        if (!player.level.isClientSide())
-                            stack.hurt(getSpellHoldingItemCalculation(stack), player.getRandom(), (ServerPlayer) player);
-                        if (HLSpells.CONFIG.spellsUseXP.get())
-                            player.giveExperiencePoints(-SpellUtils.getXpReq(player, spell));
-                    case HELD:
-                        player.getCapability(PlayerCapProvider.PLAYER_CAP).ifPresent(playerCap -> {
-                            int durabilityTickCounter = playerCap.getDurabilityTickCounter();
-                            int spellXpTickCounter = playerCap.getSpellXpTickCounter();
-                            playerCap.setSpellXpTickCounter(spellXpTickCounter + 1);
-                            playerCap.setDurabilityTickCounter(durabilityTickCounter + 1);
-                            if (spellXpTickCounter == SpellUtils.getTickDelay(player, spell) && HLSpells.CONFIG.spellsUseXP.get()) {
-                                player.giveExperiencePoints(-SpellUtils.getXpReq(player, spell));
-                                playerCap.setSpellXpTickCounter(0);
-                            }
-                            if (durabilityTickCounter % 15 == 0 && !player.level.isClientSide()) {
+                if (stack.getDamageValue() >= stack.getMaxDamage() - 1) stack.shrink(1);
+                else {
+                    switch (spell.getSpellType()) {
+                        case CAST:
+                            if (!player.level.isClientSide())
                                 stack.hurt(getSpellHoldingItemCalculation(stack), player.getRandom(), (ServerPlayer) player);
-                                playerCap.setDurabilityTickCounter(0);
-                            }
-                        });
+                            if (HLSpells.CONFIG.spellsUseXP.get())
+                                player.giveExperiencePoints(-SpellUtils.getXpReq(player, spell));
+                        case HELD:
+                            player.getCapability(PlayerCapProvider.PLAYER_CAP).ifPresent(playerCap -> {
+                                int durabilityTickCounter = playerCap.getDurabilityTickCounter();
+                                int spellXpTickCounter = playerCap.getSpellXpTickCounter();
+                                playerCap.setSpellXpTickCounter(spellXpTickCounter + 1);
+                                playerCap.setDurabilityTickCounter(durabilityTickCounter + 1);
+                                if (spellXpTickCounter == SpellUtils.getTickDelay(player, spell) && HLSpells.CONFIG.spellsUseXP.get()) {
+                                    player.giveExperiencePoints(-SpellUtils.getXpReq(player, spell));
+                                    playerCap.setSpellXpTickCounter(0);
+                                }
+                                if (durabilityTickCounter % 15 == 0 && !player.level.isClientSide()) {
+                                    stack.hurt(getSpellHoldingItemCalculation(stack), player.getRandom(), (ServerPlayer) player);
+                                    playerCap.setDurabilityTickCounter(0);
+                                }
+                            });
+                    }
                 }
             }
         };

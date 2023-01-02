@@ -23,10 +23,10 @@ public class WitherSkullEntity extends WitherSkull {
     @Override
     public void tick() {
         super.tick();
-        // Remove if it's more than 40 block away from entity pos
+  /*      // Remove if it's more than 40 block away from entity pos
         Entity owner = this.getOwner();
         if (owner != null && Math.sqrt(this.distanceToSqr(owner.position())) > 40) this.discard();
-        else if (owner == null) this.discard();
+        else if (owner == null) this.discard();*/
     }
 
     @Override @NotNull public Packet<?> getAddEntityPacket() { return NetworkHooks.getEntitySpawningPacket(this); }

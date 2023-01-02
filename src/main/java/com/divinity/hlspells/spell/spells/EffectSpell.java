@@ -24,7 +24,7 @@ public class EffectSpell<T extends MobEffect> extends Spell {
         this.duration = Integer.MAX_VALUE;
         this.amplifier = 1;
         this.isVisible = false;
-        this.instance = new MobEffectInstance(this.effect, this.duration, this.amplifier, false, false);
+        this.instance = new MobEffectInstance(this.effect, this.duration, this.amplifier, false, false, false);
     }
 
     public EffectSpell(T effect, SpellAttributes.Type type, SpellAttributes.Rarity rarity, SpellAttributes.Tier tier, SpellAttributes.Marker marker, String displayName, int xpCost, int tickDelay, boolean treasureOnly, int maxSpellLevel) {

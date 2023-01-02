@@ -26,7 +26,7 @@ public class EnUsLangProvider extends LanguageProvider {
         this.add("entity.minecraft.villager.hlspells.mage", "Mage");
         this.add("container.spell.clue","%s");
         this.add("container.spell.level.requirement" , "Level Requirement: %s");
-        this.add("container.spell.button.requirement", "Placeholder");
+        this.add("container.spell.button.requirement", "Transfer (Levels: %s)");
         this.add("container.spell.material.one", "1 %s");
         this.add("container.spell.material.many", "%s %s");
         this.add("sounds.subtitle.altar_transfer", "Spell Transfers");

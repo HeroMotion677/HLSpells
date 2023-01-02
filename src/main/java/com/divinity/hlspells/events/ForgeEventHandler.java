@@ -104,8 +104,7 @@ public class ForgeEventHandler {
             String file = name.substring(name.indexOf(prefix) + prefix.length());
             switch (file) {
                 case "woodland_mansion", "end_city_treasure", "stronghold_library", "jungle_temple", "simple_dungeon", "desert_pyramid", "nether_bridge", "bastion_treasure" -> evt.getTable().addPool(getInjectPool(file));
-                default -> {
-                }
+                default -> {}
             }
         }
     }
@@ -335,18 +334,20 @@ public class ForgeEventHandler {
         }
     }
 
+    public static final EntityDimensions OLD_PLAYER_DIMENSIONS = new EntityDimensions(0.6f, 1.8f, false);
+    public static final EntityDimensions SHRINK_DIMENSIONS = new EntityDimensions(0.6f, 0.8f, true);
+
     @SubscribeEvent
     public static void onTinyPlayer(EntityEvent.Size event) {
         if (event.getEntity().isAddedToWorld()) {
             if (event.getEntity() instanceof Player player) {
                 Spell spell = SpellUtils.getSpell(player.getUseItem());
                 if (spell == SpellInit.SHRINK.get() && spell.canUseSpell()) {
-                    event.setNewSize(new EntityDimensions(0.6f, 0.8f, true), false);
+                    event.setNewSize(SHRINK_DIMENSIONS, false);
                     event.setNewEyeHeight(player.isCrouching() ? 0.55F : 0.7F);
                 }
                 else if (SpellUtils.getSpell(player.getUseItem()) != SpellInit.SHRINK.get()) {
-                    event.setNewSize(event.getOldSize());
-                    event.setNewEyeHeight(event.getOldEyeHeight());
+                    event.setNewSize(OLD_PLAYER_DIMENSIONS, true);
                 }
             }
         }

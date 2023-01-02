@@ -14,7 +14,7 @@ public class PhasingII extends Spell {
         super(type, rarity, tier, marker, displayName, xpCost, tickDelay, treasureOnly, maxSpellLevel);
     }
 
-    private static final MobEffectInstance INVIS = new MobEffectInstance(MobEffects.INVISIBILITY, 60, 5, false, false, false);
+    private static final MobEffectInstance INVIS = new MobEffectInstance(MobEffects.INVISIBILITY, Integer.MAX_VALUE, 5, false, false, false);
 
     @Override
     public SpellConsumer<Player> getAction() {

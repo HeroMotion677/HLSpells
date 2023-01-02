@@ -24,7 +24,7 @@ public class LightningIII extends Spell {
     @Override
     public SpellConsumer<Player> getAction() {
         return p -> {
-            Util.getEntitiesInRange(p, LivingEntity.class, 25, 25, 25, f ->  {
+            Util.getEntitiesInRange(p, LivingEntity.class, 40, 40, 40, f ->  {
                 List<? extends String> blacklistedMobs = HLSpells.CONFIG.lightningSpellList.get();
                 boolean predicate = false;
                 for (String id : blacklistedMobs) {

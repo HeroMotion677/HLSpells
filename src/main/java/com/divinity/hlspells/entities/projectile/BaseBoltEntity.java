@@ -4,6 +4,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -36,9 +38,9 @@ public abstract class BaseBoltEntity extends Arrow {
             else if (this.getOwner() == null) this.discard();
             Vec3 vector3d1 = this.getDeltaMovement();
             double baseYOffset = 0.15D;
-            if (this.level.isClientSide && !(this instanceof InvisibleTargetingEntity)) {
+            if (this.level instanceof ServerLevel level && !(this instanceof InvisibleTargetingEntity)) {
                 for (int i = 0; i < this.particleTypes.length; i++) {
-                    this.level.addParticle(this.particleTypes[i], this.getX() - vector3d1.x, this.getY() - (vector3d1.y + (baseYOffset + ((double) i / 100))), this.getZ() - vector3d1.z, 0, 0, 0);
+                    level.sendParticles(this.particleTypes[i], this.getX() - vector3d1.x, this.getY() - (vector3d1.y + (baseYOffset + ((double) i / 100))), this.getZ() - vector3d1.z, 0, 0, 0, 0, 0);
                 }
             }
         }
