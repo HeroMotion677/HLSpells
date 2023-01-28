@@ -1,6 +1,10 @@
 package com.divinity.hlspells.entities.projectile;
 
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
@@ -14,8 +18,38 @@ import org.jetbrains.annotations.NotNull;
 
 public class PiercingBoltEntity extends BaseBoltEntity {
 
+    private static final EntityDataAccessor<Boolean> IS_SPECIAL = SynchedEntityData.defineId(PiercingBoltEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Integer> PIERCED_ENEMIES = SynchedEntityData.defineId(PiercingBoltEntity.class, EntityDataSerializers.INT);
+    boolean isSpecial;
+
     public PiercingBoltEntity(EntityType<? extends PiercingBoltEntity> type, Level world) {
         super(type, world, ParticleTypes.ENCHANTED_HIT, ParticleTypes.ENCHANTED_HIT);
+    }
+
+    public PiercingBoltEntity(EntityType<? extends PiercingBoltEntity> type, Level world, boolean isSpecial) {
+        super(type, world, ParticleTypes.ENCHANTED_HIT, ParticleTypes.ENCHANTED_HIT);
+        this.isSpecial = isSpecial;
+    }
+
+    @Override
+    protected void defineSynchedData() {
+        super.defineSynchedData();
+        entityData.define(IS_SPECIAL, false);
+        entityData.define(PIERCED_ENEMIES, 0);
+    }
+
+    @Override
+    public void readAdditionalSaveData(CompoundTag pCompound) {
+        this.entityData.set(IS_SPECIAL, pCompound.getBoolean("special"));
+        this.entityData.set(PIERCED_ENEMIES, pCompound.getInt("enemies"));
+        super.readAdditionalSaveData(pCompound);
+    }
+
+    @Override
+    public void addAdditionalSaveData(CompoundTag pCompound) {
+        pCompound.putBoolean("special", this.entityData.get(IS_SPECIAL));
+        pCompound.putInt("enemies", this.entityData.get(PIERCED_ENEMIES));
+        super.addAdditionalSaveData(pCompound);
     }
 
     @Override
@@ -28,7 +62,15 @@ public class PiercingBoltEntity extends BaseBoltEntity {
         if (flag && this.level instanceof ServerLevel level) {
             level.sendParticles(ParticleTypes.CRIT, this.getX(), this.getY(), this.getZ(), 2, 0.2D, 0.2D, 0.2D, 0.0D);
             if (livingentity != null) this.doEnchantDamageEffects(livingentity, entity);
-            this.remove(RemovalReason.KILLED);
+            if (this.isSpecial) {
+                if (entityData.get(PIERCED_ENEMIES) != 4) {
+                    entityData.set(PIERCED_ENEMIES, entityData.get(PIERCED_ENEMIES) + 1);
+                }
+                else this.remove(RemovalReason.KILLED);
+            }
+            else {
+                this.remove(RemovalReason.KILLED);
+            }
         }
     }
 

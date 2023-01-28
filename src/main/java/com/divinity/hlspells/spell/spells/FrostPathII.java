@@ -20,7 +20,7 @@ import javax.annotation.Nullable;
 public class FrostPathII extends Spell {
 
     public FrostPathII(SpellAttributes.Type type, SpellAttributes.Rarity rarity, SpellAttributes.Tier tier, SpellAttributes.Marker marker, String displayName, int xpCost, int tickDelay, boolean treasureOnly, int maxSpellLevel) {
-        super(type, rarity, tier, marker, displayName, xpCost, tickDelay, treasureOnly, maxSpellLevel);
+        super(type, rarity, tier, marker, displayName, xpCost, tickDelay, true, maxSpellLevel);
     }
 
     @Override

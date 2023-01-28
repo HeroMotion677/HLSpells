@@ -1,18 +1,17 @@
 package com.divinity.hlspells.network.packets.clientbound;
 
 import com.divinity.hlspells.network.ClientAccess;
-import com.divinity.hlspells.network.util.IPacket;
+import com.divinity.hlspells.network.IPacket;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.loading.FMLEnvironment;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.network.simple.SimpleChannel;
 
 import java.util.UUID;
 
 public record SpellCluePacket(UUID player, String... spellClues) implements IPacket {
 
+    @Override
     public void encode(FriendlyByteBuf buffer) {
         buffer.writeUUID(this.player);
         buffer.writeUtf(this.spellClues[0]);
@@ -24,11 +23,9 @@ public record SpellCluePacket(UUID player, String... spellClues) implements IPac
         return new SpellCluePacket(buffer.readUUID(), buffer.readUtf(), buffer.readUtf(), buffer.readUtf());
     }
 
-    public void handle(NetworkEvent.Context context) {
-        if (FMLEnvironment.dist == Dist.CLIENT) {
-            context.enqueueWork(() -> ClientAccess.updateSpellClues(this.player, this.spellClues));
-        }
-        context.setPacketHandled(true);
+    @Override
+    public void handle(ServerPlayer player) {
+        ClientAccess.updateSpellClues(this.player, this.spellClues);
     }
 
     public static void register(SimpleChannel channel, int id) {

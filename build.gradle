@@ -47,6 +47,9 @@ group = 'com.divinity'
 archivesBaseName = project.mod_id
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+
+jarJar.enable()
+
 compileJava {
     [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 }
@@ -107,20 +110,24 @@ minecraft {
     }
 }
 
+java {
+    withSourcesJar()
+}
+
 mixin {
     add sourceSets.main, "hlspells.refmap.json"
 }
 
 dependencies {
-    minecraft "net.minecraftforge:forge:1.18.2-40.1.0"
+    minecraft "net.minecraftforge:forge:1.18.2-${forge_version}"
     // Compile against the API but do not include it at runtime
     compileOnly fg.deobf("mezz.jei:jei-${jei_mc_version}:${jei_version}:api")
     compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}:api")
-    compileOnly fg.deobf("com.legacy:lucent:1.18.2-1.2.2")
+    compileOnly fg.deobf("com.legacy:lucent:${lucent_version}")
     // At runtime, use the full mod jar
     runtimeOnly fg.deobf("mezz.jei:jei-${jei_mc_version}:${jei_version}")
     runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
-    runtimeOnly fg.deobf("com.legacy:lucent:1.18.2-1.2.2")
+    runtimeOnly fg.deobf("com.legacy:lucent:${lucent_version}")
     // Processes mixin annotations
     annotationProcessor 'org.spongepowered:mixin:0.8.5-SNAPSHOT:processor'
 }
@@ -135,9 +142,32 @@ jar {
                 "Implementation-Version"  : project.mod_version,
                 "Implementation-Vendor"   : "hlspellssareus",
                 "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
-                "MixinConfigs"            : "hlspells.mixin.json"
+                "MixinConfigs"            : "hlspells.mixin.json" ,
+                "FMLModType"              : "GAMELIBRARY"
         ])
     }
     rename 'mixin.refmap.json', 'hlspells.refmap.json'
 }
-publish.dependsOn('reobfJar')
+
+tasks.jarJar {
+    archiveClassifier = ''
+}
+
+reobf {
+    jarJar {}
+}
+
+jar.finalizedBy('reobfJar')
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifact tasks.jarJar
+        }
+    }
+    repositories {
+        maven {
+            url "file://${project.projectDir}/mcmodsrepo"
+        }
+    }
+}

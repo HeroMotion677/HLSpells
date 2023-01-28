@@ -8,7 +8,6 @@ import com.divinity.hlspells.network.packets.serverbound.TransferSpellsPacket;
 import com.divinity.hlspells.network.packets.serverbound.WandInputPacket;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;

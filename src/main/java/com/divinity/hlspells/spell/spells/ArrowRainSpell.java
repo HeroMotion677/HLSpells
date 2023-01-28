@@ -28,7 +28,7 @@ public class ArrowRainSpell extends Spell {
                 }
                 else {
                     if (cap.getSpellTimer() % 8 == 0) {
-                        for (int i = 0; i < 5; i++) {
+                        for (int i = 0; i < 10; i++) {
                             doArrowSpawn(p, p.level);
                         }
                         cap.setSpellTimer(0);

@@ -109,9 +109,6 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
                 if (isSpellBook) {
                     world.playSound(null, player.blockPosition(), SoundEvents.BOOK_PAGE_TURN, SoundSource.NEUTRAL, 0.7F, 0.7F);
                 }
-                if (spell == SpellInit.SHRINK.get() && spell.canUseSpell()) {
-                    Util.updateDimensions(player);
-                }
                 if (spell != SpellInit.EMPTY.get()) {
                     if (spell.getSpellType() == SpellAttributes.Type.CAST) {
                         switch (spell.getMarkerType()) {
@@ -167,9 +164,6 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
                 if (spell.getSpellType() == SpellAttributes.Type.CAST) {
                     world.playSound(null, player.blockPosition(), spell.getSpellSound(), SoundSource.NEUTRAL, 0.7F, 0.7F);
                     spell.execute(player, stack);
-                }
-                if (spell == SpellInit.SHRINK.get() && spell.canUseSpell()) {
-                    Util.updateDimensions(player);
                 }
                 Util.doParticles(player);
                 if (!world.isClientSide()) {

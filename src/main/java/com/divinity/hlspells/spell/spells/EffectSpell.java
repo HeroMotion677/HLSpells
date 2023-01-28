@@ -24,7 +24,7 @@ public class EffectSpell<T extends MobEffect> extends Spell {
         this.duration = Integer.MAX_VALUE;
         this.amplifier = 1;
         this.isVisible = false;
-        this.instance = new MobEffectInstance(this.effect, this.duration, this.amplifier, false, false, false);
+        this.instance = new MobEffectInstance(this.effect, this.duration, 5, false, false, false);
     }
 
     public EffectSpell(T effect, SpellAttributes.Type type, SpellAttributes.Rarity rarity, SpellAttributes.Tier tier, SpellAttributes.Marker marker, String displayName, int xpCost, int tickDelay, boolean treasureOnly, int maxSpellLevel) {
@@ -36,16 +36,6 @@ public class EffectSpell<T extends MobEffect> extends Spell {
     public SpellConsumer<Player> getAction() {
         return p -> {
             p.addEffect(instance);
-            MobEffectInstance instance = p.getEffect(this.effect);
-            if (instance != null) {
-                p.getCapability(PlayerCapProvider.PLAYER_CAP).ifPresent(cap -> {
-                    if (cap.getEffect() == null) {
-                        cap.setEffect(instance.getEffect());
-                        cap.setEffectDuration(instance.getDuration());
-                        cap.setEffectAmplifier(instance.getAmplifier());
-                    }
-                });
-            }
             if (p.level.getBlockState(p.blockPosition().below()).getBlock() == Blocks.AIR) {
                 for (int i = 0; i < 3; i++) {
                     p.level.addParticle(ParticleTypes.CLOUD, p.getX(), p.getY() - 1, p.getZ(), 0, p.getDeltaMovement().y, 0);

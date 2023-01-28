@@ -5,6 +5,7 @@ import com.divinity.hlspells.spell.Spell;
 import com.divinity.hlspells.spell.SpellAttributes;
 import com.divinity.hlspells.spell.SpellConsumer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.entity.player.Player;
 
 public class FrostWallSpell extends Spell {
@@ -21,9 +22,10 @@ public class FrostWallSpell extends Spell {
                 int xPos = pos.getX();
                 int yPos = pos.getY() + 1;
                 int zPos = pos.getZ();
+
                 for (int x = xPos; x < xPos + 3; ++x) {
                     for (int y = yPos; y < yPos + 3; ++y) {
-                        p.level.setBlockAndUpdate(new BlockPos(x, y, pos.getZ()), BlockInit.CUSTOM_FROSTED_ICE.get().defaultBlockState());
+                        p.level.setBlockAndUpdate(new BlockPos(p.getDirection() == Direction.NORTH || p.getDirection() == Direction.SOUTH ? pos.getX() : x, y, p.getDirection() == Direction.NORTH || p.getDirection() == Direction.SOUTH ?  x : pos.getZ()), BlockInit.CUSTOM_FROSTED_ICE.get().defaultBlockState());
                     }
                 }
             }

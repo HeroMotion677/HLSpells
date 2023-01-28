@@ -66,7 +66,8 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import org.lwjgl.glfw.GLFW;
 import top.theillusivec4.curios.api.SlotResult;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Iterator;
 
 import static com.divinity.hlspells.HLSpells.MODID;
 
@@ -339,7 +340,7 @@ public class ForgeEventHandler {
 
     @SubscribeEvent
     public static void onTinyPlayer(EntityEvent.Size event) {
-        if (event.getEntity().isAddedToWorld()) {
+/*        if (event.getEntity().isAddedToWorld()) {
             if (event.getEntity() instanceof Player player) {
                 Spell spell = SpellUtils.getSpell(player.getUseItem());
                 if (spell == SpellInit.SHRINK.get() && spell.canUseSpell()) {
@@ -350,7 +351,7 @@ public class ForgeEventHandler {
                     event.setNewSize(OLD_PLAYER_DIMENSIONS, true);
                 }
             }
-        }
+        }*/
     }
 
     @SubscribeEvent

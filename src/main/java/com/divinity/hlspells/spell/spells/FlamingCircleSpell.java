@@ -45,6 +45,7 @@ public class FlamingCircleSpell extends Spell {
         for (int x = -6; x <= 6; x++) {
             for (int z = -6; z <= 6; z++) {
                 world.addParticle(ParticleTypes.ENCHANT, player.getX() + x + world.random.nextFloat(), player.getY() + 0.2, player.getZ() + z + world.random.nextFloat(), 0, 0, 0);
+                world.addParticle(ParticleTypes.SMOKE, player.getX() + x + world.random.nextFloat(), player.getY() + 0.2, player.getZ() + z + world.random.nextFloat(), 0, 0, 0);
             }
         }
     }

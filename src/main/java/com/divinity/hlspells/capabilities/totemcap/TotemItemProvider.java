@@ -39,13 +39,7 @@ public class TotemItemProvider implements ICapabilitySerializable<CompoundTag> {
             instance.ifPresent(cap -> {
                 tag.put("blockPos", NbtUtils.writeBlockPos(cap.getBlockPos()));
                 tag.putBoolean("hasDied", cap.getHasDied());
-                tag.putInt("hand", switch (cap.getTotemInHand()) {
-                    case MAIN_HAND -> 1;
-                    case OFF_HAND -> 2;
-                    default -> 0;
-                });
                 int hand = 0;
-
                 InteractionHand totemInHand = cap.getTotemInHand();
                 if (totemInHand == InteractionHand.MAIN_HAND) {
                     hand = 1;
