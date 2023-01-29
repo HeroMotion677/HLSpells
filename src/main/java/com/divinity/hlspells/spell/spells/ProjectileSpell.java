@@ -17,7 +17,6 @@ import net.minecraft.world.entity.projectile.WitherSkull;
 import net.minecraft.world.phys.Vec3;
 
 public class ProjectileSpell<T extends Projectile> extends Spell {
-
     private final EntityType<T> projectile;
     private double viewVectorOffset;
     private double xOffset;

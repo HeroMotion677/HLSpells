@@ -29,13 +29,12 @@ public abstract class Spell extends ForgeRegistryEntry<Spell> implements Cloneab
     protected final int xpCost;
     protected final boolean treasureOnly;
     protected int spellLevel;
-    protected int maxSpellLevel;
+    protected final int maxSpellLevel;
     protected int tickDelay;
     protected boolean canUse;
     protected SoundEvent spellSound;
 
-    @Nullable
-    private String descriptionId;
+    @Nullable private String descriptionId;
 
     public Spell(SpellAttributes.Type type, SpellAttributes.Rarity rarity, SpellAttributes.Tier tier, SpellAttributes.Marker marker, String displayName, int xpCost, boolean treasureOnly, int maxSpellLevel) {
         this.spellType = type;
@@ -56,66 +55,14 @@ public abstract class Spell extends ForgeRegistryEntry<Spell> implements Cloneab
         this.tickDelay = tickDelay;
     }
 
-    protected abstract SpellConsumer<Player> getAction();
-
-    @Nullable
-    public Spell getUpgrade() {
-        return null;
-    }
-
-    @Nullable
-    public Spell getUpgradeableSpellPath() {
-        return null;
-    }
-
-    public boolean isTreasureOnly() {
-        return this.treasureOnly;
-    }
-
-    public int getSpellLevel() {
-        return this.spellLevel;
-    }
-
-    public Spell setSpellLevel(int spellLevel) {
-        this.spellLevel = spellLevel;
-        return this;
-    }
-
-    public int getMaxSpellLevel() {
-        return this.maxSpellLevel;
-    }
-
-    public int getXpCost() {
-        return this.xpCost;
-    }
-
-    public int getTickDelay() {
-        return this.tickDelay;
-    }
-
-    public String getTrueDisplayName() {
-        return this.displayName;
-    }
-
+    ////////////////////////////////////// GETTERS & SETTERS //////////////////////////////////////
     public Spell setTrueDisplayName(String displayName) {
         this.displayName = displayName;
         return this;
     }
-
-    public SoundEvent getSpellSound() {
-        return this.spellSound;
-    }
-
-    public final SoundEvent getDefaultSpellSound() {
-        return SoundEvents.EVOKER_CAST_SPELL;
-    }
-
-    public String getDescriptionId() {
-        return this.getOrCreateDescriptionId();
-    }
-
-    public BaseComponent getDisplayName() {
-        return new TranslatableComponent(this.getDescriptionId());
+    public Spell setSpellLevel(int spellLevel) {
+        this.spellLevel = spellLevel;
+        return this;
     }
 
     public boolean isEmpty() {
@@ -125,17 +72,54 @@ public abstract class Spell extends ForgeRegistryEntry<Spell> implements Cloneab
     public SpellAttributes.Type getSpellType() {
         return this.spellType;
     }
-
     public SpellAttributes.Rarity getSpellRarity() {
         return this.spellRarity;
     }
-
     public SpellAttributes.Tier getSpellTier() {
         return this.spellTier;
     }
-
     public SpellAttributes.Marker getMarkerType() {
         return this.spellMarkerType;
+    }
+
+    public int getSpellLevel() {
+        return this.spellLevel;
+    }
+    public int getMaxSpellLevel() {
+        return this.maxSpellLevel;
+    }
+    public int getXpCost() {
+        return this.xpCost;
+    }
+    public boolean isTreasureOnly() {
+        return this.treasureOnly;
+    }
+
+    public int getTickDelay() {
+        return this.tickDelay;
+    }
+
+    public String getTrueDisplayName() {
+        return this.displayName;
+    }
+    public BaseComponent getDisplayName() {
+        return new TranslatableComponent(this.getDescriptionId());
+    }
+    public String getNameForLevel(int level) {
+        return this.getRegistryName() + " " + "I".repeat(level);
+    }
+    public String getDescriptionId() {
+        if (this.descriptionId == null) {
+            this.descriptionId = net.minecraft.Util.makeDescriptionId("spell", SpellInit.SPELLS_REGISTRY.get().getKey(this));
+        }
+        return this.descriptionId;
+    }
+
+    public SoundEvent getSpellSound() {
+        return this.spellSound;
+    }
+    public final SoundEvent getDefaultSpellSound() {
+        return SoundEvents.EVOKER_CAST_SPELL;
     }
 
     public int rarityAsInt() {
@@ -146,27 +130,30 @@ public abstract class Spell extends ForgeRegistryEntry<Spell> implements Cloneab
             default -> 0;
         };
     }
-
-    public String getNameForLevel(int level) {
-        return this.getRegistryName() + " " + "I".repeat(level);
-    }
-
     // Meant for spells that have their implementation in other/multiple places
     public boolean canUseSpell() {
         return this.canUse;
     }
 
+    @Nullable public Spell getUpgrade() {
+        return null;
+    }
+    @Nullable public Spell getUpgradeableSpellPath() {
+        return null;
+    }
+
+
+    //////////////////////////////////////// FUNCTIONALITY ////////////////////////////////////////
+    protected abstract SpellConsumer<Player> getAction();
+
     public final void execute(Player player, ItemStack stack) {
-        if (SpellUtils.checkXpReq(player, this) && this.getAction() != null) {
+        if (SpellUtils.checkXpReq(player, this) && this.getAction() != null)
             this.getAction().andThenIfCast(this.onAfterExecute(this, stack)).accept(player);
-        }
         else this.canUse = false;
     }
 
     // This is mainly for spell registration use
-    @Override
-    @Nullable
-    public Spell clone() {
+    @Override @Nullable public Spell clone() {
         try {
             return (Spell) super.clone();
         }
@@ -174,13 +161,6 @@ public abstract class Spell extends ForgeRegistryEntry<Spell> implements Cloneab
             e.printStackTrace();
         }
         return null;
-    }
-
-    protected String getOrCreateDescriptionId() {
-        if (this.descriptionId == null) {
-            this.descriptionId = net.minecraft.Util.makeDescriptionId("spell", SpellInit.SPELLS_REGISTRY.get().getKey(this));
-        }
-        return this.descriptionId;
     }
 
     private Consumer<Player> onAfterExecute(Spell spell, ItemStack stack) {
@@ -191,7 +171,7 @@ public abstract class Spell extends ForgeRegistryEntry<Spell> implements Cloneab
                     switch (spell.getSpellType()) {
                         case CAST:
                             if (!player.level.isClientSide())
-                                stack.hurt(getSpellHoldingItemCalculation(stack), player.getRandom(), (ServerPlayer) player);
+                                stack.hurt(calculateSpellHoldingItemDurabilityDamage(stack), player.getRandom(), (ServerPlayer) player);
                             if (HLSpells.CONFIG.spellsUseXP.get())
                                 player.giveExperiencePoints(-SpellUtils.getXpReq(player, spell));
                         case HELD:
@@ -205,7 +185,7 @@ public abstract class Spell extends ForgeRegistryEntry<Spell> implements Cloneab
                                     playerCap.setSpellXpTickCounter(0);
                                 }
                                 if (durabilityTickCounter % 15 == 0 && !player.level.isClientSide()) {
-                                    stack.hurt(getSpellHoldingItemCalculation(stack), player.getRandom(), (ServerPlayer) player);
+                                    stack.hurt(calculateSpellHoldingItemDurabilityDamage(stack), player.getRandom(), (ServerPlayer) player);
                                     playerCap.setDurabilityTickCounter(0);
                                 }
                             });
@@ -215,7 +195,7 @@ public abstract class Spell extends ForgeRegistryEntry<Spell> implements Cloneab
         };
     }
 
-    private static int getSpellHoldingItemCalculation(ItemStack itemStack) {
+    private static int calculateSpellHoldingItemDurabilityDamage(ItemStack itemStack) {
         int level = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.UNBREAKING, itemStack);
         if (level < 1) return 1;
         int random = new Random().nextInt(5);

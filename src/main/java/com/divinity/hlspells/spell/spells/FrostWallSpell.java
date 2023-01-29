@@ -7,6 +7,7 @@ import com.divinity.hlspells.spell.SpellConsumer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.block.state.BlockState;
 
 public class FrostWallSpell extends Spell {
 
@@ -19,17 +20,19 @@ public class FrostWallSpell extends Spell {
         return p -> {
             if (!p.level.isClientSide) {
                 BlockPos pos = p.blockPosition().relative(p.getDirection(), 2);
-                int xPos = pos.getX();
-                int yPos = pos.getY() + 1;
-                int zPos = pos.getZ();
+                boolean orient_x = p.getDirection().getAxis() == Direction.Axis.Z;
+                int yPos = pos.getY();
+                int wPos = orient_x? pos.getX():pos.getZ();
 
-                for (int x = xPos; x < xPos + 3; ++x) {
-                    for (int y = yPos; y < yPos + 3; ++y) {
-                        p.level.setBlockAndUpdate(new BlockPos(p.getDirection() == Direction.NORTH || p.getDirection() == Direction.SOUTH ? pos.getX() : x, y, p.getDirection() == Direction.NORTH || p.getDirection() == Direction.SOUTH ?  x : pos.getZ()), BlockInit.CUSTOM_FROSTED_ICE.get().defaultBlockState());
-                    }
-                }
-            }
-            return true;
+                BlockState ice = BlockInit.CUSTOM_FROSTED_ICE.get().defaultBlockState();
+                BlockPos.MutableBlockPos _pos = pos.mutable();
+                p.level.setBlockAndUpdate(_pos,ice);
+
+                for (int y = yPos; y < yPos + 3; ++y)
+                    for (int w = wPos-1; w <= wPos+1; ++w)
+                        p.level.setBlockAndUpdate(_pos.set(orient_x? w:pos.getX(),y,orient_x? pos.getZ():w),
+                         BlockInit.CUSTOM_FROSTED_ICE.get().defaultBlockState());
+            } return true;
         };
     }
 }
