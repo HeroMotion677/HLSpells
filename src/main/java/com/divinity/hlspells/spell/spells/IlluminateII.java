@@ -23,7 +23,7 @@ public class IlluminateII extends Spell {
     @Override
     protected SpellConsumer<Player> getAction() {
         return p -> {
-            var mobList = Util.getEntitiesInRange(p, Mob.class, 15, 15, 15, m -> !(m instanceof Summonable));
+            var mobList = Util.getEntitiesInRange(p, Mob.class, 8, 8, 8, m -> !(m instanceof Summonable));
             mobList.stream().filter(m -> p != null && m != null).forEach(m -> {
                 if (m.getMobType() == MobType.UNDEAD) {
                     m.setLastHurtByPlayer(p);
