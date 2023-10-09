@@ -22,7 +22,8 @@ public class SpellInit {
     public static final DeferredRegister<Spell> SPELLS = DeferredRegister.create(new ResourceLocation("spell"), HLSpells.MODID);
 
     public static final RegistryObject<Spell> EMPTY = register("no_spell", () -> new EmptySpell(SpellAttributes.Type.CAST, SpellAttributes.Rarity.COMMON, SpellAttributes.Tier.ONE, SpellAttributes.Marker.UTILITY, "No Spell", 0, false, 1));
-    public static final RegistryObject<Spell> DESCENT = register("descent", () -> new EffectSpell<>(MobEffects.SLOW_FALLING, SpellAttributes.Type.HELD, SpellAttributes.Rarity.UNCOMMON, SpellAttributes.Tier.ONE, SpellAttributes.Marker.UTILITY, "Descent", 1, 15, false, 2));
+    public static final RegistryObject<Spell> DESCENT = register("descent", () -> new EffectSpell<>(MobEffects.SLOW_FALLING, SpellAttributes.Type.HELD, SpellAttributes.Rarity.UNCOMMON, SpellAttributes.Tier.ONE, SpellAttributes.Marker.UTILITY, "Descent", 1, 15, false, 1));
+    public static final RegistryObject<Spell> DESCENT_II = register("descent_ii", () -> new DescentII(SpellAttributes.Type.HELD, SpellAttributes.Rarity.UNCOMMON, SpellAttributes.Tier.ONE, SpellAttributes.Marker.UTILITY, "Descent II", 1, 15, false, 1));
     public static final RegistryObject<Spell> TELEPORT = register("teleport", () -> new TeleportSpell(SpellAttributes.Type.CAST, SpellAttributes.Rarity.RARE, SpellAttributes.Tier.TWO, SpellAttributes.Marker.UTILITY, "Teleport", 9, false, 1));
     public static final RegistryObject<Spell> ARROW_RAIN = register("arrow_rain", () -> new ArrowRainSpell(SpellAttributes.Type.HELD, SpellAttributes.Rarity.COMMON, SpellAttributes.Tier.ONE, SpellAttributes.Marker.COMBAT, "Arrow Rain", 1, 6, false, 1));
     public static final RegistryObject<Spell> BOLT = register("bolt", () -> new Bolt(SpellAttributes.Type.CAST, SpellAttributes.Rarity.COMMON, SpellAttributes.Tier.ONE, SpellAttributes.Marker.COMBAT, "Bolt", 5, false, 1));
@@ -39,7 +40,7 @@ public class SpellInit {
     public static final RegistryObject<Spell> LEVITATION = register("levitation", () -> new EffectSpell<>(MobEffects.LEVITATION, SpellAttributes.Type.HELD, SpellAttributes.Rarity.UNCOMMON, SpellAttributes.Tier.TWO, SpellAttributes.Marker.UTILITY, "Levitation", 1, 6, false, 1));
     public static final RegistryObject<Spell> SPEED = register("speed", () -> new SpeedSpell(SpellAttributes.Type.HELD, SpellAttributes.Rarity.COMMON, SpellAttributes.Tier.TWO, SpellAttributes.Marker.UTILITY, "Speed", 1, 1, false, 1));
     public static final RegistryObject<Spell> PIERCING_BOLT = register("piercing_bolt", () -> new ProjectileSpell<>(EntityInit.PIERCING_BOLT_ENTITY.orElse(null), SpellAttributes.Type.CAST, SpellAttributes.Rarity.COMMON, SpellAttributes.Tier.TWO, SpellAttributes.Marker.COMBAT, "Piercing Bolt", 12, false, 1).yPosOffset(1.35D));
-    public static final RegistryObject<Spell> PIERCING_BOLT_II = register("piercing_bolt_ii", () -> new PiercingBoltIISpell(SpellAttributes.Type.CAST, SpellAttributes.Rarity.COMMON, SpellAttributes.Tier.TWO, SpellAttributes.Marker.COMBAT, "Piercing Bolt", 12, false, 1));
+    public static final RegistryObject<Spell> PIERCING_BOLT_II = register("piercing_bolt_ii", () -> new PiercingBoltIISpell(SpellAttributes.Type.CAST, SpellAttributes.Rarity.COMMON, SpellAttributes.Tier.TWO, SpellAttributes.Marker.COMBAT, "Piercing Bolt II", 12, false, 1));
     public static final RegistryObject<Spell> ABSORBING = register("absorbing", () -> new AbsorbingSpell(SpellAttributes.Type.HELD, SpellAttributes.Rarity.RARE, SpellAttributes.Tier.THREE, SpellAttributes.Marker.UTILITY, "Absorbing", 6, false, 1));
     public static final RegistryObject<Spell> FANGS = register("fangs", () -> new FangsSpell(SpellAttributes.Type.CAST, SpellAttributes.Rarity.RARE, SpellAttributes.Tier.THREE, SpellAttributes.Marker.COMBAT, "Fangs", 6, true, 1));
     public static final RegistryObject<Spell> FLAMING_BOLT = register("flaming_bolt", () -> new ProjectileSpell<>(EntityInit.FLAMING_BOLT_ENTITY.orElse(null), SpellAttributes.Type.CAST, SpellAttributes.Rarity.UNCOMMON, SpellAttributes.Tier.TWO, SpellAttributes.Marker.COMBAT, "Flaming Bolt", 7, false, 1).yPosOffset(1.35D));
@@ -61,7 +62,7 @@ public class SpellInit {
 
     // Optional Spells
     public static final RegistryObject<Spell> ILLUMINATE = initializeOptionalSpell("illuminate", "lucent", () -> new Illuminate(SpellAttributes.Type.HELD, SpellAttributes.Rarity.UNCOMMON, SpellAttributes.Tier.TWO, SpellAttributes.Marker.UTILITY, "Illuminate", 10, 6, false, 1));
-    public static final RegistryObject<Spell> ILLUMINATE_II = initializeOptionalSpell("illuminate_ii", "lucent", () -> new IlluminateII(SpellAttributes.Type.HELD, SpellAttributes.Rarity.UNCOMMON, SpellAttributes.Tier.TWO, SpellAttributes.Marker.UTILITY, "Illuminate", 10, 6, false, 1));
+    public static final RegistryObject<Spell> ILLUMINATE_II = initializeOptionalSpell("illuminate_ii", "lucent", () -> new IlluminateII(SpellAttributes.Type.HELD, SpellAttributes.Rarity.UNCOMMON, SpellAttributes.Tier.TWO, SpellAttributes.Marker.UTILITY, "Illuminate II", 10, 6, false, 1));
 
     //public static final RegistryObject<Spell> REPEL = register("repel", () -> new Spell(SpellAttributes.HELD, SpellActions::doRepel, "Repel", 1, 3));
     //public static final RegistryObject<Spell> PROTECTION_CIRCLE = register("protection_circle", () -> new Spell(SpellAttributes.HELD, SpellActions::doProtectionCircle, "Protection Circle", 1, 6));

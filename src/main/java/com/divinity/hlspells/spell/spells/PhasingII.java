@@ -38,7 +38,7 @@ public class PhasingII extends Spell {
                         cap.setEffect(INVIS.getEffect());
                         cap.setEffectDuration(0);
                         cap.setEffectAmplifier(INVIS.getAmplifier());
-                        p.setInvulnerable(true); // currently isnt being set to false
+                        p.setInvulnerable(true);
                     }
                 });
             }
