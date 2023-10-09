@@ -1,5 +1,6 @@
 package com.divinity.hlspells.spell.spells;
 
+import com.divinity.hlspells.compat.LucentCompat;
 import com.divinity.hlspells.entities.Summonable;
 import com.divinity.hlspells.spell.Spell;
 import com.divinity.hlspells.spell.SpellAttributes;
@@ -15,7 +16,10 @@ public class IlluminateII extends Spell {
     public IlluminateII(SpellAttributes.Type type, SpellAttributes.Rarity rarity, SpellAttributes.Tier tier, SpellAttributes.Marker marker, String displayName, int xpCost, int tickDelay, boolean treasureOnly, int maxSpellLevel) {
         super(type, rarity, tier, marker, displayName, xpCost, tickDelay, true, maxSpellLevel);
     }
-
+    /**
+     * Implementation handled by Lucent
+     * {@link LucentCompat}
+     */
     @Override
     protected SpellConsumer<Player> getAction() {
         return p -> {
@@ -29,6 +33,7 @@ public class IlluminateII extends Spell {
                     spider.setTarget(null);
                 }
             });
+            this.canUse = true;
             return true;
         };
     }

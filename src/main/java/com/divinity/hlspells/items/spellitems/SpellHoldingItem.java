@@ -11,6 +11,7 @@ import com.divinity.hlspells.setup.init.SpellInit;
 import com.divinity.hlspells.spell.Spell;
 import com.divinity.hlspells.spell.SpellAttributes;
 import com.divinity.hlspells.spell.spells.Illuminate;
+import com.divinity.hlspells.spell.spells.IlluminateII;
 import com.divinity.hlspells.spell.spells.PhasingII;
 import com.divinity.hlspells.util.SpellUtils;
 import com.divinity.hlspells.util.Util;
@@ -134,7 +135,7 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
                 spell.execute(player, stack);
                 capability.ifPresent(cap -> {
                     if (cap.getSpellSoundBuffer() == 0) {
-                        if (spell instanceof Illuminate) {
+                        if (spell instanceof Illuminate || spell instanceof IlluminateII) {
                             player.level.playSound(null, player.blockPosition(), SoundInit.HELD_ILLUMINATE.get(), SoundSource.NEUTRAL, 0.7F, 0.7F);
                             cap.setSpellSoundBuffer(65);
                         }

@@ -61,6 +61,7 @@ public class SpellInit {
 
     // Optional Spells
     public static final RegistryObject<Spell> ILLUMINATE = initializeOptionalSpell("illuminate", "lucent", () -> new Illuminate(SpellAttributes.Type.HELD, SpellAttributes.Rarity.UNCOMMON, SpellAttributes.Tier.TWO, SpellAttributes.Marker.UTILITY, "Illuminate", 10, 6, false, 1));
+    public static final RegistryObject<Spell> ILLUMINATE_II = initializeOptionalSpell("illuminate_ii", "lucent", () -> new IlluminateII(SpellAttributes.Type.HELD, SpellAttributes.Rarity.UNCOMMON, SpellAttributes.Tier.TWO, SpellAttributes.Marker.UTILITY, "Illuminate", 10, 6, false, 1));
 
     //public static final RegistryObject<Spell> REPEL = register("repel", () -> new Spell(SpellAttributes.HELD, SpellActions::doRepel, "Repel", 1, 3));
     //public static final RegistryObject<Spell> PROTECTION_CIRCLE = register("protection_circle", () -> new Spell(SpellAttributes.HELD, SpellActions::doProtectionCircle, "Protection Circle", 1, 6));
