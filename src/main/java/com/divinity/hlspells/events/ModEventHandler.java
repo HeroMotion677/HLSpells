@@ -3,9 +3,11 @@ import com.divinity.hlspells.HLSpells;
 import com.divinity.hlspells.capabilities.totemcap.ITotemCap;
 import com.divinity.hlspells.capabilities.totemcap.TotemItemProvider;
 import com.divinity.hlspells.client.models.BaseBoltModel;
+import com.divinity.hlspells.client.models.FireballModel;
 import com.divinity.hlspells.client.models.WizardHatModel;
 import com.divinity.hlspells.client.other.AltarItemRenderer;
 import com.divinity.hlspells.client.renderers.BaseBoltRenderer;
+import com.divinity.hlspells.client.renderers.FireballRenderer;
 import com.divinity.hlspells.compat.CuriosCompat;
 import com.divinity.hlspells.entities.projectile.InvisibleTargetingEntity;
 import com.divinity.hlspells.langproviders.EnUsLangProvider;
@@ -119,6 +121,7 @@ public class ModEventHandler {
         public static void registerLayer(EntityRenderersEvent.RegisterLayerDefinitions event) {
             event.registerLayerDefinition(BaseBoltModel.LAYER_LOCATION, BaseBoltModel::createBodyLayer);
             event.registerLayerDefinition(WizardHatModel.LAYER_LOCATION, WizardHatModel::createBodyLayer);
+            event.registerLayerDefinition(FireballModel.LAYER_LOCATION, FireballModel::createBodyLayer);
         }
 
         @SubscribeEvent
@@ -145,6 +148,8 @@ public class ModEventHandler {
             event.registerEntityRenderer(EntityInit.AQUA_BOLT_ENTITY.get(), ctx -> new BaseBoltRenderer<>(ctx, getBoltLocation("textures/entity/bolt/blue_bolt.png")));
             event.registerEntityRenderer(EntityInit.FREEZING_BOLT_ENTITY.get(), ctx -> new BaseBoltRenderer<>(ctx, getBoltLocation("textures/entity/bolt/white_bolt.png")));
             event.registerEntityRenderer(EntityInit.CHORUS_BOLT_ENTITY.get(), ctx -> new BaseBoltRenderer<>(ctx, getBoltLocation("textures/entity/bolt/purple_bolt.png")));
+            event.registerEntityRenderer(EntityInit.FIREBALL.get(), ctx -> new FireballRenderer<>(ctx, getBoltLocation("textures/entity/fireball/fireball1.png")));
+            event.registerEntityRenderer(EntityInit.FIREBALL2.get(), ctx -> new FireballRenderer<>(ctx, getBoltLocation("textures/entity/fireball/fireball2.png")));
             event.registerEntityRenderer(EntityInit.KNOCKBACK_BOLT_ENTITY.get(), ShulkerBulletRenderer::new);
             event.registerEntityRenderer(EntityInit.SUMMONED_VEX_ENTITY.get(), VexRenderer::new);
             event.registerEntityRenderer(EntityInit.SUMMONED_SKELETON_ENTITY.get(), SkeletonRenderer::new);

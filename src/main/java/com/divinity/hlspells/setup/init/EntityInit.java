@@ -30,6 +30,10 @@ public class EntityInit {
     public static final RegistryObject<EntityType<KnockbackBoltEntity>> KNOCKBACK_BOLT_ENTITY = registerEntity("knockback_bolt", () -> EntityType.Builder.of(KnockbackBoltEntity::new, MobCategory.MISC).sized(0.3125F, 0.3125F));
     public static final RegistryObject<EntityType<PiercingBoltEntity>> PIERCING_BOLT_ENTITY = registerEntity("piercing_bolt", () -> EntityType.Builder.<PiercingBoltEntity>of(PiercingBoltEntity::new, MobCategory.MISC).sized(0.3125F, 0.3125F));
     public static final RegistryObject<EntityType<FlamingBoltEntity>> FLAMING_BOLT_ENTITY = registerEntity("flaming_bolt", () -> EntityType.Builder.of(FlamingBoltEntity::new, MobCategory.MISC).sized(0.3125F, 0.3125F));
+
+    public static final RegistryObject<EntityType<FireballEntity>> FIREBALL = registerEntity("fireball", () -> EntityType.Builder.of(FireballEntity::new, MobCategory.MISC).sized(0.3125F, 0.3125F));
+
+    public static final RegistryObject<EntityType<Fireball2Entity>> FIREBALL2 = registerEntity("fireball2", () -> EntityType.Builder.of(Fireball2Entity::new, MobCategory.MISC).sized(0.3125F, 0.3125F));
     public static final RegistryObject<EntityType<AquaBoltEntity>> AQUA_BOLT_ENTITY = registerEntity("aqua_bolt", () -> EntityType.Builder.of(AquaBoltEntity::new, MobCategory.MISC).sized(0.3125F, 0.3125F));
     public static final RegistryObject<EntityType<FreezingBoltEntity>> FREEZING_BOLT_ENTITY = registerEntity("freezing_bolt", () -> EntityType.Builder.of(FreezingBoltEntity::new, MobCategory.MISC).sized(0.3125F, 0.3125F));
     public static final RegistryObject<EntityType<ChorusBoltEntity>> CHORUS_BOLT_ENTITY = registerEntity("chorus_bolt", () -> EntityType.Builder.of(ChorusBoltEntity::new, MobCategory.MISC).sized(0.3125F, 0.3125F));

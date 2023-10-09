@@ -11,6 +11,7 @@ import com.divinity.hlspells.setup.init.SpellInit;
 import com.divinity.hlspells.spell.Spell;
 import com.divinity.hlspells.spell.SpellAttributes;
 import com.divinity.hlspells.spell.spells.Illuminate;
+import com.divinity.hlspells.spell.spells.PhasingII;
 import com.divinity.hlspells.util.SpellUtils;
 import com.divinity.hlspells.util.Util;
 import net.minecraft.ChatFormatting;
@@ -159,7 +160,12 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
             var capability = stack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP);
             capability.ifPresent(cap -> cap.setSpellSoundBuffer(0));
             this.wasHolding = false;
+
             Spell spell = SpellUtils.getSpell(stack);
+
+            if(spell instanceof PhasingII){
+                player.setInvulnerable(false);
+            }
             if (this.castTimeCondition(player, stack)) {
                 if (spell.getSpellType() == SpellAttributes.Type.CAST) {
                     world.playSound(null, player.blockPosition(), spell.getSpellSound(), SoundSource.NEUTRAL, 0.7F, 0.7F);

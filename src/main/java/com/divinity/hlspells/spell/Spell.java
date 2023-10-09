@@ -170,35 +170,20 @@ public abstract class Spell extends ForgeRegistryEntry<Spell> implements Cloneab
                 else {
                     switch (spell.getSpellType()) {
                         case CAST:
-                            if (!player.level.isClientSide())
-                                stack.hurt(calculateSpellHoldingItemDurabilityDamage(stack), player.getRandom(), (ServerPlayer) player);
                             if (HLSpells.CONFIG.spellsUseXP.get())
                                 player.giveExperiencePoints(-SpellUtils.getXpReq(player, spell));
                         case HELD:
                             player.getCapability(PlayerCapProvider.PLAYER_CAP).ifPresent(playerCap -> {
-                                int durabilityTickCounter = playerCap.getDurabilityTickCounter();
                                 int spellXpTickCounter = playerCap.getSpellXpTickCounter();
                                 playerCap.setSpellXpTickCounter(spellXpTickCounter + 1);
-                                playerCap.setDurabilityTickCounter(durabilityTickCounter + 1);
                                 if (spellXpTickCounter == SpellUtils.getTickDelay(player, spell) && HLSpells.CONFIG.spellsUseXP.get()) {
                                     player.giveExperiencePoints(-SpellUtils.getXpReq(player, spell));
                                     playerCap.setSpellXpTickCounter(0);
-                                }
-                                if (durabilityTickCounter % 15 == 0 && !player.level.isClientSide()) {
-                                    stack.hurt(calculateSpellHoldingItemDurabilityDamage(stack), player.getRandom(), (ServerPlayer) player);
-                                    playerCap.setDurabilityTickCounter(0);
                                 }
                             });
                     }
                 }
             }
         };
-    }
-
-    private static int calculateSpellHoldingItemDurabilityDamage(ItemStack itemStack) {
-        int level = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.UNBREAKING, itemStack);
-        if (level < 1) return 1;
-        int random = new Random().nextInt(5);
-        return random <= (level - 1) ? 0 : 1;
     }
 }
