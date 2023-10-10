@@ -1,9 +1,6 @@
 package com.divinity.hlspells.spell.spells;
 
-import com.divinity.hlspells.entities.projectile.BaseBoltEntity;
-import com.divinity.hlspells.entities.projectile.FlamingBoltEntity;
-import com.divinity.hlspells.entities.projectile.FreezingBoltEntity;
-import com.divinity.hlspells.entities.projectile.InvisibleTargetingEntity;
+import com.divinity.hlspells.entities.projectile.*;
 import com.divinity.hlspells.setup.init.SoundInit;
 import com.divinity.hlspells.spell.Spell;
 import com.divinity.hlspells.spell.SpellAttributes;
@@ -44,8 +41,13 @@ public class ProjectileSpell<T extends Projectile> extends Spell {
     public SpellConsumer<Player> getAction() {
         return p -> {
             Entity projectile = this.projectile.create(p.level);
+
             if (projectile instanceof Projectile trueProjectile) {
                 if (trueProjectile instanceof BaseBoltEntity bolt) {
+                    bolt.setInitialPosition(p.position());
+                    this.velocity = 1.6F;
+                }
+                if(trueProjectile instanceof WitherSkullEntity bolt){
                     bolt.setInitialPosition(p.position());
                     this.velocity = 1.6F;
                 }
@@ -111,6 +113,8 @@ public class ProjectileSpell<T extends Projectile> extends Spell {
         }
         else if (projectile instanceof WitherSkull) {
             projectile.playSound(SoundInit.CAST_NECROMANCY.get(), 0.7F, 0.7F);
+        }else{
+            projectile.playSound(SoundInit.CAST_BOLT.get(), 0.7F, 0.7F);
         }
     }
 }

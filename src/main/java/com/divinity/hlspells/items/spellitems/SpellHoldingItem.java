@@ -132,7 +132,9 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
             ItemStack itemstack = player.getItemInHand(player.getUsedItemHand());
             var capability = itemstack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP);
             if (spell.getSpellType() == SpellAttributes.Type.HELD) {
-                spell.execute(player, stack);
+                    spell.execute(player, stack);
+
+
                 capability.ifPresent(cap -> {
                     if (cap.getSpellSoundBuffer() == 0) {
                         if (spell instanceof Illuminate || spell instanceof IlluminateII) {
@@ -175,12 +177,21 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
                 Util.doParticles(player);
                 if (!world.isClientSide()) {
                     capability.filter(p -> !(p.getSpells().isEmpty())).ifPresent(cap -> {
+                            player.getCooldowns().addCooldown(stack.getItem(), (int) (HLSpells.CONFIG.cooldownDuration.get() * 20));
                         if (stack.getItem() instanceof StaffItem item) {
                             if (item.isGemAmethyst() && SpellUtils.getSpellByID(cap.getCurrentSpell()).getMarkerType() == SpellAttributes.Marker.COMBAT) {
-                                player.getCooldowns().addCooldown(stack.getItem(), (int) (HLSpells.CONFIG.cooldownDuration.get() * 20));
+                                player.getCooldowns().addCooldown(stack.getItem(), (int) (HLSpells.CONFIG.cooldownDuration.get() * 25));
                             }
                             else if (!item.isGemAmethyst() && SpellUtils.getSpellByID(cap.getCurrentSpell()).getMarkerType() == SpellAttributes.Marker.UTILITY) {
-                                player.getCooldowns().addCooldown(stack.getItem(), (int) (HLSpells.CONFIG.cooldownDuration.get() * 20));
+                                player.getCooldowns().addCooldown(stack.getItem(), (int) (HLSpells.CONFIG.cooldownDuration.get() * 25));
+                            }
+                        }
+                        if (stack.getItem() instanceof StaffItem item) {
+                            if (!item.isGemAmethyst() && SpellUtils.getSpellByID(cap.getCurrentSpell()).getMarkerType() == SpellAttributes.Marker.COMBAT) {
+                                player.getCooldowns().addCooldown(stack.getItem(), (int) (HLSpells.CONFIG.cooldownDuration.get() * 10));
+                            }
+                            else if (item.isGemAmethyst() && SpellUtils.getSpellByID(cap.getCurrentSpell()).getMarkerType() == SpellAttributes.Marker.UTILITY) {
+                                player.getCooldowns().addCooldown(stack.getItem(), (int) (HLSpells.CONFIG.cooldownDuration.get() * 10));
                             }
                         }
                     });

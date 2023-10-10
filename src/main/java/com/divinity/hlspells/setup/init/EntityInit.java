@@ -32,7 +32,6 @@ public class EntityInit {
     public static final RegistryObject<EntityType<FlamingBoltEntity>> FLAMING_BOLT_ENTITY = registerEntity("flaming_bolt", () -> EntityType.Builder.of(FlamingBoltEntity::new, MobCategory.MISC).sized(0.3125F, 0.3125F));
 
     public static final RegistryObject<EntityType<FireballEntity>> FIREBALL = registerEntity("fireball", () -> EntityType.Builder.of(FireballEntity::new, MobCategory.MISC).sized(0.3125F, 0.3125F));
-
     public static final RegistryObject<EntityType<Fireball2Entity>> FIREBALL2 = registerEntity("fireball2", () -> EntityType.Builder.of(Fireball2Entity::new, MobCategory.MISC).sized(0.3125F, 0.3125F));
     public static final RegistryObject<EntityType<AquaBoltEntity>> AQUA_BOLT_ENTITY = registerEntity("aqua_bolt", () -> EntityType.Builder.of(AquaBoltEntity::new, MobCategory.MISC).sized(0.3125F, 0.3125F));
     public static final RegistryObject<EntityType<FreezingBoltEntity>> FREEZING_BOLT_ENTITY = registerEntity("freezing_bolt", () -> EntityType.Builder.of(FreezingBoltEntity::new, MobCategory.MISC).sized(0.3125F, 0.3125F));

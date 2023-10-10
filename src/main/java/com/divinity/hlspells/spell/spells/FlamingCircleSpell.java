@@ -15,6 +15,7 @@ import java.util.List;
 
 public class FlamingCircleSpell extends Spell {
 
+
     public FlamingCircleSpell(SpellAttributes.Type type, SpellAttributes.Rarity rarity, SpellAttributes.Tier tier, SpellAttributes.Marker marker, String displayName, int xpCost, int tickDelay, boolean treasureOnly, int maxSpellLevel) {
         super(type, rarity, tier, marker, displayName, xpCost, tickDelay, treasureOnly, maxSpellLevel);
     }
@@ -22,21 +23,24 @@ public class FlamingCircleSpell extends Spell {
     @Override
     public SpellConsumer<Player> getAction() {
         return p -> {
-            var livingEntities = Util.getEntitiesInRange(p, LivingEntity.class, 6, -1, 6);
-            p.getCapability(PlayerCapProvider.PLAYER_CAP).ifPresent(cap -> {
-                cap.setSpellTimer(cap.getSpellTimer() + 1);
-                if (cap.getSpellTimer() % 10 == 0) {
-                    doEnchantParticleInterior(p, p.level);
-                    for (int i = 0; i < 2; i++) {
-                        doOuterRingParticles(ParticleTypes.FLAME, p, p.level);
+            setTime();
+            if(time.getTime() <= currentTime+1000) {
+                var livingEntities = Util.getEntitiesInRange(p, LivingEntity.class, 6, -1, 6);
+                p.getCapability(PlayerCapProvider.PLAYER_CAP).ifPresent(cap -> {
+                    cap.setSpellTimer(cap.getSpellTimer() + 1);
+                    if (cap.getSpellTimer() % 10 == 0) {
+                        doEnchantParticleInterior(p, p.level);
+                        for (int i = 0; i < 2; i++) {
+                            doOuterRingParticles(ParticleTypes.FLAME, p, p.level);
+                        }
+                        cap.setSpellTimer(0);
                     }
-                    cap.setSpellTimer(0);
-                }
-                livingEntities.stream().filter(e -> e != null && e != p).forEach(e -> {
-                    e.setLastHurtByPlayer(p);
-                    e.setSecondsOnFire(1);
+                    livingEntities.stream().filter(e -> e != null && e != p).forEach(e -> {
+                        e.setLastHurtByPlayer(p);
+                        e.setSecondsOnFire(1);
+                    });
                 });
-            });
+            }
             return true;
         };
     }

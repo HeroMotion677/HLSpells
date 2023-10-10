@@ -4,6 +4,7 @@ import com.divinity.hlspells.HLSpells;
 import com.divinity.hlspells.capabilities.playercap.PlayerCapProvider;
 import com.divinity.hlspells.setup.init.SpellInit;
 import com.divinity.hlspells.util.SpellUtils;
+import com.sun.jna.platform.win32.Sspi;
 import net.minecraft.network.chat.BaseComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
@@ -16,6 +17,7 @@ import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 
 import javax.annotation.Nullable;
+import java.sql.Timestamp;
 import java.util.Random;
 import java.util.function.Consumer;
 
@@ -32,6 +34,8 @@ public abstract class Spell extends ForgeRegistryEntry<Spell> implements Cloneab
     protected final int maxSpellLevel;
     protected int tickDelay;
     protected boolean canUse;
+    protected Long currentTime;
+    protected Timestamp time = new Timestamp(0);
     protected SoundEvent spellSound;
 
     @Nullable private String descriptionId;
@@ -147,8 +151,9 @@ public abstract class Spell extends ForgeRegistryEntry<Spell> implements Cloneab
     protected abstract SpellConsumer<Player> getAction();
 
     public final void execute(Player player, ItemStack stack) {
-        if (SpellUtils.checkXpReq(player, this) && this.getAction() != null)
+        if (SpellUtils.checkXpReq(player, this) && this.getAction() != null ) {
             this.getAction().andThenIfCast(this.onAfterExecute(this, stack)).accept(player);
+        }
         else this.canUse = false;
     }
 
@@ -186,4 +191,8 @@ public abstract class Spell extends ForgeRegistryEntry<Spell> implements Cloneab
             }
         };
     }
+    public void setTime(){
+        currentTime = time.getTime();
+    }
+
 }

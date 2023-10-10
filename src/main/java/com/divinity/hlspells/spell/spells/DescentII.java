@@ -8,14 +8,13 @@ import com.divinity.hlspells.spell.SpellAttributes;
 import com.divinity.hlspells.spell.SpellConsumer;
 import com.divinity.hlspells.util.Util;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.MobType;
-import net.minecraft.world.entity.Pose;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.monster.Spider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ElytraItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.gameevent.GameEventDispatcher;
@@ -28,17 +27,10 @@ public class DescentII extends Spell {
 @Override
     protected SpellConsumer<Player> getAction() {
         return p -> {
-            var players = Util.getEntitiesInRange(p, Player.class, 3, 3, 3);
-            p.getCapability(PlayerCapProvider.PLAYER_CAP).ifPresent(cap -> {
-                cap.setSpellTimer(cap.getSpellTimer() + 1);
-                for (Player player : players) {
-                    if(!player.isFallFlying() && !player.isOnGround()) {
-                        player.startFallFlying();
-                    }
-                }
-            });
-
-
+            if (!p.verticalCollisionBelow) {
+                    p.startFallFlying();
+                    canUse = false;
+            }
             return true;
         };
     }
