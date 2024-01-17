@@ -3,6 +3,7 @@ buildscript {
         maven { url = 'https://maven.minecraftforge.net' }
         maven { url = 'https://maven.parchmentmc.org' }
         maven { url = 'https://repo.spongepowered.org/maven' }
+        maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
         mavenCentral()
     }
     dependencies {
@@ -31,6 +32,11 @@ repositories {
     maven {
         name = "Modding Legacy Maven"
         url = "https://maven.moddinglegacy.com/artifactory/modding-legacy/"
+    }
+    //GeckoLib
+    maven {
+        name = 'GeckoLib'
+        url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/'
     }
     maven { url = 'https://repo.spongepowered.org/maven' }
 }
@@ -130,6 +136,8 @@ dependencies {
     runtimeOnly fg.deobf("com.legacy:lucent:${lucent_version}")
     // Processes mixin annotations
     annotationProcessor 'org.spongepowered:mixin:0.8.5-SNAPSHOT:processor'
+    // GeckoLib
+    implementation fg.deobf('software.bernie.geckolib:geckolib-forge-1.18:3.0.57')
 }
 
 jar {

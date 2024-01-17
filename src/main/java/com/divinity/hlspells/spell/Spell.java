@@ -37,9 +37,24 @@ public abstract class Spell extends ForgeRegistryEntry<Spell> implements Cloneab
     protected Long currentTime;
     protected Timestamp time = new Timestamp(0);
     protected SoundEvent spellSound;
+    protected int rune;
 
     @Nullable private String descriptionId;
 
+    public Spell(SpellAttributes.Type type, SpellAttributes.Rarity rarity, SpellAttributes.Tier tier, SpellAttributes.Marker marker, String displayName, int xpCost, boolean treasureOnly, int maxSpellLevel, int rune) {
+        this.spellType = type;
+        this.spellRarity = rarity;
+        this.spellTier = tier;
+        this.spellMarkerType = marker;
+        this.displayName = displayName;
+        this.xpCost = xpCost;
+        this.treasureOnly = treasureOnly;
+        this.spellLevel = 1;
+        this.maxSpellLevel = maxSpellLevel;
+        this.canUse = false;
+        this.spellSound = SoundEvents.EVOKER_CAST_SPELL;
+        this.rune = rune;
+    }
     public Spell(SpellAttributes.Type type, SpellAttributes.Rarity rarity, SpellAttributes.Tier tier, SpellAttributes.Marker marker, String displayName, int xpCost, boolean treasureOnly, int maxSpellLevel) {
         this.spellType = type;
         this.spellRarity = rarity;
@@ -52,8 +67,13 @@ public abstract class Spell extends ForgeRegistryEntry<Spell> implements Cloneab
         this.maxSpellLevel = maxSpellLevel;
         this.canUse = false;
         this.spellSound = SoundEvents.EVOKER_CAST_SPELL;
+
     }
 
+    public Spell(SpellAttributes.Type type, SpellAttributes.Rarity rarity, SpellAttributes.Tier tier, SpellAttributes.Marker marker, String displayName, int xpCost, int tickDelay, boolean treasureOnly, int maxSpellLevel, int rune) {
+        this(type, rarity, tier, marker, displayName, xpCost, treasureOnly, maxSpellLevel, rune);
+        this.tickDelay = tickDelay;
+    }
     public Spell(SpellAttributes.Type type, SpellAttributes.Rarity rarity, SpellAttributes.Tier tier, SpellAttributes.Marker marker, String displayName, int xpCost, int tickDelay, boolean treasureOnly, int maxSpellLevel) {
         this(type, rarity, tier, marker, displayName, xpCost, treasureOnly, maxSpellLevel);
         this.tickDelay = tickDelay;
@@ -153,6 +173,7 @@ public abstract class Spell extends ForgeRegistryEntry<Spell> implements Cloneab
     public final void execute(Player player, ItemStack stack) {
         if (SpellUtils.checkXpReq(player, this) && this.getAction() != null ) {
             this.getAction().andThenIfCast(this.onAfterExecute(this, stack)).accept(player);
+
         }
         else this.canUse = false;
     }
@@ -193,6 +214,10 @@ public abstract class Spell extends ForgeRegistryEntry<Spell> implements Cloneab
     }
     public void setTime(){
         currentTime = time.getTime();
+    }
+
+    public int getRune(){
+        return rune;
     }
 
 }

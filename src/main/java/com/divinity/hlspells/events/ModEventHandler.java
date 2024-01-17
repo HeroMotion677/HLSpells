@@ -2,9 +2,7 @@ package com.divinity.hlspells.events;
 import com.divinity.hlspells.HLSpells;
 import com.divinity.hlspells.capabilities.totemcap.ITotemCap;
 import com.divinity.hlspells.capabilities.totemcap.TotemItemProvider;
-import com.divinity.hlspells.client.models.BaseBoltModel;
-import com.divinity.hlspells.client.models.FireballModel;
-import com.divinity.hlspells.client.models.WizardHatModel;
+import com.divinity.hlspells.client.models.*;
 import com.divinity.hlspells.client.other.AltarItemRenderer;
 import com.divinity.hlspells.client.renderers.BaseBoltRenderer;
 import com.divinity.hlspells.client.renderers.FireballRenderer;
@@ -13,6 +11,9 @@ import com.divinity.hlspells.entities.projectile.InvisibleTargetingEntity;
 import com.divinity.hlspells.langproviders.EnUsLangProvider;
 import com.divinity.hlspells.loot.EvokerLootModifier;
 import com.divinity.hlspells.loot.SetSpell;
+import com.divinity.hlspells.particle.ModParticles;
+import com.divinity.hlspells.particle.custom.GreenParticle;
+import com.divinity.hlspells.particle.custom.RuneParticle;
 import com.divinity.hlspells.setup.init.BlockInit;
 import com.divinity.hlspells.setup.init.EntityInit;
 import com.divinity.hlspells.setup.init.ItemInit;
@@ -39,8 +40,10 @@ import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.ClientRegistry;
 import net.minecraftforge.client.event.EntityRenderersEvent;
+import net.minecraftforge.client.event.ParticleFactoryRegisterEvent;
 import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
@@ -185,4 +188,9 @@ public class ModEventHandler {
             return new ResourceLocation(HLSpells.MODID, location);
         }
     }
+    @SubscribeEvent
+    public static void registerParticleFactories(final ParticleFactoryRegisterEvent event){
+        Minecraft.getInstance().particleEngine.register(ModParticles.GREEN_PARTICLE.get(), GreenParticle.Provider::new);
+    }
+
 }

@@ -29,7 +29,7 @@ public class ProjectileSpell<T extends Projectile> extends Spell {
         this.projectile = projectile;
         this.viewVectorOffset = 1;
         this.xOffset = 0;
-        this.yOffset = 0;
+        this.yOffset = 2;
         this.zOffset = 0;
         this.zRot = 1.2F;
         this.velocity = 1.2F;

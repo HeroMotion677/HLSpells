@@ -4,6 +4,7 @@ import com.divinity.hlspells.compat.CuriosCompat;
 import com.divinity.hlspells.capabilities.spellholdercap.ISpellHolder;
 import com.divinity.hlspells.capabilities.totemcap.ITotemCap;
 import com.divinity.hlspells.capabilities.playercap.IPlayerCap;
+import com.divinity.hlspells.particle.ModParticles;
 import com.divinity.hlspells.setup.ModRegistry;
 import com.divinity.hlspells.setup.init.ConfigData;
 import com.divinity.hlspells.world.structures.villages.StructureGen;
@@ -21,6 +22,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import software.bernie.geckolib3.GeckoLib;
 
 @Mod(HLSpells.MODID)
 public class HLSpells {
@@ -44,6 +46,9 @@ public class HLSpells {
         // Registers an event with the mod specific event bus. This is needed to register new stuff.
         bus.addListener(this::sendImc);
         bus.addListener(this::registerAllCapabilities);
+        ModParticles.register(bus);
+
+        GeckoLib.initialize();
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.addListener(this::setupMageHouses);
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, CONFIG_SPEC);

@@ -3,9 +3,10 @@ package com.divinity.hlspells.items.spellitems;
 import com.divinity.hlspells.HLSpells;
 import com.divinity.hlspells.capabilities.spellholdercap.ISpellHolder;
 import com.divinity.hlspells.capabilities.spellholdercap.SpellHolderProvider;
-import com.divinity.hlspells.network.NetworkManager;
-import com.divinity.hlspells.network.packets.clientbound.UpdateDimensionsPacket;
+import com.divinity.hlspells.particle.GenerateParticles;
+import com.divinity.hlspells.particle.ModParticles;
 import com.divinity.hlspells.setup.init.EnchantmentInit;
+import com.divinity.hlspells.setup.init.EntityInit;
 import com.divinity.hlspells.setup.init.SoundInit;
 import com.divinity.hlspells.setup.init.SpellInit;
 import com.divinity.hlspells.spell.Spell;
@@ -15,8 +16,16 @@ import com.divinity.hlspells.spell.spells.IlluminateII;
 import com.divinity.hlspells.spell.spells.PhasingII;
 import com.divinity.hlspells.util.SpellUtils;
 import com.divinity.hlspells.util.Util;
+import com.mojang.brigadier.Command;
+import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.ParseResults;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
+import net.minecraft.commands.CommandFunction;
+import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
@@ -26,27 +35,39 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ai.control.BodyRotationControl;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.level.BaseCommandBlock;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.network.PacketDistributor;
+import net.minecraftforge.fml.loading.FMLConfig;
+import net.minecraftforge.fml.loading.FMLEnvironment;
+import net.minecraftforge.fml.loading.FMLLoader;
+import net.minecraftforge.fml.loading.FMLPaths;
+import net.minecraftforge.fml.loading.targets.FMLClientLaunchHandler;
+import net.minecraftforge.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
+import net.minecraftforge.fml.common.*;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.io.*;
 import java.util.List;
 import java.util.Objects;
+import java.util.Scanner;
 import java.util.function.Predicate;
 
 public class SpellHoldingItem extends ProjectileWeaponItem {
 
     private final boolean isSpellBook;
     private boolean wasHolding;
+
 
     public SpellHoldingItem(Properties properties, boolean isSpellBook) {
         super(properties);
@@ -76,9 +97,12 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
     public void appendHoverText(ItemStack stack, @Nullable Level pLevel, List<Component> text, TooltipFlag pFlag) {
         stack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP).ifPresent(cap -> {
             List<String> spells = cap.getSpells();
+            CompoundTag nbt = new CompoundTag();
             if (isSpellBook) {
                 Spell spell = SpellUtils.getSpell(stack);
                 text.add(spell.getDisplayName().withStyle(spell.getSpellType().getTooltipFormatting()));
+                nbt.putInt("rune", spell.getRune());
+                stack.setTag(nbt);
             }
             else {
                 text.add(1, new TextComponent(ChatFormatting.AQUA + "Spells: "));
@@ -88,6 +112,8 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
                         Spell currentSpell = SpellUtils.getSpellByID(spell);
                         if (cap.getCurrentSpell().equals(spell)) {
                             text.add(new TextComponent(ChatFormatting.BLUE + "   " + currentSpell.getTrueDisplayName()));
+                            nbt.putInt("rune", currentSpell.getRune());
+                            stack.setTag(nbt);
                         }
                         else text.add(new TextComponent(ChatFormatting.GRAY + "   " + currentSpell.getTrueDisplayName()));
                     });
@@ -130,6 +156,21 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
         if (livingEntity instanceof Player player) {
             Spell spell = SpellUtils.getSpell(stack);
             ItemStack itemstack = player.getItemInHand(player.getUsedItemHand());
+            try{
+                if(spell.getSpellType() == SpellAttributes.Type.HELD) {
+                    ResourceLocation fileLocation = new ResourceLocation(HLSpells.MODID + ":functions/large/large_rune_2.mcfunction");
+                    GenerateParticles.generateLargeParticleRune(fileLocation, livingEntity, ParticleTypes.FLAME);
+
+
+                }else{
+                    ResourceLocation fileLocation = new ResourceLocation(HLSpells.MODID + ":functions/small/small_rune_2.mcfunction");
+                    GenerateParticles.generateSmallParticleRune(fileLocation, livingEntity, ParticleTypes.FLAME);
+                }
+            }catch(Exception e){
+                throw new RuntimeException(e);
+            }
+
+
             var capability = itemstack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP);
             if (spell.getSpellType() == SpellAttributes.Type.HELD) {
                     spell.execute(player, stack);
@@ -309,4 +350,5 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
         }
         return player.getUseItemRemainingTicks() < 71988;
     }
+
 }

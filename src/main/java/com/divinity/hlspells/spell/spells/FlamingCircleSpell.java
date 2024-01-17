@@ -1,12 +1,14 @@
 package com.divinity.hlspells.spell.spells;
 
 import com.divinity.hlspells.capabilities.playercap.PlayerCapProvider;
+import com.divinity.hlspells.setup.init.EntityInit;
 import com.divinity.hlspells.spell.Spell;
 import com.divinity.hlspells.spell.SpellAttributes;
 import com.divinity.hlspells.spell.SpellConsumer;
 import com.divinity.hlspells.util.Util;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.particles.SimpleParticleType;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -32,6 +34,8 @@ public class FlamingCircleSpell extends Spell {
                         doEnchantParticleInterior(p, p.level);
                         for (int i = 0; i < 2; i++) {
                             doOuterRingParticles(ParticleTypes.FLAME, p, p.level);
+
+
                         }
                         cap.setSpellTimer(0);
                     }
@@ -39,6 +43,7 @@ public class FlamingCircleSpell extends Spell {
                         e.setLastHurtByPlayer(p);
                         e.setSecondsOnFire(1);
                     });
+
                 });
             }
             return true;
