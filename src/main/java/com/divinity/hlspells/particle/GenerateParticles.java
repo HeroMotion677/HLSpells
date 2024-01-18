@@ -43,7 +43,8 @@ public class GenerateParticles{
             double offsetY = Math.sin(pitchRad);
             double offsetZ = Math.cos(yawRad) * Math.cos(pitchRad);
 
-            livingEntity.getLevel().addParticle(ModParticles.GREEN_PARTICLE.get(), livingEntity.getX()  + offsetX + Double.parseDouble(split[1]),
+            livingEntity.getLevel().addParticle(ModParticles.GREEN_PARTICLE.get(),
+                    livingEntity.getX()  + offsetX + Double.parseDouble(split[1]),
                     livingEntity.getY() + offsetY + Double.parseDouble(split[2]),
                     livingEntity.getZ() + offsetZ + Double.parseDouble(split[3]),
                     0, 0, 0);

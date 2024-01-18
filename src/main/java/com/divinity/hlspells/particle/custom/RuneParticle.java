@@ -18,7 +18,7 @@ public class RuneParticle extends TextureSheetParticle {
         this.yd = yd;
         this.zd = zd;
         this.quadSize*= 1.5F;
-        this.lifetime = 5;
+        this.lifetime = 1;
         this.setSpriteFromAge(spriteSet);
 
         this.rCol = 1f;
