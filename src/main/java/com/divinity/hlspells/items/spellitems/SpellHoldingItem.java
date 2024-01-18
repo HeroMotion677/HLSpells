@@ -11,6 +11,7 @@ import com.divinity.hlspells.setup.init.SoundInit;
 import com.divinity.hlspells.setup.init.SpellInit;
 import com.divinity.hlspells.spell.Spell;
 import com.divinity.hlspells.spell.SpellAttributes;
+import com.divinity.hlspells.spell.spells.DescentII;
 import com.divinity.hlspells.spell.spells.Illuminate;
 import com.divinity.hlspells.spell.spells.IlluminateII;
 import com.divinity.hlspells.spell.spells.PhasingII;
@@ -36,6 +37,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.ai.control.BodyRotationControl;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
@@ -54,6 +56,7 @@ import net.minecraftforge.fml.loading.targets.FMLClientLaunchHandler;
 import net.minecraftforge.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
 import net.minecraftforge.fml.common.*;
+import org.spongepowered.asm.mixin.injection.Desc;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -209,6 +212,9 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 
             if(spell instanceof PhasingII){
                 player.setInvulnerable(false);
+            }
+            if(spell instanceof DescentII){
+                player.setForcedPose(Pose.STANDING);
             }
             if (this.castTimeCondition(player, stack)) {
                 if (spell.getSpellType() == SpellAttributes.Type.CAST) {

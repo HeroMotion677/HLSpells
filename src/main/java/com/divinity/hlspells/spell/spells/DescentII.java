@@ -24,12 +24,20 @@ public class DescentII extends Spell {
     public DescentII(SpellAttributes.Type type, SpellAttributes.Rarity rarity, SpellAttributes.Tier tier, SpellAttributes.Marker marker, String displayName, int xpCost, int tickDelay, boolean treasureOnly, int maxSpellLevel) {
         super(type, rarity, tier, marker, displayName, xpCost, tickDelay, true, maxSpellLevel);
     }
+    int flag = 0;
 @Override
     protected SpellConsumer<Player> getAction() {
         return p -> {
-            if (!p.verticalCollisionBelow) {
-                    p.startFallFlying();
-                    canUse = false;
+
+            if (!p.verticalCollisionBelow && flag == 0) {
+                p.setForcedPose(Pose.FALL_FLYING);
+                float yaw = p.getYRot();
+                float pitch = p.getXRot();
+                float f = 0.3F;
+                double motionX = (double)(-Math.sin(yaw / 180.0F * (float)Math.PI) * Math.cos(pitch / 180.0F * (float)Math.PI) * f);
+                double motionZ = (double)(Math.cos(yaw / 180.0F * (float)Math.PI) * Math.cos(pitch / 180.0F * (float)Math.PI) * f);
+                p.setDeltaMovement(motionX, -0.1, motionZ);
+
             }
             return true;
         };
