@@ -18,7 +18,7 @@ public class RuneParticle extends TextureSheetParticle {
         this.yd = yd;
         this.zd = zd;
         this.quadSize*= 1.5F;
-        this.lifetime = 1;
+        this.lifetime = 2;
         this.setSpriteFromAge(spriteSet);
 
         this.rCol = 1f;
@@ -39,7 +39,7 @@ public class RuneParticle extends TextureSheetParticle {
 
     @Override
     public ParticleRenderType getRenderType(){
-        return ParticleRenderType.PARTICLE_SHEET_LIT;
+        return ParticleRenderType.PARTICLE_SHEET_TRANSLUCENT;
     }
     @OnlyIn(Dist.CLIENT)
     public static class Provider implements ParticleProvider<SimpleParticleType> {

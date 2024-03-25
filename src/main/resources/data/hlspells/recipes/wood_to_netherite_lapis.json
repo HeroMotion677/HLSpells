@@ -1,0 +1,12 @@
+{
+    "type": "minecraft:smithing",
+    "base": {
+        "item": "hlspells:wooden_lapis_staff"
+    },
+    "addition": {
+        "item": "minecraft:netherite_ingot"
+    },
+    "result": {
+        "item": "hlspells:netherite_lapis_staff"
+    }
+}

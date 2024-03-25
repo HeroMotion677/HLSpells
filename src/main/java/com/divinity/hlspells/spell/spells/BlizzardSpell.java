@@ -7,18 +7,21 @@ import com.divinity.hlspells.spell.SpellAttributes;
 import com.divinity.hlspells.spell.SpellConsumer;
 import com.divinity.hlspells.util.Util;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.RegistryObject;
 
 import java.util.stream.Collectors;
 
 public class BlizzardSpell extends Spell {
 
-    public BlizzardSpell(SpellAttributes.Type type, SpellAttributes.Rarity rarity, SpellAttributes.Tier tier, SpellAttributes.Marker marker, String displayName, int xpCost, boolean treasureOnly, int maxSpellLevel) {
-        super(type, rarity, tier, marker, displayName, xpCost, treasureOnly, maxSpellLevel);
+    public BlizzardSpell(SpellAttributes.Type type, SpellAttributes.Rarity rarity, SpellAttributes.Tier tier, SpellAttributes.Marker marker, String displayName, int xpCost, boolean treasureOnly, int maxSpellLevel, RegistryObject<SimpleParticleType> rune) {
+        super(type, rarity, tier, marker, displayName, xpCost, treasureOnly, maxSpellLevel, rune);
     }
 
     @Override

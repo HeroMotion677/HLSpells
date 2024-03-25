@@ -1,0 +1,12 @@
+{
+    "type": "minecraft:smithing",
+    "base": {
+        "item": "hlspells:amethyst_wand"
+    },
+    "addition": {
+        "item": "minecraft:lapis_lazuli"
+    },
+    "result": {
+        "item": "hlspells:lapis_wand"
+    }
+}

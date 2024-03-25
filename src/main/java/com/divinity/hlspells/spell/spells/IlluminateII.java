@@ -6,15 +6,18 @@ import com.divinity.hlspells.spell.Spell;
 import com.divinity.hlspells.spell.SpellAttributes;
 import com.divinity.hlspells.spell.SpellConsumer;
 import com.divinity.hlspells.util.Util;
+import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobType;
 import net.minecraft.world.entity.monster.Spider;
 import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.RegistryObject;
 
 public class IlluminateII extends Spell {
 
-    public IlluminateII(SpellAttributes.Type type, SpellAttributes.Rarity rarity, SpellAttributes.Tier tier, SpellAttributes.Marker marker, String displayName, int xpCost, int tickDelay, boolean treasureOnly, int maxSpellLevel) {
-        super(type, rarity, tier, marker, displayName, xpCost, tickDelay, true, maxSpellLevel);
+    public IlluminateII(SpellAttributes.Type type, SpellAttributes.Rarity rarity, SpellAttributes.Tier tier, SpellAttributes.Marker marker, String displayName, int xpCost, int tickDelay, boolean treasureOnly, int maxSpellLevel, RegistryObject<SimpleParticleType> rune) {
+        super(type, rarity, tier, marker, displayName, xpCost, tickDelay, true, maxSpellLevel, rune);
     }
     /**
      * Implementation handled by Lucent

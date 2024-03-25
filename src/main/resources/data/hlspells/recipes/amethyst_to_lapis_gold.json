@@ -1,0 +1,12 @@
+{
+    "type": "minecraft:smithing",
+    "base": {
+        "item": "hlspells:golden_amethyst_staff"
+    },
+    "addition": {
+        "item": "minecraft:lapis_lazuli"
+    },
+    "result": {
+        "item": "hlspells:golden_lapis_staff"
+    }
+}

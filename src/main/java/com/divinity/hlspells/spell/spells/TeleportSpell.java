@@ -7,16 +7,19 @@ import com.divinity.hlspells.spell.SpellConsumer;
 import com.divinity.hlspells.util.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.RegistryObject;
 
 public class TeleportSpell extends Spell {
 
-    public TeleportSpell(SpellAttributes.Type type, SpellAttributes.Rarity rarity, SpellAttributes.Tier tier, SpellAttributes.Marker marker, String displayName, int xpCost, boolean treasureOnly, int maxSpellLevel) {
-        super(type, rarity, tier, marker, displayName, xpCost, treasureOnly, maxSpellLevel);
+    public TeleportSpell(SpellAttributes.Type type, SpellAttributes.Rarity rarity, SpellAttributes.Tier tier, SpellAttributes.Marker marker, String displayName, int xpCost, boolean treasureOnly, int maxSpellLevel, RegistryObject<SimpleParticleType> rune) {
+        super(type, rarity, tier, marker, displayName, xpCost, treasureOnly, maxSpellLevel, rune);
     }
 
     @Override

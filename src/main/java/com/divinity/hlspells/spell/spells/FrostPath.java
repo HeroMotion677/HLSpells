@@ -6,6 +6,7 @@ import com.divinity.hlspells.spell.SpellAttributes;
 import com.divinity.hlspells.spell.SpellConsumer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Blocks;
@@ -15,13 +16,15 @@ import net.minecraft.world.level.material.Material;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.event.ForgeEventFactory;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.RegistryObject;
 
 import javax.annotation.Nullable;
 
 public class FrostPath extends Spell {
 
-    public FrostPath(SpellAttributes.Type type, SpellAttributes.Rarity rarity, SpellAttributes.Tier tier, SpellAttributes.Marker marker, String displayName, int xpCost, int tickDelay, boolean treasureOnly, int maxSpellLevel) {
-        super(type, rarity, tier, marker, displayName, xpCost, tickDelay, treasureOnly, maxSpellLevel);
+    public FrostPath(SpellAttributes.Type type, SpellAttributes.Rarity rarity, SpellAttributes.Tier tier, SpellAttributes.Marker marker, String displayName, int xpCost, int tickDelay, boolean treasureOnly, int maxSpellLevel, RegistryObject<SimpleParticleType> rune) {
+        super(type, rarity, tier, marker, displayName, xpCost, tickDelay, treasureOnly, maxSpellLevel, rune);
     }
 
     @Override

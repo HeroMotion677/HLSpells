@@ -4,6 +4,7 @@ import com.divinity.hlspells.spell.Spell;
 import com.divinity.hlspells.spell.SpellAttributes;
 import com.divinity.hlspells.spell.SpellConsumer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
@@ -13,10 +14,12 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.RegistryObject;
 
 public class AbsorbingSpell extends Spell {
 
-    public AbsorbingSpell(SpellAttributes.Type type, SpellAttributes.Rarity rarity, SpellAttributes.Tier tier, SpellAttributes.Marker marker, String displayName, int xpCost, boolean treasureOnly, int maxSpellLevel, int rune) {
+    public AbsorbingSpell(SpellAttributes.Type type, SpellAttributes.Rarity rarity, SpellAttributes.Tier tier, SpellAttributes.Marker marker, String displayName, int xpCost, boolean treasureOnly, int maxSpellLevel, RegistryObject<SimpleParticleType> rune) {
         super(type, rarity, tier, marker, displayName, xpCost, treasureOnly, maxSpellLevel, rune);
     }
 

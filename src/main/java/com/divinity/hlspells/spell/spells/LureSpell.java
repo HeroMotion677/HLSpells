@@ -7,10 +7,13 @@ import com.divinity.hlspells.spell.Spell;
 import com.divinity.hlspells.spell.SpellAttributes;
 import com.divinity.hlspells.spell.SpellConsumer;
 import com.divinity.hlspells.util.Util;
+import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.RegistryObject;
 
 import java.util.List;
 
@@ -20,8 +23,8 @@ public class LureSpell extends Spell {
 
     private static final MobEffectInstance GLOWING = new MobEffectInstance(MobEffects.GLOWING, Integer.MAX_VALUE, 5, false, false);
 
-    public LureSpell(SpellAttributes.Type type, SpellAttributes.Rarity rarity, SpellAttributes.Tier tier, SpellAttributes.Marker marker, String displayName, int xpCost, int tickDelay, boolean treasureOnly, int maxSpellLevel) {
-        super(type, rarity, tier, marker, displayName, xpCost, tickDelay, treasureOnly, maxSpellLevel);
+    public LureSpell(SpellAttributes.Type type, SpellAttributes.Rarity rarity, SpellAttributes.Tier tier, SpellAttributes.Marker marker, String displayName, int xpCost, int tickDelay, boolean treasureOnly, int maxSpellLevel, RegistryObject<SimpleParticleType> rune) {
+        super(type, rarity, tier, marker, displayName, xpCost, tickDelay, treasureOnly, maxSpellLevel, rune);
     }
 
     @Override

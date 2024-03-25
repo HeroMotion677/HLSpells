@@ -1,0 +1,12 @@
+{
+    "type": "minecraft:smithing",
+    "base": {
+        "item": "hlspells:netherite_amethyst_staff"
+    },
+    "addition": {
+        "item": "minecraft:lapis_lazuli"
+    },
+    "result": {
+        "item": "hlspells:netherite_lapis_staff"
+    }
+}

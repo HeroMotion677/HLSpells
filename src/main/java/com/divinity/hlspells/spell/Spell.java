@@ -5,6 +5,7 @@ import com.divinity.hlspells.capabilities.playercap.PlayerCapProvider;
 import com.divinity.hlspells.setup.init.SpellInit;
 import com.divinity.hlspells.util.SpellUtils;
 import com.sun.jna.platform.win32.Sspi;
+import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.network.chat.BaseComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
@@ -14,7 +15,9 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistryEntry;
+import net.minecraftforge.registries.RegistryObject;
 
 import javax.annotation.Nullable;
 import java.sql.Timestamp;
@@ -37,11 +40,11 @@ public abstract class Spell extends ForgeRegistryEntry<Spell> implements Cloneab
     protected Long currentTime;
     protected Timestamp time = new Timestamp(0);
     protected SoundEvent spellSound;
-    protected int rune;
+    protected RegistryObject<SimpleParticleType> rune;
 
     @Nullable private String descriptionId;
 
-    public Spell(SpellAttributes.Type type, SpellAttributes.Rarity rarity, SpellAttributes.Tier tier, SpellAttributes.Marker marker, String displayName, int xpCost, boolean treasureOnly, int maxSpellLevel, int rune) {
+    public Spell(SpellAttributes.Type type, SpellAttributes.Rarity rarity, SpellAttributes.Tier tier, SpellAttributes.Marker marker, String displayName, int xpCost, boolean treasureOnly, int maxSpellLevel, RegistryObject<SimpleParticleType> rune) {
         this.spellType = type;
         this.spellRarity = rarity;
         this.spellTier = tier;
@@ -70,7 +73,7 @@ public abstract class Spell extends ForgeRegistryEntry<Spell> implements Cloneab
 
     }
 
-    public Spell(SpellAttributes.Type type, SpellAttributes.Rarity rarity, SpellAttributes.Tier tier, SpellAttributes.Marker marker, String displayName, int xpCost, int tickDelay, boolean treasureOnly, int maxSpellLevel, int rune) {
+    public Spell(SpellAttributes.Type type, SpellAttributes.Rarity rarity, SpellAttributes.Tier tier, SpellAttributes.Marker marker, String displayName, int xpCost, int tickDelay, boolean treasureOnly, int maxSpellLevel, RegistryObject<SimpleParticleType> rune) {
         this(type, rarity, tier, marker, displayName, xpCost, treasureOnly, maxSpellLevel, rune);
         this.tickDelay = tickDelay;
     }
@@ -216,7 +219,7 @@ public abstract class Spell extends ForgeRegistryEntry<Spell> implements Cloneab
         currentTime = time.getTime();
     }
 
-    public int getRune(){
+    public RegistryObject<SimpleParticleType> getRune(){
         return rune;
     }
 

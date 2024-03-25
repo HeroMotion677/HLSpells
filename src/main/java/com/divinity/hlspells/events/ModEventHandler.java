@@ -11,8 +11,7 @@ import com.divinity.hlspells.entities.projectile.InvisibleTargetingEntity;
 import com.divinity.hlspells.langproviders.EnUsLangProvider;
 import com.divinity.hlspells.loot.EvokerLootModifier;
 import com.divinity.hlspells.loot.SetSpell;
-import com.divinity.hlspells.particle.ModParticles;
-import com.divinity.hlspells.particle.custom.GreenParticle;
+import com.divinity.hlspells.setup.init.ParticlesInit;
 import com.divinity.hlspells.particle.custom.RuneParticle;
 import com.divinity.hlspells.setup.init.BlockInit;
 import com.divinity.hlspells.setup.init.EntityInit;
@@ -43,7 +42,6 @@ import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.ParticleFactoryRegisterEvent;
 import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
 import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
@@ -190,7 +188,24 @@ public class ModEventHandler {
     }
     @SubscribeEvent
     public static void registerParticleFactories(final ParticleFactoryRegisterEvent event){
-        Minecraft.getInstance().particleEngine.register(ModParticles.GREEN_PARTICLE.get(), GreenParticle.Provider::new);
+        Minecraft.getInstance().particleEngine.register(ParticlesInit.GREEN_PARTICLE.get(), RuneParticle.Provider::new);
+        Minecraft.getInstance().particleEngine.register(ParticlesInit.BLACK_PARTICLE.get(), RuneParticle.Provider::new);
+        Minecraft.getInstance().particleEngine.register(ParticlesInit.RED_PARTICLE.get(), RuneParticle.Provider::new);
+        Minecraft.getInstance().particleEngine.register(ParticlesInit.WHITE_PARTICLE.get(), RuneParticle.Provider::new);
+        Minecraft.getInstance().particleEngine.register(ParticlesInit.ORANGE_PARTICLE.get(), RuneParticle.Provider::new);
+        Minecraft.getInstance().particleEngine.register(ParticlesInit.PURPLE_PARTICLE.get(), RuneParticle.Provider::new);
+        Minecraft.getInstance().particleEngine.register(ParticlesInit.BLUE_PARTICLE.get(), RuneParticle.Provider::new);
+        Minecraft.getInstance().particleEngine.register(ParticlesInit.YELLOW_PARTICLE.get(), RuneParticle.Provider::new);
+
+        Minecraft.getInstance().particleEngine.register(ParticlesInit.GREEN_PARTICLE_SMALL.get(), RuneParticle.Provider::new);
+        Minecraft.getInstance().particleEngine.register(ParticlesInit.BLACK_PARTICLE_SMALL.get(), RuneParticle.Provider::new);
+        Minecraft.getInstance().particleEngine.register(ParticlesInit.RED_PARTICLE_SMALL.get(), RuneParticle.Provider::new);
+        Minecraft.getInstance().particleEngine.register(ParticlesInit.WHITE_PARTICLE_SMALL.get(), RuneParticle.Provider::new);
+        Minecraft.getInstance().particleEngine.register(ParticlesInit.ORANGE_PARTICLE_SMALL.get(), RuneParticle.Provider::new);
+        Minecraft.getInstance().particleEngine.register(ParticlesInit.PURPLE_PARTICLE_SMALL.get(), RuneParticle.Provider::new);
+        Minecraft.getInstance().particleEngine.register(ParticlesInit.BLUE_PARTICLE_SMALL.get(), RuneParticle.Provider::new);
+        Minecraft.getInstance().particleEngine.register(ParticlesInit.YELLOW_PARTICLE_SMALL.get(), RuneParticle.Provider::new);
+
     }
 
 }

@@ -1,0 +1,29 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        " #Y",
+        "PCP",
+        " _ "
+    ],
+    "key": {
+        "#": {
+            "item": "minecraft:red_carpet"
+        },
+        "Y": {
+            "item": "minecraft:purple_candle"
+        },
+        "P": {
+            "item": "minecraft:gilded_blackstone"
+        },
+        "C": {
+            "item": "minecraft:chiseled_polished_blackstone"
+        },
+        "_": {
+            "item": "minecraft:deepslate_brick_slab"
+        }
+    },
+    "result": {
+        "item": "hlspells:altar_of_attunement",
+        "count": 1
+    }
+}

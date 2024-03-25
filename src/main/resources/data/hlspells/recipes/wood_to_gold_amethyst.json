@@ -1,0 +1,12 @@
+{
+    "type": "minecraft:smithing",
+    "base": {
+        "item": "hlspells:wooden_amethyst_staff"
+    },
+    "addition": {
+        "item": "minecraft:gold_ingot"
+    },
+    "result": {
+        "item": "hlspells:golden_amethyst_staff"
+    }
+}

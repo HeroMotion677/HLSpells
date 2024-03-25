@@ -6,6 +6,7 @@ import com.divinity.hlspells.spell.Spell;
 import com.divinity.hlspells.spell.SpellAttributes;
 import com.divinity.hlspells.spell.SpellConsumer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.*;
@@ -16,6 +17,8 @@ import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TieredItem;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.RegistryObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,8 +35,8 @@ public class SummonSpell<T extends Entity & Summonable> extends Spell {
     private double attributeIncrease;
     private final Map<Attribute, Double> attributeMap;
 
-    public SummonSpell(EntityType<T> summoned, SpellAttributes.Type type, SpellAttributes.Rarity rarity, SpellAttributes.Tier tier, SpellAttributes.Marker marker, String displayName, int xpCost, boolean treasureOnly, int maxSpellLevel) {
-        super(type, rarity, tier, marker, displayName, xpCost, treasureOnly, maxSpellLevel);
+    public SummonSpell(EntityType<T> summoned, SpellAttributes.Type type, SpellAttributes.Rarity rarity, SpellAttributes.Tier tier, SpellAttributes.Marker marker, String displayName, int xpCost, boolean treasureOnly, int maxSpellLevel, RegistryObject<SimpleParticleType> rune) {
+        super(type, rarity, tier, marker, displayName, xpCost, treasureOnly, maxSpellLevel, rune);
         this.summoned = summoned;
         this.summonCount = 1;
         this.items = new ArrayList<>();
