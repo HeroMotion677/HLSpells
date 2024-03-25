@@ -24,23 +24,13 @@ public class PhasingII extends Spell {
     public PhasingII(SpellAttributes.Type type, SpellAttributes.Rarity rarity, SpellAttributes.Tier tier, SpellAttributes.Marker marker, String displayName, int xpCost, int tickDelay, boolean treasureOnly, int maxSpellLevel) {
         super(type, rarity, tier, marker, displayName, xpCost, tickDelay, true, maxSpellLevel);
     }
-
-    private static final MobEffectInstance INVIS = new MobEffectInstance(MobEffects.INVISIBILITY, Integer.MAX_VALUE, 5, false, false, false);
-
     @Override
     public SpellConsumer<Player> getAction() {
         return p -> {
             this.canUse = !p.noPhysics && !p.onClimbable() && !p.isPassenger();
             if (canUse) {
-                p.addEffect(INVIS);
-                p.getCapability(PlayerCapProvider.PLAYER_CAP).ifPresent(cap -> {
-                    if (cap.getEffect() == null) {
-                        cap.setEffect(INVIS.getEffect());
-                        cap.setEffectDuration(0);
-                        cap.setEffectAmplifier(INVIS.getAmplifier());
-                        p.setInvulnerable(true);
-                    }
-                });
+                p.setInvisible(true);
+                p.setInvulnerable(true);
             }
             return this.canUse;
         };

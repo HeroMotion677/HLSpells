@@ -212,6 +212,7 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 
             if(spell instanceof PhasingII){
                 player.setInvulnerable(false);
+                player.setInvisible(false);
             }
             if(spell instanceof DescentII){
                 player.setForcedPose(Pose.STANDING);

@@ -49,7 +49,7 @@ public class ProjectileSpell<T extends Projectile> extends Spell {
                 }
                 if(trueProjectile instanceof WitherSkullEntity bolt){
                     bolt.setInitialPosition(p.position());
-                    this.velocity = 1.6F;
+                    this.velocity = 2F;
                 }
                 Vec3 viewVector = p.getViewVector(1.0F);
                 Vec3 positionVector = new Vec3(p.getX() + (viewVector.x * this.viewVectorOffset) + this.xOffset, p.getY() + this.yOffset, p.getZ() + (viewVector.z * this.viewVectorOffset) + this.zOffset);
