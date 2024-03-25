@@ -27,10 +27,10 @@ public final class LucentCompat implements ILucentPlugin {
         registry.register(EntityType.PLAYER, (Player player) -> {
             if (player instanceof AbstractClientPlayer clientPlayer) {
                 if (SpellUtils.getSpell(clientPlayer.getUseItem()) instanceof Illuminate spell && spell.canUseSpell()) {
-                    return 15;
+                    return 13;
                 }
                 else if(SpellUtils.getSpell(clientPlayer.getUseItem()) instanceof IlluminateII spell2 && spell2.canUseSpell()){
-                    return 15;
+                    return 30;
                 }
             }
             return 0;
