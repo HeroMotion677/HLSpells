@@ -60,9 +60,9 @@ public class ChorusBoltEntity extends BaseBoltEntity {
         double d1 = livingEntity.getY();
         double d2 = livingEntity.getZ();
         for (int i = 0; i < 64; ++i) {
-            double d3 = livingEntity.getX() + (livingEntity.getRandom().nextDouble() - 0.5D) * 16.0D;
-            double d4 = Mth.clamp(livingEntity.getY() + (double) (livingEntity.getRandom().nextInt(16) - 8), livingLevel.getMinBuildHeight(), livingLevel.getMinBuildHeight() + ((ServerLevel) livingLevel).getLogicalHeight() - 1);
-            double d5 = livingEntity.getZ() + (livingEntity.getRandom().nextDouble() - 0.5D) * 16.0D;
+            double d3 = livingEntity.getX() + (livingEntity.getRandom().nextDouble() - 0.5D) * 32.0D;
+            double d4 = Mth.clamp(livingEntity.getY() + (double) (livingEntity.getRandom().nextInt(32) - 8), livingLevel.getMinBuildHeight(), livingLevel.getMinBuildHeight() + ((ServerLevel) livingLevel).getLogicalHeight() - 1);
+            double d5 = livingEntity.getZ() + (livingEntity.getRandom().nextDouble() - 0.5D) * 32.0D;
             if (livingEntity.isPassenger()) livingEntity.stopRiding();
             if (livingEntity.randomTeleport(d3, d4, d5, true)) {
                 SoundEvent soundevent = livingEntity instanceof Fox ? SoundEvents.FOX_TELEPORT : SoundEvents.CHORUS_FRUIT_TELEPORT;
