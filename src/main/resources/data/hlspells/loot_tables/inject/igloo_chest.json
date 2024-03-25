@@ -5,13 +5,13 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "weight": 3,
+          "weight": 2,
           "quality": 1,
           "name": "hlspells:spell_book",
           "functions": [
             {
               "function": "hlspells:set_spell",
-              "spell": "hlspells:fangs"
+              "spell": "hlspells:freezing_bolt"
             },
             {
               "function": "minecraft:set_damage",
@@ -30,7 +30,7 @@
           "functions": [
             {
               "function": "hlspells:set_spell",
-              "spell": "hlspells:soul_summon"
+              "spell": "hlspells:frost_wall"
             },
             {
               "function": "minecraft:set_damage",
@@ -54,7 +54,6 @@
           ]
         }
       ],
-
       "conditions": [
         {
           "condition": "minecraft:random_chance",

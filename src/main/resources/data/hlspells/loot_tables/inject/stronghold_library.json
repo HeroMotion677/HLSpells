@@ -40,6 +40,18 @@
               }
             }
           ]
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 1,
+          "quality": 1,
+          "name": "hlspells:wooden_amethyst_staff",
+          "functions": [
+            {
+              "function": "hlspells:set_spell",
+              "spell": "hlspells:no_spell"
+            }
+          ]
         }
       ],
       "conditions": [
