@@ -17,7 +17,7 @@ public class StopHandRender {
     public static void onRenderPlayer(RenderPlayerEvent.Pre event){
         Player player = event.getPlayer();
         if(!event.isCanceled()){
-            if(player.isInvisible()){
+            if(player.isInvisible() && player.isInvulnerable()){
                 event.setCanceled(true);
             }
         }
@@ -27,7 +27,7 @@ public class StopHandRender {
     public static void onRenderHand(RenderArmEvent event){
         LocalPlayer player = Minecraft.getInstance().player;
         if(!event.isCanceled() && player != null){
-            if(player.isInvisible()){
+            if(player.isInvisible() && player.isInvulnerable()){
                 event.setCanceled(true);
             }
         }
