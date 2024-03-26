@@ -24,6 +24,6 @@ public class VillagerInit {
                     ImmutableSet.of(), SoundEvents.ENCHANTMENT_TABLE_USE));
 
     private static Set<BlockState> getAllStates() {
-        return ImmutableSet.copyOf(Blocks.ENCHANTING_TABLE.getStateDefinition().getPossibleStates());
+        return ImmutableSet.copyOf(BlockInit.ORB_OF_ENCHANTING.get().getStateDefinition().getPossibleStates());
     }
 }
