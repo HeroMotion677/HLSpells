@@ -132,7 +132,7 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 
             }else{
                 try{
-                    if(spell instanceof HealingCircleSpell || spell instanceof LightningIII || spell instanceof LureSpell || spell instanceof FlamingCircleSpell || spell instanceof SummonSpell<?> || spell instanceof FrostWallSpell) {
+                    if(spell instanceof HealingCircleSpell || spell instanceof LightningIII || spell instanceof LureSpell || spell instanceof FlamingCircleSpell || spell instanceof SummonSpell<?> || spell instanceof FrostWallSpell|| spell instanceof IlluminateII) {
                         ResourceLocation fileLocation = new ResourceLocation(HLSpells.MODID + ":functions/large/large_rune_2.mcfunction");
                         GenerateParticles.generateParticleRune(fileLocation, livingEntity, spell.getRune());
                     }else{

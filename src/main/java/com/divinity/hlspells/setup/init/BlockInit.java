@@ -3,11 +3,15 @@ package com.divinity.hlspells.setup.init;
 import com.divinity.hlspells.HLSpells;
 import com.divinity.hlspells.world.blocks.AltarOfAttunementBlock;
 import com.divinity.hlspells.world.blocks.CustomFrostedIce;
+import com.divinity.hlspells.world.blocks.OrbOfEnchantingBlock;
 import com.divinity.hlspells.world.blocks.blockentities.AltarOfAttunementBE;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.material.MaterialColor;
 import net.minecraftforge.registries.DeferredRegister;
@@ -28,4 +32,8 @@ public class BlockInit {
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITIES, HLSpells.MODID);
 
     public static final RegistryObject<BlockEntityType<AltarOfAttunementBE>> ALTAR_BE = BLOCK_ENTITIES.register("altar_of_attunement", () -> BlockEntityType.Builder.of(AltarOfAttunementBE::new, ALTAR_OF_ATTUNEMENT_BLOCK.get()).build(null));
+
+    public static final RegistryObject<Block> ORB_OF_ENCHANTING = BLOCKS.register("orb_of_enchanting",
+            ()-> new OrbOfEnchantingBlock(BlockBehaviour.Properties.copy(Blocks.GLASS).strength(4f)
+                    .requiresCorrectToolForDrops()));
 }

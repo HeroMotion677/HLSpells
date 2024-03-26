@@ -1,0 +1,31 @@
+{
+  "variants": {
+    "level=0": {
+      "model": "hlspells:block/orb_of_enchanting"
+    },
+    "level=1": {
+      "model": "hlspells:block/orb_of_enchanting_1"
+    },
+    "level=2": {
+      "model": "hlspells:block/orb_of_enchanting_2"
+    },
+    "level=3": {
+      "model": "hlspells:block/orb_of_enchanting_3"
+    },
+    "level=4": {
+      "model": "hlspells:block/orb_of_enchanting_4"
+    },
+    "level=5": {
+      "model": "hlspells:block/orb_of_enchanting_5"
+    },
+    "level=6": {
+      "model": "hlspells:block/orb_of_enchanting_6"
+    },
+    "level=7": {
+      "model": "hlspells:block/orb_of_enchanting_7"
+    },
+    "level=8": {
+      "model": "hlspells:block/orb_of_enchanting_full"
+    }
+  }
+}

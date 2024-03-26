@@ -1,5 +1,6 @@
 {
   "block.hlspells.altar_of_attunement": "Altar Of Attunement",
+  "block.hlspells.orb_of_enchanting": "Orb of Enchanting",
   "block.hlspells.frosted_ice": "Frosted Ice",
   "container.hlspells.altar_of_attunement": "Altar Of Attunement",
   "container.spell.button.requirement": "Transfer (Levels: %s)",
