@@ -39,7 +39,7 @@ public class SonicBoomSpell extends Spell {
     @Override
     protected SpellConsumer<Player> getAction() {
         return p -> {
-            var entity = Util.rayTrace(p.level, p, 100D);
+            var entity = Util.rayTrace(p.level, p, 10000D);
             if(entity !=null){
                 Vec3 vec3 = p.position().add(0.0D, (double)1.6F, 0.0D);
                 Vec3 vec31 = entity.getEyePosition().subtract(vec3);
