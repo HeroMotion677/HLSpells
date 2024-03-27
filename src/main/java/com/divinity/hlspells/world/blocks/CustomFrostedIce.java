@@ -1,5 +1,6 @@
 package com.divinity.hlspells.world.blocks;
 
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.FrostedIceBlock;
 import net.minecraft.core.Direction;
@@ -13,6 +14,8 @@ import java.util.Random;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
+import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
+
 public class CustomFrostedIce extends FrostedIceBlock {
 
     public CustomFrostedIce(Properties properties) {
@@ -22,7 +25,7 @@ public class CustomFrostedIce extends FrostedIceBlock {
     // Overridden to remove the check for light level
     @Override
     @ParametersAreNonnullByDefault
-    public void tick(BlockState pState, ServerLevel pLevel, BlockPos pPos, Random pRand) {
+    public void tick(BlockState pState, ServerLevel pLevel, BlockPos pPos, RandomSource pRand) {
         if ((pRand.nextInt(3) == 0 || this.fewerNeighboursThan(pLevel, pPos, 4)) && this.slightlyMelt(pState, pLevel, pPos)) {
             BlockPos.MutableBlockPos mutablePos = new BlockPos.MutableBlockPos();
             for (Direction direction : Direction.values()) {

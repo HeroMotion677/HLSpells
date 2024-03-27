@@ -38,8 +38,8 @@ public record TransferSpellsPacket() implements IPacket {
             if (spell != SpellInit.EMPTY.get() && botHolder != null && topHolder != null) {
                 if (SpellUtils.canAddSpell(bottomSlot, spell)) {
                     if (player.isCreative() || player.experienceLevel >= 5 * (spell.rarityAsInt())) {
-                        botHolder.addSpell(spell.getRegistryName().toString());
-                        topHolder.removeSpell(spell.getRegistryName().toString());
+                        botHolder.addSpell(SpellInit.SPELLS_REGISTRY.get().getKey(spell).toString());
+                        topHolder.removeSpell(SpellInit.SPELLS_REGISTRY.get().getKey(spell).toString());
                         player.level.playSound(null, player.blockPosition(), SoundInit.ALTAR_TRANSFER.get(), SoundSource.BLOCKS, 0.6F, 0.6F);
                         if (!player.isCreative()) {
                             player.giveExperiencePoints(-(5 * spell.rarityAsInt()));

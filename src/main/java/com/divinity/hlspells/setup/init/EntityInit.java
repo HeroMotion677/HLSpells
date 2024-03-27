@@ -23,7 +23,7 @@ import java.util.function.Supplier;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD, modid = HLSpells.MODID)
 public class EntityInit {
-    public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(ForgeRegistries.ENTITIES, HLSpells.MODID);
+    public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, HLSpells.MODID);
     private static final List<AttributesRegister<?>> attributeSuppliers = new ArrayList<>();
 
     public static final RegistryObject<EntityType<InvisibleTargetingEntity>> INVISIBLE_TARGETING_ENTITY = registerEntity("invisible_targeting_entity", () -> EntityType.Builder.of(InvisibleTargetingEntity::new, MobCategory.MISC).sized(0.3125F, 0.3125F));

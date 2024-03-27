@@ -6,6 +6,7 @@ import com.divinity.hlspells.capabilities.totemcap.ITotemCap;
 import com.divinity.hlspells.capabilities.playercap.IPlayerCap;
 import com.divinity.hlspells.setup.ModRegistry;
 import com.divinity.hlspells.setup.init.ConfigData;
+import com.divinity.hlspells.setup.init.VillagerInit;
 import com.divinity.hlspells.world.structures.villages.StructureGen;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.MinecraftForge;
@@ -16,6 +17,7 @@ import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.commons.lang3.tuple.Pair;
@@ -65,5 +67,11 @@ public class HLSpells {
         if (ModList.get().isLoaded("curios")) {
             CuriosCompat.sendImc();
         }
+    }
+
+    private void commonSetup(final FMLCommonSetupEvent event){
+        event.enqueueWork(()-> {
+            VillagerInit.registerPOIs();
+        });
     }
 }

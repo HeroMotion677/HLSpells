@@ -6,8 +6,8 @@ import com.divinity.hlspells.setup.init.SpellInit;
 import com.divinity.hlspells.util.SpellUtils;
 import com.sun.jna.platform.win32.Sspi;
 import net.minecraft.core.particles.SimpleParticleType;
-import net.minecraft.network.chat.BaseComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -16,7 +16,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistryEntry;
 import net.minecraftforge.registries.RegistryObject;
 
 import javax.annotation.Nullable;
@@ -24,7 +23,7 @@ import java.sql.Timestamp;
 import java.util.Random;
 import java.util.function.Consumer;
 
-public abstract class Spell extends ForgeRegistryEntry<Spell> implements Cloneable {
+public abstract class Spell implements Cloneable {
 
     protected final SpellAttributes.Type spellType;
     protected final SpellAttributes.Rarity spellRarity;
@@ -129,11 +128,11 @@ public abstract class Spell extends ForgeRegistryEntry<Spell> implements Cloneab
     public String getTrueDisplayName() {
         return this.displayName;
     }
-    public BaseComponent getDisplayName() {
-        return new TranslatableComponent(this.getDescriptionId());
+    public MutableComponent getDisplayName() {
+        return Component.translatable(this.getDescriptionId());
     }
     public String getNameForLevel(int level) {
-        return this.getRegistryName() + " " + "I".repeat(level);
+        return this.displayName + " " + "I".repeat(level);
     }
     public String getDescriptionId() {
         if (this.descriptionId == null) {

@@ -29,7 +29,7 @@ public class BlockInit {
                     .requiresCorrectToolForDrops()
                     .lightLevel(level -> 10).strength(5.0F, 1200.0F))));
 
-    public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITIES, HLSpells.MODID);
+    public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, HLSpells.MODID);
 
     public static final RegistryObject<BlockEntityType<AltarOfAttunementBE>> ALTAR_BE = BLOCK_ENTITIES.register("altar_of_attunement", () -> BlockEntityType.Builder.of(AltarOfAttunementBE::new, ALTAR_OF_ATTUNEMENT_BLOCK.get()).build(null));
 

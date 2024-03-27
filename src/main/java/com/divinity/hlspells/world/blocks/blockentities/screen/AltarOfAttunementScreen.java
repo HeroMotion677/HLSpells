@@ -57,18 +57,18 @@ public class AltarOfAttunementScreen extends AbstractContainerScreen<AltarOfAttu
                 int spellSlotNumber = j + 1;
                 if (this.isHovering(42, 22 + 19 * j, 87, 19, pMouseX, pMouseY) && k > 0) {
                     List<Component> list = Lists.newArrayList();
-                    list.add((new TranslatableComponent("container.spell.clue", clue).withStyle(ChatFormatting.WHITE))); // Change this to diff color for rarity
+                    list.add((Component.translatable("container.spell.clue", clue).withStyle(ChatFormatting.WHITE))); // Change this to diff color for rarity
                      if (!isCreative) {
-                        list.add(TextComponent.EMPTY);
+                        list.add(Component.empty());
                         if (this.minecraft.player.experienceLevel < k) {
-                            list.add((new TranslatableComponent("container.spell.level.requirement", this.menu.costs[j])).withStyle(ChatFormatting.RED));
+                            list.add((Component.translatable("container.spell.level.requirement", this.menu.costs[j])).withStyle(ChatFormatting.RED));
                         }
                         else {
                             Item materialItem = this.handler.getStackInSlot(2).getItem();
                             String isAmethystOrLapis = materialItem == Items.LAPIS_LAZULI ? "Lapis Lazuli" : "Amethyst Shard";
                             MutableComponent conditionalComponent = spellSlotNumber == 1
-                                    ? new TranslatableComponent("container.spell.material.one", isAmethystOrLapis)
-                                    : new TranslatableComponent("container.spell.material.many", spellSlotNumber, isAmethystOrLapis);
+                                    ? Component.translatable("container.spell.material.one", isAmethystOrLapis)
+                                    : Component.translatable("container.spell.material.many", spellSlotNumber, isAmethystOrLapis);
                             list.add(conditionalComponent.withStyle(i >= spellSlotNumber ? ChatFormatting.GRAY : ChatFormatting.RED));
                             list.add(conditionalComponent.withStyle(ChatFormatting.GRAY));
                         }
@@ -108,7 +108,7 @@ public class AltarOfAttunementScreen extends AbstractContainerScreen<AltarOfAttu
                     if (!AltarOfAttunementScreen.this.handler.getStackInSlot(0).isEmpty()) {
                         List<Component> list = new ArrayList<>();
                         ItemStack stack = AltarOfAttunementScreen.this.handler.getStackInSlot(0);
-                        list.add(new TranslatableComponent("container.spell.button.requirement", SpellUtils.getSpell(stack).rarityAsInt()).withStyle(ChatFormatting.WHITE));
+                        list.add(Component.translatable("container.spell.button.requirement", SpellUtils.getSpell(stack).rarityAsInt()).withStyle(ChatFormatting.WHITE));
                         AltarOfAttunementScreen.this.renderComponentTooltip(pPoseStack, list, pMouseX, pMouseY);
                     }
                 }

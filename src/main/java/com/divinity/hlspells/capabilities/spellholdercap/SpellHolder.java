@@ -33,7 +33,7 @@ public class SpellHolder implements ISpellHolder {
             Spell upgrade = spells.getUpgrade();
             if (upgrade != null) {
                 this.spells.remove(spell);
-                this.spells.add(upgrade.getRegistryName().toString());
+                this.spells.add(SpellInit.SPELLS_REGISTRY.get().getKey(upgrade).toString());
             }
         }
         else if (!this.spells.contains(spell)) {
@@ -68,7 +68,7 @@ public class SpellHolder implements ISpellHolder {
     @Override
     @NotNull
     public String getCurrentSpell() {
-        return getCurrentSpellCycle() < spells.size() ? spells.get(getCurrentSpellCycle()) : Objects.requireNonNull(SpellInit.EMPTY.get().getRegistryName()).toString();
+        return getCurrentSpellCycle() < spells.size() ? spells.get(getCurrentSpellCycle()) : Objects.requireNonNull(SpellInit.SPELLS_REGISTRY.get().getKey(SpellInit.EMPTY.get()).toString());
     }
 
     @Override

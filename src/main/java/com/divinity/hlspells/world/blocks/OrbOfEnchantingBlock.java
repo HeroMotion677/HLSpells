@@ -25,6 +25,8 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
+import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
+
 public class OrbOfEnchantingBlock extends Block {
     final double MAX_XP = 1400;
     int xp;

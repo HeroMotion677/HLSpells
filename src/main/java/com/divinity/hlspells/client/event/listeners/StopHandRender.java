@@ -15,7 +15,7 @@ public class StopHandRender {
 
     @SubscribeEvent
     public static void onRenderPlayer(RenderPlayerEvent.Pre event){
-        Player player = event.getPlayer();
+        Player player = event.getEntity();
         if(!event.isCanceled()){
             if(player.isInvisible() && player.isInvulnerable()){
                 event.setCanceled(true);

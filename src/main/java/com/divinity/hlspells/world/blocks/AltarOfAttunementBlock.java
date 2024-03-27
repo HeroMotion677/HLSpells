@@ -29,6 +29,8 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
+import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
+
 @SuppressWarnings("deprecation")
 public class AltarOfAttunementBlock extends EnchantmentTableBlock {
 
@@ -67,7 +69,7 @@ public class AltarOfAttunementBlock extends EnchantmentTableBlock {
         if (pLevel.getBlockEntity(pPos) instanceof AltarOfAttunementBE blockEntity) {
             if (pLevel.isClientSide)
                 return InteractionResult.SUCCESS;
-            NetworkHooks.openGui((ServerPlayer) pPlayer, blockEntity, pPos);
+            NetworkHooks.openScreen((ServerPlayer) pPlayer, blockEntity, pPos);
             if (pPlayer.containerMenu instanceof AltarOfAttunementMenu menu)
                 menu.slotsChanged(null);
             return InteractionResult.CONSUME;

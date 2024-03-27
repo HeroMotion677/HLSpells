@@ -14,7 +14,10 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
+
+import net.minecraft.world.entity.Entity.RemovalReason;
 
 public class AquaBoltEntity extends BaseBoltEntity {
 
@@ -31,7 +34,7 @@ public class AquaBoltEntity extends BaseBoltEntity {
         var fireMobsList = HLSpells.CONFIG.fireMobsList.get();
         boolean predicate = false;
         for (String id : fireMobsList) {
-            if (id.equals(entity.getType().getRegistryName() != null ? entity.getType().getRegistryName().toString() : "")) {
+            if (id.equals(ForgeRegistries.ENTITY_TYPES.getKey(entity.getType()) != null ? ForgeRegistries.ENTITY_TYPES.getKey(entity.getType()).toString() : "")) {
                 predicate = true;
                 break;
             }

@@ -1,6 +1,7 @@
 package com.divinity.hlspells.world.structures.villages;
 
 import com.divinity.hlspells.HLSpells;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
@@ -39,7 +40,8 @@ public class StructureGen {
         StructureTemplatePool pool = dynamicRegistries.registryOrThrow(Registry.TEMPLATE_POOL_REGISTRY).getOptional(new ResourceLocation(villagePiece)).orElse(null);
         if (pool != null) {
             // Pretty sure this can be an immutable list (when datapacked) so gotta make a copy to be safe.
-            List<StructurePoolElement> listOfPieces = new ArrayList<>(pool.templates);
+
+            ObjectArrayList<StructurePoolElement> listOfPieces = new ObjectArrayList<>(pool.templates);
             for (int i = 0; i < weight; i++) {
                 listOfPieces.add(piece);
             }

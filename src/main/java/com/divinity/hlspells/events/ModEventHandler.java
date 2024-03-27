@@ -18,6 +18,7 @@ import com.divinity.hlspells.setup.init.EntityInit;
 import com.divinity.hlspells.setup.init.ItemInit;
 import com.divinity.hlspells.setup.init.MenuTypeInit;
 import com.divinity.hlspells.world.blocks.blockentities.screen.AltarOfAttunementScreen;
+import com.mojang.serialization.Codec;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.model.HumanoidModel;
@@ -37,21 +38,21 @@ import net.minecraft.world.level.storage.loot.functions.LootItemConditionalFunct
 import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.ClientRegistry;
 import net.minecraftforge.client.event.EntityRenderersEvent;
-import net.minecraftforge.client.event.ParticleFactoryRegisterEvent;
-import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
-import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
+import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
+import net.minecraftforge.common.loot.IGlobalLootModifier;
+import net.minecraftforge.common.loot.LootModifier;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
-
+import net.minecraftforge.data.event.GatherDataEvent;
+import net.minecraftforge.registries.RegisterEvent;
+import net.minecraftforge.registries.RegistryObject;
 import java.util.HashMap;
 import java.util.Map;
-
 import static com.divinity.hlspells.HLSpells.LOGGER;
 import static com.divinity.hlspells.events.ForgeEventHandler.WAND_BINDING;
 
@@ -72,16 +73,11 @@ public class ModEventHandler {
     }
 
     @SubscribeEvent
-    public static void registerModifierSerializers(final RegistryEvent.Register<GlobalLootModifierSerializer<?>> event) {
-        event.getRegistry().registerAll(new EvokerLootModifier.Serializer().setRegistryName(new ResourceLocation(HLSpells.MODID, "evoker_modifier")));
-    }
-
-    @SubscribeEvent
     public static void onGatherData(GatherDataEvent event) {
         LOGGER.info("Gathering data providers!");
         DataGenerator generator = event.getGenerator();
         if (event.includeClient()) {
-            generator.addProvider(new EnUsLangProvider(generator));
+            generator.addProvider(event.includeServer(), new EnUsLangProvider(generator));
         }
     }
 
@@ -108,7 +104,6 @@ public class ModEventHandler {
                     return 0;
                 });
             });
-            ClientRegistry.registerKeyBinding(WAND_BINDING);
             // Curios Renderer Registration
             if (HLSpells.isCurioLoaded) {
                 CuriosCompat.renderCuriosTotems(ItemInit.TOTEMS);
@@ -116,6 +111,10 @@ public class ModEventHandler {
             MenuScreens.register(MenuTypeInit.ALTAR_CONTAINER.get(), AltarOfAttunementScreen::new);
             ItemBlockRenderTypes.setRenderLayer(BlockInit.ALTAR_OF_ATTUNEMENT_BLOCK.get(), RenderType.cutout());
             BlockEntityRenderers.register(BlockInit.ALTAR_BE.get(), ctx -> new AltarItemRenderer());
+        }
+        @SubscribeEvent
+        public static void okKeyRegister(RegisterKeyMappingsEvent event){
+            event.register(WAND_BINDING);
         }
 
         @SubscribeEvent
@@ -130,6 +129,8 @@ public class ModEventHandler {
             EntityRendererProvider.Context context = new EntityRendererProvider.Context(
                     Minecraft.getInstance().getEntityRenderDispatcher(),
                     Minecraft.getInstance().getItemRenderer(),
+                    Minecraft.getInstance().getBlockRenderer(),
+                    Minecraft.getInstance().getEntityRenderDispatcher().getItemInHandRenderer(),
                     Minecraft.getInstance().getResourceManager(),
                     Minecraft.getInstance().getEntityModels(),
                     Minecraft.getInstance().font);
@@ -187,7 +188,7 @@ public class ModEventHandler {
         }
     }
     @SubscribeEvent
-    public static void registerParticleFactories(final ParticleFactoryRegisterEvent event){
+    public static void registerParticleFactories(final RegisterParticleProvidersEvent event){
         Minecraft.getInstance().particleEngine.register(ParticlesInit.GREEN_PARTICLE.get(), RuneParticle.Provider::new);
         Minecraft.getInstance().particleEngine.register(ParticlesInit.BLACK_PARTICLE.get(), RuneParticle.Provider::new);
         Minecraft.getInstance().particleEngine.register(ParticlesInit.RED_PARTICLE.get(), RuneParticle.Provider::new);

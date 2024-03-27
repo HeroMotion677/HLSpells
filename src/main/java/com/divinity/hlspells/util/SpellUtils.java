@@ -14,6 +14,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
 import javax.annotation.Nonnull;
@@ -30,7 +31,9 @@ public final class SpellUtils {
      */
     public static Spell getSpell(ItemStack stack) {
         String id = stack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP).map(ISpellHolder::getCurrentSpell).orElse(null);
-        if (id != null) return getSpellByID(id);
+        if (id != null){
+            return getSpellByID(id);
+        }
         else return SpellInit.EMPTY.get();
     }
 
@@ -45,8 +48,9 @@ public final class SpellUtils {
         if (item != ItemStack.EMPTY) {
             List<String> existingSpells = SpellHolderProvider.getSpellHolderUnwrap(item).getSpells();
             Spell currentSpell = getSpell(item);
-            boolean canUpgrade = currentSpell.getUpgrade() != null && currentSpell.getRegistryName().toString().equals(spell.getRegistryName().toString());
-            if (!existingSpells.contains(spell.getRegistryName().toString())) {
+            boolean canUpgrade = currentSpell.getUpgrade() != null &&
+                    SpellInit.SPELLS_REGISTRY.get().getKey(currentSpell).equals(SpellInit.SPELLS_REGISTRY.get().getKey(spell).toString());
+            if (!existingSpells.contains(SpellInit.SPELLS_REGISTRY.get().getKey(spell).toString())) {
                 if (currentSpell.getUpgradeableSpellPath() != null && currentSpell.getUpgradeableSpellPath() == spell.getUpgradeableSpellPath()) {
                     return false;
                 }

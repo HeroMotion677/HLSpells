@@ -16,6 +16,8 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import org.jetbrains.annotations.NotNull;
 
+import net.minecraft.world.entity.Entity.RemovalReason;
+
 public class FreezingBoltEntity extends BaseBoltEntity {
 
     public FreezingBoltEntity(EntityType<? extends BaseBoltEntity> entityType, Level level) {

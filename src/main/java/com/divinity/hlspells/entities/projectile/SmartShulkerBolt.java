@@ -24,6 +24,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
+import net.minecraft.world.entity.Entity.RemovalReason;
+
 public class SmartShulkerBolt extends ShulkerBullet {
 
     public SmartShulkerBolt(Level world, LivingEntity entity, Entity targetEntity, Direction.Axis direction) {

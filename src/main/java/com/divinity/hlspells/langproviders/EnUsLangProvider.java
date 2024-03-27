@@ -6,6 +6,7 @@ import net.minecraft.data.DataGenerator;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.BlockItem;
 import net.minecraftforge.common.data.LanguageProvider;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.commons.lang3.text.WordUtils;
 
 public class EnUsLangProvider extends LanguageProvider {
@@ -18,11 +19,11 @@ public class EnUsLangProvider extends LanguageProvider {
     @SuppressWarnings({"deprecation", "ConstantConditions"})
     protected void addTranslations() {
         SpellInit.SPELLS.getEntries().forEach(s -> this.add(this.spellNameToRegistryName(s.get().getTrueDisplayName()), s.get().getTrueDisplayName()));
-        EntityInit.ENTITIES.getEntries().forEach(e -> this.add(e.get(), WordUtils.capitalizeFully(e.get().getRegistryName().toString().replace("hlspells:", "").replace("_", " "))));
-        BlockInit.BLOCKS.getEntries().forEach(b -> this.add(b.get(), WordUtils.capitalizeFully(b.get().getRegistryName().toString().replace("hlspells:", "").replace("_", " "))));
-        EnchantmentInit.ENCHANTMENTS.getEntries().forEach(e -> this.add(e.get(), WordUtils.capitalizeFully(e.get().getRegistryName().toString().replace("hlspells:", "").replace("_", " "))));
-        ItemInit.ITEMS.getEntries().stream().filter(i -> !(i.get() instanceof BlockItem)).forEach(i -> this.add(i.get(), WordUtils.capitalizeFully(i.get().getRegistryName().toString().replace("hlspells:", "").replace("_", " "))));
-        MenuTypeInit.MENUS.getEntries().forEach(m -> this.add(this.menuTypeRegistryName(m.get()), WordUtils.capitalizeFully(m.get().getRegistryName().toString().replace("hlspells:", "").replace("_", " "))));
+        EntityInit.ENTITIES.getEntries().forEach(e -> this.add(e.get(), WordUtils.capitalizeFully(ForgeRegistries.ENTITY_TYPES.getKey(e.get()).toString().replace("hlspells:", "").replace("_", " "))));
+        BlockInit.BLOCKS.getEntries().forEach(b -> this.add(b.get(), WordUtils.capitalizeFully(ForgeRegistries.BLOCKS.getKey(b.get()).toString().replace("hlspells:", "").replace("_", " "))));
+        EnchantmentInit.ENCHANTMENTS.getEntries().forEach(e -> this.add(e.get(), WordUtils.capitalizeFully(ForgeRegistries.ENCHANTMENTS.getKey(e.get()).toString().replace("hlspells:", "").replace("_", " "))));
+        ItemInit.ITEMS.getEntries().stream().filter(i -> !(i.get() instanceof BlockItem)).forEach(i -> this.add(i.get(), WordUtils.capitalizeFully(ForgeRegistries.ITEMS.getKey(i.get()).toString().replace("hlspells:", "").replace("_", " "))));
+        MenuTypeInit.MENUS.getEntries().forEach(m -> this.add(this.menuTypeRegistryName(m.get()), WordUtils.capitalizeFully(ForgeRegistries.MENU_TYPES.getKey(m.get()).toString().replace("hlspells:", "").replace("_", " "))));
         this.add("entity.minecraft.villager.hlspells.mage", "Mage");
         this.add("container.spell.clue","%s");
         this.add("container.spell.level.requirement" , "Level Requirement: %s");
@@ -48,6 +49,6 @@ public class EnUsLangProvider extends LanguageProvider {
     }
 
     private String menuTypeRegistryName(MenuType<?> menuType) {
-        return "container." + menuType.getRegistryName().toString().replace(":", ".");
+        return "container." + menuType.toString().replace(":", ".");
     }
 }

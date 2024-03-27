@@ -13,6 +13,7 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
 import java.util.List;
@@ -46,7 +47,7 @@ public class LureSpell extends Spell {
                 List<? extends String> blacklistedMobs = HLSpells.CONFIG.sapientMobsList.get();
                 boolean predicate = false;
                 for (String id : blacklistedMobs) {
-                    if (id.equals(mob.getType().getRegistryName() != null ? mob.getType().getRegistryName().toString() : "")) {
+                    if (id.equals(ForgeRegistries.ENTITY_TYPES.getKey(mob.getType()) != null ? ForgeRegistries.ENTITY_TYPES.getKey(mob.getType()) : "")) {
                         predicate = true;
                     }
                 }

@@ -67,10 +67,9 @@ public class SpellInit {
     //public static final RegistryObject<Spell> REPEL = register("repel", () -> new Spell(SpellAttributes.HELD, SpellActions::doRepel, "Repel", 1, 3));
     //public static final RegistryObject<Spell> PROTECTION_CIRCLE = register("protection_circle", () -> new Spell(SpellAttributes.HELD, SpellActions::doProtectionCircle, "Protection Circle", 1, 6));
 
-    public static Supplier<IForgeRegistry<Spell>> SPELLS_REGISTRY = SPELLS.makeRegistry(Spell.class,
-            () -> new RegistryBuilder<Spell>().setMaxID(Integer.MAX_VALUE - 1)
-                    .onAdd((owner, stage, id, obj, oldObj) -> {})
-                    .setDefaultKey(new ResourceLocation(HLSpells.MODID, "empty")));
+    public static Supplier<IForgeRegistry<Spell>> SPELLS_REGISTRY = SPELLS.makeRegistry(() -> new RegistryBuilder<Spell>().setMaxID(Integer.MAX_VALUE - 1)
+            .onAdd((owner, stage, id, key, obj, oldObj ) -> {})
+            .setDefaultKey(new ResourceLocation(HLSpells.MODID, "empty")));
 
     private static RegistryObject<Spell> register(String name, Supplier<Spell> spell) {
         RegistryObject<Spell> registryObject = SPELLS.register(name, spell);

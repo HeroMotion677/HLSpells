@@ -66,7 +66,7 @@ public class VillagerTradesRegistration {
                     0.05F
             ));
             ItemStack bondSpellBook = new ItemStack(ItemInit.SPELL_BOOK.get());
-            bondSpellBook.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP).ifPresent(cap -> cap.addSpell(Objects.requireNonNull(SpellInit.BOND.get().getRegistryName()).toString()));
+            bondSpellBook.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP).ifPresent(cap -> cap.addSpell(Objects.requireNonNull(SpellInit.SPELLS_REGISTRY.get().getKey(SpellInit.BOND.get()).toString())));
             trades.get(2).add((pTrader, pRand) -> new MerchantOffer(
                     new ItemStack(Items.LAPIS_LAZULI, 10),
                     new ItemStack(ItemInit.SPELL_BOOK.get()),
@@ -76,7 +76,7 @@ public class VillagerTradesRegistration {
                     0.05F
             ));
             ItemStack arrowRain = new ItemStack(ItemInit.SPELL_BOOK.get());
-            arrowRain.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP).ifPresent(cap -> cap.addSpell(Objects.requireNonNull(SpellInit.ARROW_RAIN.get().getRegistryName()).toString()));
+            arrowRain.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP).ifPresent(cap -> cap.addSpell(Objects.requireNonNull(SpellInit.SPELLS_REGISTRY.get().getKey(SpellInit.ARROW_RAIN.get())).toString()));
             trades.get(2).add((pTrader, pRand) -> new MerchantOffer(
                     EnchantedBookItem.createForEnchantment(new EnchantmentInstance(Enchantments.POWER_ARROWS, 2)),
                     new ItemStack(Items.LAPIS_LAZULI, 5),

@@ -26,7 +26,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -48,7 +48,7 @@ import net.minecraft.world.level.storage.loot.entries.LootTableReference;
 import net.minecraft.world.level.storage.loot.providers.number.BinomialDistributionGenerator;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.MovementInputUpdateEvent;
-import net.minecraftforge.client.event.RenderBlockOverlayEvent;
+import net.minecraftforge.client.event.RenderBlockScreenEffectEvent;
 import net.minecraftforge.client.settings.KeyConflictContext;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.LootTableLoadEvent;
@@ -112,7 +112,7 @@ public class ForgeEventHandler {
 
     @SubscribeEvent
     public static void onEntityDies(LivingDeathEvent event) {
-        if (event.getEntityLiving() instanceof Player player) {
+        if (event.getEntity() instanceof Player player) {
             // Check if any item in the player's inventory contains soul bond enchant
             soulBond = player.inventory.compartments
                     .stream()
@@ -210,9 +210,9 @@ public class ForgeEventHandler {
 
     @SubscribeEvent
     public static void onEntityCloned(PlayerEvent.Clone event) {
-        if (event.isWasDeath() && !event.getPlayer().level.isClientSide()) {
+        if (event.isWasDeath() && !event.getEntity().level.isClientSide()) {
             Player original = event.getOriginal();
-            Player current = event.getPlayer();
+            Player current = event.getEntity();
             boolean keepingActivated = false;
             // TOTEM OF KEEPING (Restores the inventory)
             original.reviveCaps(); // This is needed to re-validate original player's capabilities (only affects newer versions apparently)
@@ -285,8 +285,8 @@ public class ForgeEventHandler {
     // TOTEM OF RETURNING (Teleports the player to last died pos when right-clicked)
     @SubscribeEvent
     public static void onPlayerRightClick(PlayerInteractEvent.RightClickItem event) {
-        if (event.getPlayer() != null) {
-            Player player = event.getPlayer();
+        if (event.getEntity() != null) {
+            Player player = event.getEntity();
             Level world = player.level;
             if (!world.isClientSide()) {
                 for (InteractionHand hand : InteractionHand.values()) {
@@ -318,7 +318,7 @@ public class ForgeEventHandler {
                 if (next.getItem() instanceof SpellHoldingItem item && !item.isSpellBook()) {
                     next.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP).filter(cap -> !cap.getSpells().isEmpty()).ifPresent(cap -> {
                         Spell spell = SpellUtils.getSpellByID(cap.getCurrentSpell());
-                        player.displayClientMessage(new TextComponent("Spell : " + spell.getTrueDisplayName()).withStyle(ChatFormatting.AQUA), true);
+                        player.displayClientMessage(Component.literal("Spell : " + spell.getTrueDisplayName()).withStyle(ChatFormatting.AQUA), true);
                     });
                 }
                 if (previous.getItem() instanceof SpellHoldingItem item) {
@@ -368,7 +368,7 @@ public class ForgeEventHandler {
 
     @SubscribeEvent
     public static void preventPhasingSuffocation(LivingDamageEvent event) {
-        if (event.getEntityLiving() instanceof Player player) {
+        if (event.getEntity() instanceof Player player) {
             if (player.isUsingItem()) {
                 if (SpellUtils.getSpell(player.getUseItem()) instanceof Phasing spell && spell.canUseSpell() || SpellUtils.getSpell(player.getUseItem()) instanceof PhasingII spell2 && spell2.canUseSpell()) {
                     if (event.getSource() == DamageSource.IN_WALL) {
@@ -452,7 +452,7 @@ public class ForgeEventHandler {
     public static class ClientEventHandler {
 
         @SubscribeEvent
-        public static void onRenderBlockOnHUD(RenderBlockOverlayEvent event) {
+        public static void onRenderBlockOnHUD(RenderBlockScreenEffectEvent event) {
             Player player = event.getPlayer();
             if (player != null && player.isUsingItem()) {
                 if (SpellUtils.getSpell(player.getUseItem()) instanceof Phasing spell && spell.canUseSpell() || SpellUtils.getSpell(player.getUseItem()) instanceof PhasingII spell2 && spell2.canUseSpell()) {
@@ -475,7 +475,7 @@ public class ForgeEventHandler {
                                     if (!cap.getSpells().isEmpty()) {
                                         cap.incrementCurrentSpellCycle();
                                         Spell spell = SpellUtils.getSpellByID(cap.getCurrentSpell());
-                                        player.displayClientMessage(new TextComponent("Spell : " + spell.getTrueDisplayName()).withStyle(ChatFormatting.GOLD), true);
+                                        player.displayClientMessage(Component.literal("Spell : " + spell.getTrueDisplayName()).withStyle(ChatFormatting.GOLD), true);
                                     }
                                 });
                                 break;
@@ -494,7 +494,7 @@ public class ForgeEventHandler {
         @SubscribeEvent
         @SuppressWarnings("ConstantConditions")
         public static void onInput(MovementInputUpdateEvent event) {
-            if (event.getPlayer() instanceof LocalPlayer player) {
+            if (event.getEntity() instanceof LocalPlayer player) {
                 InteractionHand hand = player.getUsedItemHand();
                 // Don't remove this even if it complains. If it can be null, it can be null
                 if (hand != null) {

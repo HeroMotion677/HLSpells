@@ -14,6 +14,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
 import java.util.List;
@@ -31,7 +32,7 @@ public class LightningIII extends Spell {
                 List<? extends String> blacklistedMobs = HLSpells.CONFIG.lightningSpellList.get();
                 boolean predicate = false;
                 for (String id : blacklistedMobs) {
-                    if (id.equals(f.getType().getRegistryName() != null ? f.getType().getRegistryName().toString() : "")) {
+                    if (id.equals(ForgeRegistries.ENTITY_TYPES.getKey(f.getType()) != null ? ForgeRegistries.ENTITY_TYPES.getKey(f.getType()).toString() : "")) {
                         predicate = true;
                     }
                 }

@@ -20,6 +20,8 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 
+import net.minecraft.world.entity.Entity.RemovalReason;
+
 public class FireballEntity extends BaseBoltEntity {
 
     public FireballEntity(EntityType<? extends BaseBoltEntity> type, Level world) {

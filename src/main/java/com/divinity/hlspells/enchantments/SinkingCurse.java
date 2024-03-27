@@ -13,6 +13,8 @@ import net.minecraftforge.fml.common.Mod;
 
 import static com.divinity.hlspells.HLSpells.MODID;
 
+import net.minecraft.world.item.enchantment.Enchantment.Rarity;
+
 @Mod.EventBusSubscriber(modid = MODID)
 public class SinkingCurse extends Enchantment {
 
@@ -21,9 +23,9 @@ public class SinkingCurse extends Enchantment {
     }
 
     @SubscribeEvent
-    public static void onArmorTick(LivingEvent.LivingUpdateEvent event) {
-        if (event.getEntityLiving() != null) {
-            LivingEntity entity = event.getEntityLiving();
+    public static void onArmorTick(LivingEvent.LivingTickEvent event) {
+        if (event.getEntity() != null) {
+            LivingEntity entity = event.getEntity();
             for (ItemStack stack : entity.getArmorSlots())  {
                 if (EnchantmentHelper.getItemEnchantmentLevel(EnchantmentInit.CURSE_OF_SINKING.get(), stack) > 0) {
                     // FluidOnEyes check whether the player is currently in a liquid. If no liquids are found, the value is empty

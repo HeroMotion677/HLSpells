@@ -9,6 +9,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -84,7 +85,7 @@ public class SummonedSkeletonEntity extends AbstractSkeleton implements Summonab
     }
 
     @Override
-    protected void populateDefaultEquipmentSlots(@NotNull DifficultyInstance instance) {
+    protected void populateDefaultEquipmentSlots(RandomSource pRandom, @NotNull DifficultyInstance instance) {
         this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.IRON_SWORD));
         this.setItemSlot(EquipmentSlot.HEAD, new ItemStack(Items.IRON_HELMET));
         this.setDropChance(EquipmentSlot.MAINHAND, 0.0F);

@@ -36,28 +36,28 @@ public class ItemInit {
     // Staffs
     public static final RegistryObject<Item> WOODEN_STAFF = ITEMS.register("wooden_lapis_staff", () ->
             new StaffItem(new Item.Properties().tab(CreativeModeTab.TAB_TOOLS).durability(70),
-                    2D, -3.231D, HLSpells.CONFIG.woodStaffCastTime.get() * 20, false));
+                    2D, -3.231D, 0.6 * 20, false));
 
     public static final RegistryObject<Item> GOLDEN_STAFF = ITEMS.register("golden_lapis_staff", () ->
             new StaffItem(new Item.Properties().tab(CreativeModeTab.TAB_TOOLS).durability(170),
-                    5D, -2.572D, HLSpells.CONFIG.goldStaffCastTime.get() * 20, false));
+                    5D, -2.572D, 0.2 * 20, false));
 
     public static final RegistryObject<Item> NETHER_STAFF = ITEMS.register("netherite_lapis_staff", () ->
             new StaffItem(new Item.Properties().tab(CreativeModeTab.TAB_TOOLS).durability(700),
-                    7D, -3D, HLSpells.CONFIG.netheriteStaffCastTime.get() * 20, false));
+                    7D, -3D, 0.4 * 20, false));
 
     // Amethyst Variants
     public static final RegistryObject<Item> WOODEN_STAFF_AMETHYST = ITEMS.register("wooden_amethyst_staff", () ->
             new StaffItem(new Item.Properties().tab(CreativeModeTab.TAB_TOOLS).durability(70),
-                    2D, -3.231D, HLSpells.CONFIG.woodStaffCastTime.get() * 20, true));
+                    2D, -3.231D, 0.6 * 20, true));
 
     public static final RegistryObject<Item> GOLDEN_STAFF_AMETHYST = ITEMS.register("golden_amethyst_staff", () ->
             new StaffItem(new Item.Properties().tab(CreativeModeTab.TAB_TOOLS).durability(170),
-                    5D, -2.572D, HLSpells.CONFIG.goldStaffCastTime.get() * 20, true));
+                    5D, -2.572D, 0.2 * 20, true));
 
     public static final RegistryObject<Item> NETHER_STAFF_AMETHYST = ITEMS.register("netherite_amethyst_staff", () ->
             new StaffItem(new Item.Properties().tab(CreativeModeTab.TAB_TOOLS).durability(700),
-                    7D, -3D, HLSpells.CONFIG.netheriteStaffCastTime.get() * 20, true));
+                    7D, -3D, 0.4 * 20, true));
 
     public static final List<RegistryObject<Item>> STAFFS = Lists.newArrayList(WOODEN_STAFF, GOLDEN_STAFF, NETHER_STAFF, WOODEN_STAFF_AMETHYST, GOLDEN_STAFF_AMETHYST, NETHER_STAFF_AMETHYST);
 

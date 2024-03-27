@@ -8,13 +8,15 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.client.IItemRenderProperties;
+import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 
 import javax.annotation.Nullable;
 import java.util.function.Consumer;
 import static com.divinity.hlspells.HLSpells.MODID;
 
-public class WizardHatArmorItem extends ArmorItem implements IItemRenderProperties {
+import net.minecraft.world.item.Item.Properties;
+
+public class WizardHatArmorItem extends ArmorItem implements IClientItemExtensions {
 
     public WizardHatArmorItem(ArmorMaterial material, EquipmentSlot type, Properties properties) {
         super(material, type, properties);
@@ -27,11 +29,11 @@ public class WizardHatArmorItem extends ArmorItem implements IItemRenderProperti
     }
 
     @Override
-    public void initializeClient(Consumer<IItemRenderProperties> consumer) {
-        consumer.accept(new IItemRenderProperties() {
+    public void initializeClient(Consumer<IClientItemExtensions> consumer) {
+        consumer.accept(new IClientItemExtensions() {
             @Nullable
             @Override
-            public HumanoidModel<?> getArmorModel(LivingEntity entityLiving, ItemStack itemStack, EquipmentSlot armorSlot, HumanoidModel<?> _default) {
+            public HumanoidModel<?> getHumanoidArmorModel(LivingEntity entityLiving, ItemStack itemStack, EquipmentSlot armorSlot, HumanoidModel<?> _default) {
                 var armorModel = ModEventHandler.armorModel.get(itemStack.getItem());
                 if (armorModel != null)
                     armorModel.head.visible = (armorSlot == EquipmentSlot.HEAD);

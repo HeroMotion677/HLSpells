@@ -10,7 +10,7 @@ import net.minecraftforge.registries.RegistryObject;
 
 public class MenuTypeInit {
 
-    public static final DeferredRegister<MenuType<?>> MENUS = DeferredRegister.create(ForgeRegistries.CONTAINERS, HLSpells.MODID);
+    public static final DeferredRegister<MenuType<?>> MENUS = DeferredRegister.create(ForgeRegistries.MENU_TYPES, HLSpells.MODID);
 
     public static final RegistryObject<MenuType<AltarOfAttunementMenu>> ALTAR_CONTAINER = MENUS.register("altar_of_attunement",
             () -> IForgeMenuType.create((windowId, inv, data) -> new AltarOfAttunementMenu(windowId, inv, inv.player, data)));

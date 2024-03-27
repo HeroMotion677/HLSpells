@@ -16,6 +16,8 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import org.jetbrains.annotations.NotNull;
 
+import net.minecraft.world.entity.Entity.RemovalReason;
+
 public class PiercingBoltEntity extends BaseBoltEntity {
 
     private static final EntityDataAccessor<Boolean> IS_SPECIAL = SynchedEntityData.defineId(PiercingBoltEntity.class, EntityDataSerializers.BOOLEAN);

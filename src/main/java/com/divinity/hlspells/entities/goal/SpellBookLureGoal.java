@@ -83,7 +83,7 @@ public class SpellBookLureGoal extends Goal {
         boolean[] canDo = new boolean[2];
         if (stack.getItem() instanceof SpellHoldingItem) {
             stack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP, null).ifPresent(cap -> {
-                ResourceLocation location = SpellInit.LURE.get().getRegistryName();
+                ResourceLocation location = SpellInit.SPELLS_REGISTRY.get().getKey(SpellInit.LURE.get());
                 // canDo[0] is true when the current spell is 'repel'.
                 canDo[0] = location != null && cap.getCurrentSpell().equals(location.toString());
                 // canDo[1] is true when xp requirements are met.

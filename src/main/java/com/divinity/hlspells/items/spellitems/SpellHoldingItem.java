@@ -16,7 +16,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -54,16 +53,18 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
     @ParametersAreNonnullByDefault
     public void fillItemCategory(CreativeModeTab pGroup, NonNullList<ItemStack> pItems) {
         if (isSpellBook) {
-            if (this.allowdedIn(pGroup)) {
+            if(allowedIn(pGroup)){
                 for (Spell spell : SpellInit.SPELLS_REGISTRY.get()) {
                     ItemStack stack = new ItemStack(this);
                     stack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP).ifPresent(cap -> {
                         if (spell != SpellInit.EMPTY.get())
-                            cap.addSpell(Objects.requireNonNull(spell.getRegistryName()).toString());
+                            cap.addSpell(Objects.requireNonNull(SpellInit.SPELLS_REGISTRY.get().getKey(spell)).toString());
                     });
                     pItems.add(stack);
                 }
             }
+
+
         }
         else super.fillItemCategory(pGroup, pItems);
     }
@@ -73,21 +74,20 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
     public void appendHoverText(ItemStack stack, @Nullable Level pLevel, List<Component> text, TooltipFlag pFlag) {
         stack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP).ifPresent(cap -> {
             List<String> spells = cap.getSpells();
-            CompoundTag nbt = new CompoundTag();
             if (isSpellBook) {
                 Spell spell = SpellUtils.getSpell(stack);
                 text.add(spell.getDisplayName().withStyle(spell.getSpellType().getTooltipFormatting()));
             }
             else {
-                text.add(1, new TextComponent(ChatFormatting.AQUA + "Spells: "));
-                if (spells.isEmpty()) text.add(new TextComponent(ChatFormatting.GRAY + "   Empty"));
+                text.add(1, Component.literal(ChatFormatting.AQUA + "Spells: "));
+                if (spells.isEmpty()) text.add(Component.literal(ChatFormatting.GRAY + "   Empty"));
                 else {
                     spells.forEach(spell -> {
                         Spell currentSpell = SpellUtils.getSpellByID(spell);
                         if (cap.getCurrentSpell().equals(spell)) {
-                            text.add(new TextComponent(ChatFormatting.BLUE + "   " + currentSpell.getTrueDisplayName()));
+                            text.add(Component.literal(ChatFormatting.BLUE + "   " + currentSpell.getTrueDisplayName()));
                         }
-                        else text.add(new TextComponent(ChatFormatting.GRAY + "   " + currentSpell.getTrueDisplayName()));
+                        else text.add(Component.literal(ChatFormatting.GRAY + "   " + currentSpell.getTrueDisplayName()));
                     });
                 }
             }

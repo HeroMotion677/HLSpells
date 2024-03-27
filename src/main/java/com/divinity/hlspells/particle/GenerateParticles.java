@@ -14,7 +14,7 @@ import java.io.InputStreamReader;
 public class GenerateParticles{
 
     public static void generateParticleRune(ResourceLocation location, LivingEntity livingEntity, RegistryObject<SimpleParticleType> type) throws IOException {
-       InputStream stream = Minecraft.getInstance().getResourceManager().getResource(location).getInputStream();
+       InputStream stream = Minecraft.getInstance().getResourceManager().getResource(location).get().open();
        BufferedReader input = new BufferedReader(new InputStreamReader(stream));
         String textLine = input.readLine();
         while (input.readLine() != null) {

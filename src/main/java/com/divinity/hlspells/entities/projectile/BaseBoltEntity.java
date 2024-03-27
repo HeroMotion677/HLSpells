@@ -19,6 +19,8 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 
+import net.minecraft.world.entity.Entity.RemovalReason;
+
 public abstract class BaseBoltEntity extends Arrow {
 
     private final SimpleParticleType[] particleTypes;
@@ -49,7 +51,6 @@ public abstract class BaseBoltEntity extends Arrow {
     @Override
     public void checkDespawn() {
         super.checkDespawn();
-        if (this.level.getDifficulty() == Difficulty.PEACEFUL) this.discard();
     }
 
     @Override

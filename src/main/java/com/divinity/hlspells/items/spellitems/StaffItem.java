@@ -11,6 +11,8 @@ import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
+import net.minecraft.world.item.Item.Properties;
+
 public class StaffItem extends SpellHoldingItem {
 
     private final Multimap<Attribute, AttributeModifier> defaultModifiers;

@@ -20,6 +20,8 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 
+import net.minecraft.world.entity.Entity.RemovalReason;
+
 public class KnockbackBoltEntity extends ShulkerBullet {
 
     public KnockbackBoltEntity(EntityType<? extends ShulkerBullet> entityType, Level level) {

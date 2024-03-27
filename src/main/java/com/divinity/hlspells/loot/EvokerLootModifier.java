@@ -1,32 +1,41 @@
 package com.divinity.hlspells.loot;
 
 import com.divinity.hlspells.setup.init.ItemInit;
+import com.google.common.base.Suppliers;
 import com.google.common.collect.Lists;
-import com.google.gson.JsonObject;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
+import net.minecraftforge.common.Tags;
+import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.loot.LootModifier;
+import net.minecraftforge.registries.ForgeRegistries;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.function.Supplier;
 
 public class EvokerLootModifier extends LootModifier {
 
-    protected EvokerLootModifier(LootItemCondition[] conditionsIn) {
+    public static final Supplier<Codec<EvokerLootModifier>> CODEC = Suppliers.memoize(()
+            -> RecordCodecBuilder.create(inst -> codecStart(inst).and(ForgeRegistries.ITEMS.getCodec()
+            .fieldOf("item").forGetter(m -> m.item)).apply(inst, EvokerLootModifier::new)));
+    private final Item item;
+
+    protected EvokerLootModifier(LootItemCondition[] conditionsIn, Item item) {
         super(conditionsIn);
+        this.item = item;
     }
 
-    @Nonnull
-    @Override
-    protected List<ItemStack> doApply(List<ItemStack> generatedLoot, LootContext context) {
-        float rand = context.getRandom().nextFloat();
-        if (rand > 0.5) {
+    protected @NotNull ObjectArrayList<ItemStack> doApply(ObjectArrayList<ItemStack> generatedLoot, LootContext context) {
+        if (context.getRandom().nextFloat()> 0.5) {
             List<ItemStack> toRemove = Lists.newArrayList();
             for (ItemStack stack : generatedLoot) {
                 if (stack.getItem() == Items.TOTEM_OF_UNDYING) toRemove.add(stack);
@@ -37,13 +46,8 @@ public class EvokerLootModifier extends LootModifier {
         return generatedLoot;
     }
 
-    public static class Serializer extends GlobalLootModifierSerializer<EvokerLootModifier> {
-
-        @Override
-        public EvokerLootModifier read(ResourceLocation location, JsonObject object, LootItemCondition[] conditions) {
-            return new EvokerLootModifier(conditions);
-        }
-
-        @Override public JsonObject write(EvokerLootModifier instance) { return this.makeConditions(instance.conditions); }
+    @Override
+    public Codec<? extends IGlobalLootModifier> codec() {
+        return CODEC.get();
     }
 }

@@ -9,6 +9,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -71,7 +72,7 @@ public class SummonedVexEntity extends Vex implements Summonable {
     }
 
     @Override
-    protected void populateDefaultEquipmentSlots(@NotNull DifficultyInstance instance) {
+    protected void populateDefaultEquipmentSlots(RandomSource pRandom, @NotNull DifficultyInstance instance) {
         if (this.random.nextInt(2) == 0) this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.IRON_SWORD));
         else this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.IRON_AXE));
         this.setDropChance(EquipmentSlot.MAINHAND, 0.0F);

@@ -41,7 +41,6 @@ apply plugin: 'org.parchmentmc.librarian.forgegradle'
 apply plugin: 'org.spongepowered.mixin'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
-apply from: 'https://raw.githubusercontent.com/SizableShrimp/Forge-Class-Remapper/main/classremapper.gradle'
 
 version = project.mod_version
 group = 'com.divinity'
@@ -72,7 +71,7 @@ sourceSets {
 
 println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
 minecraft {
-    mappings channel: 'parchment', version: '2022.03.13-1.18.2'
+    mappings channel: 'parchment', version: '2022.11.27-1.19.2'
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
     runs {
         all {
@@ -120,15 +119,19 @@ mixin {
 }
 
 dependencies {
-    minecraft "net.minecraftforge:forge:1.18.2-${forge_version}"
+    minecraft "net.minecraftforge:forge:1.19.2-${forge_version}"
+
     // Compile against the API but do not include it at runtime
-    compileOnly fg.deobf("mezz.jei:jei-${jei_mc_version}:${jei_version}:api")
+    compileOnly fg.deobf("mezz.jei:jei-1.19.2-common-api:${jei_version}")
+    compileOnly fg.deobf("mezz.jei:jei-1.19.2-forge-api:${jei_version}")
     compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}:api")
     compileOnly fg.deobf("com.legacy:lucent:${lucent_version}")
+
     // At runtime, use the full mod jar
-    runtimeOnly fg.deobf("mezz.jei:jei-${jei_mc_version}:${jei_version}")
+    runtimeOnly fg.deobf("mezz.jei:jei-1.19.2-forge:${jei_version}")
     runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
     runtimeOnly fg.deobf("com.legacy:lucent:${lucent_version}")
+
     // Processes mixin annotations
     annotationProcessor 'org.spongepowered:mixin:0.8.5-SNAPSHOT:processor'
 }

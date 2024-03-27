@@ -176,8 +176,8 @@ public class AltarOfAttunementMenu extends AbstractContainerMenu implements Cont
                     if (spellItemSlot.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP).isPresent() && spell != null) {
                         pPlayer.onEnchantmentPerformed(spellItemSlot, i);
                         spellItemSlot.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP).ifPresent(spellHolder -> {
-                            if (spell.getRegistryName() != null) {
-                                spellHolder.addSpell(spell.getRegistryName().toString());
+                            if (SpellInit.SPELLS_REGISTRY.get().getKey(spell) != null) {
+                                spellHolder.addSpell(SpellInit.SPELLS_REGISTRY.get().getKey(spell).toString());
                             }
                         });
                         if (!pPlayer.getAbilities().instabuild) {

@@ -9,6 +9,8 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 
+import net.minecraft.world.entity.Entity.RemovalReason;
+
 public class InvisibleTargetingEntity extends BaseBoltEntity {
 
     public InvisibleTargetingEntity(EntityType<? extends InvisibleTargetingEntity> type, Level world) {

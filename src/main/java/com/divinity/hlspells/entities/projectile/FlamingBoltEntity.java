@@ -14,6 +14,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.server.level.ServerLevel;
 import org.jetbrains.annotations.NotNull;
 
+import net.minecraft.world.entity.Entity.RemovalReason;
+
 public class FlamingBoltEntity extends BaseBoltEntity {
 
     public FlamingBoltEntity(EntityType<? extends FlamingBoltEntity> type, Level world) {
