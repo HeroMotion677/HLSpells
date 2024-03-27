@@ -17,8 +17,8 @@ public class RuneParticle extends TextureSheetParticle {
         this.xd = xd;
         this.yd = yd;
         this.zd = zd;
-        this.quadSize*= 1.1F;
-        this.lifetime = 2;
+        this.quadSize*= 1F;
+        this.lifetime = 3;
         this.pickSprite(spriteSet);
         this.rCol = 1f;
         this.gCol = 1f;
@@ -29,6 +29,7 @@ public class RuneParticle extends TextureSheetParticle {
     public void tick() {
         super.tick();
         fadeOut();
+        this.alpha = (-(1/(float)lifetime) * age + 2);
 
     }
 
