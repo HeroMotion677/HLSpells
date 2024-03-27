@@ -154,8 +154,8 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
                 capability.ifPresent(cap -> {
                     if (cap.getSpellSoundBuffer() == 0) {
                         if (spell instanceof Illuminate || spell instanceof IlluminateII) {
-                            player.level.playSound(null, player.blockPosition(), SoundInit.HELD_ILLUMINATE.get(), SoundSource.NEUTRAL, 0.7F, 0.7F);
-                            cap.setSpellSoundBuffer(65);
+                            player.level.playSound(null, player.blockPosition(), SoundInit.HELD_ILLUMINATE.get(), SoundSource.NEUTRAL, 0.5F, 0.6F);
+                            cap.setSpellSoundBuffer(13);
                         }
                         else if (spell.getMarkerType() == SpellAttributes.Marker.COMBAT) {
                             player.level.playSound(null, player.blockPosition(), SoundInit.HELD_COMBAT.get(), SoundSource.NEUTRAL, 0.7F, 0.7F);

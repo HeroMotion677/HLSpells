@@ -1,6 +1,7 @@
 {
     "textures": [
         "hlspells:blue_rune_small",
-        "hlspells:blue_rune_emissive"
+        "hlspells:blue_rune_emissive",
+        "hlspells:blue_rune_emissive_2"
     ]
 }

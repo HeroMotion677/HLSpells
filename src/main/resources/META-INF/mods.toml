@@ -8,7 +8,7 @@ version = "${file.jarVersion}"
 displayName = "HLSpells"
 credits = "Credits are on mod's page."
 displayURL = "https://www.curseforge.com/minecraft/mc-mods/hlspells"
-authors = "Divinity, StrikerRocker"
+authors = "cultivator.,Divinity, StrikerRocker"
 description = '''
 Ever wanted magic in Minecraft but don't want to commit to those over-complicated ritual magic mods? Then welcome to HLSpells, the plug and play somewhat Vanilla + (+) magic mod. Cast a multitude of spells, all the way from a chain of lightning to just instantly taming your new pet.
 '''
