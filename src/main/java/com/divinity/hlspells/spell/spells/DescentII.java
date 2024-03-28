@@ -30,7 +30,7 @@ public class DescentII extends Spell {
         return p -> {
 
             if (!p.verticalCollisionBelow && flag == 0) {
-                p.setForcedPose(Pose.FALL_FLYING);
+                p.setPose(Pose.FALL_FLYING);
                 /*
                 Got this code from here
                 https://www.minecraftforum.net/forums/mapping-and-modding-java-edition/minecraft-mods/modification-development/1435515-how-i-can-do-to-move-to-where-i-look

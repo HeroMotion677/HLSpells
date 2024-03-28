@@ -186,9 +186,9 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
                 player.setInvulnerable(false);
                 player.setInvisible(false);
             }
-            if(spell instanceof DescentII){
-                player.setForcedPose(Pose.STANDING);
-            }
+//            if(spell instanceof DescentII){
+//                player.setForcedPose(Pose.STANDING);
+//            }
             if (this.castTimeCondition(player, stack)) {
                 if (spell.getSpellType() == SpellAttributes.Type.CAST) {
                     world.playSound(null, player.blockPosition(), spell.getSpellSound(), SoundSource.NEUTRAL, 0.7F, 0.7F);
