@@ -291,11 +291,11 @@ public final class Util {
     private static void doBookParticles(ClientLevel world, BlockPos pos, int number) {
         for (int l = 0; l < number; l++) {
             double d0 = (pos.getX() + world.random.nextFloat());
-            double d1 = (pos.getY() + world.random.nextFloat());
+            double d1 = (pos.getY() - 0.5 + world.random.nextFloat());
             double d2 = (pos.getZ() + world.random.nextFloat());
-            double d3 = (world.random.nextFloat() - 0.2D) * 0.5D;
-            double d4 = (world.random.nextFloat() - 0.2D) * 0.5D;
-            double d5 = (world.random.nextFloat() - 0.2D) * 0.5D;
+            double d3 = (world.random.nextFloat()) * 0.5D;
+            double d4 = (world.random.nextFloat()) * 0.5D;
+            double d5 = (world.random.nextFloat()) * 0.5D;
             world.addParticle(ParticleTypes.ENCHANT, d0, d1, d2, d3, d4, d5);
         }
     }
