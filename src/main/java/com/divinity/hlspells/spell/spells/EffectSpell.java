@@ -38,7 +38,7 @@ public class EffectSpell<T extends MobEffect> extends Spell {
             p.addEffect(instance);
             if (p.level.getBlockState(p.blockPosition().below()).getBlock() == Blocks.AIR) {
                 for (int i = 0; i < 3; i++) {
-                    p.level.addParticle(ParticleTypes.CLOUD, p.getX(), p.getY() - 1, p.getZ(), 0, p.getDeltaMovement().y, 0);
+                    p.level.addParticle(ParticleTypes.CLOUD, p.getX(), p.getY() - 0.5, p.getZ(), 0, p.getDeltaMovement().y, 0);
                 }
             }
             return true;

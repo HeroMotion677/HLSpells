@@ -11,6 +11,7 @@ import com.divinity.hlspells.entities.projectile.InvisibleTargetingEntity;
 import com.divinity.hlspells.langproviders.EnUsLangProvider;
 import com.divinity.hlspells.loot.EvokerLootModifier;
 import com.divinity.hlspells.loot.SetSpell;
+import com.divinity.hlspells.particle.custom.BoltBoomParticle;
 import com.divinity.hlspells.setup.init.ParticlesInit;
 import com.divinity.hlspells.particle.custom.RuneParticle;
 import com.divinity.hlspells.setup.init.BlockInit;
@@ -206,6 +207,8 @@ public class ModEventHandler {
         Minecraft.getInstance().particleEngine.register(ParticlesInit.PURPLE_PARTICLE_SMALL.get(), RuneParticle.Provider::new);
         Minecraft.getInstance().particleEngine.register(ParticlesInit.BLUE_PARTICLE_SMALL.get(), RuneParticle.Provider::new);
         Minecraft.getInstance().particleEngine.register(ParticlesInit.YELLOW_PARTICLE_SMALL.get(), RuneParticle.Provider::new);
+
+        Minecraft.getInstance().particleEngine.register(ParticlesInit.ORANGE_BOLT_BOOM.get(), BoltBoomParticle.Provider::new);
 
     }
 

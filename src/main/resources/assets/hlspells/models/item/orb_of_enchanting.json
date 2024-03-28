@@ -1,3 +1,7 @@
 {
-  "parent": "hlspells:block/orb_of_enchanting"
-}
+  "parent": "hlspells:block/orb_of_enchanting_full",
+  "textures": {
+    "0": "hlspells:block/pedastal_texture",
+    "1": "hlspells:block/orb_texture"
+  }
+  }

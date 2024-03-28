@@ -5,13 +5,13 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "weight": 2,
+          "weight": 5,
           "quality": 1,
           "name": "hlspells:spell_book",
           "functions": [
             {
               "function": "hlspells:set_spell",
-              "spell": "hlspells:freezing_bolt"
+              "spell": "hlspells:sonic_boom"
             },
             {
               "function": "minecraft:set_damage",
@@ -30,7 +30,7 @@
           "functions": [
             {
               "function": "hlspells:set_spell",
-              "spell": "hlspells:frost_wall"
+              "spell": "hlspells:phasing"
             },
             {
               "function": "minecraft:set_damage",
@@ -43,15 +43,16 @@
         },
         {
           "type": "minecraft:item",
-          "weight": 1,
+          "weight": 3,
           "quality": 1,
           "name": "hlspells:wooden_lapis_staff"
         }
       ],
+
       "conditions": [
         {
           "condition": "minecraft:random_chance",
-          "chance": 0.85
+          "chance": 0.75
         }
       ]
     }

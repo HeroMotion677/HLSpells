@@ -45,19 +45,14 @@
           "type": "minecraft:item",
           "weight": 1,
           "quality": 1,
-          "name": "hlspells:wooden_amethyst_staff",
-          "functions": [
-            {
-              "function": "hlspells:set_spell",
-              "spell": "hlspells:no_spell"
-            }
-          ]
+          "name": "hlspells:wooden_amethyst_staff"
+
         }
       ],
       "conditions": [
         {
           "condition": "minecraft:random_chance",
-          "chance": 0.35
+          "chance": 0.55
         }
       ]
     }

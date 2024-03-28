@@ -1,5 +1,6 @@
 package com.divinity.hlspells.world.blocks;
 
+import com.divinity.hlspells.setup.init.SoundInit;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -75,7 +76,8 @@ public class OrbOfEnchantingBlock extends Block {
                         pLevel.setBlock(pPos, pState.setValue(LEVEL, Integer.valueOf(0)), 2);
                         break;
                 }
-                pLevel.playSound(null, pPos, SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.NEUTRAL, 0.7F, 0.3F);
+                pLevel.playSound(null, pPos, SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.NEUTRAL, 0.4F, 0.2F);
+                pPlayer.level.playSound(null, pPlayer.blockPosition(), SoundInit.MISCAST_SOUND.get(), SoundSource.NEUTRAL, 0.8F, 0.7F);
                 return InteractionResult.SUCCESS;
             }else{
                 return InteractionResult.FAIL;
