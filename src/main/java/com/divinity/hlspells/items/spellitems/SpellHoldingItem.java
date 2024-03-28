@@ -13,12 +13,15 @@ import com.divinity.hlspells.spell.spells.*;
 import com.divinity.hlspells.util.SpellUtils;
 import com.divinity.hlspells.util.Util;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
@@ -29,6 +32,8 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.EnchantmentTableBlock;
+import net.minecraft.world.level.levelgen.LegacyRandomSource;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import org.jetbrains.annotations.NotNull;
 
@@ -36,6 +41,7 @@ import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 import java.util.Objects;
+import java.util.Random;
 import java.util.function.Predicate;
 
 public class SpellHoldingItem extends ProjectileWeaponItem {
@@ -136,6 +142,13 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
                         ResourceLocation fileLocation = new ResourceLocation(HLSpells.MODID + ":functions/large/large_rune_2.mcfunction");
                         GenerateParticles.generateParticleRune(fileLocation, livingEntity, spell.getRune());
                     }else{
+                        Random pRandom = new Random();
+                        for(BlockPos blockpos : EnchantmentTableBlock.BOOKSHELF_OFFSETS){
+                            if (pRandom.nextInt(24) == 0) {
+                                livingEntity.getLevel().addParticle(ParticleTypes.ENCHANT, (double)livingEntity.getX(), (double)livingEntity.getY() + 2.0D, (double)livingEntity.getZ(), (double)((float)blockpos.getX() + pRandom.nextFloat()) - 0.5D, (double)((float)blockpos.getY() - pRandom.nextFloat() - 1.0F), (double)((float)blockpos.getZ() + pRandom.nextFloat()) - 0.5D);
+                            }
+                        }
+
                         ResourceLocation fileLocation = new ResourceLocation(HLSpells.MODID + ":functions/small/small_rune_2.mcfunction");
                         GenerateParticles.generateParticleRune(fileLocation, livingEntity, spell.getRune());
                     }
@@ -186,9 +199,9 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
                 player.setInvulnerable(false);
                 player.setInvisible(false);
             }
-            if(spell instanceof DescentII){
-                player.setForcedPose(Pose.STANDING);
-            }
+//            if(spell instanceof DescentII){
+//                player.setForcedPose(Pose.STANDING);
+//            }
             if (this.castTimeCondition(player, stack)) {
                 if (spell.getSpellType() == SpellAttributes.Type.CAST) {
                     world.playSound(null, player.blockPosition(), spell.getSpellSound(), SoundSource.NEUTRAL, 0.7F, 0.7F);
