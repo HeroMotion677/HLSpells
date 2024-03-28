@@ -501,7 +501,7 @@ public class ForgeEventHandler {
                     ItemStack stack = player.getItemInHand(hand);
                     if (player.isUsingItem() && !player.isPassenger() && stack.getItem() instanceof SpellHoldingItem) {
                         Spell spell = SpellUtils.getSpell(stack);
-                        if (spell == SpellInit.SPEED.get() || spell == SpellInit.FROST_PATH_II.get()) {
+                        if (spell == SpellInit.SPEED.get() || spell == SpellInit.FROST_PATH_II.get() || spell == SpellInit.FROST_PATH.get() || spell == SpellInit.PHASING.get() || spell == SpellInit.PHASING_II.get()) {
                             player.input.leftImpulse /= 0.2F;
                             player.input.forwardImpulse /= 0.2F;
                         }

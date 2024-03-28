@@ -59,7 +59,7 @@ public class SpellInit {
     public static final RegistryObject<Spell> NECROMANCY = register("necromancy", () -> new SummonSpell<>(EntityInit.SUMMONED_SKELETON_ENTITY.orElse(null), SpellAttributes.Type.CAST, SpellAttributes.Rarity.RARE, SpellAttributes.Tier.THREE, SpellAttributes.Marker.COMBAT, "Necromancy", 16, false, 1, ParticlesInit.BLACK_PARTICLE).summonCount(4));
     public static final RegistryObject<Spell> RESPAWN = register("respawn", () -> new RespawnSpell(SpellAttributes.Type.CAST, SpellAttributes.Rarity.RARE, SpellAttributes.Tier.THREE, SpellAttributes.Marker.COMBAT, "Respawn", 16, false, 1, ParticlesInit.WHITE_PARTICLE_SMALL));
     public static final RegistryObject<Spell> FROST_WALL = register("frost_wall", () -> new FrostWallSpell(SpellAttributes.Type.HELD, SpellAttributes.Rarity.RARE, SpellAttributes.Tier.THREE, SpellAttributes.Marker.COMBAT, "Frost Wall", 16, 6, false, 1, ParticlesInit.BLUE_PARTICLE));
-    public static final RegistryObject<Spell> SONIC_BOOM = register("sonic_boom", () -> new SonicBoomSpell(SpellAttributes.Type.CAST, SpellAttributes.Rarity.RARE, SpellAttributes.Tier.THREE, SpellAttributes.Marker.COMBAT, "Sonic Boom", 30, false, 1, ParticlesInit.BLUE_PARTICLE_SMALL));
+    public static final RegistryObject<Spell> SONIC_BOOM = register("sonic_boom", () -> new SonicBoomSpell(SpellAttributes.Type.CAST, SpellAttributes.Rarity.RARE, SpellAttributes.Tier.THREE, SpellAttributes.Marker.COMBAT, "Sonic Boom", 30, true, 1, ParticlesInit.BLUE_PARTICLE_SMALL));
 
 
     // Optional Spells

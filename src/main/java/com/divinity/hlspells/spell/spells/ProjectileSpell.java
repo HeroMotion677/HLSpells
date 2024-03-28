@@ -109,10 +109,10 @@ public class ProjectileSpell<T extends Projectile> extends Spell {
             projectile.playSound(SoundInit.CAST_BOLT.get(), 0.7F, 0.7F);
         }
         else if (projectile instanceof FreezingBoltEntity) {
-            projectile.playSound(SoundInit.CAST_ICE.get(), 0.7F, 0.7F);
+            projectile.playSound(SoundInit.CAST_ICE.get(), 0.6F, 0.7F);
         }
         else if (projectile instanceof FlamingBoltEntity) {
-            projectile.playSound(SoundInit.CAST_FLAME.get(), 0.7F, 0.7F);
+            projectile.playSound(SoundInit.CAST_FLAME.get(), 0.8F, 0.7F);
         }
         else if (projectile instanceof WitherSkull) {
             projectile.playSound(SoundInit.CAST_NECROMANCY.get(), 0.7F, 0.7F);

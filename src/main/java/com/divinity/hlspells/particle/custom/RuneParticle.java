@@ -3,6 +3,7 @@ package com.divinity.hlspells.particle.custom;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.*;
 import net.minecraft.core.particles.SimpleParticleType;
+import net.minecraft.util.Mth;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -18,7 +19,7 @@ public class RuneParticle extends TextureSheetParticle {
         this.yd = yd;
         this.zd = zd;
         this.quadSize*= 1F;
-        this.lifetime = 3;
+        this.lifetime = 2;
         this.pickSprite(spriteSet);
         this.rCol = 1f;
         this.gCol = 1f;
@@ -26,20 +27,22 @@ public class RuneParticle extends TextureSheetParticle {
     }
 
     @Override
-    public void tick() {
-        super.tick();
-        fadeOut();
-        this.alpha = (-(1/(float)lifetime) * age + 2);
-
-    }
-
-    private void fadeOut(){
-        this.alpha = (-(1/(float)lifetime) * age + 1);
-    }
-
-    @Override
     public ParticleRenderType getRenderType(){
-        return ParticleRenderType.PARTICLE_SHEET_LIT;
+        return ParticleRenderType.PARTICLE_SHEET_OPAQUE;
+    }
+
+    public int getLightColor(float pPartialTick) {
+        float f = ((float)this.age + pPartialTick) / (float)this.lifetime;
+        f = Mth.clamp(f, 0.0F, 1.0F);
+        int i = super.getLightColor(pPartialTick);
+        int j = i & 255;
+        int k = i >> 16 & 255;
+        j += (int)(f * 15.0F * 16.0F);
+        if (j > 240) {
+            j = 240;
+        }
+
+        return j | k << 16;
     }
     @OnlyIn(Dist.CLIENT)
     public static class Provider implements ParticleProvider<SimpleParticleType> {
