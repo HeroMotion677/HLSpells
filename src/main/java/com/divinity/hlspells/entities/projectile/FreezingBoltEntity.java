@@ -35,7 +35,7 @@ public class FreezingBoltEntity extends BaseBoltEntity {
             level.sendParticles(ParticleTypes.CRIT, this.getX(), this.getY(), this.getZ(), 2, 0.2D, 0.2D, 0.2D, 0.0D);
             if (livingentity != null) {
                 this.doEnchantDamageEffects(livingentity, entity);
-                entity.setTicksFrozen(300);
+                entity.setTicksFrozen(350);
             }
             this.remove(RemovalReason.KILLED);
         }
