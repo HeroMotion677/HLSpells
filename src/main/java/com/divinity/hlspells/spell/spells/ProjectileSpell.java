@@ -1,17 +1,20 @@
 package com.divinity.hlspells.spell.spells;
 
 import com.divinity.hlspells.entities.projectile.*;
+import com.divinity.hlspells.setup.init.ParticlesInit;
 import com.divinity.hlspells.setup.init.SoundInit;
 import com.divinity.hlspells.spell.Spell;
 import com.divinity.hlspells.spell.SpellAttributes;
 import com.divinity.hlspells.spell.SpellConsumer;
 import com.divinity.hlspells.util.Util;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.projectile.WitherSkull;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
@@ -58,6 +61,13 @@ public class ProjectileSpell<T extends Projectile> extends Spell {
                 Vec3 positionVector = new Vec3(p.getX() + (viewVector.x * this.viewVectorOffset) + this.xOffset, p.getY() + this.yOffset, p.getZ() + (viewVector.z * this.viewVectorOffset) + this.zOffset);
                 Util.shootSpellRelative(p, trueProjectile, positionVector, this.zRot, this.velocity, this.inaccuracy, this.noVerticalMovement);
                 playSound(trueProjectile);
+                if(projectile instanceof FlamingBoltEntity){
+                    Level world = p.getLevel();
+                    double d0 = (projectile.getX());
+                    double d1 = (projectile.getY() - 0.2);
+                    double d2 = (projectile.getZ());
+                    world.addParticle(ParticlesInit.ORANGE_BOLT_BOOM.get(), d0, d1, d2, 0, 0, 0);
+                }
                 return true;
             }
             return false;
