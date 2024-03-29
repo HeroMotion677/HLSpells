@@ -2,6 +2,7 @@ package com.divinity.hlspells.spell;
 
 import com.divinity.hlspells.HLSpells;
 import com.divinity.hlspells.capabilities.playercap.PlayerCapProvider;
+import com.divinity.hlspells.setup.init.SoundInit;
 import com.divinity.hlspells.setup.init.SpellInit;
 import com.divinity.hlspells.util.SpellUtils;
 import com.sun.jna.platform.win32.Sspi;
@@ -178,7 +179,10 @@ public abstract class Spell implements Cloneable {
             this.getAction().andThenIfCast(this.onAfterExecute(this, stack)).accept(player);
 
         }
-        else this.canUse = false;
+        else {
+            player.playSound(SoundInit.MISCAST_SOUND.get(), 0.7f, 0.7f);
+            this.canUse = false;
+        }
     }
 
     // This is mainly for spell registration use

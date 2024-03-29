@@ -229,6 +229,8 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
                         }
                     });
                 }
+            }else{
+                player.playSound(SoundInit.MISCAST_SOUND.get(), 0.7f, 0.7f);
             }
         }
     }
