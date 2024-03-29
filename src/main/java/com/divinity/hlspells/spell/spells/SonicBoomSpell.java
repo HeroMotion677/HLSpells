@@ -58,10 +58,22 @@ public class SonicBoomSpell extends Spell {
                 double d1 = 0.5D;
                 double d0 = 2.5D;
                 entity.push(vec32.x() * d0, vec32.y() * d1, vec32.z() * d0);
-                return true;
+            }else{
+                var block = Util.lookAt(p, 10000, 10, true);
+
+                Vec3 vec3 = p.position().add(0.0D, (double)1.6F, 0.0D);
+                Vec3 vec31 = block.getLocation().subtract(vec3);
+                Vec3 vec32 = vec31.normalize();
+
+                for(int i = 1; i < Mth.floor(vec31.length()) + 7; ++i) {
+                    Vec3 vec33 = vec3.add(vec32.scale((double)i));
+                    p.getLevel().addParticle(ParticleTypes.SONIC_BOOM, vec33.x, vec33.y, vec33.z, 0.0D, 0.0D, 0.0D);
+                }
+
+                p.playSound(SoundEvents.WARDEN_SONIC_BOOM, 3.0F, 1.0F);
             }
 
-            return false;
+            return true;
         };
     }
 
