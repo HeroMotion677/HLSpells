@@ -46,45 +46,18 @@ public class OrbOfEnchantingBlock extends Block {
         if(pPlayer.isCrouching()){
             if (pPlayer.totalExperience >= 1 && xp < MAX_XP){
                 pPlayer.giveExperiencePoints(-10);
-                xp += 10;
-                switch((int)Math.floor(xp/175)){
-                    case(1):
-                        pLevel.setBlock(pPos, pState.setValue(LEVEL, Integer.valueOf(1)), 2);
-                        break;
-                    case(2):
-                        pLevel.setBlock(pPos, pState.setValue(LEVEL, Integer.valueOf(2)), 2);
-                        break;
-                    case(3):
-                        pLevel.setBlock(pPos, pState.setValue(LEVEL, Integer.valueOf(3)), 2);
-                        break;
-                    case(4):
-                        pLevel.setBlock(pPos, pState.setValue(LEVEL, Integer.valueOf(4)), 2);
-                        break;
-                    case(5):
-                        pLevel.setBlock(pPos, pState.setValue(LEVEL, Integer.valueOf(5)), 2);
-                        break;
-                    case(6):
-                        pLevel.setBlock(pPos, pState.setValue(LEVEL, Integer.valueOf(6)), 2);
-                        break;
-                    case(7):
-                        pLevel.setBlock(pPos, pState.setValue(LEVEL, Integer.valueOf(7)), 2);
-                        break;
-                    case(8):
-                        pLevel.setBlock(pPos, pState.setValue(LEVEL, Integer.valueOf(8)), 2);
-                        break;
-                    default:
-                        pLevel.setBlock(pPos, pState.setValue(LEVEL, Integer.valueOf(0)), 2);
-                        break;
-                }
+                xp += 5;
+                changeState(pState, pLevel, pPos);
                 pLevel.playSound(null, pPos, SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.NEUTRAL, 0.4F, 0.2F);
-                pPlayer.level.playSound(null, pPlayer.blockPosition(), SoundInit.MISCAST_SOUND.get(), SoundSource.NEUTRAL, 0.8F, 0.7F);
                 return InteractionResult.SUCCESS;
             }else{
+                pPlayer.level.playSound(null, pPlayer.blockPosition(), SoundInit.MISCAST_SOUND.get(), SoundSource.NEUTRAL, 0.4F, 0.2F);
                 return InteractionResult.FAIL;
             }
         }else{
             if(xp >= 1){
-                xp-= 10;
+                xp-= 5;
+                changeState(pState, pLevel, pPos);
                 if(pPlayer.isHolding(Items.GLASS_BOTTLE)){
                     pPlayer.getItemInHand(InteractionHand.MAIN_HAND).setCount(pPlayer.getItemInHand(InteractionHand.MAIN_HAND).getCount()-1);
                     pPlayer.addItem(new ItemStack(Items.EXPERIENCE_BOTTLE));
@@ -94,6 +67,7 @@ public class OrbOfEnchantingBlock extends Block {
                 pLevel.playSound(null, pPos, SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.NEUTRAL, 0.7F, 0.7F);
                 return InteractionResult.SUCCESS;
             }else{
+                pPlayer.level.playSound(null, pPlayer.blockPosition(), SoundInit.MISCAST_SOUND.get(), SoundSource.NEUTRAL, 0.4F, 0.2F);
                 return InteractionResult.FAIL;
             }
         }
@@ -117,6 +91,38 @@ public class OrbOfEnchantingBlock extends Block {
 
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> pBuilder) {
         pBuilder.add(LEVEL);
+    }
+
+    protected void changeState(BlockState pState, Level pLevel, BlockPos pPos){
+        switch((int)Math.floor(xp/175)){
+            case(1):
+                pLevel.setBlock(pPos, pState.setValue(LEVEL, Integer.valueOf(1)), 2);
+                break;
+            case(2):
+                pLevel.setBlock(pPos, pState.setValue(LEVEL, Integer.valueOf(2)), 2);
+                break;
+            case(3):
+                pLevel.setBlock(pPos, pState.setValue(LEVEL, Integer.valueOf(3)), 2);
+                break;
+            case(4):
+                pLevel.setBlock(pPos, pState.setValue(LEVEL, Integer.valueOf(4)), 2);
+                break;
+            case(5):
+                pLevel.setBlock(pPos, pState.setValue(LEVEL, Integer.valueOf(5)), 2);
+                break;
+            case(6):
+                pLevel.setBlock(pPos, pState.setValue(LEVEL, Integer.valueOf(6)), 2);
+                break;
+            case(7):
+                pLevel.setBlock(pPos, pState.setValue(LEVEL, Integer.valueOf(7)), 2);
+                break;
+            case(8):
+                pLevel.setBlock(pPos, pState.setValue(LEVEL, Integer.valueOf(8)), 2);
+                break;
+            default:
+                pLevel.setBlock(pPos, pState.setValue(LEVEL, Integer.valueOf(0)), 2);
+                break;
+        }
     }
 
 }
