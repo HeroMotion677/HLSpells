@@ -3,6 +3,7 @@ package com.divinity.hlspells.spell.spells;
 import com.divinity.hlspells.entities.projectile.*;
 import com.divinity.hlspells.setup.init.ParticlesInit;
 import com.divinity.hlspells.setup.init.SoundInit;
+import com.divinity.hlspells.setup.init.SpellInit;
 import com.divinity.hlspells.spell.Spell;
 import com.divinity.hlspells.spell.SpellAttributes;
 import com.divinity.hlspells.spell.SpellConsumer;
@@ -18,6 +19,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
+
+import javax.annotation.Nullable;
 
 public class ProjectileSpell<T extends Projectile> extends Spell {
     private final EntityType<T> projectile;
@@ -128,6 +131,19 @@ public class ProjectileSpell<T extends Projectile> extends Spell {
             projectile.playSound(SoundInit.CAST_NECROMANCY.get(), 0.7F, 0.7F);
         }else{
             projectile.playSound(SoundInit.CAST_BOLT.get(), 0.7F, 0.7F);
+        }
+    }
+
+    @Nullable
+    @Override
+    public Spell getUpgrade() {
+        if(this.getTrueDisplayName().equals("Fire Ball")){
+            return SpellInit.FIRE_BALL_II.get();
+        }
+        else if(this.getTrueDisplayName().equals("Piercing Bolt")){
+            return SpellInit.PIERCING_BOLT_II.get();
+        } else{
+            return null;
         }
     }
 }

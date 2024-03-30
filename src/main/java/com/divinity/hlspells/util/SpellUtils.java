@@ -48,8 +48,10 @@ public final class SpellUtils {
         if (item != ItemStack.EMPTY) {
             List<String> existingSpells = SpellHolderProvider.getSpellHolderUnwrap(item).getSpells();
             Spell currentSpell = getSpell(item);
+            String currentSpellName = SpellInit.SPELLS_REGISTRY.get().getKey(currentSpell).toString();
+            String otherSpellName = SpellInit.SPELLS_REGISTRY.get().getKey(spell).toString();
             boolean canUpgrade = currentSpell.getUpgrade() != null &&
-                    SpellInit.SPELLS_REGISTRY.get().getKey(currentSpell).equals(SpellInit.SPELLS_REGISTRY.get().getKey(spell).toString());
+                  currentSpellName.equals(otherSpellName);
             if (!existingSpells.contains(SpellInit.SPELLS_REGISTRY.get().getKey(spell).toString())) {
                 if (currentSpell.getUpgradeableSpellPath() != null && currentSpell.getUpgradeableSpellPath() == spell.getUpgradeableSpellPath()) {
                     return false;

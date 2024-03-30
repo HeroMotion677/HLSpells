@@ -1,5 +1,6 @@
 package com.divinity.hlspells.spell.spells;
 
+import com.divinity.hlspells.setup.init.SpellInit;
 import com.divinity.hlspells.spell.Spell;
 import com.divinity.hlspells.spell.SpellAttributes;
 import com.divinity.hlspells.spell.SpellConsumer;
@@ -7,6 +8,8 @@ import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
+
+import javax.annotation.Nullable;
 
 public class Phasing extends Spell {
 
@@ -20,5 +23,10 @@ public class Phasing extends Spell {
             this.canUse = !p.noPhysics && !p.onClimbable() && !p.isPassenger();
             return this.canUse;
         };
+    }
+    @Nullable
+    @Override
+    public Spell getUpgrade() {
+        return SpellInit.PHASING_II.get();
     }
 }

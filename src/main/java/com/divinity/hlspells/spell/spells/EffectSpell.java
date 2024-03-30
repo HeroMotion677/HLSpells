@@ -1,6 +1,7 @@
 package com.divinity.hlspells.spell.spells;
 
 import com.divinity.hlspells.capabilities.playercap.PlayerCapProvider;
+import com.divinity.hlspells.setup.init.SpellInit;
 import com.divinity.hlspells.spell.Spell;
 import com.divinity.hlspells.spell.SpellAttributes;
 import com.divinity.hlspells.spell.SpellConsumer;
@@ -9,6 +10,8 @@ import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Blocks;
+
+import javax.annotation.Nullable;
 
 public class EffectSpell<T extends MobEffect> extends Spell {
 
@@ -58,5 +61,15 @@ public class EffectSpell<T extends MobEffect> extends Spell {
     public EffectSpell<T> visible(boolean isVisible) {
         this.isVisible = isVisible;
         return this;
+    }
+
+    @Nullable
+    @Override
+    public Spell getUpgrade() {
+        if(this.getTrueDisplayName().equals("Descent")){
+            return SpellInit.DESCENT_II.get();
+        }else{
+            return null;
+        }
     }
 }
