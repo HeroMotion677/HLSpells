@@ -41,7 +41,7 @@ public class ProjectileSpell<T extends Projectile> extends Spell {
         this.yOffset = 2;
         this.zOffset = 0;
         this.zRot = 1.2F;
-        this.velocity = 1.2F;
+        this.velocity = 2.5F;
         this.inaccuracy = 1.2F;
         this.noVerticalMovement = false;
     }

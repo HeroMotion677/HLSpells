@@ -28,7 +28,7 @@ public class PiercingBoltIISpell extends Spell {
     float yOffset = 1.35f;
     float zOffset = 0;
     float zRot = 1.2F;
-    float velocity = 1.2F;
+    float velocity = 2.5F;
     float inaccuracy = 1.2F;
     boolean noVerticalMovement = false;
 

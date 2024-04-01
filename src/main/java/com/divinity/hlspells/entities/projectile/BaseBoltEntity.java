@@ -36,7 +36,7 @@ public abstract class BaseBoltEntity extends Arrow {
         super.tick();
         // Remove if it's more than 40 block away from initial pos
         if (this.initialPosition != null) {
-            if (this.getOwner() != null && Math.sqrt(this.distanceToSqr(this.initialPosition)) > 40) this.discard();
+            if (this.getOwner() != null && Math.sqrt(this.distanceToSqr(this.initialPosition)) > 100) this.discard();
             else if (this.getOwner() == null) this.discard();
             Vec3 vector3d1 = this.getDeltaMovement();
             double baseYOffset = 0.15D;

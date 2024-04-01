@@ -65,7 +65,7 @@ public class PiercingBoltEntity extends BaseBoltEntity {
             level.sendParticles(ParticleTypes.CRIT, this.getX(), this.getY(), this.getZ(), 2, 0.2D, 0.2D, 0.2D, 0.0D);
             if (livingentity != null) this.doEnchantDamageEffects(livingentity, entity);
             if (this.isSpecial) {
-                if (entityData.get(PIERCED_ENEMIES) != 4) {
+                if (entityData.get(PIERCED_ENEMIES) != 5) {
                     entityData.set(PIERCED_ENEMIES, entityData.get(PIERCED_ENEMIES) + 1);
                 }
                 else this.remove(RemovalReason.KILLED);

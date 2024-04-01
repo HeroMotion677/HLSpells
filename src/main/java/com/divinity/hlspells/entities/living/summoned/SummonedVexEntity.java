@@ -72,7 +72,7 @@ public class SummonedVexEntity extends Vex implements Summonable {
     }
 
     @Override
-    protected void populateDefaultEquipmentSlots(RandomSource pRandom, @NotNull DifficultyInstance instance) {
+    protected void populateDefaultEquipmentSlots(@NotNull RandomSource pRandom, @NotNull DifficultyInstance instance) {
         if (this.random.nextInt(2) == 0) this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.IRON_SWORD));
         else this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.IRON_AXE));
         this.setDropChance(EquipmentSlot.MAINHAND, 0.0F);

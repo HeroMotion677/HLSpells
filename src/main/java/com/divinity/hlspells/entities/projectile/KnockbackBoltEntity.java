@@ -34,7 +34,7 @@ public class KnockbackBoltEntity extends ShulkerBullet {
     @Override
     public void tick() {
         super.tick();
-        if (this.getOwner() != null && this.distanceTo(this.getOwner()) >= 40) {
+        if (this.getOwner() != null && this.distanceTo(this.getOwner()) >= 100) {
             this.remove(RemovalReason.KILLED);
         }
     }

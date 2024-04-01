@@ -38,8 +38,8 @@ public class BoltII extends Spell {
     @Override
     public SpellConsumer<Player> getAction() {
         return p -> {
-            if (Util.rayTrace(p.level, p, 25D) != null && p.isShiftKeyDown()) {
-                Entity entity = Util.rayTrace(p.level, p, 25D);
+            if (Util.rayTrace(p.level, p, 100D) != null && p.isShiftKeyDown()) {
+                Entity entity = Util.rayTrace(p.level, p, 100D);
                 if (entity != null) {
                     ShulkerBullet smartBullet = new SmartShulkerBolt(p.level, p, entity, p.getDirection().getAxis());
                     smartBullet.setPos(p.getX() + p.getViewVector(1.0F).x, p.getY() + 1.35, p.getZ() + p.getViewVector(1.0F).z);
@@ -64,7 +64,7 @@ public class BoltII extends Spell {
                     @Override
                     public void tick() {
                         super.tick();
-                        if (this.getOwner() != null && this.distanceTo(this.getOwner()) >= 40) {
+                        if (this.getOwner() != null && this.distanceTo(this.getOwner()) >= 100) {
                             this.remove(RemovalReason.KILLED);
                         }
                     }
