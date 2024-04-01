@@ -60,6 +60,8 @@ public final class SpellUtils {
                     return true;
                 else if (item.getItem() == ItemInit.WAND.get() && existingSpells.size() < 3)
                     return true;
+                else if (item.getItem() == ItemInit.AMETHYST_WAND.get() && existingSpells.size() < 3)
+                    return true;
                 else return item.getItem() instanceof StaffItem && existingSpells.size() < 6;
             }
             else {

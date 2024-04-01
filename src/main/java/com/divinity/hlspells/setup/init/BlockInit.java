@@ -27,13 +27,13 @@ public class BlockInit {
     public static final RegistryObject<Block> ALTAR_OF_ATTUNEMENT_BLOCK = BLOCKS.register("altar_of_attunement", () ->
             new AltarOfAttunementBlock((BlockBehaviour.Properties.of(Material.STONE, MaterialColor.COLOR_RED)
                     .requiresCorrectToolForDrops()
-                    .lightLevel(level -> 10).strength(5.0F, 1200.0F))));
+                    .lightLevel(level -> 3).strength(5.0F, 7.0F))));
 
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, HLSpells.MODID);
 
     public static final RegistryObject<BlockEntityType<AltarOfAttunementBE>> ALTAR_BE = BLOCK_ENTITIES.register("altar_of_attunement", () -> BlockEntityType.Builder.of(AltarOfAttunementBE::new, ALTAR_OF_ATTUNEMENT_BLOCK.get()).build(null));
 
     public static final RegistryObject<Block> ORB_OF_ENCHANTING = BLOCKS.register("orb_of_enchanting",
-            ()-> new OrbOfEnchantingBlock(BlockBehaviour.Properties.copy(Blocks.GLASS).strength(4f)
+            ()-> new OrbOfEnchantingBlock(BlockBehaviour.Properties.copy(Blocks.GLASS).strength(0.5f)
                     .requiresCorrectToolForDrops()));
 }

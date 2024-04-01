@@ -48,6 +48,21 @@ public class ParticlesInit {
     public static final RegistryObject<SimpleParticleType> ORANGE_BOLT_BOOM=
             PARTICLE_TYPES.register("orange_bolt_boom", ()-> new SimpleParticleType(true));
 
+    public static final RegistryObject<SimpleParticleType> WHITE_BOLT_BOOM=
+            PARTICLE_TYPES.register("white_bolt_boom", ()-> new SimpleParticleType(true));
+
+    public static final RegistryObject<SimpleParticleType> BLUE_BOLT_BOOM=
+            PARTICLE_TYPES.register("blue_bolt_boom", ()-> new SimpleParticleType(true));
+
+    public static final RegistryObject<SimpleParticleType> BLACK_BOLT_BOOM=
+            PARTICLE_TYPES.register("black_bolt_boom", ()-> new SimpleParticleType(true));
+
+    public static final RegistryObject<SimpleParticleType> PURPLE_BOLT_BOOM=
+            PARTICLE_TYPES.register("purple_bolt_boom", ()-> new SimpleParticleType(true));
+
+    public static final RegistryObject<SimpleParticleType> GREEN_BOLT_BOOM=
+            PARTICLE_TYPES.register("green_bolt_boom", ()-> new SimpleParticleType(true));
+
     public static void register(IEventBus eventBus){
         PARTICLE_TYPES.register(eventBus);
     }

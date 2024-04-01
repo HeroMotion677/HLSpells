@@ -23,7 +23,7 @@ public class ConfigData {
         spellsUseXP = builder.comment("Should the spells use experience?").define("spellsUseXP", true);
         lootOnlyMode = builder.comment("Should the spells only be obtainable from loot?").define("lootOnlyMode", false);
         summonsAttackPlayers = builder.comment("Should summoned entities from spells be able to attack players?").define("summonsAttackPlayers", true);
-        ArrayList<String> defaultFireMobsList = Lists.newArrayList("minecraft:blaze", "minecraft:magma_cube");
+        ArrayList<String> defaultFireMobsList = Lists.newArrayList("minecraft:blaze", "minecraft:magma_cube", "minecraft:enderman");
         fireMobsList = builder.comment("List of mobs which should take extra damage from aqua bolt")
                 .defineList("fireMobsList", defaultFireMobsList, String.class::isInstance);
         ArrayList<String> defaultSapientMobsList = Lists.newArrayList("minecraft:villager", "minecraft:pillager",
@@ -33,7 +33,7 @@ public class ConfigData {
         sapientMobsList = builder.comment("Lists of mobs which are immune to repel and lure spell")
                 .defineList("sapientMobsList", defaultSapientMobsList, String.class::isInstance);
         spellCastTime = builder.comment("How long should spell items be held before they cast? (seconds)")
-                .defineInRange("spellCastTime", 0.3, 0, 60);
+                .defineInRange("spellCastTime", 0.2, 0, 60);
         teleportRange = builder.comment("Teleport range for the teleport spell.").defineInRange("teleportRange", 50D, 1D, 500D);
 
         cooldownDuration = builder.comment("How long should should the cooldown of spell items be when you cast? (seconds)")

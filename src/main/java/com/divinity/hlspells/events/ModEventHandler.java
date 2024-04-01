@@ -209,6 +209,11 @@ public class ModEventHandler {
         Minecraft.getInstance().particleEngine.register(ParticlesInit.YELLOW_PARTICLE_SMALL.get(), RuneParticle.Provider::new);
 
         Minecraft.getInstance().particleEngine.register(ParticlesInit.ORANGE_BOLT_BOOM.get(), BoltBoomParticle.Provider::new);
+        Minecraft.getInstance().particleEngine.register(ParticlesInit.BLUE_BOLT_BOOM.get(), BoltBoomParticle.Provider::new);
+        Minecraft.getInstance().particleEngine.register(ParticlesInit.BLACK_BOLT_BOOM.get(), BoltBoomParticle.Provider::new);
+        Minecraft.getInstance().particleEngine.register(ParticlesInit.WHITE_BOLT_BOOM.get(), BoltBoomParticle.Provider::new);
+        Minecraft.getInstance().particleEngine.register(ParticlesInit.PURPLE_BOLT_BOOM.get(), BoltBoomParticle.Provider::new);
+        Minecraft.getInstance().particleEngine.register(ParticlesInit.GREEN_BOLT_BOOM.get(), BoltBoomParticle.Provider::new);
 
     }
 

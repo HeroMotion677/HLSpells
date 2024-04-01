@@ -28,7 +28,7 @@ public class RuneParticle extends TextureSheetParticle {
 
     @Override
     public ParticleRenderType getRenderType(){
-        return ParticleRenderType.PARTICLE_SHEET_OPAQUE;
+        return ParticleRenderType.PARTICLE_SHEET_LIT;
     }
 
     public int getLightColor(float pPartialTick) {

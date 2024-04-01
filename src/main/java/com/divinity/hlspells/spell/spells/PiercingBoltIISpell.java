@@ -2,6 +2,7 @@ package com.divinity.hlspells.spell.spells;
 
 import com.divinity.hlspells.entities.projectile.*;
 import com.divinity.hlspells.setup.init.EntityInit;
+import com.divinity.hlspells.setup.init.ParticlesInit;
 import com.divinity.hlspells.setup.init.SoundInit;
 import com.divinity.hlspells.spell.Spell;
 import com.divinity.hlspells.spell.SpellAttributes;
@@ -11,6 +12,7 @@ import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.projectile.WitherSkull;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
@@ -36,11 +38,18 @@ public class PiercingBoltIISpell extends Spell {
             Projectile projectile = new PiercingBoltEntity(EntityInit.PIERCING_BOLT_ENTITY.get(), p.level, true);
             BaseBoltEntity bolt = (BaseBoltEntity) projectile;
             bolt.setInitialPosition(p.position());
-            this.velocity = 1.6F;
+            this.velocity = 2.5F;
             Vec3 viewVector = p.getViewVector(1.0F);
             Vec3 positionVector = new Vec3(p.getX() + (viewVector.x * this.viewVectorOffset) + this.xOffset, p.getY() + this.yOffset, p.getZ() + (viewVector.z * this.viewVectorOffset) + this.zOffset);
             Util.shootSpellRelative(p, bolt, positionVector, this.zRot, this.velocity, this.inaccuracy, this.noVerticalMovement);
             playSound(bolt);
+            if(projectile instanceof PiercingBoltEntity){
+                Level world = p.getLevel();
+                double d0 = (projectile.getX());
+                double d1 = (projectile.getY());
+                double d2 = (projectile.getZ());
+                world.addParticle(ParticlesInit.GREEN_BOLT_BOOM.get(), d0, d1, d2, 0, 0, 0);
+            }
             return true;
         };
     }

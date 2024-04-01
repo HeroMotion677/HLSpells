@@ -82,6 +82,7 @@ public class Bolt extends Spell {
             dumbBullet.setPos(p.getX() + p.getViewVector(1.0F).x, p.getY() + 1.35, p.getZ() + p.getViewVector(1.0F).z);
             dumbBullet.shootFromRotation(p, p.xRot, p.yRot, 1.3F, 1.3F, 1.3F);
             p.level.addFreshEntity(dumbBullet);
+
             return true;
         };
     }

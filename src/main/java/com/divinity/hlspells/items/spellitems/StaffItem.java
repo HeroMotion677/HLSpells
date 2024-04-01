@@ -19,10 +19,13 @@ public class StaffItem extends SpellHoldingItem {
     private final boolean isGemAmethyst;
     private final double castDelay;
 
-    public StaffItem(Properties properties, double damage, double attackSpeed, double castDelay, boolean isGemAmethyst) {
+    private final double maxCastTime;
+
+    public StaffItem(Properties properties, double damage, double attackSpeed, double castDelay, boolean isGemAmethyst, double maxCastTime) {
         super(properties, false);
         this.castDelay = castDelay;
         this.isGemAmethyst = isGemAmethyst;
+        this.maxCastTime = maxCastTime;
         ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
         builder.put(Attributes.ATTACK_DAMAGE, new AttributeModifier(BASE_ATTACK_DAMAGE_UUID, "Weapon modifier", damage, AttributeModifier.Operation.ADDITION));
         builder.put(Attributes.ATTACK_SPEED, new AttributeModifier(BASE_ATTACK_SPEED_UUID, "Weapon modifier", attackSpeed, AttributeModifier.Operation.ADDITION));
@@ -43,6 +46,10 @@ public class StaffItem extends SpellHoldingItem {
 
     public double getCastDelay() {
         return this.castDelay;
+    }
+
+    public double getMaxCastTime() {
+        return this.maxCastTime;
     }
 
     public boolean isGemAmethyst() {
