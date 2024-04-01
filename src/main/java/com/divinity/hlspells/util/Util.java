@@ -62,8 +62,8 @@ public final class Util {
      */
     public static void teleportToLocation(Level world, BlockPos pos, BlockPos teleportPos, Entity entity) {
         entity.teleportTo(teleportPos.getX(), teleportPos.getY(), teleportPos.getZ());
-        doTeleportParticles(world, pos, 150);
-        doTeleportParticles(world, teleportPos, 150);
+        doTeleportParticles(world, pos, 350);
+        doTeleportParticles(world, teleportPos, 350);
         world.playSound(null, pos, SoundEvents.ILLUSIONER_MIRROR_MOVE, SoundSource.NEUTRAL, 0.6F, 1.0F);
     }
 

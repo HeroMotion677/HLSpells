@@ -34,8 +34,8 @@ ordering = "NONE"
 
 [[dependencies.hlspells]]
 modId="lucent"
-mandatory=false
-versionRange="[1.4.0]"
+mandatory=true
+versionRange="[1.4.0,1.4.1]"
 ordering="NONE"
 side="BOTH"
 

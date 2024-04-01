@@ -55,8 +55,6 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
     private final boolean isSpellBook;
     private boolean wasHolding;
 
-    private final int pTimeLeft = 72000 - currentCastTime;
-
 
     public SpellHoldingItem(Properties properties, boolean isSpellBook) {
         super(properties);
@@ -142,7 +140,7 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
             Spell spell = SpellUtils.getSpell(stack);
             ItemStack itemstack = player.getItemInHand(player.getUsedItemHand());
             if (spell instanceof PhasingII || spell instanceof EffectSpell<?> || spell instanceof DescentII || spell instanceof RespirationSpell) {
-
+                currentCastTime++;
             } else {
                 currentCastTime++;
                 try {
@@ -223,16 +221,16 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
                         player.getCooldowns().addCooldown(stack.getItem(), (int) (HLSpells.CONFIG.cooldownDuration.get() * 20));
                         if (stack.getItem() instanceof StaffItem item) {
                             if (item.isGemAmethyst() && SpellUtils.getSpellByID(cap.getCurrentSpell()).getMarkerType() == SpellAttributes.Marker.COMBAT) {
-                                player.getCooldowns().addCooldown(stack.getItem(), (int) (HLSpells.CONFIG.cooldownDuration.get() * 25));
+                                player.getCooldowns().addCooldown(stack.getItem(), (int) (HLSpells.CONFIG.cooldownDuration.get() * 30));
                             } else if (!item.isGemAmethyst() && SpellUtils.getSpellByID(cap.getCurrentSpell()).getMarkerType() == SpellAttributes.Marker.UTILITY) {
-                                player.getCooldowns().addCooldown(stack.getItem(), (int) (HLSpells.CONFIG.cooldownDuration.get() * 25));
+                                player.getCooldowns().addCooldown(stack.getItem(), (int) (HLSpells.CONFIG.cooldownDuration.get() * 30));
                             }
                         }
                         if (stack.getItem() instanceof StaffItem item) {
                             if (!item.isGemAmethyst() && SpellUtils.getSpellByID(cap.getCurrentSpell()).getMarkerType() == SpellAttributes.Marker.COMBAT) {
-                                player.getCooldowns().addCooldown(stack.getItem(), (int) (HLSpells.CONFIG.cooldownDuration.get() * 15));
+                                player.getCooldowns().addCooldown(stack.getItem(), (int) (HLSpells.CONFIG.cooldownDuration.get() * 20));
                             } else if (item.isGemAmethyst() && SpellUtils.getSpellByID(cap.getCurrentSpell()).getMarkerType() == SpellAttributes.Marker.UTILITY) {
-                                player.getCooldowns().addCooldown(stack.getItem(), (int) (HLSpells.CONFIG.cooldownDuration.get() * 15));
+                                player.getCooldowns().addCooldown(stack.getItem(), (int) (HLSpells.CONFIG.cooldownDuration.get() * 20));
                             }
                         }
                     });
@@ -383,13 +381,13 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
     }
 
     public int getBarWidth(ItemStack pStack) {
-        if (pStack.getItem() instanceof StaffItem item && this.isWasHolding()) {
+        if (pStack.getItem() instanceof StaffItem item) {
             return (int) Math.min(currentCastTime * item.getCastDelay() / 20, 13);
 
-        } else if (!this.isSpellBook && this.isWasHolding()) {
+        } else if (!this.isSpellBook) {
             return (int) Math.min(currentCastTime * (HLSpells.CONFIG.spellCastTime.get() * 20) / 20, 13);
 
-        } else if (this.isSpellBook && this.isWasHolding()) {
+        } else if (this.isSpellBook) {
             return (int) Math.min(currentCastTime * (HLSpells.CONFIG.spellCastTime.get() * 20) / 20, 13);
         }
         return (0);

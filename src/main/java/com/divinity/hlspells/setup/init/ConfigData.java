@@ -34,7 +34,7 @@ public class ConfigData {
                 .defineList("sapientMobsList", defaultSapientMobsList, String.class::isInstance);
         spellCastTime = builder.comment("How long should spell items be held before they cast? (seconds)")
                 .defineInRange("spellCastTime", 0.2, 0, 60);
-        teleportRange = builder.comment("Teleport range for the teleport spell.").defineInRange("teleportRange", 50D, 1D, 500D);
+        teleportRange = builder.comment("Teleport range for the teleport spell.").defineInRange("teleportRange", 350D, 1D, 500D);
 
         cooldownDuration = builder.comment("How long should should the cooldown of spell items be when you cast? (seconds)")
                 .defineInRange("cooldownDuration", 1.2, 0, 60);

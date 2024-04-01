@@ -74,7 +74,7 @@ import static com.divinity.hlspells.HLSpells.MODID;
 @Mod.EventBusSubscriber(modid = HLSpells.MODID, bus = Bus.FORGE)
 public class ForgeEventHandler {
 
-    public static final KeyMapping WAND_BINDING = new KeyMapping("Wand Cycle", KeyConflictContext.UNIVERSAL, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_G, "HLSpells");
+    public static final KeyMapping WAND_BINDING = new KeyMapping("Next Spell", KeyConflictContext.IN_GAME, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_G, "HLSpells");
     public static boolean buttonPressedFlag;
     public static boolean soulBond = false;
     public static boolean displayActivationOnDeath = false;
@@ -318,7 +318,7 @@ public class ForgeEventHandler {
                 if (next.getItem() instanceof SpellHoldingItem item && !item.isSpellBook()) {
                     next.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP).filter(cap -> !cap.getSpells().isEmpty()).ifPresent(cap -> {
                         Spell spell = SpellUtils.getSpellByID(cap.getCurrentSpell());
-                        player.displayClientMessage(Component.literal("Spell : " + spell.getTrueDisplayName()).withStyle(ChatFormatting.AQUA), true);
+                        player.displayClientMessage(Component.literal(spell.getTrueDisplayName()).withStyle(ChatFormatting.AQUA), true);
                     });
                 }
                 if (previous.getItem() instanceof SpellHoldingItem item) {
@@ -465,7 +465,7 @@ public class ForgeEventHandler {
         public static void onClientTick(TickEvent.ClientTickEvent event) {
             if (event.phase == TickEvent.Phase.END) {
                 LocalPlayer player = Minecraft.getInstance().player;
-                if (WAND_BINDING.isDown() && !buttonPressedFlag) {
+                if (WAND_BINDING.consumeClick()) {
                     if (player != null && !player.isUsingItem()) {
                         NetworkManager.INSTANCE.sendToServer(new WandInputPacket(WAND_BINDING.getKey().getValue()));
                         for (InteractionHand hand : InteractionHand.values()) {
@@ -475,7 +475,7 @@ public class ForgeEventHandler {
                                     if (!cap.getSpells().isEmpty()) {
                                         cap.incrementCurrentSpellCycle();
                                         Spell spell = SpellUtils.getSpellByID(cap.getCurrentSpell());
-                                        player.displayClientMessage(Component.literal("Spell : " + spell.getTrueDisplayName()).withStyle(ChatFormatting.GOLD), true);
+                                        player.displayClientMessage(Component.literal(spell.getTrueDisplayName()).withStyle(ChatFormatting.AQUA), true);
                                     }
                                 });
                                 break;
