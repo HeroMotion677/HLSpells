@@ -180,7 +180,7 @@ public abstract class Spell implements Cloneable {
 
         }
         else {
-            player.playSound(SoundInit.MISCAST_SOUND.get(), 0.7f, 0.7f);
+            player.playSound(SoundInit.MISCAST_SOUND.get(), 0.9f, 0.7f);
             this.canUse = false;
         }
     }

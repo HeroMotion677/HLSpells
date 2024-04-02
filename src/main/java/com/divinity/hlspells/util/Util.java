@@ -62,9 +62,9 @@ public final class Util {
      */
     public static void teleportToLocation(Level world, BlockPos pos, BlockPos teleportPos, Entity entity) {
         entity.teleportTo(teleportPos.getX(), teleportPos.getY(), teleportPos.getZ());
-        doTeleportParticles(world, pos, 350);
-        doTeleportParticles(world, teleportPos, 350);
-        world.playSound(null, pos, SoundEvents.ILLUSIONER_MIRROR_MOVE, SoundSource.NEUTRAL, 0.6F, 1.0F);
+        doTeleportParticles(world, pos, 250);
+        doTeleportParticles(world, teleportPos, 250);
+        world.playSound(null, pos, SoundEvents.ILLUSIONER_MIRROR_MOVE, SoundSource.NEUTRAL, 0.7F, 1.0F);
     }
 
     /**
@@ -94,7 +94,7 @@ public final class Util {
         Vec3 vector3d = entity.getEyePosition(height);
         Vec3 vector3d1 = entity.getViewVector(height);
         Vec3 vector3d2 = vector3d.add(vector3d1.x * range, vector3d1.y * range, vector3d1.z * range);
-        return entity.level.clip(new ClipContext(vector3d, vector3d2, ClipContext.Block.OUTLINE, includeFluids ? ClipContext.Fluid.ANY : ClipContext.Fluid.NONE, entity));
+        return entity.level.clip(new ClipContext(vector3d, vector3d2, ClipContext.Block.VISUAL, includeFluids ? ClipContext.Fluid.ANY : ClipContext.Fluid.NONE, entity));
     }
 
     /**

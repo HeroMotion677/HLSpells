@@ -181,19 +181,25 @@ public class ProjectileSpell<T extends Projectile> extends Spell {
     }
 
     private static void playSound(Projectile projectile) {
-        if (projectile instanceof BaseBoltEntity e && !(e instanceof FreezingBoltEntity || e instanceof FlamingBoltEntity || e instanceof InvisibleTargetingEntity)) {
-            projectile.playSound(SoundInit.CAST_BOLT.get(), 0.5F, 0.7F);
+        if (projectile instanceof BaseBoltEntity e && !(e instanceof FreezingBoltEntity || e instanceof FlamingBoltEntity || e instanceof InvisibleTargetingEntity || e instanceof FireballEntity || e instanceof Fireball2Entity)) {
+            projectile.playSound(SoundInit.CAST_BOLT.get(), 0.3F, 0.7F);
         }
         else if (projectile instanceof FreezingBoltEntity) {
-            projectile.playSound(SoundInit.CAST_ICE.get(), 0.6F, 0.7F);
+            projectile.playSound(SoundInit.CAST_ICE.get(), 0.4F, 0.7F);
         }
         else if (projectile instanceof FlamingBoltEntity) {
-            projectile.playSound(SoundInit.CAST_FLAME.get(), 0.8F, 0.7F);
+            projectile.playSound(SoundInit.CAST_FLAME.get(), 0.5F, 0.7F);
+        }
+        else if (projectile instanceof FireballEntity) {
+            projectile.playSound(SoundInit.CAST_FLAME.get(), 0.5F, 0.7F);
+        }
+        else if (projectile instanceof Fireball2Entity) {
+            projectile.playSound(SoundInit.CAST_FLAME.get(), 0.5F, 0.7F);
         }
         else if (projectile instanceof WitherSkull) {
-            projectile.playSound(SoundInit.CAST_NECROMANCY.get(), 0.7F, 0.7F);
+            projectile.playSound(SoundInit.CAST_NECROMANCY.get(), 0.6F, 0.7F);
         }else{
-            projectile.playSound(SoundInit.CAST_BOLT.get(), 0.7F, 0.7F);
+            projectile.playSound(SoundInit.CAST_BOLT.get(), 0.3F, 0.7F);
         }
     }
 

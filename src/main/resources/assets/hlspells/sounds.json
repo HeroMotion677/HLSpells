@@ -62,7 +62,9 @@
   "miscast_sound": {
     "subtitle": "sounds.subtitle.miscast_sound",
     "sounds": [
-      "hlspells:miscast_sound"
+      "hlspells:miscast_sound",
+      "hlspells:miscast_sound_1",
+      "hlspells:miscast_sound_2"
     ]
   },
   "spell_attunement": {

@@ -16,7 +16,6 @@ public class ConfigData {
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> lightningSpellList;
     public final ForgeConfigSpec.DoubleValue spellCastTime;
     public final ForgeConfigSpec.DoubleValue teleportRange;
-    public final ForgeConfigSpec.DoubleValue cooldownDuration;
 
     public ConfigData(ForgeConfigSpec.Builder builder) {
         builder.push("HLSpells Config");
@@ -33,11 +32,9 @@ public class ConfigData {
         sapientMobsList = builder.comment("Lists of mobs which are immune to repel and lure spell")
                 .defineList("sapientMobsList", defaultSapientMobsList, String.class::isInstance);
         spellCastTime = builder.comment("How long should spell items be held before they cast? (seconds)")
-                .defineInRange("spellCastTime", 0.2, 0, 60);
-        teleportRange = builder.comment("Teleport range for the teleport spell.").defineInRange("teleportRange", 350D, 1D, 500D);
+                .defineInRange("spellCastTime", 0.35, 0, 60);
+        teleportRange = builder.comment("Teleport range for the teleport spell.").defineInRange("teleportRange", 650D, 1D, 800D);
 
-        cooldownDuration = builder.comment("How long should should the cooldown of spell items be when you cast? (seconds)")
-                .defineInRange("cooldownDuration", 1.2, 0, 60);
         builder.pop();
     }
 }

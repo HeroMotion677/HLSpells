@@ -50,7 +50,7 @@ public class SonicBoomSpell extends Spell {
                     p.getLevel().addParticle(ParticleTypes.SONIC_BOOM, vec33.x, vec33.y, vec33.z, 0.0D, 0.0D, 0.0D);
                 }
 
-                p.playSound(SoundEvents.WARDEN_SONIC_BOOM, 3.0F, 1.0F);
+                p.playSound(SoundEvents.WARDEN_SONIC_BOOM, 2.0F, 1.0F);
 
 
                 entity.hurt(DamageSource.sonicBoom(p), 15.0F);
@@ -70,7 +70,7 @@ public class SonicBoomSpell extends Spell {
                     p.getLevel().addParticle(ParticleTypes.SONIC_BOOM, vec33.x, vec33.y, vec33.z, 0.0D, 0.0D, 0.0D);
                 }
 
-                p.playSound(SoundEvents.WARDEN_SONIC_BOOM, 3.0F, 1.0F);
+                p.playSound(SoundEvents.WARDEN_SONIC_BOOM, 2.0F, 1.0F);
             }
 
             return true;

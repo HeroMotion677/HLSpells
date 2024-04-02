@@ -104,7 +104,7 @@ public class ForgeEventHandler {
         if (name.startsWith(prefix)) {
             String file = name.substring(name.indexOf(prefix) + prefix.length());
             switch (file) {
-                case "woodland_mansion", "end_city_treasure", "stronghold_library", "jungle_temple", "simple_dungeon", "desert_pyramid", "nether_bridge", "bastion_treasure" -> evt.getTable().addPool(getInjectPool(file));
+                case "woodland_mansion", "end_city_treasure", "stronghold_library", "jungle_temple", "simple_dungeon", "desert_pyramid", "nether_bridge", "bastion_treasure", "igloo_chest", "ancient_city" -> evt.getTable().addPool(getInjectPool(file));
                 default -> {}
             }
         }
@@ -299,7 +299,7 @@ public class ForgeEventHandler {
                             player.teleportTo(pos.getX(), pos.getY(), pos.getZ());
                             player.setItemInHand(hand, ItemStack.EMPTY);
                             Util.doTeleportParticles(world, pos, 200);
-                            world.playSound(null, player.blockPosition(), SoundEvents.ENDERMAN_TELEPORT, SoundSource.PLAYERS, 0.7F, 0.7F);
+                            world.playSound(null, player.blockPosition(), SoundEvents.ENDERMAN_TELEPORT, SoundSource.PLAYERS, 0.5F, 0.7F);
                         });
                         return;
                     }
@@ -326,7 +326,7 @@ public class ForgeEventHandler {
                         cap.setSpellSoundBuffer(0);
                         Spell spell = SpellUtils.getSpellByID(cap.getCurrentSpell());
                         if (spell.getSpellType() == SpellAttributes.Type.HELD && item.isWasHolding() && !player.isUsingItem()) {
-                            player.getCooldowns().addCooldown(previous.getItem(), ((int) (HLSpells.CONFIG.cooldownDuration.get() * 20)));
+                            player.getCooldowns().addCooldown(previous.getItem(), 25);
                             item.setWasHolding(false);
                         }
                     });

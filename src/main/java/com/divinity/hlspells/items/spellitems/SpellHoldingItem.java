@@ -27,6 +27,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
@@ -117,15 +118,17 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
             player.startUsingItem(hand);
             if (!world.isClientSide()) {
                 if (isSpellBook) {
-                    world.playSound(null, player.blockPosition(), SoundEvents.BOOK_PAGE_TURN, SoundSource.NEUTRAL, 0.7F, 0.7F);
+                    world.playSound(null, player.blockPosition(), SoundEvents.BOOK_PAGE_TURN, SoundSource.NEUTRAL, 0.6F, 0.7F);
                 }
                 if (spell != SpellInit.EMPTY.get()) {
                     if (spell.getSpellType() == SpellAttributes.Type.CAST) {
                         switch (spell.getMarkerType()) {
                             case COMBAT:
-                                world.playSound(null, player.blockPosition(), SoundInit.CHARGE_COMBAT.get(), SoundSource.PLAYERS, 0.7F, 0.7F);
+                                world.playSound(null, player.blockPosition(), SoundInit.CHARGE_COMBAT.get(), SoundSource.PLAYERS, 0.2F, 0.7F);
+                                currentCastTime = 0;
                             case UTILITY:
-                                world.playSound(null, player.blockPosition(), SoundInit.CHARGE_UTILITY.get(), SoundSource.PLAYERS, 0.7F, 0.7F);
+                                world.playSound(null, player.blockPosition(), SoundInit.CHARGE_UTILITY.get(), SoundSource.PLAYERS, 0.2F, 0.8F);
+                                currentCastTime = 0;
                         }
                     }
                 }
@@ -172,14 +175,14 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
                 capability.ifPresent(cap -> {
                     if (cap.getSpellSoundBuffer() == 0) {
                         if (spell instanceof Illuminate || spell instanceof IlluminateII) {
-                            player.level.playSound(null, player.blockPosition(), SoundInit.HELD_ILLUMINATE.get(), SoundSource.NEUTRAL, 0.5F, 0.5F);
+                            player.level.playSound(null, player.blockPosition(), SoundInit.HELD_ILLUMINATE.get(), SoundSource.PLAYERS, 0.35F, 0.5F);
                             cap.setSpellSoundBuffer(13);
                         } else if (spell.getMarkerType() == SpellAttributes.Marker.COMBAT) {
-                            player.level.playSound(null, player.blockPosition(), SoundInit.HELD_COMBAT.get(), SoundSource.NEUTRAL, 0.7F, 0.7F);
-                            cap.setSpellSoundBuffer(47);
+                            player.level.playSound(null, player.blockPosition(), SoundInit.HELD_COMBAT.get(), SoundSource.PLAYERS, 2.1F, 1.0F);
+                            cap.setSpellSoundBuffer(23);
                         } else if (spell.getMarkerType() == SpellAttributes.Marker.UTILITY) {
-                            player.level.playSound(null, player.blockPosition(), SoundInit.HELD_UTILITY.get(), SoundSource.NEUTRAL, 0.7F, 0.7F);
-                            cap.setSpellSoundBuffer(46);
+                            player.level.playSound(null, player.blockPosition(), SoundInit.HELD_UTILITY.get(), SoundSource.PLAYERS, 1.8F, 1.3F);
+                            cap.setSpellSoundBuffer(23);
                         }
                     } else cap.setSpellSoundBuffer(cap.getSpellSoundBuffer() - 1);
                 });
@@ -195,6 +198,7 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
             capability.ifPresent(cap -> cap.setSpellSoundBuffer(0));
             this.wasHolding = false;
 
+            player.getCooldowns().addCooldown(stack.getItem(), 25);
 
             Spell spell = SpellUtils.getSpell(stack);
 
@@ -202,44 +206,47 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
                 player.setInvulnerable(false);
                 player.setInvisible(false);
             }
-//            if(spell instanceof DescentII){
-//                player.setForcedPose(Pose.STANDING);
-//            }
-//            if (this.castTimeCondition(player, stack)) {
-//                if (spell.getSpellType() == SpellAttributes.Type.CAST) {
-//                    world.playSound(null, player.blockPosition(), spell.getSpellSound(), SoundSource.NEUTRAL, 0.7F, 0.7F);
-//                    spell.execute(player, stack);
-//                }
+
             if (this.castTimeCondition(player, stack)) {
                 if (spell.getSpellType() == SpellAttributes.Type.CAST) {
-                    world.playSound(null, player.blockPosition(), spell.getSpellSound(), SoundSource.NEUTRAL, 0.5F, 0.7F);
+                    world.playSound(null, player.blockPosition(), spell.getSpellSound(), SoundSource.PLAYERS, 0.3F, 0.7F);
                     spell.execute(player, stack);
                 }
+
                 Util.doParticles(player);
                 if (!world.isClientSide()) {
                     capability.filter(p -> !(p.getSpells().isEmpty())).ifPresent(cap -> {
-                        player.getCooldowns().addCooldown(stack.getItem(), (int) (HLSpells.CONFIG.cooldownDuration.get() * 20));
                         if (stack.getItem() instanceof StaffItem item) {
                             if (item.isGemAmethyst() && SpellUtils.getSpellByID(cap.getCurrentSpell()).getMarkerType() == SpellAttributes.Marker.COMBAT) {
-                                player.getCooldowns().addCooldown(stack.getItem(), (int) (HLSpells.CONFIG.cooldownDuration.get() * 30));
+                                player.getCooldowns().addCooldown(stack.getItem(), 30);
                             } else if (!item.isGemAmethyst() && SpellUtils.getSpellByID(cap.getCurrentSpell()).getMarkerType() == SpellAttributes.Marker.UTILITY) {
-                                player.getCooldowns().addCooldown(stack.getItem(), (int) (HLSpells.CONFIG.cooldownDuration.get() * 30));
-                            }
+                                player.getCooldowns().addCooldown(stack.getItem(), 30);
+                            }    else if (!item.isGemAmethyst() && SpellUtils.getSpellByID(cap.getCurrentSpell()).getMarkerType() == SpellAttributes.Marker.COMBAT) {
+                                        player.getCooldowns().addCooldown(stack.getItem(), 15);
+                                    } else if (item.isGemAmethyst() && SpellUtils.getSpellByID(cap.getCurrentSpell()).getMarkerType() == SpellAttributes.Marker.UTILITY) {
+                                        player.getCooldowns().addCooldown(stack.getItem(), 15);
+                                    }
+                                }
+                        else if (this.isSpellBook || !this.isSpellBook){
+                            player.getCooldowns().addCooldown(stack.getItem(), 25);
                         }
-                        if (stack.getItem() instanceof StaffItem item) {
-                            if (!item.isGemAmethyst() && SpellUtils.getSpellByID(cap.getCurrentSpell()).getMarkerType() == SpellAttributes.Marker.COMBAT) {
-                                player.getCooldowns().addCooldown(stack.getItem(), (int) (HLSpells.CONFIG.cooldownDuration.get() * 20));
-                            } else if (item.isGemAmethyst() && SpellUtils.getSpellByID(cap.getCurrentSpell()).getMarkerType() == SpellAttributes.Marker.UTILITY) {
-                                player.getCooldowns().addCooldown(stack.getItem(), (int) (HLSpells.CONFIG.cooldownDuration.get() * 20));
-                            }
-                        }
+                        //Faster casting
+//                        if (stack.getItem() instanceof StaffItem item) {
+//                            if (!item.isGemAmethyst() && SpellUtils.getSpellByID(cap.getCurrentSpell()).getMarkerType() == SpellAttributes.Marker.COMBAT) {
+//                                player.getCooldowns().addCooldown(stack.getItem(), (15));
+//                            } else if (item.isGemAmethyst() && SpellUtils.getSpellByID(cap.getCurrentSpell()).getMarkerType() == SpellAttributes.Marker.UTILITY) {
+//                                player.getCooldowns().addCooldown(stack.getItem(), (15));
+//                            }
+                     //   }
                     });
                 }
             } else {
-                player.playSound(SoundInit.MISCAST_SOUND.get(), 0.7f, 0.7f);
+                player.playSound(SoundInit.MISCAST_SOUND.get(), 0.9f, 0.7f);
+
             }
         }
         currentCastTime = 0;
+
     }
 
     @Override
@@ -378,8 +385,9 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 
     public boolean isBarVisible(ItemStack pStack) {
         return currentCastTime > 0;
-    }
 
+
+    }
     public int getBarWidth(ItemStack pStack) {
         if (pStack.getItem() instanceof StaffItem item) {
             return (int) Math.min(currentCastTime * item.getCastDelay() / 20, 13);
@@ -390,7 +398,7 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
         } else if (this.isSpellBook) {
             return (int) Math.min(currentCastTime * (HLSpells.CONFIG.spellCastTime.get() * 20) / 20, 13);
         }
-        return (0);
+        return 0;
     }
 
 //    private boolean castTimeCondition(Player player, ItemStack stack) {
@@ -401,9 +409,6 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 //        }
 //            return player.getUseItemRemainingTicks() < 71988;
 //        }
-
-
-
 
     private boolean castTimeCondition(Player player, ItemStack stack) {
         if (stack.getItem() instanceof StaffItem item) {

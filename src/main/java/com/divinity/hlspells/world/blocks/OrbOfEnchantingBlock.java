@@ -48,7 +48,7 @@ public class OrbOfEnchantingBlock extends Block {
                 pPlayer.giveExperiencePoints(-10);
                 xp += 5;
                 changeState(pState, pLevel, pPos);
-                pLevel.playSound(null, pPos, SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.NEUTRAL, 0.4F, 0.2F);
+                pLevel.playSound(null, pPos, SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.NEUTRAL, 0.25F, 0.2F);
                 return InteractionResult.SUCCESS;
             }else{
                 pPlayer.level.playSound(null, pPlayer.blockPosition(), SoundInit.MISCAST_SOUND.get(), SoundSource.NEUTRAL, 0.4F, 0.2F);
@@ -64,10 +64,10 @@ public class OrbOfEnchantingBlock extends Block {
                 }else{
                     pPlayer.giveExperiencePoints(10);
                 }
-                pLevel.playSound(null, pPos, SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.NEUTRAL, 0.7F, 0.7F);
+                pLevel.playSound(null, pPos, SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.NEUTRAL, 0.5F, 0.5F);
                 return InteractionResult.SUCCESS;
             }else{
-                pPlayer.level.playSound(null, pPlayer.blockPosition(), SoundInit.MISCAST_SOUND.get(), SoundSource.NEUTRAL, 0.4F, 0.2F);
+                pPlayer.level.playSound(null, pPlayer.blockPosition(), SoundInit.MISCAST_SOUND.get(), SoundSource.NEUTRAL, 0.4F, 0.3F);
                 return InteractionResult.FAIL;
             }
         }
