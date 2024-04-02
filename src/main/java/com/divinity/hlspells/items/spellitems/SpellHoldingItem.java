@@ -198,9 +198,9 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
             capability.ifPresent(cap -> cap.setSpellSoundBuffer(0));
             this.wasHolding = false;
 
-            player.getCooldowns().addCooldown(stack.getItem(), 25);
-
             Spell spell = SpellUtils.getSpell(stack);
+
+            player.getCooldowns().addCooldown(stack.getItem(), 25);
 
             if (spell instanceof PhasingII) {
                 player.setInvulnerable(false);
@@ -219,16 +219,21 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
                         if (stack.getItem() instanceof StaffItem item) {
                             if (item.isGemAmethyst() && SpellUtils.getSpellByID(cap.getCurrentSpell()).getMarkerType() == SpellAttributes.Marker.COMBAT) {
                                 player.getCooldowns().addCooldown(stack.getItem(), 30);
+                                currentCastTime = 0;
                             } else if (!item.isGemAmethyst() && SpellUtils.getSpellByID(cap.getCurrentSpell()).getMarkerType() == SpellAttributes.Marker.UTILITY) {
                                 player.getCooldowns().addCooldown(stack.getItem(), 30);
+                                currentCastTime = 0;
                             }    else if (!item.isGemAmethyst() && SpellUtils.getSpellByID(cap.getCurrentSpell()).getMarkerType() == SpellAttributes.Marker.COMBAT) {
                                         player.getCooldowns().addCooldown(stack.getItem(), 15);
+                                currentCastTime = 0;
                                     } else if (item.isGemAmethyst() && SpellUtils.getSpellByID(cap.getCurrentSpell()).getMarkerType() == SpellAttributes.Marker.UTILITY) {
                                         player.getCooldowns().addCooldown(stack.getItem(), 15);
+                                currentCastTime = 0;
                                     }
                                 }
                         else if (this.isSpellBook || !this.isSpellBook){
                             player.getCooldowns().addCooldown(stack.getItem(), 25);
+                            currentCastTime = 0;
                         }
                         //Faster casting
 //                        if (stack.getItem() instanceof StaffItem item) {
@@ -242,10 +247,11 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
                 }
             } else {
                 player.playSound(SoundInit.MISCAST_SOUND.get(), 0.9f, 0.7f);
+                currentCastTime = 0;
 
             }
         }
-        currentCastTime = 0;
+
 
     }
 
