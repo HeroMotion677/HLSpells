@@ -116,6 +116,7 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
         var spells = capability.map(ISpellHolder::getSpells).orElse(null);
         if (spells != null && !spells.isEmpty()) {
             player.startUsingItem(hand);
+            addNbtToSpellItem(player);
             if (!world.isClientSide()) {
                 if (isSpellBook) {
                     world.playSound(null, player.blockPosition(), SoundEvents.BOOK_PAGE_TURN, SoundSource.NEUTRAL, 0.6F, 0.7F);
@@ -142,10 +143,9 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
         if (livingEntity instanceof Player player) {
             Spell spell = SpellUtils.getSpell(stack);
             ItemStack itemstack = player.getItemInHand(player.getUsedItemHand());
+            currentCastTime++;
             if (spell instanceof PhasingII || spell instanceof EffectSpell<?> || spell instanceof DescentII || spell instanceof RespirationSpell) {
-                currentCastTime++;
             } else {
-                currentCastTime++;
                 try {
                     if (spell instanceof HealingCircleSpell || spell instanceof LightningIII || spell instanceof LureSpell || spell instanceof FlamingCircleSpell || spell instanceof SummonSpell<?> || spell instanceof FrostWallSpell || spell instanceof IlluminateII) {
                         ResourceLocation fileLocation = new ResourceLocation(HLSpells.MODID + ":functions/large/large_rune_2.mcfunction");
@@ -234,6 +234,7 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
                         else if (this.isSpellBook || !this.isSpellBook){
                             player.getCooldowns().addCooldown(stack.getItem(), 25);
                             currentCastTime = 0;
+
                         }
                         //Faster casting
 //                        if (stack.getItem() instanceof StaffItem item) {
@@ -248,8 +249,8 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
             } else {
                 player.playSound(SoundInit.MISCAST_SOUND.get(), 0.9f, 0.7f);
                 currentCastTime = 0;
-
             }
+            resetNbtOnSpellItem(player);
         }
 
 
@@ -390,7 +391,7 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
     }
 
     public boolean isBarVisible(ItemStack pStack) {
-        return currentCastTime > 0;
+        return pStack.getTag().getInt("hlspells.fuckednbt") > 0;
 
 
     }
@@ -415,6 +416,30 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 //        }
 //            return player.getUseItemRemainingTicks() < 71988;
 //        }
+
+    private void addNbtToSpellItem(Player player){
+        ItemStack spellItem =
+                player.getItemInHand(InteractionHand.MAIN_HAND);
+        if(spellItem.getItem() instanceof SpellHoldingItem){
+            CompoundTag nbtData = new CompoundTag();
+            nbtData.putInt("hlspells.fuckednbt", 1);
+
+            spellItem.setTag(nbtData);
+        }
+    }
+
+    private void resetNbtOnSpellItem(Player player){
+        ItemStack spellItem =
+                player.getItemInHand(InteractionHand.MAIN_HAND);
+        if(spellItem.getItem() instanceof SpellHoldingItem){
+            CompoundTag nbtData = new CompoundTag();
+            nbtData.putInt("hlspells.fuckednbt", 0);
+
+            spellItem.setTag(nbtData);
+        }
+    }
+
+
 
     private boolean castTimeCondition(Player player, ItemStack stack) {
         if (stack.getItem() instanceof StaffItem item) {
