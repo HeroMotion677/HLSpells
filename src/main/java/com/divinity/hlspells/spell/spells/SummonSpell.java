@@ -1,6 +1,7 @@
 package com.divinity.hlspells.spell.spells;
 
 import com.divinity.hlspells.entities.Summonable;
+import com.divinity.hlspells.entities.living.summoned.SummonedVexEntity;
 import com.divinity.hlspells.setup.init.SoundInit;
 import com.divinity.hlspells.spell.Spell;
 import com.divinity.hlspells.spell.SpellAttributes;
@@ -9,9 +10,12 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.util.Unit;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.memory.MemoryModuleType;
+import net.minecraft.world.entity.monster.warden.WardenAi;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.Item;
@@ -50,13 +54,16 @@ public class SummonSpell<T extends Entity & Summonable> extends Spell {
             for (int i = 0; i < this.summonCount; i++) {
                 Entity summoned = this.summoned.create(p.level);
                 if (summoned instanceof Mob mob && summoned instanceof Summonable summonable) {
-                    BlockPos blockpos = p.blockPosition().offset(-2 + p.level.random.nextInt(5), 1, -2 + p.level.random.nextInt(5));
-                    mob.moveTo(blockpos, 0.0F, 0.0F);
+                    BlockPos blockPos = p.blockPosition().offset(-2 + p.level.random.nextInt(5), 0, -2 + p.level.random.nextInt(5));
+                    mob.moveTo(blockPos, 0.0F, 0.0F);
+                    if(mob instanceof SummonedVexEntity vex){
+                        vex.setBoundOrigin(blockPos);
+                    }
                     summonable.setSummonedOwner(p);
                     if (p.level instanceof ServerLevel level) {
                         this.items.stream().filter(item -> item instanceof ArmorItem || item instanceof TieredItem).forEach(item -> mob.setItemSlot(this.getSlotForItem(new ItemStack(item)), new ItemStack(item)));
                         this.doAttributeModification(mob);
-                        mob.finalizeSpawn(level, level.getCurrentDifficultyAt(blockpos), MobSpawnType.MOB_SUMMONED, null, null);
+                        mob.finalizeSpawn(level, level.getCurrentDifficultyAt(blockPos), MobSpawnType.MOB_SUMMONED, null, null);
                         level.addFreshEntityWithPassengers(mob);
                     }
                     else return false;

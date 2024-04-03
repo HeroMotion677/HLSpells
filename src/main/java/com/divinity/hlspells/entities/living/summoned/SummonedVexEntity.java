@@ -72,7 +72,7 @@ public class SummonedVexEntity extends Vex implements Summonable {
     }
 
     @Override
-    protected void populateDefaultEquipmentSlots(@NotNull RandomSource pRandom, @NotNull DifficultyInstance instance) {
+    protected void populateDefaultEquipmentSlots(RandomSource pRandom, @NotNull DifficultyInstance instance) {
         if (this.random.nextInt(2) == 0) this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.IRON_SWORD));
         else this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.IRON_AXE));
         this.setDropChance(EquipmentSlot.MAINHAND, 0.0F);
@@ -192,13 +192,13 @@ public class SummonedVexEntity extends Vex implements Summonable {
 
         @Override
         public void tick() {
-            BlockPos blockpos = SummonedVexEntity.this.getBoundOrigin();
-            if (blockpos == null) {
-                blockpos = SummonedVexEntity.this.playerOwner.blockPosition();
+            BlockPos blockPos = SummonedVexEntity.this.getBoundOrigin();
+            if (blockPos == null) {
+                blockPos = SummonedVexEntity.this.playerOwner.blockPosition();
             }
 
             for (int i = 0; i < 3; ++i) {
-                BlockPos blockpos1 = blockpos.offset(SummonedVexEntity.this.random.nextInt(15) - 7, SummonedVexEntity.this.random.nextInt(11) - 5, SummonedVexEntity.this.random.nextInt(15) - 7);
+                BlockPos blockpos1 = blockPos.offset(SummonedVexEntity.this.random.nextInt(15) - 7, SummonedVexEntity.this.random.nextInt(11) - 5, SummonedVexEntity.this.random.nextInt(15) - 7);
                 if (SummonedVexEntity.this.level.isEmptyBlock(blockpos1)) {
                     SummonedVexEntity.this.moveControl.setWantedPosition(blockpos1.getX() + 0.5D, blockpos1.getY() + 0.5D, blockpos1.getZ() + 0.5D, 0.25D);
                     if (SummonedVexEntity.this.getTarget() == null) {
