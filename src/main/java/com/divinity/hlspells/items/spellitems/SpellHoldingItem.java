@@ -400,10 +400,10 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
             return (int) Math.min(currentCastTime * item.getCastDelay() / 20, 13);
 
         } else if (!this.isSpellBook) {
-            return (int) Math.min(currentCastTime * (HLSpells.CONFIG.spellCastTime.get() * 20) / 25, 13);
+            return (int) Math.min (currentCastTime * 0.35 * 20 / 25, 13);
 
         } else  {
-            return (int) Math.min(currentCastTime * (HLSpells.CONFIG.spellCastTime.get() * 20) / 28, 13);
+            return (int) Math.min(currentCastTime * 0.35 * 20 / 28, 13);
         }
 
     }
@@ -445,7 +445,7 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
         if (stack.getItem() instanceof StaffItem item) {
             return currentCastTime >= (item.getMaxCastTime() + 17);
         } else if (!this.isSpellBook) {
-            return currentCastTime >= (43 + 11);
+            return currentCastTime >= (43 + 9);
         } else {
             return currentCastTime >= (47 + 13);
         }

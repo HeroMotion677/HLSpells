@@ -112,13 +112,13 @@ public class AltarOfAttunementBlock extends EnchantmentTableBlock {
 
     public static VoxelShape makeShape(Direction property) {
         VoxelShape shape = Shapes.empty();
-        VoxelShape topNS = Shapes.join(shape, Shapes.box(-0.1875, 0.75, 0, 1.1875, 1, 1),  BooleanOp.OR); // North and South
-        VoxelShape topEW = Shapes.join(shape, Shapes.box(0, 0.75, -0.1875, 1, 1, 1.1875), BooleanOp.OR); // East and West
+        VoxelShape topNS = Shapes.join(shape, Shapes.box(0, 0.75, 0.0625, 1, 1, 0.9375),  BooleanOp.OR); // North and South
+        VoxelShape topEW = Shapes.join(shape, Shapes.box(0.0625, 0.75, 0, 0.9375, 1, 1), BooleanOp.OR); // East and West
         if (property == Direction.NORTH || property == Direction.SOUTH) {
-            VoxelShape base = Shapes.join(topNS, Shapes.box(0.125, 0.125, 0.125, 0.875, 0.8125, 0.875), BooleanOp.OR);
-            return Shapes.join(base, Shapes.box(0.125, 0.3125, 0.125, 0.875, 1, 0.875), BooleanOp.OR);
+            VoxelShape base = Shapes.join(topNS, Shapes.box(0.25, 0.25, 0.25, 0.75, 0.75, 0.75), BooleanOp.OR);
+            return Shapes.join(base, Shapes.box(0.125, 0, 0.125, 0.875, 0.3125, 0.875), BooleanOp.OR);
         }
-        VoxelShape base = Shapes.join(topEW, Shapes.box(0.125, 0.125, 0.125, 0.875, 0.8125, 0.875), BooleanOp.OR);
-        return Shapes.join(base, Shapes.box(0.125, 0.3125, 0.125, 0.875, 1, 0.875), BooleanOp.OR);
+        VoxelShape base = Shapes.join(topEW, Shapes.box(0.25, 0.25, 0.25, 0.75, 0.75, 0.75), BooleanOp.OR);
+        return Shapes.join(base, Shapes.box(0.125, 0, 0.125, 0.875, 0.3125, 0.875), BooleanOp.OR);
     }
 }
