@@ -36,7 +36,7 @@ public class ItemInit {
     // Staffs
     public static final RegistryObject<Item> WOODEN_STAFF = ITEMS.register("wooden_lapis_staff", () ->
             new StaffItem(new Item.Properties().tab(CreativeModeTab.TAB_TOOLS).durability(70),
-                    2D, -3.231D, 0.25 * 20, false, 35));
+                    2D, -3.231D, 0.25 * 20, false, 30));
 
     public static final RegistryObject<Item> GOLDEN_STAFF = ITEMS.register("golden_lapis_staff", () ->
             new StaffItem(new Item.Properties().tab(CreativeModeTab.TAB_TOOLS).durability(170),
@@ -49,7 +49,7 @@ public class ItemInit {
     // Amethyst Variants
     public static final RegistryObject<Item> WOODEN_STAFF_AMETHYST = ITEMS.register("wooden_amethyst_staff", () ->
             new StaffItem(new Item.Properties().tab(CreativeModeTab.TAB_TOOLS).durability(70),
-                    2D, -3.231D, 0.25 * 20, true, 35));
+                    2D, -3.231D, 0.25 * 20, true, 30));
 
     public static final RegistryObject<Item> GOLDEN_STAFF_AMETHYST = ITEMS.register("golden_amethyst_staff", () ->
             new StaffItem(new Item.Properties().tab(CreativeModeTab.TAB_TOOLS).durability(170),

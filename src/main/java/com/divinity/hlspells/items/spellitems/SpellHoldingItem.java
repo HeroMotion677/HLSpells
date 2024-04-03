@@ -391,7 +391,7 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
     }
 
     public boolean isBarVisible(ItemStack pStack) {
-        return pStack.getTag().getInt("hlspells.fuckednbt") > 0;
+        return pStack.getTag().getInt("castBar") > 0;
 
 
     }
@@ -400,12 +400,12 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
             return (int) Math.min(currentCastTime * item.getCastDelay() / 20, 13);
 
         } else if (!this.isSpellBook) {
-            return (int) Math.min(currentCastTime * (HLSpells.CONFIG.spellCastTime.get() * 20) / 20, 13);
+            return (int) Math.min(currentCastTime * (HLSpells.CONFIG.spellCastTime.get() * 20) / 25, 13);
 
-        } else if (this.isSpellBook) {
-            return (int) Math.min(currentCastTime * (HLSpells.CONFIG.spellCastTime.get() * 20) / 20, 13);
+        } else  {
+            return (int) Math.min(currentCastTime * (HLSpells.CONFIG.spellCastTime.get() * 20) / 28, 13);
         }
-        return 0;
+
     }
 
 //    private boolean castTimeCondition(Player player, ItemStack stack) {
@@ -422,7 +422,7 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
                 player.getItemInHand(InteractionHand.MAIN_HAND);
         if(spellItem.getItem() instanceof SpellHoldingItem){
             CompoundTag nbtData = new CompoundTag();
-            nbtData.putInt("hlspells.fuckednbt", 1);
+            nbtData.putInt("castBar", 1);
 
             spellItem.setTag(nbtData);
         }
@@ -433,7 +433,7 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
                 player.getItemInHand(InteractionHand.MAIN_HAND);
         if(spellItem.getItem() instanceof SpellHoldingItem){
             CompoundTag nbtData = new CompoundTag();
-            nbtData.putInt("hlspells.fuckednbt", 0);
+            nbtData.putInt("castBar", 0);
 
             spellItem.setTag(nbtData);
         }
@@ -445,10 +445,10 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
         if (stack.getItem() instanceof StaffItem item) {
             return currentCastTime >= (item.getMaxCastTime() + 17);
         } else if (!this.isSpellBook) {
-            return currentCastTime >= (35 + 11);
-        } else if (this.isSpellBook) {
-            return currentCastTime >= (35 + 11);
+            return currentCastTime >= (43 + 11);
+        } else {
+            return currentCastTime >= (47 + 13);
         }
-        return false;
+
     }
 }

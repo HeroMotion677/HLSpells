@@ -33,7 +33,7 @@ public class ConfigData {
                 .defineList("sapientMobsList", defaultSapientMobsList, String.class::isInstance);
         spellCastTime = builder.comment("How long should spell items be held before they cast? (seconds)")
                 .defineInRange("spellCastTime", 0.35, 0, 60);
-        teleportRange = builder.comment("Teleport range for the teleport spell.").defineInRange("teleportRange", 650D, 1D, 800D);
+        teleportRange = builder.comment("Teleport range for the teleport spell.").defineInRange("teleportRange", 850D, 1D, 2000D);
 
         builder.pop();
     }
