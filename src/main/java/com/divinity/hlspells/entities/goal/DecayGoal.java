@@ -30,7 +30,7 @@ public class DecayGoal extends Goal {
     public void tick() {
         if (--this.decayAmount <= 0) {
             this.decayAmount = 20;
-            this.mob.hurt(DamageSource.STARVE, 1.0F);
+            this.mob.hurt(DamageSource.STARVE, 3.0F);
         }
     }
 }

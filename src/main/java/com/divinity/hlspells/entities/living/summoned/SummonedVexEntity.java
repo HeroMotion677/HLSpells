@@ -3,6 +3,7 @@ package com.divinity.hlspells.entities.living.summoned;
 import com.divinity.hlspells.entities.Summonable;
 import com.divinity.hlspells.entities.goal.AttackedOwnerEnemyGoal;
 import com.divinity.hlspells.entities.goal.CopyOwnerTargetGoal;
+import com.divinity.hlspells.entities.goal.DecayGoal;
 import com.divinity.hlspells.entities.goal.FollowOwnerGoal;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -62,6 +63,7 @@ public class SummonedVexEntity extends Vex implements Summonable {
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
+        this.goalSelector.addGoal(6, new DecayGoal(this));
         this.goalSelector.addGoal(1, new FollowOwnerGoal(this));
         this.goalSelector.addGoal(2, new ChargeAttackGoal());
         this.goalSelector.addGoal(3, new MoveRandomGoal());
