@@ -3,6 +3,7 @@
   "block.hlspells.orb_of_enchanting": "Orb of Enchanting",
   "block.hlspells.frosted_ice": "Frosted Ice",
   "container.hlspells.altar_of_attunement": "Altar Of Attunement",
+  "container.hlspells.altar_of_attunement.transfer": "Attune & Transfer",
   "container.spell.button.requirement": "Transfer (Levels: %s)",
   "container.spell.clue": "%s",
   "container.spell.level.requirement": "Level Requirement: %s",

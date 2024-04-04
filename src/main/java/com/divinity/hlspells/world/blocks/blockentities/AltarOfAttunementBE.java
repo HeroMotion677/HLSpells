@@ -98,7 +98,7 @@ public class AltarOfAttunementBE extends EnchantmentTableBlockEntity implements 
     }
 
     @Override public Component getDisplayName() {
-        return Component.literal("Attune & Transfer");
+        return Component.translatable("container.hlspells.altar_of_attunement.transfer");
     }
 
     public void dropContents() {
