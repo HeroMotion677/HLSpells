@@ -60,7 +60,7 @@ import static com.divinity.hlspells.HLSpells.LOGGER;
 @Mod.EventBusSubscriber(modid = HLSpells.MODID, bus = Bus.MOD)
 public class ModEventHandler {
 
-    public static final Map<Item, HumanoidModel<LivingEntity>> armorModel = new HashMap<>();
+    //public static final Map<Item, HumanoidModel<LivingEntity>> armorModel = new HashMap<>();
 
     public static LootItemFunctionType SET_SPELL;
 

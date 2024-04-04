@@ -19,6 +19,7 @@ import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
+import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
@@ -26,6 +27,7 @@ import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.entity.*;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.api.distmarker.Dist;
@@ -36,11 +38,14 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import org.lwjgl.glfw.GLFW;
-import static com.divinity.hlspells.events.ModEventHandler.armorModel;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 @Mod.EventBusSubscriber(modid = HLSpells.MODID, value = Dist.CLIENT, bus = Bus.MOD)
 public class ClientEventHandler {
+
         @SubscribeEvent
         public static void init(final FMLClientSetupEvent event) {
             event.enqueueWork(() -> {
@@ -57,6 +62,7 @@ public class ClientEventHandler {
                     return 0;
                 });
             });
+
             // Curios Renderer Registration
             if (HLSpells.isCurioLoaded) {
                 CuriosCompat.renderCuriosTotems(ItemInit.TOTEMS);
@@ -66,6 +72,8 @@ public class ClientEventHandler {
             BlockEntityRenderers.register(BlockInit.ALTAR_BE.get(), ctx -> new AltarItemRenderer());
         }
 
+
+        public static final Map<Item, HumanoidModel<LivingEntity>> armorModel = new HashMap<>();
         @SubscribeEvent
         public static void okKeyRegister(RegisterKeyMappingsEvent event) {
             event.register(WAND_BINDING);

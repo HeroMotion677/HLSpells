@@ -1,6 +1,7 @@
 package com.divinity.hlspells.items.armor;
 
 import com.divinity.hlspells.events.ModEventHandler;
+import com.divinity.hlspells.events.ClientEventHandler;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -34,7 +35,7 @@ public class WizardHatArmorItem extends ArmorItem implements IClientItemExtensio
             @Nullable
             @Override
             public HumanoidModel<?> getHumanoidArmorModel(LivingEntity entityLiving, ItemStack itemStack, EquipmentSlot armorSlot, HumanoidModel<?> _default) {
-                var armorModel = ModEventHandler.armorModel.get(itemStack.getItem());
+                var armorModel = ClientEventHandler.armorModel.get(itemStack.getItem());
                 if (armorModel != null)
                     armorModel.head.visible = (armorSlot == EquipmentSlot.HEAD);
                 return armorModel;
