@@ -1,0 +1,34 @@
+{
+  "display": {
+    "icon": {
+      "item": "hlspells:amethyst_wand"
+    },
+    "title": "...We love casting spells.",
+    "description": "Cast a spell",
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "hlspells:altar_advancement",
+  "criteria": {
+    "requirement": {
+      "trigger": "minecraft:using_item",
+      "conditions": {
+        "item": {
+          "items": [
+            "hlspells:wooden_lapis_staff",
+            "hlspells:wooden_amethyst_staff",
+            "hlspells:golden_lapis_staff",
+            "hlspells:golden_amethyst_staff",
+            "hlspells:netherite_lapis_staff",
+            "hlspells:netherite_amethyst_staff",
+            "hlspells:lapis_wand",
+            "hlspells:amethyst_wand",
+            "hlspells:spell_book"
+          ]
+        }
+      }
+    }
+  }
+}

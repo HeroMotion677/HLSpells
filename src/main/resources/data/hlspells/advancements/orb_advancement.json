@@ -1,0 +1,29 @@
+{
+  "display": {
+    "icon": {
+      "item": "hlspells:orb_of_enchanting"
+    },
+    "title": "Pondering the Orb.",
+    "description": "Use the Orb of Enchanting",
+
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "hlspells:spells_advancement",
+  "criteria": {
+    "requirement": {
+      "trigger": "minecraft:item_used_on_block",
+      "conditions": {
+        "location": {
+          "block": {
+            "blocks": [
+              "hlspells:orb_of_enchanting"
+            ]
+          }
+        }
+      }
+    }
+  }
+}

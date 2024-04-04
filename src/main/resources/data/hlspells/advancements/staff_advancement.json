@@ -1,0 +1,27 @@
+{
+  "display": {
+    "icon": {
+      "item": "hlspells:wooden_lapis_staff"
+    },
+    "title": "You Shall not Pass!",
+    "description": "Obtain a Wooden Staff",
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "hlspells:spell_book_advancement",
+  "criteria": {
+    "requirement": {
+      "trigger": "minecraft:using_item",
+      "conditions": {
+        "item": {
+          "items": [
+            "hlspells:wooden_lapis_staff",
+            "hlspells:wooden_amethyst_staff"
+          ]
+        }
+      }
+    }
+  }
+}

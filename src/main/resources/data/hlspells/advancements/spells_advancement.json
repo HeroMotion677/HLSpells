@@ -1,0 +1,24 @@
+{
+  "display": {
+    "icon": {
+      "item": "hlspells:spell_book"
+    },
+    "title": {
+      "translate": "Wizardry"
+    },
+    "description": {
+      "translate": "Discover the potential of magic and spell casting"
+    },
+    "background": "minecraft:textures/block/blackstone.png",
+    "frame": "task",
+    "show_toast": false,
+    "announce_to_chat": false,
+    "hidden": false
+  },
+
+  "criteria": {
+    "requirement": {
+      "trigger": "minecraft:tick"
+    }
+  }
+}
