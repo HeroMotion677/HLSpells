@@ -49,7 +49,6 @@ import net.minecraft.world.level.storage.loot.providers.number.BinomialDistribut
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.MovementInputUpdateEvent;
 import net.minecraftforge.client.event.RenderBlockScreenEffectEvent;
-import net.minecraftforge.client.settings.KeyConflictContext;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.event.TickEvent;
@@ -63,19 +62,17 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
-import org.lwjgl.glfw.GLFW;
 import top.theillusivec4.curios.api.SlotResult;
-
 import java.util.Collection;
 import java.util.Iterator;
-
 import static com.divinity.hlspells.HLSpells.MODID;
+import static com.divinity.hlspells.events.ClientEventHandler.WAND_BINDING;
 
 @Mod.EventBusSubscriber(modid = HLSpells.MODID, bus = Bus.FORGE)
 public class ForgeEventHandler {
 
-    public static final KeyMapping WAND_BINDING = new KeyMapping("Next Spell", KeyConflictContext.IN_GAME, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_G, "HLSpells");
-    public static boolean buttonPressedFlag;
+    //public static final KeyMapping WAND_BINDING = new KeyMapping("Next Spell", KeyConflictContext.IN_GAME, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_G, "HLSpells");
+
     public static boolean soulBond = false;
     public static boolean displayActivationOnDeath = false;
 
@@ -104,8 +101,10 @@ public class ForgeEventHandler {
         if (name.startsWith(prefix)) {
             String file = name.substring(name.indexOf(prefix) + prefix.length());
             switch (file) {
-                case "woodland_mansion", "end_city_treasure", "stronghold_library", "jungle_temple", "simple_dungeon", "desert_pyramid", "nether_bridge", "bastion_treasure", "igloo_chest", "ancient_city" -> evt.getTable().addPool(getInjectPool(file));
-                default -> {}
+                case "woodland_mansion", "end_city_treasure", "stronghold_library", "jungle_temple", "simple_dungeon", "desert_pyramid", "nether_bridge", "bastion_treasure", "igloo_chest", "ancient_city" ->
+                        evt.getTable().addPool(getInjectPool(file));
+                default -> {
+                }
             }
         }
     }
@@ -139,7 +138,7 @@ public class ForgeEventHandler {
         if (event.getEntity() instanceof Player player) {
             // If true the inventory is loaded back and drops are removed
             boolean[] keepingTotem = new boolean[1];
-            for (Iterator<ItemEntity> itemEntityIterator = event.getDrops().iterator(); itemEntityIterator.hasNext();) {
+            for (Iterator<ItemEntity> itemEntityIterator = event.getDrops().iterator(); itemEntityIterator.hasNext(); ) {
                 ItemStack stack = itemEntityIterator.next().getItem();
                 // TOTEM OF KEEPING (Reloads player inventory even after dying and disables inventory from spilling)
                 if (stack.getItem() == ItemInit.TOTEM_OF_KEEPING.get() && !keepingTotem[0]) {
@@ -177,8 +176,7 @@ public class ForgeEventHandler {
                                 player.inventory.add(player.inventory.selected, stack);
                                 itemEntityIterator.remove();
                                 cap.setTotemInHand(null);
-                            }
-                            else if (hand == InteractionHand.OFF_HAND) {
+                            } else if (hand == InteractionHand.OFF_HAND) {
                                 player.inventory.offhand.set(0, stack);
                                 itemEntityIterator.remove();
                                 cap.setTotemInHand(null);
@@ -195,11 +193,9 @@ public class ForgeEventHandler {
                 player.getCapability(PlayerCapProvider.PLAYER_CAP).ifPresent(cap -> cap.getSoulBondItems().forEach((pIndex, pStack) -> {
                     if (player.inventory.getItem(pIndex).isEmpty()) {
                         player.inventory.setItem(pIndex, pStack);
-                    }
-                    else player.inventory.add(pStack);
+                    } else player.inventory.add(pStack);
                 }));
-            }
-            else {
+            } else {
                 event.getDrops().removeIf(itemEntity -> {
                     if (player.inventory.contains(itemEntity.getItem())) return true;
                     return HLSpells.isCurioLoaded && CuriosCompat.getItemInCuriosSlot(player, itemEntity.getItem().getItem()).isPresent();
@@ -228,12 +224,10 @@ public class ForgeEventHandler {
                 }
                 original.inventory.getItem(mainSlot != -1 ? mainSlot : 0).shrink(mainSlot != -1 ? 1 : 0); // Wtf?
                 keepingActivated = true;
-            }
-            else if (original.getOffhandItem().getItem() == ItemInit.TOTEM_OF_KEEPING.get()) {
+            } else if (original.getOffhandItem().getItem() == ItemInit.TOTEM_OF_KEEPING.get()) {
                 original.inventory.offhand.get(0).shrink(1);
                 keepingActivated = true;
-            }
-            else if (HLSpells.isCurioLoaded && CuriosCompat.getItemInCuriosSlot(original, ItemInit.TOTEM_OF_KEEPING.get()).isPresent()) {
+            } else if (HLSpells.isCurioLoaded && CuriosCompat.getItemInCuriosSlot(original, ItemInit.TOTEM_OF_KEEPING.get()).isPresent()) {
                 CuriosCompat.getItemInCuriosSlot(original, ItemInit.TOTEM_OF_KEEPING.get()).ifPresent(slotResult -> slotResult.stack().getCapability(TotemItemProvider.TOTEM_CAP).ifPresent(cap -> {
                     if (cap.diedTotemInCurios())
                         slotResult.stack().shrink(1);
@@ -249,11 +243,9 @@ public class ForgeEventHandler {
             // TOTEM OF RETURNING (Adds totem to the inventory)
             if (original.getMainHandItem().getItem() == ItemInit.TOTEM_OF_RETURNING.get()) {
                 current.inventory.setItem(original.inventory.selected, original.inventory.getSelected());
-            }
-            else if (original.getOffhandItem().getItem() == ItemInit.TOTEM_OF_RETURNING.get()) {
+            } else if (original.getOffhandItem().getItem() == ItemInit.TOTEM_OF_RETURNING.get()) {
                 current.inventory.offhand.set(0, original.inventory.offhand.get(0));
-            }
-            else if (HLSpells.isCurioLoaded && CuriosCompat.getItemInCuriosSlot(original, ItemInit.TOTEM_OF_RETURNING.get()).isPresent()) {
+            } else if (HLSpells.isCurioLoaded && CuriosCompat.getItemInCuriosSlot(original, ItemInit.TOTEM_OF_RETURNING.get()).isPresent()) {
                 CuriosCompat.restoreCuriosInv(current, CuriosCompat.getCuriosInv(original));
             }
             // SOUL BOND
@@ -262,8 +254,7 @@ public class ForgeEventHandler {
                     cap.getSoulBondItems().forEach((pIndex, pStack) -> {
                         if (current.inventory.getItem(pIndex).isEmpty()) {
                             current.inventory.setItem(pIndex, pStack);
-                        }
-                        else current.inventory.add(pStack);
+                        } else current.inventory.add(pStack);
                     });
                     cap.getSoulBondItems().clear();
                 });
@@ -416,21 +407,17 @@ public class ForgeEventHandler {
                         targetTotem.performAction(event, player, player.level, main, InteractionHand.MAIN_HAND, true);
                     }
                 }
-            }
-            else if (targetTotem.doesCancelDeath()) {
+            } else if (targetTotem.doesCancelDeath()) {
                 if (main.getItem() == target) {
                     targetTotem.performAction(event, player, player.level, main, InteractionHand.MAIN_HAND, false);
-                }
-                else if (off.getItem() == target) {
+                } else if (off.getItem() == target) {
                     targetTotem.performAction(event, player, player.level, off, InteractionHand.OFF_HAND, false);
-                }
-                else if (curiosStack != null) {
+                } else if (curiosStack != null) {
                     if (curiosStack.getItem() == target) {
                         targetTotem.performAction(event, player, player.level, main, InteractionHand.MAIN_HAND, true);
                     }
                 }
-            }
-            else if (!targetTotem.isDisposableOnDeath() && !targetTotem.doesCancelDeath() && !event.isCanceled()) {
+            } else if (!targetTotem.isDisposableOnDeath() && !targetTotem.doesCancelDeath() && !event.isCanceled()) {
                 if (main.getItem() == target) {
                     otherTotems = !(isSameTotem(main, off) || curiosStack != null && isSameTotem(main, curiosStack));
                     targetTotem.performAction(event, player, player.level, main, InteractionHand.MAIN_HAND, false);
@@ -460,7 +447,7 @@ public class ForgeEventHandler {
                 }
             }
         }
-
+//
         @SubscribeEvent
         public static void onClientTick(TickEvent.ClientTickEvent event) {
             if (event.phase == TickEvent.Phase.END) {
@@ -482,9 +469,7 @@ public class ForgeEventHandler {
                             }
                         }
                     }
-                    buttonPressedFlag = true;
                 }
-                buttonPressedFlag = WAND_BINDING.isDown() || !buttonPressedFlag;
             }
         }
 
@@ -510,4 +495,5 @@ public class ForgeEventHandler {
             }
         }
     }
-}
+    }
+
