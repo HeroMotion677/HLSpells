@@ -9,6 +9,8 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 
 import javax.annotation.Nullable;
@@ -29,7 +31,8 @@ public class WizardHatArmorItem extends ArmorItem implements IClientItemExtensio
         return slot == EquipmentSlot.HEAD ? "%s:%s".formatted(MODID, "textures/items/armor/model/wizard_hat.png") : null;
     }
 
-    @Override
+
+    @OnlyIn(Dist.CLIENT)
     public void initializeClient(Consumer<IClientItemExtensions> consumer) {
         consumer.accept(new IClientItemExtensions() {
             @Nullable
