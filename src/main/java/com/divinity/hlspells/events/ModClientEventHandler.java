@@ -15,8 +15,6 @@ import com.divinity.hlspells.particle.custom.BoltBoomParticle;
 import com.divinity.hlspells.particle.custom.RuneParticle;
 import com.divinity.hlspells.setup.init.*;
 import com.divinity.hlspells.world.blocks.blockentities.screen.AltarOfAttunementScreen;
-import com.mojang.blaze3d.platform.InputConstants;
-import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.model.HumanoidModel;
@@ -32,19 +30,17 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.*;
-import net.minecraftforge.client.settings.KeyConflictContext;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import org.lwjgl.glfw.GLFW;
 
 import java.util.HashMap;
 import java.util.Map;
 
 
 @Mod.EventBusSubscriber(modid = HLSpells.MODID, value = Dist.CLIENT, bus = Bus.MOD)
-public class ClientEventHandler {
+public class ModClientEventHandler {
 
         @SubscribeEvent
         public static void init(final FMLClientSetupEvent event) {
@@ -74,10 +70,8 @@ public class ClientEventHandler {
 
 
         public static final Map<Item, HumanoidModel<LivingEntity>> armorModel = new HashMap<>();
-        @SubscribeEvent
-        public static void okKeyRegister(RegisterKeyMappingsEvent event) {
-            event.register(WAND_BINDING);
-        }
+
+
 
         @SubscribeEvent
         public static void registerLayer(EntityRenderersEvent.RegisterLayerDefinitions event) {
@@ -100,7 +94,7 @@ public class ClientEventHandler {
             armorModel.put(ItemInit.WIZARD_HAT.get(), model);
         }
 
-    public static final KeyMapping WAND_BINDING = new KeyMapping("Next Spell", KeyConflictContext.IN_GAME, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_G, "HLSpells");
+    //public static final KeyMapping WAND_BINDING = new KeyMapping("Next Spell", KeyConflictContext.IN_GAME, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_G, "HLSpells");
         @SuppressWarnings("all")
         @SubscribeEvent
         public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {

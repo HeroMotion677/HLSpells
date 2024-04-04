@@ -48,6 +48,7 @@ import net.minecraft.world.level.storage.loot.entries.LootTableReference;
 import net.minecraft.world.level.storage.loot.providers.number.BinomialDistributionGenerator;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.MovementInputUpdateEvent;
+import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.client.event.RenderBlockScreenEffectEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.LootTableLoadEvent;
@@ -66,7 +67,7 @@ import top.theillusivec4.curios.api.SlotResult;
 import java.util.Collection;
 import java.util.Iterator;
 import static com.divinity.hlspells.HLSpells.MODID;
-import static com.divinity.hlspells.events.ClientEventHandler.WAND_BINDING;
+import static com.divinity.hlspells.events.ForgeClientEventHandler.WAND_BINDING;
 
 @Mod.EventBusSubscriber(modid = HLSpells.MODID, bus = Bus.FORGE)
 public class ForgeEventHandler {
@@ -75,6 +76,10 @@ public class ForgeEventHandler {
 
     public static boolean soulBond = false;
     public static boolean displayActivationOnDeath = false;
+
+//    @SubscribeEvent
+//    public static void okKeyRegister(RegisterKeyMappingsEvent event) {
+//        event.register(WAND_BINDING);}
 
     @SubscribeEvent
     public static void onAttachEntityCaps(AttachCapabilitiesEvent<Entity> event) {
@@ -435,65 +440,65 @@ public class ForgeEventHandler {
         }
     }
 
-    @Mod.EventBusSubscriber(modid = HLSpells.MODID, value = Dist.CLIENT, bus = Bus.FORGE)
-    public static class ClientEventHandler {
-
-        @SubscribeEvent
-        public static void onRenderBlockOnHUD(RenderBlockScreenEffectEvent event) {
-            Player player = event.getPlayer();
-            if (player != null && player.isUsingItem()) {
-                if (SpellUtils.getSpell(player.getUseItem()) instanceof Phasing spell && spell.canUseSpell() || SpellUtils.getSpell(player.getUseItem()) instanceof PhasingII spell2 && spell2.canUseSpell()) {
-                    event.setCanceled(true);
-                }
-            }
-        }
+//    @Mod.EventBusSubscriber(modid = HLSpells.MODID, value = Dist.CLIENT, bus = Bus.FORGE)
+//    public static class ClientEventHandler {
 //
-        @SubscribeEvent
-        public static void onClientTick(TickEvent.ClientTickEvent event) {
-            if (event.phase == TickEvent.Phase.END) {
-                LocalPlayer player = Minecraft.getInstance().player;
-                if (WAND_BINDING.consumeClick()) {
-                    if (player != null && !player.isUsingItem()) {
-                        NetworkManager.INSTANCE.sendToServer(new WandInputPacket(WAND_BINDING.getKey().getValue()));
-                        for (InteractionHand hand : InteractionHand.values()) {
-                            ItemStack carriedItem = player.getItemInHand(hand);
-                            if (carriedItem.getItem() instanceof SpellHoldingItem item && !item.isSpellBook()) {
-                                carriedItem.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP).ifPresent(cap -> {
-                                    if (!cap.getSpells().isEmpty()) {
-                                        cap.incrementCurrentSpellCycle();
-                                        Spell spell = SpellUtils.getSpellByID(cap.getCurrentSpell());
-                                        player.displayClientMessage(Component.literal(spell.getTrueDisplayName()).withStyle(ChatFormatting.AQUA), true);
-                                    }
-                                });
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        /**
-         * When a spell holding item is used it stops the slowness effect
-         */
-        @SubscribeEvent
-        @SuppressWarnings("ConstantConditions")
-        public static void onInput(MovementInputUpdateEvent event) {
-            if (event.getEntity() instanceof LocalPlayer player) {
-                InteractionHand hand = player.getUsedItemHand();
-                // Don't remove this even if it complains. If it can be null, it can be null
-                if (hand != null) {
-                    ItemStack stack = player.getItemInHand(hand);
-                    if (player.isUsingItem() && !player.isPassenger() && stack.getItem() instanceof SpellHoldingItem) {
-                        Spell spell = SpellUtils.getSpell(stack);
-                        if (spell == SpellInit.SPEED.get() || spell == SpellInit.FROST_PATH_II.get() || spell == SpellInit.FROST_PATH.get() || spell == SpellInit.PHASING.get() || spell == SpellInit.PHASING_II.get()) {
-                            player.input.leftImpulse /= 0.2F;
-                            player.input.forwardImpulse /= 0.2F;
-                        }
-                    }
-                }
-            }
-        }
-    }
+//        @SubscribeEvent
+//        public static void onRenderBlockOnHUD(RenderBlockScreenEffectEvent event) {
+//            Player player = event.getPlayer();
+//            if (player != null && player.isUsingItem()) {
+//                if (SpellUtils.getSpell(player.getUseItem()) instanceof Phasing spell && spell.canUseSpell() || SpellUtils.getSpell(player.getUseItem()) instanceof PhasingII spell2 && spell2.canUseSpell()) {
+//                    event.setCanceled(true);
+//                }
+//            }
+//        }
+////
+//        @SubscribeEvent
+//        public static void onClientTick(TickEvent.ClientTickEvent event) {
+//            if (event.phase == TickEvent.Phase.END) {
+//                LocalPlayer player = Minecraft.getInstance().player;
+//                if (WAND_BINDING.consumeClick()) {
+//                    if (player != null && !player.isUsingItem()) {
+//                        NetworkManager.INSTANCE.sendToServer(new WandInputPacket(WAND_BINDING.getKey().getValue()));
+//                        for (InteractionHand hand : InteractionHand.values()) {
+//                            ItemStack carriedItem = player.getItemInHand(hand);
+//                            if (carriedItem.getItem() instanceof SpellHoldingItem item && !item.isSpellBook()) {
+//                                carriedItem.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP).ifPresent(cap -> {
+//                                    if (!cap.getSpells().isEmpty()) {
+//                                        cap.incrementCurrentSpellCycle();
+//                                        Spell spell = SpellUtils.getSpellByID(cap.getCurrentSpell());
+//                                        player.displayClientMessage(Component.literal(spell.getTrueDisplayName()).withStyle(ChatFormatting.AQUA), true);
+//                                    }
+//                                });
+//                                break;
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//
+//        /**
+//         * When a spell holding item is used it stops the slowness effect
+//         */
+//        @SubscribeEvent
+//        @SuppressWarnings("ConstantConditions")
+//        public static void onInput(MovementInputUpdateEvent event) {
+//            if (event.getEntity() instanceof LocalPlayer player) {
+//                InteractionHand hand = player.getUsedItemHand();
+//                // Don't remove this even if it complains. If it can be null, it can be null
+//                if (hand != null) {
+//                    ItemStack stack = player.getItemInHand(hand);
+//                    if (player.isUsingItem() && !player.isPassenger() && stack.getItem() instanceof SpellHoldingItem) {
+//                        Spell spell = SpellUtils.getSpell(stack);
+//                        if (spell == SpellInit.SPEED.get() || spell == SpellInit.FROST_PATH_II.get() || spell == SpellInit.FROST_PATH.get() || spell == SpellInit.PHASING.get() || spell == SpellInit.PHASING_II.get()) {
+//                            player.input.leftImpulse /= 0.2F;
+//                            player.input.forwardImpulse /= 0.2F;
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//    }
     }
 

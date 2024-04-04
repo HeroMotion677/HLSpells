@@ -1,7 +1,6 @@
 package com.divinity.hlspells.items.armor;
 
-import com.divinity.hlspells.events.ModEventHandler;
-import com.divinity.hlspells.events.ClientEventHandler;
+import com.divinity.hlspells.events.ModClientEventHandler;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -17,8 +16,6 @@ import javax.annotation.Nullable;
 import java.util.function.Consumer;
 import static com.divinity.hlspells.HLSpells.MODID;
 
-import net.minecraft.world.item.Item.Properties;
-
 public class WizardHatArmorItem extends ArmorItem implements IClientItemExtensions {
 
     public WizardHatArmorItem(ArmorMaterial material, EquipmentSlot type, Properties properties) {
@@ -31,14 +28,13 @@ public class WizardHatArmorItem extends ArmorItem implements IClientItemExtensio
         return slot == EquipmentSlot.HEAD ? "%s:%s".formatted(MODID, "textures/items/armor/model/wizard_hat.png") : null;
     }
 
-
     @OnlyIn(Dist.CLIENT)
     public void initializeClient(Consumer<IClientItemExtensions> consumer) {
         consumer.accept(new IClientItemExtensions() {
             @Nullable
             @Override
             public HumanoidModel<?> getHumanoidArmorModel(LivingEntity entityLiving, ItemStack itemStack, EquipmentSlot armorSlot, HumanoidModel<?> _default) {
-                var armorModel = ClientEventHandler.armorModel.get(itemStack.getItem());
+                var armorModel = ModClientEventHandler.armorModel.get(itemStack.getItem());
                 if (armorModel != null)
                     armorModel.head.visible = (armorSlot == EquipmentSlot.HEAD);
                 return armorModel;
