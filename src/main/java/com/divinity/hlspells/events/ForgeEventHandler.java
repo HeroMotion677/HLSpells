@@ -8,22 +8,15 @@ import com.divinity.hlspells.capabilities.totemcap.TotemItemProvider;
 import com.divinity.hlspells.compat.CuriosCompat;
 import com.divinity.hlspells.items.spellitems.SpellHoldingItem;
 import com.divinity.hlspells.items.totems.ITotem;
-import com.divinity.hlspells.network.NetworkManager;
-import com.divinity.hlspells.network.packets.serverbound.WandInputPacket;
 import com.divinity.hlspells.setup.init.EnchantmentInit;
 import com.divinity.hlspells.setup.init.ItemInit;
-import com.divinity.hlspells.setup.init.SpellInit;
 import com.divinity.hlspells.spell.Spell;
 import com.divinity.hlspells.spell.SpellAttributes;
 import com.divinity.hlspells.spell.spells.Phasing;
 import com.divinity.hlspells.spell.spells.PhasingII;
 import com.divinity.hlspells.util.SpellUtils;
 import com.divinity.hlspells.util.Util;
-import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.KeyMapping;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
@@ -33,7 +26,6 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Inventory;
@@ -46,14 +38,9 @@ import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.entries.LootPoolEntryContainer;
 import net.minecraft.world.level.storage.loot.entries.LootTableReference;
 import net.minecraft.world.level.storage.loot.providers.number.BinomialDistributionGenerator;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.MovementInputUpdateEvent;
-import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
-import net.minecraftforge.client.event.RenderBlockScreenEffectEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
@@ -66,20 +53,15 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import top.theillusivec4.curios.api.SlotResult;
 import java.util.Collection;
 import java.util.Iterator;
+
 import static com.divinity.hlspells.HLSpells.MODID;
-import static com.divinity.hlspells.events.ForgeClientEventHandler.WAND_BINDING;
+
 
 @Mod.EventBusSubscriber(modid = HLSpells.MODID, bus = Bus.FORGE)
 public class ForgeEventHandler {
 
-    //public static final KeyMapping WAND_BINDING = new KeyMapping("Next Spell", KeyConflictContext.IN_GAME, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_G, "HLSpells");
-
     public static boolean soulBond = false;
     public static boolean displayActivationOnDeath = false;
-
-//    @SubscribeEvent
-//    public static void okKeyRegister(RegisterKeyMappingsEvent event) {
-//        event.register(WAND_BINDING);}
 
     @SubscribeEvent
     public static void onAttachEntityCaps(AttachCapabilitiesEvent<Entity> event) {
@@ -330,26 +312,15 @@ public class ForgeEventHandler {
             }
         }
     }
-
-    public static final EntityDimensions OLD_PLAYER_DIMENSIONS = new EntityDimensions(0.6f, 1.8f, false);
-    public static final EntityDimensions SHRINK_DIMENSIONS = new EntityDimensions(0.6f, 0.8f, true);
-
     @SubscribeEvent
-    public static void onTinyPlayer(EntityEvent.Size event) {
-/*        if (event.getEntity().isAddedToWorld()) {
-            if (event.getEntity() instanceof Player player) {
-                Spell spell = SpellUtils.getSpell(player.getUseItem());
-                if (spell == SpellInit.SHRINK.get() && spell.canUseSpell()) {
-                    event.setNewSize(SHRINK_DIMENSIONS, false);
-                    event.setNewEyeHeight(player.isCrouching() ? 0.55F : 0.7F);
-                }
-                else if (SpellUtils.getSpell(player.getUseItem()) != SpellInit.SHRINK.get()) {
-                    event.setNewSize(OLD_PLAYER_DIMENSIONS, true);
-                }
+    public static void SpellCap(TickEvent.PlayerTickEvent event) {
+        if (!event.player.level.isClientSide()) {
+            if (event.phase == TickEvent.Phase.END && displayActivationOnDeath) {
+                displayActivationOnDeath = false;
+                Util.displayActivation(event.player, ItemInit.TOTEM_OF_KEEPING.get());
             }
-        }*/
+        }
     }
-
     @SubscribeEvent
     public static void clearEffectsAfterUse(TickEvent.PlayerTickEvent event) {
         Player player = event.player;
@@ -440,65 +411,5 @@ public class ForgeEventHandler {
         }
     }
 
-//    @Mod.EventBusSubscriber(modid = HLSpells.MODID, value = Dist.CLIENT, bus = Bus.FORGE)
-//    public static class ClientEventHandler {
-//
-//        @SubscribeEvent
-//        public static void onRenderBlockOnHUD(RenderBlockScreenEffectEvent event) {
-//            Player player = event.getPlayer();
-//            if (player != null && player.isUsingItem()) {
-//                if (SpellUtils.getSpell(player.getUseItem()) instanceof Phasing spell && spell.canUseSpell() || SpellUtils.getSpell(player.getUseItem()) instanceof PhasingII spell2 && spell2.canUseSpell()) {
-//                    event.setCanceled(true);
-//                }
-//            }
-//        }
-////
-//        @SubscribeEvent
-//        public static void onClientTick(TickEvent.ClientTickEvent event) {
-//            if (event.phase == TickEvent.Phase.END) {
-//                LocalPlayer player = Minecraft.getInstance().player;
-//                if (WAND_BINDING.consumeClick()) {
-//                    if (player != null && !player.isUsingItem()) {
-//                        NetworkManager.INSTANCE.sendToServer(new WandInputPacket(WAND_BINDING.getKey().getValue()));
-//                        for (InteractionHand hand : InteractionHand.values()) {
-//                            ItemStack carriedItem = player.getItemInHand(hand);
-//                            if (carriedItem.getItem() instanceof SpellHoldingItem item && !item.isSpellBook()) {
-//                                carriedItem.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP).ifPresent(cap -> {
-//                                    if (!cap.getSpells().isEmpty()) {
-//                                        cap.incrementCurrentSpellCycle();
-//                                        Spell spell = SpellUtils.getSpellByID(cap.getCurrentSpell());
-//                                        player.displayClientMessage(Component.literal(spell.getTrueDisplayName()).withStyle(ChatFormatting.AQUA), true);
-//                                    }
-//                                });
-//                                break;
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//
-//        /**
-//         * When a spell holding item is used it stops the slowness effect
-//         */
-//        @SubscribeEvent
-//        @SuppressWarnings("ConstantConditions")
-//        public static void onInput(MovementInputUpdateEvent event) {
-//            if (event.getEntity() instanceof LocalPlayer player) {
-//                InteractionHand hand = player.getUsedItemHand();
-//                // Don't remove this even if it complains. If it can be null, it can be null
-//                if (hand != null) {
-//                    ItemStack stack = player.getItemInHand(hand);
-//                    if (player.isUsingItem() && !player.isPassenger() && stack.getItem() instanceof SpellHoldingItem) {
-//                        Spell spell = SpellUtils.getSpell(stack);
-//                        if (spell == SpellInit.SPEED.get() || spell == SpellInit.FROST_PATH_II.get() || spell == SpellInit.FROST_PATH.get() || spell == SpellInit.PHASING.get() || spell == SpellInit.PHASING_II.get()) {
-//                            player.input.leftImpulse /= 0.2F;
-//                            player.input.forwardImpulse /= 0.2F;
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//    }
     }
 

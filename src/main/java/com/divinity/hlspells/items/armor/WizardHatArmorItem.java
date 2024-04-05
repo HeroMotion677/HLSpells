@@ -1,6 +1,6 @@
 package com.divinity.hlspells.items.armor;
 
-import com.divinity.hlspells.events.ModClientEventHandler;
+import com.divinity.hlspells.events.ForgeClientEventHandler;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -11,12 +11,12 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
-
 import javax.annotation.Nullable;
 import java.util.function.Consumer;
 import static com.divinity.hlspells.HLSpells.MODID;
 
-public class WizardHatArmorItem extends ArmorItem implements IClientItemExtensions {
+public class WizardHatArmorItem extends ArmorItem {
+
 
     public WizardHatArmorItem(ArmorMaterial material, EquipmentSlot type, Properties properties) {
         super(material, type, properties);
@@ -24,21 +24,33 @@ public class WizardHatArmorItem extends ArmorItem implements IClientItemExtensio
 
     @Nullable
     @Override
+
     public String getArmorTexture(ItemStack stack, Entity entity, EquipmentSlot slot, String type) {
         return slot == EquipmentSlot.HEAD ? "%s:%s".formatted(MODID, "textures/items/armor/model/wizard_hat.png") : null;
     }
 
+    @Override
     @OnlyIn(Dist.CLIENT)
     public void initializeClient(Consumer<IClientItemExtensions> consumer) {
         consumer.accept(new IClientItemExtensions() {
-            @Nullable
-            @Override
-            public HumanoidModel<?> getHumanoidArmorModel(LivingEntity entityLiving, ItemStack itemStack, EquipmentSlot armorSlot, HumanoidModel<?> _default) {
-                var armorModel = ModClientEventHandler.armorModel.get(itemStack.getItem());
-                if (armorModel != null)
-                    armorModel.head.visible = (armorSlot == EquipmentSlot.HEAD);
-                return armorModel;
+            public HumanoidModel<?> getHumanoidArmorModel(LivingEntity entity, ItemStack itemStack, EquipmentSlot armorSlot, HumanoidModel<?> properties) {
+                var hatArmorModel = ForgeClientEventHandler.hatArmorModel.get(itemStack.getItem());
+                if (hatArmorModel != null)
+                    hatArmorModel.head.visible = (armorSlot == EquipmentSlot.HEAD);
+                return hatArmorModel;
             }
         });
     }
+
+//    @OnlyIn(Dist.CLIENT)
+//    public void initializeClient(Consumer<IClientItemExtensions> consumer) {
+//        consumer.accept(new IClientItemExtensions() {
+//            public HumanoidModel<?> getHumanoidArmorModel(LivingEntity entityLiving, ItemStack itemStack, EquipmentSlot armorSlot, HumanoidModel<?> _default) {
+//                var armorModel = ForgeClientEventHandler.hatArmorModel.get(itemStack.getItem());
+//                if (armorModel != null)
+//                    armorModel.head.visible = (armorSlot == EquipmentSlot.HEAD);
+//                return armorModel;
+//            }
+//        });
+//    }
 }

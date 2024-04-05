@@ -16,7 +16,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 public class BaseBoltModel<T extends Entity> extends HierarchicalModel<T> {
 
-    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation(HLSpells.MODID,"baseboltmodel"), "main");
+
     private final ModelPart root;
     private final ModelPart model;
 

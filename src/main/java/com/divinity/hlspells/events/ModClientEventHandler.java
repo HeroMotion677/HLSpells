@@ -3,9 +3,6 @@ package com.divinity.hlspells.events;
 import com.divinity.hlspells.HLSpells;
 import com.divinity.hlspells.capabilities.totemcap.ITotemCap;
 import com.divinity.hlspells.capabilities.totemcap.TotemItemProvider;
-import com.divinity.hlspells.client.models.BaseBoltModel;
-import com.divinity.hlspells.client.models.FireballModel;
-import com.divinity.hlspells.client.models.WizardHatModel;
 import com.divinity.hlspells.client.other.AltarItemRenderer;
 import com.divinity.hlspells.client.renderers.BaseBoltRenderer;
 import com.divinity.hlspells.client.renderers.FireballRenderer;
@@ -17,7 +14,6 @@ import com.divinity.hlspells.setup.init.*;
 import com.divinity.hlspells.world.blocks.blockentities.screen.AltarOfAttunementScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
-import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
@@ -25,18 +21,16 @@ import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.entity.*;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.*;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
-import java.util.HashMap;
-import java.util.Map;
 
 
 @Mod.EventBusSubscriber(modid = HLSpells.MODID, value = Dist.CLIENT, bus = Bus.MOD)
@@ -58,7 +52,6 @@ public class ModClientEventHandler {
                     return 0;
                 });
             });
-
             // Curios Renderer Registration
             if (HLSpells.isCurioLoaded) {
                 CuriosCompat.renderCuriosTotems(ItemInit.TOTEMS);
@@ -67,43 +60,21 @@ public class ModClientEventHandler {
             ItemBlockRenderTypes.setRenderLayer(BlockInit.ALTAR_OF_ATTUNEMENT_BLOCK.get(), RenderType.cutout());
             BlockEntityRenderers.register(BlockInit.ALTAR_BE.get(), ctx -> new AltarItemRenderer());
         }
+//        @SubscribeEvent
+//        public static void registerLayer(EntityRenderersEvent.RegisterLayerDefinitions event) {
+//            event.registerLayerDefinition(BaseBoltModel.LAYER_LOCATION, BaseBoltModel::createBodyLayer);
+//
+//            event.registerLayerDefinition(FireballModel.LAYER_LOCATION, FireballModel::createBodyLayer);
 
-
-        public static final Map<Item, HumanoidModel<LivingEntity>> armorModel = new HashMap<>();
-
-
-
-        @SubscribeEvent
-        public static void registerLayer(EntityRenderersEvent.RegisterLayerDefinitions event) {
-            event.registerLayerDefinition(BaseBoltModel.LAYER_LOCATION, BaseBoltModel::createBodyLayer);
-            event.registerLayerDefinition(WizardHatModel.LAYER_LOCATION, WizardHatModel::createBodyLayer);
-            event.registerLayerDefinition(FireballModel.LAYER_LOCATION, FireballModel::createBodyLayer);
-        }
-
-        @SubscribeEvent
-        public static void registerModelLayers(EntityRenderersEvent.AddLayers event) {
-            EntityRendererProvider.Context context = new EntityRendererProvider.Context(
-                    Minecraft.getInstance().getEntityRenderDispatcher(),
-                    Minecraft.getInstance().getItemRenderer(),
-                    Minecraft.getInstance().getBlockRenderer(),
-                    Minecraft.getInstance().getEntityRenderDispatcher().getItemInHandRenderer(),
-                    Minecraft.getInstance().getResourceManager(),
-                    Minecraft.getInstance().getEntityModels(),
-                    Minecraft.getInstance().font);
-            var model = new WizardHatModel<>(context.bakeLayer(WizardHatModel.LAYER_LOCATION));
-            armorModel.put(ItemInit.WIZARD_HAT.get(), model);
-        }
-
-    //public static final KeyMapping WAND_BINDING = new KeyMapping("Next Spell", KeyConflictContext.IN_GAME, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_G, "HLSpells");
         @SuppressWarnings("all")
         @SubscribeEvent
+        @OnlyIn(Dist.CLIENT)
         public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
             event.registerEntityRenderer(EntityInit.INVISIBLE_TARGETING_ENTITY.get(), ctx -> new EntityRenderer<>(ctx) {
                 @Override
                 public boolean shouldRender(InvisibleTargetingEntity pLivingEntity, Frustum pCamera, double pCamX, double pCamY, double pCamZ) {
                     return false;
                 }
-
                 @Override
                 public ResourceLocation getTextureLocation(InvisibleTargetingEntity pEntity) {
                     return new ResourceLocation("");
@@ -152,6 +123,7 @@ public class ModClientEventHandler {
         }
 
         @SubscribeEvent
+        @OnlyIn(Dist.CLIENT)
         public static void registerParticleFactories(RegisterParticleProvidersEvent event) {
             Minecraft.getInstance().particleEngine.register(ParticlesInit.GREEN_PARTICLE.get(), RuneParticle.Provider::new);
             Minecraft.getInstance().particleEngine.register(ParticlesInit.BLACK_PARTICLE.get(), RuneParticle.Provider::new);
@@ -179,63 +151,7 @@ public class ModClientEventHandler {
             Minecraft.getInstance().particleEngine.register(ParticlesInit.GREEN_BOLT_BOOM.get(), BoltBoomParticle.Provider::new);
 
         }
-//    @SubscribeEvent
-//    public static void onRenderBlockOnHUD(RenderBlockScreenEffectEvent event) {
-//        Player player = event.getPlayer();
-//        if (player != null && player.isUsingItem()) {
-//            if (SpellUtils.getSpell(player.getUseItem()) instanceof Phasing spell && spell.canUseSpell() || SpellUtils.getSpell(player.getUseItem()) instanceof PhasingII spell2 && spell2.canUseSpell()) {
-//                event.setCanceled(true);
-//            }
-//        }
-//    }
 
-//    @SubscribeEvent
-//    public static void onClientTick (TickEvent.ClientTickEvent event){
-//        if (event.phase == TickEvent.Phase.END) {
-//            LocalPlayer player = Minecraft.getInstance().player;
-//            if (WAND_BINDING.consumeClick()) {
-//                if (player != null && !player.isUsingItem()) {
-//                    NetworkManager.INSTANCE.sendToServer(new WandInputPacket(WAND_BINDING.getKey().getValue()));
-//                    for (InteractionHand hand : InteractionHand.values()) {
-//                        ItemStack carriedItem = player.getItemInHand(hand);
-//                        if (carriedItem.getItem() instanceof SpellHoldingItem item && !item.isSpellBook()) {
-//                            carriedItem.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP).ifPresent(cap -> {
-//                                if (!cap.getSpells().isEmpty()) {
-//                                    cap.incrementCurrentSpellCycle();
-//                                    Spell spell = SpellUtils.getSpellByID(cap.getCurrentSpell());
-//                                    player.displayClientMessage(Component.literal(spell.getTrueDisplayName()).withStyle(ChatFormatting.AQUA), true);
-//                                }
-//                            });
-//                            break;
-//                        }
-//                    }
-//                }
-//            }
-//
-//        }
-//    }
-//
-//    /**
-//     * When a spell holding item is used it stops the slowness effect
-//     */
-//    @SubscribeEvent
-//    @SuppressWarnings("ConstantConditions")
-//    public static void onInput (MovementInputUpdateEvent event){
-//        if (event.getEntity() instanceof LocalPlayer player) {
-//            InteractionHand hand = player.getUsedItemHand();
-//            // Don't remove this even if it complains. If it can be null, it can be null
-//            if (hand != null) {
-//                ItemStack stack = player.getItemInHand(hand);
-//                if (player.isUsingItem() && !player.isPassenger() && stack.getItem() instanceof SpellHoldingItem) {
-//                    Spell spell = SpellUtils.getSpell(stack);
-//                    if (spell == SpellInit.SPEED.get() || spell == SpellInit.FROST_PATH_II.get() || spell == SpellInit.FROST_PATH.get() || spell == SpellInit.PHASING.get() || spell == SpellInit.PHASING_II.get()) {
-//                        player.input.leftImpulse /= 0.2F;
-//                        player.input.forwardImpulse /= 0.2F;
-//                    }
-//                }
-//            }
-//        }
-//    }
 }
 
 

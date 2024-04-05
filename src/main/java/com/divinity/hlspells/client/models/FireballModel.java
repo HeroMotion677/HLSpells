@@ -16,7 +16,7 @@ import net.minecraft.world.entity.Entity;
 
 public class FireballModel<T extends Entity> extends EntityModel<T> {
 	// This layer location should be baked with EntityRendererProvider.Context in the entity renderer and passed into this model's constructor
-	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation(HLSpells.MODID, "fireballmodel"), "main");
+
 	private final ModelPart bb_main;
 
 	public FireballModel(ModelPart root) {

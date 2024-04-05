@@ -1,6 +1,7 @@
 package com.divinity.hlspells.client.renderers;
 
 import com.divinity.hlspells.client.models.BaseBoltModel;
+import com.divinity.hlspells.events.ModelLayers;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Vector3f;
@@ -25,7 +26,7 @@ public class BaseBoltRenderer<T extends Projectile> extends EntityRenderer<T> {
 
     public BaseBoltRenderer(Context manager, ResourceLocation location) {
         super(manager);
-        this.model = new BaseBoltModel<>(manager.bakeLayer(BaseBoltModel.LAYER_LOCATION));
+        this.model = new BaseBoltModel<>(manager.bakeLayer(ModelLayers.BOLT_LAYER));
         this.TEXTURE_LOCATION = location;
         this.RENDER_TYPE = RenderType.entityTranslucent(location);
     }

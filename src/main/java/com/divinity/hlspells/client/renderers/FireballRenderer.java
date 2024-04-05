@@ -1,5 +1,6 @@
 package com.divinity.hlspells.client.renderers;
 import com.divinity.hlspells.client.models.FireballModel;
+import com.divinity.hlspells.events.ModelLayers;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Vector3f;
@@ -24,7 +25,7 @@ public class FireballRenderer<T extends Projectile> extends EntityRenderer<T> {
 
     public FireballRenderer(Context manager, ResourceLocation location) {
         super(manager);
-        this.model = new FireballModel<>(manager.bakeLayer(FireballModel.LAYER_LOCATION));
+        this.model = new FireballModel<>(manager.bakeLayer(ModelLayers.FIRE_BALL_LAYER));
         this.TEXTURE_LOCATION = location;
         this.RENDER_TYPE = RenderType.entityTranslucent(location);
     }

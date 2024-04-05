@@ -11,13 +11,12 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.decoration.ArmorStand;
+import net.minecraft.world.item.ArmorItem;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
 public class WizardHatModel<T extends LivingEntity> extends HumanoidModel<T> {
-
-    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation(HLSpells.MODID, "wizard_hat"), "main");
 
     public WizardHatModel(ModelPart root) {
         super(root);
@@ -56,4 +55,5 @@ public class WizardHatModel<T extends LivingEntity> extends HumanoidModel<T> {
     public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
         this.head.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
     }
+
 }
