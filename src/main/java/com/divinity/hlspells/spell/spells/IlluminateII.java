@@ -16,7 +16,7 @@ import net.minecraftforge.registries.RegistryObject;
 
 public class IlluminateII extends Spell {
 
-    public IlluminateII(SpellAttributes.Type type, SpellAttributes.Rarity rarity, SpellAttributes.Tier tier, SpellAttributes.Marker marker, String displayName, int xpCost, int tickDelay, boolean treasureOnly, int maxSpellLevel, RegistryObject<SimpleParticleType> rune) {
+    public IlluminateII(SpellAttributes.Type type, SpellAttributes.Rarity rarity, SpellAttributes.Tier tier, SpellAttributes.Marker marker, String displayName, int xpCost, int tickDelay, boolean treasureOnly, int maxSpellLevel, SimpleParticleType rune) {
         super(type, rarity, tier, marker, displayName, xpCost, tickDelay, true, maxSpellLevel, rune);
     }
     /**

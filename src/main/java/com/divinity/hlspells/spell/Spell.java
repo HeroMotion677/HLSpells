@@ -40,11 +40,11 @@ public abstract class Spell implements Cloneable {
     protected Long currentTime;
     protected Timestamp time = new Timestamp(0);
     protected SoundEvent spellSound;
-    protected RegistryObject<SimpleParticleType> rune;
+    protected SimpleParticleType rune;
 
     @Nullable private String descriptionId;
 
-    public Spell(SpellAttributes.Type type, SpellAttributes.Rarity rarity, SpellAttributes.Tier tier, SpellAttributes.Marker marker, String displayName, int xpCost, boolean treasureOnly, int maxSpellLevel, RegistryObject<SimpleParticleType> rune) {
+    public Spell(SpellAttributes.Type type, SpellAttributes.Rarity rarity, SpellAttributes.Tier tier, SpellAttributes.Marker marker, String displayName, int xpCost, boolean treasureOnly, int maxSpellLevel, SimpleParticleType rune) {
         this.spellType = type;
         this.spellRarity = rarity;
         this.spellTier = tier;
@@ -73,7 +73,7 @@ public abstract class Spell implements Cloneable {
 
     }
 
-    public Spell(SpellAttributes.Type type, SpellAttributes.Rarity rarity, SpellAttributes.Tier tier, SpellAttributes.Marker marker, String displayName, int xpCost, int tickDelay, boolean treasureOnly, int maxSpellLevel, RegistryObject<SimpleParticleType> rune) {
+    public Spell(SpellAttributes.Type type, SpellAttributes.Rarity rarity, SpellAttributes.Tier tier, SpellAttributes.Marker marker, String displayName, int xpCost, int tickDelay, boolean treasureOnly, int maxSpellLevel, SimpleParticleType rune) {
         this(type, rarity, tier, marker, displayName, xpCost, treasureOnly, maxSpellLevel, rune);
         this.tickDelay = tickDelay;
     }
@@ -223,7 +223,7 @@ public abstract class Spell implements Cloneable {
         currentTime = time.getTime();
     }
 
-    public RegistryObject<SimpleParticleType> getRune(){
+    public SimpleParticleType getRune(){
         return rune;
     }
 

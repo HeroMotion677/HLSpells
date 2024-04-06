@@ -21,6 +21,7 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
@@ -144,7 +145,7 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
             Spell spell = SpellUtils.getSpell(stack);
             ItemStack itemstack = player.getItemInHand(player.getUsedItemHand());
             currentCastTime++;
-            if (spell instanceof PhasingII || spell instanceof EffectSpell<?> || spell instanceof DescentII || spell instanceof RespirationSpell) {
+            if (spell instanceof PhasingII || spell instanceof EffectSpell<?> || spell instanceof DescentII || spell instanceof RespirationSpell || spell instanceof EmptySpell) {
             } else {
                 try {
                     if (spell instanceof HealingCircleSpell || spell instanceof LightningIII || spell instanceof FlamingCircleSpell || spell instanceof SummonSpell<?> || spell instanceof FrostWallSpell || spell instanceof IlluminateII) {
@@ -153,9 +154,14 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
                     } else {
                         Random pRandom = new Random();
                         for (BlockPos blockpos : EnchantmentTableBlock.BOOKSHELF_OFFSETS) {
-                            if (pRandom.nextInt(24) == 0) {
-                                livingEntity.getLevel().addParticle(ParticleTypes.ENCHANT, (double) livingEntity.getX(), (double) livingEntity.getY() + 2.0D, (double) livingEntity.getZ(), (double) ((float) blockpos.getX() + pRandom.nextFloat()) - 0.5D, (double) ((float) blockpos.getY() - pRandom.nextFloat() - 1.0F), (double) ((float) blockpos.getZ() + pRandom.nextFloat()) - 0.5D);
+                            if(livingEntity.getLevel() instanceof ServerLevel level){
+                                level.sendParticles(ParticleTypes.ENCHANT, (double) livingEntity.getX(), (double) livingEntity.getY() + 2.0D, (double) livingEntity.getZ(), 1, (double) ((float) blockpos.getX() + pRandom.nextFloat()) - 0.5D, (double) ((float) blockpos.getY() - pRandom.nextFloat() - 1.0F), (double) ((float) blockpos.getZ() + pRandom.nextFloat()) - 0.5D, 0);
+                            }else{
+                                if (pRandom.nextInt(24) == 0) {
+                                    livingEntity.getLevel().addParticle(ParticleTypes.ENCHANT, (double) livingEntity.getX(), (double) livingEntity.getY() + 2.0D, (double) livingEntity.getZ(), (double) ((float) blockpos.getX() + pRandom.nextFloat()) - 0.5D, (double) ((float) blockpos.getY() - pRandom.nextFloat() - 1.0F), (double) ((float) blockpos.getZ() + pRandom.nextFloat()) - 0.5D);
+                                }
                             }
+
                         }
 
                         ResourceLocation fileLocation = new ResourceLocation(HLSpells.MODID + ":functions/small/small_rune_2.mcfunction");
@@ -302,9 +308,15 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
             spellHolder.ifPresent(cap -> capTag.put("spellHolder", stack.serializeNBT()));
         }
         CompoundTag stackTag = stack.getTag();
-        if (capTag.isEmpty()) return stackTag;
-        else if (stackTag == null) stackTag = new CompoundTag();
-        else stackTag = stackTag.copy(); // Because we don't actually want to add this data to the server side ItemStack
+        if (capTag.isEmpty()) {
+            return stackTag;
+        }
+        else if (stackTag == null){
+            stackTag = new CompoundTag();
+        }
+        else {
+            stackTag = stackTag.copy(); // Because we don't actually want to add this data to the server side ItemStack
+        }
         stackTag.put("spellCap", capTag);
         return stackTag;
     }
@@ -315,7 +327,7 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
         if (nbt != null && nbt.contains("spellCap")) {
             CompoundTag capTags = nbt.getCompound("spellCap");
             if (capTags.contains("spellHolder")) {
-                stack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP).ifPresent(spellHolder -> stack.deserializeNBT(nbt));
+               stack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP).ifPresent(spellHolder -> stack.deserializeNBT(nbt));
             }
         }
     }
@@ -421,10 +433,7 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
         ItemStack spellItem =
                 player.getItemInHand(InteractionHand.MAIN_HAND);
         if(spellItem.getItem() instanceof SpellHoldingItem){
-            CompoundTag nbtData = new CompoundTag();
-            nbtData.putInt("castBar", 1);
-
-            spellItem.setTag(nbtData);
+            spellItem.getOrCreateTag().putInt("castBar", 1);
         }
     }
 
@@ -432,10 +441,7 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
         ItemStack spellItem =
                 player.getItemInHand(InteractionHand.MAIN_HAND);
         if(spellItem.getItem() instanceof SpellHoldingItem){
-            CompoundTag nbtData = new CompoundTag();
-            nbtData.putInt("castBar", 0);
-
-            spellItem.setTag(nbtData);
+            spellItem.getOrCreateTag().putInt("castBar", 0);
         }
     }
 

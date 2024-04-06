@@ -29,7 +29,7 @@ import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
@@ -67,7 +67,7 @@ public class AltarOfAttunementMenu extends AbstractContainerMenu implements Cont
         IItemHandler playerInv = new InvWrapper(playerInventory);
         this.playerEntity = player;
         if (blockEntity != null) {
-            blockEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(handler -> {
+            blockEntity.getCapability(ForgeCapabilities.ITEM_HANDLER).ifPresent(handler -> {
                 this.addSlot(new SlotItemHandler(handler, 0, 17, 25) {
                     @Override public boolean mayPlace(@NotNull ItemStack pStack) { return pStack.getItem() instanceof SpellHoldingItem; }
                     @Override public int getMaxStackSize() {

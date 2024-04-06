@@ -33,7 +33,7 @@ public class ProjectileSpell<T extends Projectile> extends Spell {
     private float inaccuracy;
     private boolean noVerticalMovement;
 
-    public ProjectileSpell(EntityType<T> projectile, SpellAttributes.Type type, SpellAttributes.Rarity rarity, SpellAttributes.Tier tier, SpellAttributes.Marker marker, String displayName, int xpCost, boolean treasureOnly, int maxSpellLevel, RegistryObject<SimpleParticleType> rune) {
+    public ProjectileSpell(EntityType<T> projectile, SpellAttributes.Type type, SpellAttributes.Rarity rarity, SpellAttributes.Tier tier, SpellAttributes.Marker marker, String displayName, int xpCost, boolean treasureOnly, int maxSpellLevel, SimpleParticleType rune) {
         super(type, rarity, tier, marker, displayName, xpCost, treasureOnly, maxSpellLevel, rune);
         this.projectile = projectile;
         this.viewVectorOffset = 1;

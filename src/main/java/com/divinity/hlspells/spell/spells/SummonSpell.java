@@ -39,7 +39,7 @@ public class SummonSpell<T extends Entity & Summonable> extends Spell {
     private double attributeIncrease;
     private final Map<Attribute, Double> attributeMap;
 
-    public SummonSpell(EntityType<T> summoned, SpellAttributes.Type type, SpellAttributes.Rarity rarity, SpellAttributes.Tier tier, SpellAttributes.Marker marker, String displayName, int xpCost, boolean treasureOnly, int maxSpellLevel, RegistryObject<SimpleParticleType> rune) {
+    public SummonSpell(EntityType<T> summoned, SpellAttributes.Type type, SpellAttributes.Rarity rarity, SpellAttributes.Tier tier, SpellAttributes.Marker marker, String displayName, int xpCost, boolean treasureOnly, int maxSpellLevel, SimpleParticleType rune) {
         super(type, rarity, tier, marker, displayName, xpCost, treasureOnly, maxSpellLevel, rune);
         this.summoned = summoned;
         this.summonCount = 1;
