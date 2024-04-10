@@ -311,7 +311,6 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 	@Override
 	public CompoundTag getShareTag(ItemStack stack) {
 		CompoundTag nbt = super.getShareTag(stack);
-		System.out.println("get b " + nbt.toString());
 		if (nbt.contains("spellHolder")) {
 			nbt.remove("spellHolder");
 		}
@@ -320,7 +319,6 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 			CompoundTag shareTag = iSpellHolder.serializeNBT();
 			nbt.put("spellHolder", shareTag);
 		});
-		System.out.println("get a " + nbt.toString());
 		return nbt;
 	}
 	
@@ -334,7 +332,6 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 			});
 		}
 		currentCastTime = nbt.getInt("currentCastTime");
-		System.out.println("read a " + nbt.toString());
 		super.readShareTag(stack, nbt);
 	}
 	
