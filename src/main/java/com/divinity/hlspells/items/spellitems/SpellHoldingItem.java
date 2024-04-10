@@ -147,33 +147,18 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 					} else {
 						Random pRandom = new Random();
 						for (BlockPos blockpos : EnchantmentTableBlock.BOOKSHELF_OFFSETS) {
-							if (livingEntity.getLevel() instanceof ServerLevel level) {
-								level.sendParticles(ParticleTypes.ENCHANT,
-										(double) livingEntity.getX(),
-										(double) livingEntity.getY() + 2.0D,
-										(double) livingEntity.getZ(),
-										1,
-										(double) ((float) blockpos.getX() + pRandom.nextFloat()) - 0.5D,
-										(double) ((float) blockpos.getY() - pRandom.nextFloat() - 1.0F),
-										(double) ((float) blockpos.getZ() + pRandom.nextFloat()) - 0.5D,
-										0
-								                   );
-							} else {
-								if (pRandom.nextInt(14) == 0) {
-									livingEntity.getLevel()
-									            .addParticle(ParticleTypes.ENCHANT,
-											            (double) livingEntity.getX(),
-											            (double) livingEntity.getY() + 2.0D,
-											            (double) livingEntity.getZ(),
-											            (double) ((float) blockpos.getX() + pRandom.nextFloat()) - 0.5D,
-											            (double) ((float) blockpos.getY() - pRandom.nextFloat() - 1.0F),
-											            (double) ((float) blockpos.getZ() + pRandom.nextFloat()) - 0.5D
-									                        );
-								}
+							if (pRandom.nextInt(14) == 0) {
+								livingEntity.getLevel()
+										.addParticle(ParticleTypes.ENCHANT,
+												(double) livingEntity.getX(),
+												(double) livingEntity.getY() + 2.0D,
+												(double) livingEntity.getZ(),
+												(double) ((float) blockpos.getX() + pRandom.nextFloat()) - 0.5D,
+												(double) ((float) blockpos.getY() - pRandom.nextFloat() - 1.0F),
+												(double) ((float) blockpos.getZ() + pRandom.nextFloat()) - 0.5D
+										);
 							}
-							
 						}
-						
 						ResourceLocation fileLocation = new ResourceLocation(HLSpells.MODID + ":functions/small/small_rune_2.mcfunction");
 						GenerateParticles.generateParticleRune(fileLocation, livingEntity, spell.getRune());
 					}
