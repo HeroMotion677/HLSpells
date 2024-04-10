@@ -138,7 +138,7 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 		if (livingEntity instanceof Player player && (FMLEnvironment.dist.isDedicatedServer() || player.level.isClientSide)) {
 			Spell spell = SpellUtils.getSpell(stack);
 			ItemStack itemstack = player.getItemInHand(player.getUsedItemHand());
-			currentCastTime++;
+			currentCastTime = currentCastTime + 2;
 			if (spell instanceof PhasingII || spell instanceof EffectSpell<?> || spell instanceof DescentII || spell instanceof RespirationSpell || spell instanceof EmptySpell) {
 			} else {
 				try {
