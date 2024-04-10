@@ -159,7 +159,7 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 										0
 								                   );
 							} else {
-								if (pRandom.nextInt(24) == 0) {
+								if (pRandom.nextInt(14) == 0) {
 									livingEntity.getLevel()
 									            .addParticle(ParticleTypes.ENCHANT,
 											            (double) livingEntity.getX(),
@@ -249,14 +249,7 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 							currentCastTime = 0;
 							
 						}
-						//Faster casting
-						//                        if (stack.getItem() instanceof StaffItem item) {
-						//                            if (!item.isGemAmethyst() && SpellUtils.getSpellByID(cap.getCurrentSpell()).getMarkerType() == SpellAttributes.Marker.COMBAT) {
-						//                                player.getCooldowns().addCooldown(stack.getItem(), (15));
-						//                            } else if (item.isGemAmethyst() && SpellUtils.getSpellByID(cap.getCurrentSpell()).getMarkerType() == SpellAttributes.Marker.UTILITY) {
-						//                                player.getCooldowns().addCooldown(stack.getItem(), (15));
-						//                            }
-						//   }
+
 					});
 				} else {
 					Util.doParticles(player);
@@ -421,16 +414,7 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 		}
 		
 	}
-	
-	//    private boolean castTimeCondition(Player player, ItemStack stack) {
-	//        if (stack.getItem() instanceof StaffItem item) {
-	//            return player.getUseItemRemainingTicks() < (72000 - (item.getCastDelay()));
-	//        } else if (!this.isSpellBook) {
-	//            return player.getUseItemRemainingTicks() < (72000 - (HLSpells.CONFIG.spellCastTime.get() * 20));
-	//        }
-	//            return player.getUseItemRemainingTicks() < 71988;
-	//        }
-	
+
 	private void addNbtToSpellItem(Player player) {
 		ItemStack spellItem = player.getItemInHand(InteractionHand.MAIN_HAND);
 		if (spellItem.getItem() instanceof SpellHoldingItem) {
