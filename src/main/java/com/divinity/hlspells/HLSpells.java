@@ -1,14 +1,13 @@
 package com.divinity.hlspells;
 
+import com.divinity.hlspells.capabilities.playercap.IPlayerCap;
+import com.divinity.hlspells.capabilities.spellholdercap.ISpellHolder;
+import com.divinity.hlspells.capabilities.totemcap.ITotemCap;
 import com.divinity.hlspells.client.models.BaseBoltModel;
 import com.divinity.hlspells.client.models.FireballModel;
 import com.divinity.hlspells.client.models.WizardHatModel;
 import com.divinity.hlspells.compat.CuriosCompat;
-import com.divinity.hlspells.capabilities.spellholdercap.ISpellHolder;
-import com.divinity.hlspells.capabilities.totemcap.ITotemCap;
-import com.divinity.hlspells.capabilities.playercap.IPlayerCap;
 import com.divinity.hlspells.events.ModelLayers;
-import com.divinity.hlspells.items.armor.WizardHatArmorItem;
 import com.divinity.hlspells.setup.ModRegistry;
 import com.divinity.hlspells.setup.init.ConfigData;
 import com.divinity.hlspells.setup.init.ItemInit;
@@ -19,7 +18,6 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.EntityRenderersEvent;
-import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
@@ -30,7 +28,6 @@ import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -106,6 +103,7 @@ public class HLSpells {
         event.register(ISpellHolder.class);
         event.register(ITotemCap.class);
     }
+	
     private void sendImc(final InterModEnqueueEvent event) {
         if (ModList.get().isLoaded("curios")) {
             CuriosCompat.sendImc();

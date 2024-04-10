@@ -1,9 +1,12 @@
 package com.divinity.hlspells.capabilities.spellholdercap;
 
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.capabilities.*;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.common.capabilities.CapabilityToken;
+import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.LazyOptional;
 
 import javax.annotation.Nonnull;
@@ -32,30 +35,16 @@ public class SpellHolderProvider implements ICapabilitySerializable<CompoundTag>
 
     @Override
     public CompoundTag serializeNBT() {
-        CompoundTag tag = new CompoundTag();
         if (instance.isPresent()) {
-            instance.ifPresent(cap -> {
-                tag.putInt("spellsSize", cap.getSpells().size());
-                if (cap.getSpells() != null) {
-                    for (int i = 0; i < cap.getSpells().size(); i++) {
-                        tag.putString(SPELL_NBT + i, cap.getSpells().get(i));
-                    }
-                }
-                tag.putInt(CURRENT_SPELL_CYCLE_NBT, cap.getCurrentSpellCycle());
-            });
+	        return instance.orElseThrow(RuntimeException::new).serializeNBT();
         }
-        return tag;
+        return new CompoundTag();
     }
 
     @Override
     public void deserializeNBT(CompoundTag nbt) {
         if (instance.isPresent()) {
-            instance.ifPresent(cap -> {
-                for (int i = 0; i < nbt.getInt("spellsSize"); i++) {
-                    cap.addSpell(nbt.getString(SPELL_NBT + i));
-                }
-                cap.setCurrentSpellCycle(nbt.getInt(CURRENT_SPELL_CYCLE_NBT));
-            });
+            instance.orElseThrow(RuntimeException::new).deserializeNBT(nbt);
         }
     }
 
