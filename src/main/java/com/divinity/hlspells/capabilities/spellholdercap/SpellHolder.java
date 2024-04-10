@@ -3,11 +3,15 @@ package com.divinity.hlspells.capabilities.spellholdercap;
 import com.divinity.hlspells.setup.init.SpellInit;
 import com.divinity.hlspells.spell.Spell;
 import com.divinity.hlspells.util.SpellUtils;
+import net.minecraft.nbt.CompoundTag;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
+import static com.divinity.hlspells.capabilities.spellholdercap.SpellHolderProvider.CURRENT_SPELL_CYCLE_NBT;
+import static com.divinity.hlspells.capabilities.spellholdercap.SpellHolderProvider.SPELL_NBT;
 
 public class SpellHolder implements ISpellHolder {
 
@@ -86,4 +90,23 @@ public class SpellHolder implements ISpellHolder {
             this.currentSpellCycle = 0;
         }
     }
+	
+	@Override
+	public CompoundTag serializeNBT() {
+		CompoundTag tag = new CompoundTag();
+		tag.putInt("spellsSize", getSpells().size());
+		for (int i = 0; i < getSpells().size(); i++) {
+			tag.putString(SPELL_NBT + i, getSpells().get(i));
+		}
+		tag.putInt(CURRENT_SPELL_CYCLE_NBT, getCurrentSpellCycle());
+		return tag;
+	}
+	
+	@Override
+	public void deserializeNBT(CompoundTag nbt) {
+		for (int i = 0; i < nbt.getInt("spellsSize"); i++) {
+			addSpell(nbt.getString(SPELL_NBT + i));
+		}
+		setCurrentSpellCycle(nbt.getInt(CURRENT_SPELL_CYCLE_NBT));
+	}
 }
