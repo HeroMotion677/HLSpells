@@ -34,6 +34,7 @@ import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.EnchantmentTableBlock;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -134,7 +135,7 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 	
 	@Override
 	public void onUsingTick(ItemStack stack, LivingEntity livingEntity, int count) {
-		if (livingEntity instanceof Player player && !player.level.isClientSide) {
+		if (livingEntity instanceof Player player && (FMLEnvironment.dist.isDedicatedServer() || player.level.isClientSide)) {
 			Spell spell = SpellUtils.getSpell(stack);
 			ItemStack itemstack = player.getItemInHand(player.getUsedItemHand());
 			currentCastTime++;
