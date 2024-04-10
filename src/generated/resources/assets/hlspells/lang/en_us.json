@@ -1,9 +1,8 @@
 {
   "block.hlspells.altar_of_attunement": "Altar Of Attunement",
-  "block.hlspells.orb_of_enchanting": "Orb of Enchanting",
   "block.hlspells.frosted_ice": "Frosted Ice",
-  "container.hlspells.altar_of_attunement": "Altar Of Attunement",
-  "container.hlspells.altar_of_attunement.transfer": "Attune & Transfer",
+  "block.hlspells.orb_of_enchanting": "Orb Of Enchanting",
+  "container.net.minecraft.world.inventory.MenuType@bb51961": "Altar Of Attunement",
   "container.spell.button.requirement": "Transfer (Levels: %s)",
   "container.spell.clue": "%s",
   "container.spell.level.requirement": "Level Requirement: %s",
@@ -14,6 +13,8 @@
   "enchantment.hlspells.soul_syphon": "Soul Syphon",
   "entity.hlspells.aqua_bolt": "Aqua Bolt",
   "entity.hlspells.chorus_bolt": "Chorus Bolt",
+  "entity.hlspells.fireball": "Fireball",
+  "entity.hlspells.fireball2": "Fireball2",
   "entity.hlspells.flaming_bolt": "Flaming Bolt",
   "entity.hlspells.freezing_bolt": "Freezing Bolt",
   "entity.hlspells.invisible_targeting_entity": "Invisible Targeting Entity",
@@ -74,7 +75,6 @@
   "spell.hlspells.lightning": "Lightning",
   "spell.hlspells.lightning_ii": "Lightning II",
   "spell.hlspells.lightning_iii": "Lightning III",
-  "spell.hlspells.lure": "Lure",
   "spell.hlspells.necromancy": "Necromancy",
   "spell.hlspells.no_spell": "No Spell",
   "spell.hlspells.phasing": "Phasing",
@@ -84,11 +84,10 @@
   "spell.hlspells.pull": "Pull",
   "spell.hlspells.respawn": "Respawn",
   "spell.hlspells.respiration": "Respiration",
-  "spell.hlspells.shrink": "Shrink",
+  "spell.hlspells.sonic_boom": "Sonic Boom",
   "spell.hlspells.soul_summon": "Soul Summon",
   "spell.hlspells.speed": "Speed",
   "spell.hlspells.teleport": "Teleport",
   "spell.hlspells.torpedo": "Torpedo",
-  "spell.hlspells.wither_skull": "Wither Skull",
-  "spell.hlspells.sonic_boom": "Sonic Boom"
+  "spell.hlspells.wither_skull": "Wither Skull"
 }

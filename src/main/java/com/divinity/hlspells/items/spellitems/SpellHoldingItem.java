@@ -228,7 +228,6 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 					spell.execute(player, stack);
 				}
 				
-				Util.doParticles(player);
 				if (!world.isClientSide()) {
 					capability.filter(p -> !(p.getSpells().isEmpty())).ifPresent(cap -> {
 						if (stack.getItem() instanceof StaffItem item) {
@@ -259,6 +258,8 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 						//                            }
 						//   }
 					});
+				} else {
+					Util.doParticles(player);
 				}
 			} else {
 				player.playSound(SoundInit.MISCAST_SOUND.get(), 0.9f, 0.7f);
@@ -310,10 +311,16 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 	@Override
 	public CompoundTag getShareTag(ItemStack stack) {
 		CompoundTag nbt = super.getShareTag(stack);
+		System.out.println("get b " + nbt.toString());
+		if (nbt.contains("spellHolder")) {
+			nbt.remove("spellHolder");
+		}
+		nbt.putInt("currentCastTime", currentCastTime);
 		stack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP).ifPresent(iSpellHolder -> {
 			CompoundTag shareTag = iSpellHolder.serializeNBT();
 			nbt.put("spellHolder", shareTag);
 		});
+		System.out.println("get a " + nbt.toString());
 		return nbt;
 	}
 	
@@ -326,6 +333,8 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 				iSpellHolder.deserializeNBT(nbt.getCompound("spellHolder"));
 			});
 		}
+		currentCastTime = nbt.getInt("currentCastTime");
+		System.out.println("read a " + nbt.toString());
 		super.readShareTag(stack, nbt);
 	}
 	
@@ -401,7 +410,6 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 	
 	public boolean isBarVisible(ItemStack pStack) {
 		return pStack.getTag().getInt("castBar") > 0;
-		
 	}
 	
 	public int getBarWidth(ItemStack pStack) {
