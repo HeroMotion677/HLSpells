@@ -1,23 +1,24 @@
 {
-  "required": true,
-  "package": "com.divinity.hlspells.mixin",
-  "compatibilityLevel": "JAVA_8",
-  "refmap": "hlspells.refmap.json",
-  "mixins": [
-    "MixinGrindstoneContainer",
-    "MixinGrindstoneContainerConstructor",
-    "MixinGrindstoneExperience",
-    "MixinItemRenderer",
-    "MixinPhasing",
-    "MixinPose",
-    "MixinSmithingRecipe"
-  ],
-  "minVersion": "0.8",
-  "injectors": {
-    "defaultRequire": 1
-  },
-  "client": [
-    "MixinHumanoidArmorLayer",
-    "MixinIllusions"
+    "required": true,
+    "package": "com.divinity.hlspells.mixin",
+    "compatibilityLevel": "JAVA_8",
+    "refmap": "hlspells.refmap.json",
+    "mixins": [
+        "FriendlyByteBufMixin",
+        "MixinGrindstoneContainer",
+        "MixinGrindstoneContainerConstructor",
+        "MixinGrindstoneExperience",
+        "MixinItemRenderer",
+        "MixinPhasing",
+        "MixinPose",
+        "MixinSmithingRecipe"
+    ],
+    "minVersion": "0.8",
+    "injectors": {
+        "defaultRequire": 1
+    },
+    "client": [
+        "MixinHumanoidArmorLayer",
+        "MixinIllusions"
   ]
 }
