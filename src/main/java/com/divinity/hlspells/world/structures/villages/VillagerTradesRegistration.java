@@ -36,8 +36,22 @@ public class VillagerTradesRegistration {
                     0.05F
             ));
             trades.get(1).add((pTrader, pRand) -> new MerchantOffer(
+                    new ItemStack(Items.EMERALD, 3),
+                    new ItemStack(Items.AMETHYST_SHARD),
+                    7,
+                    1,
+                    0.05F
+            ));
+            trades.get(1).add((pTrader, pRand) -> new MerchantOffer(
                     new ItemStack(Items.LAPIS_LAZULI),
                     new ItemStack(Items.EMERALD, 2),
+                    7,
+                    1,
+                    0.05F
+            ));
+            trades.get(1).add((pTrader, pRand) -> new MerchantOffer(
+                    new ItemStack(Items.AMETHYST_SHARD),
+                    new ItemStack(Items.EMERALD, 3),
                     7,
                     1,
                     0.05F

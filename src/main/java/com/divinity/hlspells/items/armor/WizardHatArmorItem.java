@@ -42,15 +42,4 @@ public class WizardHatArmorItem extends ArmorItem {
         });
     }
 
-//    @OnlyIn(Dist.CLIENT)
-//    public void initializeClient(Consumer<IClientItemExtensions> consumer) {
-//        consumer.accept(new IClientItemExtensions() {
-//            public HumanoidModel<?> getHumanoidArmorModel(LivingEntity entityLiving, ItemStack itemStack, EquipmentSlot armorSlot, HumanoidModel<?> _default) {
-//                var armorModel = ForgeClientEventHandler.hatArmorModel.get(itemStack.getItem());
-//                if (armorModel != null)
-//                    armorModel.head.visible = (armorSlot == EquipmentSlot.HEAD);
-//                return armorModel;
-//            }
-//        });
-//    }
 }

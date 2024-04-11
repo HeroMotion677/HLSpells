@@ -2,23 +2,18 @@ package com.divinity.hlspells.events;
 
 import com.divinity.hlspells.HLSpells;
 import com.divinity.hlspells.capabilities.spellholdercap.SpellHolderProvider;
-import com.divinity.hlspells.client.models.WizardHatModel;
 import com.divinity.hlspells.items.spellitems.SpellHoldingItem;
 import com.divinity.hlspells.network.NetworkManager;
 import com.divinity.hlspells.network.packets.serverbound.WandInputPacket;
-import com.divinity.hlspells.setup.init.ItemInit;
 import com.divinity.hlspells.setup.init.SpellInit;
 import com.divinity.hlspells.spell.Spell;
 import com.divinity.hlspells.spell.spells.Phasing;
 import com.divinity.hlspells.spell.spells.PhasingII;
 import com.divinity.hlspells.util.SpellUtils;
-import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
@@ -26,30 +21,23 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.MovementInputUpdateEvent;
-import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.client.event.RenderBlockScreenEffectEvent;
-import net.minecraftforge.client.settings.KeyConflictContext;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
-import org.lwjgl.glfw.GLFW;
-
 import java.util.HashMap;
 import java.util.Map;
+
+import static com.divinity.hlspells.events.ModClientEventHandler.WAND_BINDING;
 
 
 @Mod.EventBusSubscriber(modid = HLSpells.MODID, value = Dist.CLIENT, bus = Bus.FORGE)
 public class ForgeClientEventHandler {
 
-    public static final KeyMapping WAND_BINDING = new KeyMapping("Next Spell", KeyConflictContext.IN_GAME, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_G, "HLSpells");
-
     public static final Map<Item, HumanoidModel<LivingEntity>> hatArmorModel = new HashMap<>();
-        @SubscribeEvent
-        public static void okKeyRegister(RegisterKeyMappingsEvent event) {
-        event.register(WAND_BINDING);}
+
         @SubscribeEvent
         public static void onRenderBlockOnHUD(RenderBlockScreenEffectEvent event) {
             Player player = event.getPlayer();
@@ -59,7 +47,6 @@ public class ForgeClientEventHandler {
                 }
             }
         }
-
         @SubscribeEvent
         public static void onClientTick(TickEvent.ClientTickEvent event) {
             if (event.phase == TickEvent.Phase.END) {
@@ -84,7 +71,6 @@ public class ForgeClientEventHandler {
                 }
             }
         }
-
         /**
          * When a spell holding item is used it stops the slowness effect
          */
@@ -107,5 +93,3 @@ public class ForgeClientEventHandler {
             }
         }
     }
-
-

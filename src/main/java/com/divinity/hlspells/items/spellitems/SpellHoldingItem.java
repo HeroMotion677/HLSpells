@@ -233,7 +233,6 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 						} else if (this.isSpellBook || !this.isSpellBook) {
 							player.getCooldowns().addCooldown(stack.getItem(), 25);
 							currentCastTime = 0;
-							
 						}
 
 					});
@@ -246,9 +245,7 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 			}
 			resetNbtOnSpellItem(player);
 		}
-		
 	}
-	
 	@Override
 	public boolean isBookEnchantable(ItemStack stack, ItemStack book) {
 		if (EnchantedBookItem.getEnchantments(book).size() > 0) {
@@ -278,13 +275,11 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 		}
 		return false;
 	}
-	
 	@Override
 	public boolean isFoil(ItemStack pStack) {
 		var spells = pStack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP).map(ISpellHolder::getSpells).orElse(null);
 		return isSpellBook && SpellUtils.getSpell(pStack) != SpellInit.EMPTY.get() || !isSpellBook && spells != null && !spells.isEmpty() || super.isFoil(pStack);
 	}
-	
 	// Responsible for syncing capability to client side
 	@Nullable
 	@Override
@@ -300,7 +295,6 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 		});
 		return nbt;
 	}
-	
 	@Override
 	public void readShareTag(ItemStack stack, @Nullable CompoundTag nbt) {
 		if (nbt == null)
@@ -313,7 +307,6 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 		currentCastTime = nbt.getInt("currentCastTime");
 		super.readShareTag(stack, nbt);
 	}
-	
 	@Override
 	@NotNull
 	public Predicate<ItemStack> getAllSupportedProjectiles() {
@@ -336,7 +329,6 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 	public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
 		return false;
 	}
-	
 	@Override
 	public int getDefaultProjectileRange() {
 		return 8;
@@ -346,7 +338,7 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 	public int getUseDuration(@NotNull ItemStack pStack) {
 		return 72000;
 	}
-	
+
 	@Override
 	public boolean isEnchantable(@NotNull ItemStack pStack) {
 		return isSpellBook;

@@ -41,7 +41,7 @@ public class ItemInit {
                     2D, -3.231D, 0.25 * 20, false, 30));
 
     public static final RegistryObject<Item> GOLDEN_STAFF = ITEMS.register("golden_lapis_staff", () ->
-            new StaffItem(new Item.Properties().tab(CreativeModeTab.TAB_TOOLS).durability(170),
+            new StaffItem(new Item.Properties().tab(CreativeModeTab.TAB_TOOLS).durability(350),
                     5D, -2.572D, 0.65 * 20, false, 3.5));
 
     public static final RegistryObject<Item> NETHER_STAFF = ITEMS.register("netherite_lapis_staff", () ->
@@ -54,7 +54,7 @@ public class ItemInit {
                     2D, -3.231D, 0.25 * 20, true, 30));
 
     public static final RegistryObject<Item> GOLDEN_STAFF_AMETHYST = ITEMS.register("golden_amethyst_staff", () ->
-            new StaffItem(new Item.Properties().tab(CreativeModeTab.TAB_TOOLS).durability(170),
+            new StaffItem(new Item.Properties().tab(CreativeModeTab.TAB_TOOLS).durability(350),
                     5D, -2.572D, 0.65 * 20, true, 3.5));
 
     public static final RegistryObject<Item> NETHER_STAFF_AMETHYST = ITEMS.register("netherite_amethyst_staff", () ->
