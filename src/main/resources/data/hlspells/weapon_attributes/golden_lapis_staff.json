@@ -1,3 +1,6 @@
 {
-	"parent":"bettercombat:mace"
+	"parent":"bettercombat:mace",
+	"attributes": {
+		"two_handed": true
+	}
 }

@@ -1,3 +1,6 @@
 {
-	"parent":"bettercombat:battlestaff"
+	"parent":"bettercombat:battlestaff",
+	"attributes": {
+		"two_handed": true
+	}
 }

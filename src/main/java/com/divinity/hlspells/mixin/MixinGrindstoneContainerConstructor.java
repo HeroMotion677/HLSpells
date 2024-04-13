@@ -17,6 +17,6 @@ public class MixinGrindstoneContainerConstructor {
     @Inject(method = "mayPlace(Lnet/minecraft/world/item/ItemStack;)Z", at = @At(value = "HEAD"), cancellable = true)
     private void mayPlace(ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
             cir.setReturnValue(stack.isDamageableItem() || stack.getItem() == Items.ENCHANTED_BOOK
-                    || stack.isEnchanted() || (stack.getItem() instanceof SpellHoldingItem item && item.isWand()));
+                    || stack.isEnchanted() || (stack.getItem() instanceof SpellHoldingItem));
     }
 }

@@ -1,0 +1,78 @@
+{
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "weight": 2,
+          "quality": 1,
+          "name": "hlspells:spell_book",
+          "functions": [
+            {
+              "function": "hlspells:set_spell",
+              "spell": "hlspells:flaming_bolt"
+            },
+            {
+              "function": "minecraft:set_damage",
+              "damage": {
+                "min": 0.13,
+                "max": 0.5
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 1,
+          "quality": 1,
+          "name": "hlspells:spell_book",
+          "functions": [
+            {
+              "function": "hlspells:set_spell",
+              "spell": "hlspells:flaming_circle"
+            },
+            {
+              "function": "minecraft:set_damage",
+              "damage": {
+                "min": 0.13,
+                "max": 0.5
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 2,
+          "quality": 1,
+          "name": "hlspells:spell_book",
+          "functions": [
+            {
+              "function": "hlspells:set_spell",
+              "spell": "hlspells:fire_ball"
+            },
+            {
+              "function": "minecraft:set_damage",
+              "damage": {
+                "min": 0.13,
+                "max": 0.5
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 3,
+          "quality": 1,
+          "name": "hlspells:wooden_lapis_staff"
+        }
+      ],
+      "conditions": [
+        {
+          "condition": "minecraft:random_chance",
+          "chance": 0.35
+        }
+      ]
+    }
+  ]
+}
