@@ -337,7 +337,20 @@ public class ForgeEventHandler {
     public static void preventPhasingSuffocation(LivingDamageEvent event) {
         if (event.getEntity() instanceof Player player) {
             if (player.isUsingItem()) {
-                if (SpellUtils.getSpell(player.getUseItem()) instanceof Phasing spell && spell.canUseSpell() || SpellUtils.getSpell(player.getUseItem()) instanceof PhasingII spell2 && spell2.canUseSpell()) {
+                if (SpellUtils.getSpell(player.getUseItem()) instanceof Phasing spell && spell.canUseSpell()) {
+                    if (event.getSource() == DamageSource.IN_WALL) {
+                        event.setCanceled(true);
+                    }
+                }
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void preventPhasingIISuffocation(LivingDamageEvent event) {
+        if (event.getEntity() instanceof Player player) {
+            if (player.isUsingItem()) {
+                if (SpellUtils.getSpell(player.getUseItem()) instanceof PhasingII spell && spell.canUseSpell()) {
                     if (event.getSource() == DamageSource.IN_WALL) {
                         event.setCanceled(true);
                     }

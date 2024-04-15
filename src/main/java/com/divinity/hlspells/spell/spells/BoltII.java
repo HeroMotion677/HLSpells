@@ -80,7 +80,7 @@ public class BoltII extends Spell {
                             Entity entity1 = this.getOwner();
                             LivingEntity livingentity = entity1 instanceof LivingEntity entity2 ? entity2 : null;
                             if (result.getEntity() == this.getOwner()) return;
-                            boolean flag = entity.hurt(DamageSource.indirectMobAttack(this, livingentity).setProjectile(), 8.0F);
+                            boolean flag = entity.hurt(DamageSource.indirectMobAttack(this, livingentity).setProjectile(), 6.0F);
                             if (flag) {
                                 if (livingentity != null) this.doEnchantDamageEffects(livingentity, entity);
                                 this.remove(RemovalReason.KILLED);
@@ -91,7 +91,7 @@ public class BoltII extends Spell {
                 dumbBullet.setNoGravity(true);
                 dumbBullet.setOwner(p);
                 dumbBullet.setPos(p.getX() + p.getViewVector(1.0F).x, p.getY() + 1.35, p.getZ() + p.getViewVector(1.0F).z);
-                dumbBullet.shootFromRotation(p, p.xRot, p.yRot, 1.3F, 1.3F, 1.3F);
+                dumbBullet.shootFromRotation(p, p.xRot, p.yRot, 1.3F, 2.5F, 1.3F);
                 p.level.addFreshEntity(dumbBullet);
             }
             return true;

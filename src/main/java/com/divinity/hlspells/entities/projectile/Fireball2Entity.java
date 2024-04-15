@@ -42,7 +42,7 @@ public class Fireball2Entity extends BaseBoltEntity {
                         this.getY(), this.getZ() - this.random.nextFloat(), 2, 0.2D, 0.2D, 0.2D, 0.0D);
             }
             entity.setSecondsOnFire(5);
-            level.explode((Entity)null, this.getX(), this.getY(), this.getZ(),4, Explosion.BlockInteraction.DESTROY);
+            level.explode((Entity)null, this.getX(), this.getY(), this.getZ(),3, Explosion.BlockInteraction.DESTROY);
             level.sendParticles(ParticleTypes.CRIT, this.getX(), this.getY(), this.getZ(), 15, 0.2D, 0.2D, 0.2D, 0.0D);
             if (livingentity != null) this.doEnchantDamageEffects(livingentity, entity);
             this.remove(RemovalReason.KILLED);

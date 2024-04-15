@@ -30,6 +30,7 @@ public class PhasingII extends Spell {
             this.canUse = !p.noPhysics && !p.onClimbable() && !p.isPassenger();
             if (canUse) {
                 p.setInvisible(true);
+                p.setSilent(true);
                 p.setInvulnerable(true);
             }
             return this.canUse;

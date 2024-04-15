@@ -5,6 +5,7 @@ import com.divinity.hlspells.capabilities.spellholdercap.ISpellHolder;
 import com.divinity.hlspells.capabilities.spellholdercap.SpellHolderProvider;
 import com.divinity.hlspells.particle.GenerateParticles;
 import com.divinity.hlspells.setup.init.EnchantmentInit;
+import com.divinity.hlspells.setup.init.ItemInit;
 import com.divinity.hlspells.setup.init.SoundInit;
 import com.divinity.hlspells.setup.init.SpellInit;
 import com.divinity.hlspells.spell.Spell;
@@ -25,6 +26,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
@@ -138,7 +140,15 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 		if (livingEntity instanceof Player player && (FMLEnvironment.dist.isDedicatedServer() || player.level.isClientSide)) {
 			Spell spell = SpellUtils.getSpell(stack);
 			ItemStack itemstack = player.getItemInHand(player.getUsedItemHand());
-			currentCastTime = currentCastTime + 2;
+
+			if (player.getItemBySlot(EquipmentSlot.HEAD).getItem() == ItemInit.WIZARD_HAT.get()) {
+				currentCastTime = currentCastTime + 3; }
+				else if (player.getItemBySlot(EquipmentSlot.HEAD).getItem() != ItemInit.WIZARD_HAT.get()){
+				currentCastTime = currentCastTime + 2;
+			}
+
+			//currentCastTime = currentCastTime + 2;
+
 			if (spell instanceof PhasingII || spell instanceof EffectSpell<?> || spell instanceof DescentII || spell instanceof RespirationSpell || spell instanceof EmptySpell) {
 			} else {
 				try {
@@ -206,6 +216,7 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 			if (spell instanceof PhasingII) {
 				player.setInvulnerable(false);
 				player.setInvisible(false);
+				player.setSilent(false);
 			}
 			
 			if (this.castTimeCondition(player, stack)) {
@@ -255,7 +266,7 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 				if (enchantment != null) {
 					switch (enchantment.toString()) {
 						case "minecraft:mending":
-							if (EnchantmentHelper.getItemEnchantmentLevel(Enchantments.MENDING, stack) == 0) {
+							if (EnchantmentHelper.getItemEnchantmentLevel(Enchantments.MENDING, stack) >= 1) {
 								return !isSpellBook || stack.getItem() instanceof StaffItem;
 							}
 						case "minecraft:unbreaking":
@@ -265,7 +276,7 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 								}
 							}
 						case "hlspells:soul_bond":
-							if (EnchantmentHelper.getItemEnchantmentLevel(EnchantmentInit.SOUL_BOND.get(), stack) == 0) {
+							if (EnchantmentHelper.getItemEnchantmentLevel(EnchantmentInit.SOUL_BOND.get(), stack) >= 0) {
 								return !isSpellBook || stack.getItem() instanceof StaffItem;
 							}
 							break;
@@ -310,7 +321,7 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 	@Override
 	@NotNull
 	public Predicate<ItemStack> getAllSupportedProjectiles() {
-		return ARROW_ONLY;
+		return null;
 	}
 	
 	@Override
