@@ -144,7 +144,7 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 			ItemStack itemstack = player.getItemInHand(player.getUsedItemHand());
 
 			if (player.getItemBySlot(EquipmentSlot.HEAD).getItem() == ItemInit.WIZARD_HAT.get()) {
-				currentCastTime = currentCastTime + 3;
+				currentCastTime = currentCastTime + 4;
 			} else if (player.getItemBySlot(EquipmentSlot.HEAD).getItem() != ItemInit.WIZARD_HAT.get()) {
 				currentCastTime = currentCastTime + 2;
 			}
