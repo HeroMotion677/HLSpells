@@ -2,7 +2,7 @@
   "block.hlspells.altar_of_attunement": "Altar Of Attunement",
   "block.hlspells.frosted_ice": "Frosted Ice",
   "block.hlspells.orb_of_enchanting": "Orb Of Enchanting",
-  "container.net.minecraft.world.inventory.MenuType@bb51961": "Altar Of Attunement",
+  "container.hlspells.altar_of_attunement.transfer": "Attune & Transfer",
   "container.spell.button.requirement": "Transfer (Levels: %s)",
   "container.spell.clue": "%s",
   "container.spell.level.requirement": "Level Requirement: %s",

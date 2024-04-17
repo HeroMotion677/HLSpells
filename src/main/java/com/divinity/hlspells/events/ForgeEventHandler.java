@@ -88,7 +88,7 @@ public class ForgeEventHandler {
         if (name.startsWith(prefix)) {
             String file = name.substring(name.indexOf(prefix) + prefix.length());
             switch (file) {
-                case "woodland_mansion", "end_city_treasure", "stronghold_library", "jungle_temple", "simple_dungeon", "desert_pyramid", "nether_bridge", "bastion_treasure", "igloo_chest", "ancient_city" ->
+                case "woodland_mansion", "end_city_treasure", "stronghold_library", "jungle_temple", "simple_dungeon", "desert_pyramid", "nether_bridge", "bastion_treasure", "igloo_chest", "ancient_city", "ancient_city_ice_box", "bastion_other", "bastion_bridge" ->
                         evt.getTable().addPool(getInjectPool(file));
                 default -> {
                 }

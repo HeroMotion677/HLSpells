@@ -19,7 +19,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
-import net.minecraft.world.entity.monster.AbstractSkeleton;
+import net.minecraft.world.entity.monster.WitherSkeleton;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -27,11 +27,11 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 
-public class SummonedSkeletonEntity extends AbstractSkeleton implements Summonable {
+public class SummonedWitherSkeletonEntity extends WitherSkeleton implements Summonable {
 
     protected Player playerOwner;
 
-    public SummonedSkeletonEntity(EntityType<? extends AbstractSkeleton> type, Level level) {
+    public SummonedWitherSkeletonEntity(EntityType<? extends WitherSkeleton> type, Level level) {
         super(type, level);
         this.xpReward = 0;
     }
@@ -60,13 +60,13 @@ public class SummonedSkeletonEntity extends AbstractSkeleton implements Summonab
         this.targetSelector.addGoal(1, new AttackedOwnerEnemyGoal(this, true));
     }
 
-    @Override protected SoundEvent getAmbientSound() { return SoundEvents.SKELETON_AMBIENT; }
+    @Override protected SoundEvent getAmbientSound() { return SoundEvents.WITHER_SKELETON_AMBIENT; }
 
-    @Override protected SoundEvent getHurtSound(@NotNull DamageSource pDamageSource) { return SoundEvents.SKELETON_HURT; }
+    @Override protected SoundEvent getHurtSound(@NotNull DamageSource pDamageSource) { return SoundEvents.WITHER_SKELETON_AMBIENT;}
 
-    @Override protected SoundEvent getDeathSound() { return SoundEvents.SKELETON_DEATH; }
+    @Override protected SoundEvent getDeathSound() { return SoundEvents.WITHER_SKELETON_DEATH; }
 
-    @Override protected @NotNull SoundEvent getStepSound() { return SoundEvents.SKELETON_STEP; }
+    @Override protected @NotNull SoundEvent getStepSound() { return SoundEvents.WITHER_SKELETON_STEP; }
 
     @Override
     @NotNull
@@ -87,7 +87,7 @@ public class SummonedSkeletonEntity extends AbstractSkeleton implements Summonab
     @Override
     protected void populateDefaultEquipmentSlots(RandomSource pRandom, @NotNull DifficultyInstance instance) {
         this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.IRON_SWORD));
-        this.setItemSlot(EquipmentSlot.HEAD, new ItemStack(Items.IRON_HELMET));
+        this.setItemSlot(EquipmentSlot.HEAD, new ItemStack(Items.NETHERITE_HELMET));
         this.setDropChance(EquipmentSlot.MAINHAND, 0.0F);
         this.setDropChance(EquipmentSlot.HEAD, 0.0F);
     }

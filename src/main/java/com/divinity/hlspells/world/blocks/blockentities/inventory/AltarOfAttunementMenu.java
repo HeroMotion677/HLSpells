@@ -193,7 +193,7 @@ public class AltarOfAttunementMenu extends AbstractContainerMenu implements Cont
                         this.blockEntity.setChanged();
                         this.enchantmentSeed.set(pPlayer.getEnchantmentSeed());
                         this.slotsChanged(null);
-                        level.playSound(null, blockPos, SoundInit.SPELL_ATTUNEMENT.get(), SoundSource.BLOCKS, 1.0F, level.random.nextFloat() * 0.1F + 0.9F);
+                        level.playSound(null, blockPos, SoundInit.SPELL_ATTUNEMENT.get(), SoundSource.BLOCKS, 0.7F, level.random.nextFloat() * 0.1F + 0.9F);
                     }
                 });
                 return true;

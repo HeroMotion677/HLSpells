@@ -47,16 +47,16 @@ import java.util.Random;
 import java.util.function.Predicate;
 
 public class SpellHoldingItem extends ProjectileWeaponItem {
-	
+
 	private int currentCastTime = 0;
 	private final boolean isSpellBook;
 	private boolean wasHolding;
-	
+
 	public SpellHoldingItem(Properties properties, boolean isSpellBook) {
 		super(properties);
 		this.isSpellBook = isSpellBook;
 	}
-	
+
 	@Override
 	@ParametersAreNonnullByDefault
 	public void fillItemCategory(CreativeModeTab pGroup, NonNullList<ItemStack> pItems) {
@@ -71,11 +71,11 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 					pItems.add(stack);
 				}
 			}
-			
+
 		} else
 			super.fillItemCategory(pGroup, pItems);
 	}
-	
+
 	@Override
 	@ParametersAreNonnullByDefault
 	public void appendHoverText(ItemStack stack, @Nullable Level pLevel, List<Component> text, TooltipFlag pFlag) {
@@ -100,7 +100,7 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 			}
 		});
 	}
-	
+
 	@Override
 	@ParametersAreNonnullByDefault
 	@NotNull
@@ -134,20 +134,21 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 		} else
 			return InteractionResultHolder.pass(itemstack);
 	}
-	
+
 	@Override
 	public void onUsingTick(ItemStack stack, LivingEntity livingEntity, int count) {
+
+
 		if (livingEntity instanceof Player player && (FMLEnvironment.dist.isDedicatedServer() || player.level.isClientSide)) {
 			Spell spell = SpellUtils.getSpell(stack);
 			ItemStack itemstack = player.getItemInHand(player.getUsedItemHand());
 
 			if (player.getItemBySlot(EquipmentSlot.HEAD).getItem() == ItemInit.WIZARD_HAT.get()) {
-				currentCastTime = currentCastTime + 3; }
-				else if (player.getItemBySlot(EquipmentSlot.HEAD).getItem() != ItemInit.WIZARD_HAT.get()){
+				currentCastTime = currentCastTime + 3;
+			} else if (player.getItemBySlot(EquipmentSlot.HEAD).getItem() != ItemInit.WIZARD_HAT.get()) {
 				currentCastTime = currentCastTime + 2;
 			}
 
-			//currentCastTime = currentCastTime + 2;
 
 			if (spell instanceof PhasingII || spell instanceof EffectSpell<?> || spell instanceof DescentII || spell instanceof RespirationSpell || spell instanceof EmptySpell) {
 			} else {
@@ -177,11 +178,11 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 					throw new RuntimeException(e);
 				}
 			}
-			
+
 			var capability = itemstack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP);
 			if (spell.getSpellType() == SpellAttributes.Type.HELD) {
 				spell.execute(player, stack);
-				
+
 				capability.ifPresent(cap -> {
 					if (cap.getSpellSoundBuffer() == 0) {
 						if (spell instanceof Illuminate || spell instanceof IlluminateII) {
@@ -200,7 +201,7 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 			}
 		}
 	}
-	
+
 	@Override
 	@ParametersAreNonnullByDefault
 	public void releaseUsing(ItemStack stack, Level world, LivingEntity entity, int power) {
@@ -208,23 +209,23 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 			var capability = stack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP);
 			capability.ifPresent(cap -> cap.setSpellSoundBuffer(0));
 			this.wasHolding = false;
-			
+
 			Spell spell = SpellUtils.getSpell(stack);
-			
+
 			player.getCooldowns().addCooldown(stack.getItem(), 25);
-			
+
 			if (spell instanceof PhasingII) {
 				player.setInvulnerable(false);
 				player.setInvisible(false);
 				player.setSilent(false);
 			}
-			
+
 			if (this.castTimeCondition(player, stack)) {
 				if (spell.getSpellType() == SpellAttributes.Type.CAST) {
 					world.playSound(null, player.blockPosition(), spell.getSpellSound(), SoundSource.PLAYERS, 0.3F, 0.7F);
 					spell.execute(player, stack);
 				}
-				
+
 				if (!world.isClientSide()) {
 					capability.filter(p -> !(p.getSpells().isEmpty())).ifPresent(cap -> {
 						if (stack.getItem() instanceof StaffItem item) {
@@ -257,6 +258,7 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 			resetNbtOnSpellItem(player);
 		}
 	}
+
 	@Override
 	public boolean isBookEnchantable(ItemStack stack, ItemStack book) {
 		if (EnchantedBookItem.getEnchantments(book).size() > 0) {
@@ -286,11 +288,13 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 		}
 		return false;
 	}
+
 	@Override
 	public boolean isFoil(ItemStack pStack) {
 		var spells = pStack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP).map(ISpellHolder::getSpells).orElse(null);
 		return isSpellBook && SpellUtils.getSpell(pStack) != SpellInit.EMPTY.get() || !isSpellBook && spells != null && !spells.isEmpty() || super.isFoil(pStack);
 	}
+
 	// Responsible for syncing capability to client side
 	@Nullable
 	@Override
@@ -306,6 +310,7 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 		});
 		return nbt;
 	}
+
 	@Override
 	public void readShareTag(ItemStack stack, @Nullable CompoundTag nbt) {
 		if (nbt == null)
@@ -318,33 +323,35 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 		currentCastTime = nbt.getInt("currentCastTime");
 		super.readShareTag(stack, nbt);
 	}
+
 	@Override
 	@NotNull
 	public Predicate<ItemStack> getAllSupportedProjectiles() {
 		return null;
 	}
-	
+
 	@Override
 	@NotNull
 	public UseAnim getUseAnimation(@NotNull ItemStack pStack) {
 		return isSpellBook ? UseAnim.CROSSBOW : UseAnim.BOW;
 	}
-	
+
 	@Override
 	@Nullable
 	public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag nbt) {
 		return new SpellHolderProvider();
 	}
-	
+
 	@Override
 	public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
 		return false;
 	}
+
 	@Override
 	public int getDefaultProjectileRange() {
 		return 8;
 	}
-	
+
 	@Override
 	public int getUseDuration(@NotNull ItemStack pStack) {
 		return 72000;
@@ -354,54 +361,67 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 	public boolean isEnchantable(@NotNull ItemStack pStack) {
 		return isSpellBook;
 	}
-	
+
 	@Override
 	public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
 		return false;
 	}
-	
+
 	@SuppressWarnings("all")
 	public boolean isSpellBook() {
 		return isSpellBook;
 	}
-	
+
 	/**
 	 * Returns true if wand or staff
 	 */
 	public boolean isWand() {
 		return !isSpellBook;
 	}
-	
+
 	public boolean isWasHolding() {
 		return this.wasHolding;
 	}
-	
+
 	public void setWasHolding(boolean wasHolding) {
 		this.wasHolding = wasHolding;
 	}
-	
+
 	private static final int BAR_COLOR = Mth.color(0.4F, 1.0F, 0.8F);
-	
+
 	@Override
 	public int getBarColor(ItemStack pStack) {
-		return BAR_COLOR;
+		if (pStack.getTag().getInt("castBar") > 0) {
+			return BAR_COLOR;
+		}
+		else {
+			float stackMaxDamage = (float)this.getMaxDamage(pStack);
+			float f = Math.max(0.0F, (stackMaxDamage - (float)pStack.getDamageValue()) / stackMaxDamage);
+			return Mth.hsvToRgb(f / 3.0F, 1.0F, 1.0F);
+		}
 	}
-	
+
 	public boolean isBarVisible(ItemStack pStack) {
-		return pStack.getTag().getInt("castBar") > 0;
-	}
-	
-	public int getBarWidth(ItemStack pStack) {
-		if (pStack.getItem() instanceof StaffItem item) {
-			return (int) Math.min(currentCastTime * item.getCastDelay() / 20, 13);
-			
-		} else if (!this.isSpellBook) {
-			return (int) Math.min(currentCastTime * 0.35 * 20 / 25, 13);
-			
+		if (pStack.getTag().getInt("castBar") > 0 || pStack.isDamaged()) {
+			return true;
 		} else {
+			return false;
+		}
+	}
+
+
+
+	public int getBarWidth(ItemStack pStack) {
+		if (pStack.getItem() instanceof StaffItem item && pStack.getTag().getInt("castBar") > 0) {
+			return (int) Math.min(currentCastTime * item.getCastDelay() / 20, 13);
+
+		} else if (!this.isSpellBook && pStack.getTag().getInt("castBar") > 0) {
+			return (int) Math.min(currentCastTime * 0.35 * 20 / 25, 13);
+
+		} else if (pStack.getTag().getInt("castBar") > 0) {
 			return (int) Math.min(currentCastTime * 0.35 * 20 / 28, 13);
 		}
-		
+		return Math.round(13.0F - (float)pStack.getDamageValue() * 13.0F / (float)this.getMaxDamage(pStack));
 	}
 
 	private void addNbtToSpellItem(Player player) {
