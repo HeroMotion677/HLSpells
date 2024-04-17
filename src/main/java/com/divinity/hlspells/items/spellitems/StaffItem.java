@@ -20,6 +20,11 @@ import net.minecraft.world.item.*;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 import net.minecraft.world.item.Item.Properties;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.Enchantments;
+
+import java.util.function.Supplier;
 
 public class StaffItem extends SpellHoldingItem {
 
@@ -75,6 +80,36 @@ public class StaffItem extends SpellHoldingItem {
     }
 
     @Override
+    public boolean isBookEnchantable(ItemStack stack, ItemStack book) {
+        if (EnchantedBookItem.getEnchantments(book).size() > 0) {
+            for (int i = 0; i < EnchantedBookItem.getEnchantments(book).size(); i++) {
+                CompoundTag tag = EnchantedBookItem.getEnchantments(book).getCompound(i);
+                ResourceLocation enchantment = EnchantmentHelper.getEnchantmentId(tag);
+                if (enchantment != null) {
+                    switch (enchantment.toString()) {
+                        case "minecraft:mending":
+                            if (EnchantmentHelper.getItemEnchantmentLevel(Enchantments.MENDING, stack) >= 1) {
+                                return stack.getItem() instanceof StaffItem;
+                            }
+                        case "minecraft:unbreaking":
+                            if (EnchantmentHelper.getItemEnchantmentLevel(Enchantments.UNBREAKING, stack) <= EnchantmentHelper.getEnchantmentLevel(tag)) {
+                                if (EnchantmentHelper.getItemEnchantmentLevel(Enchantments.UNBREAKING, stack) != 3) {
+                                    return stack.getItem() instanceof StaffItem;
+                                }
+                            }
+                        case "hlspells:soul_bond":
+                            if (EnchantmentHelper.getItemEnchantmentLevel(EnchantmentInit.SOUL_BOND.get(), stack) >= 0) {
+                                return stack.getItem() instanceof StaffItem;
+                            }
+                            break;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    @Override
     @ParametersAreNonnullByDefault
     public boolean hurtEnemy(ItemStack pStack, LivingEntity pTarget, LivingEntity pAttacker) {
         pStack.hurtAndBreak(1, pAttacker, livingEntity -> livingEntity.broadcastBreakEvent(EquipmentSlot.MAINHAND));
@@ -92,4 +127,6 @@ public class StaffItem extends SpellHoldingItem {
     public boolean isGemAmethyst() {
         return isGemAmethyst;
     }
+
+
 }
