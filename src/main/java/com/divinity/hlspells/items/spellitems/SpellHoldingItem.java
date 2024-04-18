@@ -327,7 +327,7 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 	@Override
 	@NotNull
 	public Predicate<ItemStack> getAllSupportedProjectiles() {
-		return null;
+		return ARROW_ONLY;
 	}
 
 	@Override
@@ -356,6 +356,7 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 	public int getUseDuration(@NotNull ItemStack pStack) {
 		return 72000;
 	}
+
 
 	@Override
 	public boolean isEnchantable(@NotNull ItemStack pStack) {
