@@ -32,7 +32,7 @@ public class FlamingBoltEntity extends BaseBoltEntity {
         if (hasHurt && level instanceof ServerLevel level) {
             for (int i = 0; i < 3; i++) {
                 level.sendParticles(ParticleTypes.CAMPFIRE_COSY_SMOKE, this.getX() - this.random.nextInt(2),
-                        this.getY(), this.getZ() - this.random.nextFloat(), 2, 0.2D, 0.2D, 0.2D, 0.0D);
+                        this.getY(), this.getZ() - this.random.nextFloat(), 2, 0.2D, 0.2D, 0.2D, 0.1D);
             }
             entity.setSecondsOnFire(5);
             level.sendParticles(ParticleTypes.CRIT, this.getX(), this.getY(), this.getZ(), 15, 0.2D, 0.2D, 0.2D, 0.0D);

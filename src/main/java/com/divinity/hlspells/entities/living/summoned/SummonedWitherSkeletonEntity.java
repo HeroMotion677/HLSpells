@@ -56,8 +56,8 @@ public class SummonedWitherSkeletonEntity extends WitherSkeleton implements Summ
         this.goalSelector.addGoal(3, new RandomLookAroundGoal(this));
         this.goalSelector.addGoal(4, new LookAtPlayerGoal(this, Player.class, 3.0F, 0.7F));
         this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, LivingEntity.class, 8.0F, 0.5F));
-        this.targetSelector.addGoal(0, new CopyOwnerTargetGoal(this, true));
-        this.targetSelector.addGoal(1, new AttackedOwnerEnemyGoal(this, true));
+        this.targetSelector.addGoal(0, new CopyOwnerTargetGoal(this, false));
+        this.targetSelector.addGoal(1, new AttackedOwnerEnemyGoal(this, false));
     }
 
     @Override protected SoundEvent getAmbientSound() { return SoundEvents.WITHER_SKELETON_AMBIENT; }

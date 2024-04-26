@@ -38,7 +38,7 @@ public class FireballEntity extends BaseBoltEntity {
         if (hasHurt && level instanceof ServerLevel level) {
             for (int i = 0; i < 3; i++) {
                 level.sendParticles(ParticleTypes.FLAME, this.getX() - this.random.nextInt(2),
-                        this.getY(), this.getZ() - this.random.nextFloat(), 2, 0.2D, 0.2D, 0.2D, 0.0D);
+                        this.getY(), this.getZ() - this.random.nextFloat(), 20, 0.2D, 0.2D, 0.2D, 0.0D);
             }
             level.explode((Entity)null, this.getX(), this.getY(), this.getZ(),2, Explosion.BlockInteraction.DESTROY);
             entity.setSecondsOnFire(5);

@@ -42,7 +42,7 @@ public abstract class BaseBoltEntity extends Arrow {
             double baseYOffset = 0.15D;
             if (this.level instanceof ServerLevel level && !(this instanceof InvisibleTargetingEntity)) {
                 for (int i = 0; i < this.particleTypes.length; i++) {
-                    level.sendParticles(this.particleTypes[i], this.getX() - vector3d1.x, this.getY() - (vector3d1.y + (baseYOffset + ((double) i / 100))), this.getZ() - vector3d1.z, 0, 0, 0, 0, 0);
+                    level.sendParticles(this.particleTypes[i], this.getX() - vector3d1.x, this.getY() - (vector3d1.y + (baseYOffset + ((double) i / 100))), this.getZ() - vector3d1.z, 25, 0, 0, 0, 0.015);
                 }
             }
         }
