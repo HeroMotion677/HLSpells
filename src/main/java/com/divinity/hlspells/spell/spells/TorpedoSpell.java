@@ -38,11 +38,11 @@ public class TorpedoSpell extends Spell {
                 f3 *= f5 / f4;
                 p.push(f1, f2, f3);
                 p.startAutoSpinAttack(20);
-                if (p.isOnGround()) {
+                if (p.onGround()) {
                     p.move(MoverType.SELF, new Vec3(0.0D, 1.1999999F, 0.0D));
                 }
                 SoundEvent soundevent = SoundEvents.TRIDENT_RIPTIDE_1;
-                p.level.playSound(null, p, soundevent, SoundSource.PLAYERS, 1.0F, 1.0F);
+                p.level().playSound(null, p, soundevent, SoundSource.PLAYERS, 1.0F, 1.0F);
             }
             return true;
         };

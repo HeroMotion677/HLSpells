@@ -20,7 +20,7 @@ public class BondSpell extends Spell {
     @Override
     public SpellConsumer<Player> getAction() {
         return p -> {
-            Entity targetEntity = Util.rayTrace(p.level, p, 20D);
+            Entity targetEntity = Util.rayTrace(p.level(), p, 20D);
             if (targetEntity instanceof TamableAnimal entity) {
                 entity.tame(p);
                 return true;

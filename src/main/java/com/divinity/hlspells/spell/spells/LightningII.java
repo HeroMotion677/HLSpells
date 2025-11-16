@@ -28,7 +28,7 @@ public class LightningII extends Spell {
     @Override
     public SpellConsumer<Player> getAction() {
         return p -> {
-            InvisibleTargetingEntity stormBullet = new InvisibleTargetingEntity(EntityInit.INVISIBLE_TARGETING_ENTITY.get(), p.level) {
+            InvisibleTargetingEntity stormBullet = new InvisibleTargetingEntity(EntityInit.INVISIBLE_TARGETING_ENTITY.get(), p.level()) {
                 @Override
                 public void tick() {
                     super.tick();
@@ -37,10 +37,10 @@ public class LightningII extends Spell {
                         if (distance >= 25) {
                             this.remove(RemovalReason.DISCARDED);
                         }
-                        if (this.level.getGameTime() % 2 == 0) {
-                            LightningBolt lightning = new LightningBolt(EntityType.LIGHTNING_BOLT, this.level);
+                        if (this.level().getGameTime() % 2 == 0) {
+                            LightningBolt lightning = new LightningBolt(EntityType.LIGHTNING_BOLT, this.level());
                             lightning.moveTo(this.getX(), this.getY(), this.getZ());
-                            this.level.addFreshEntity(lightning);
+                            this.level().addFreshEntity(lightning);
                         }
                     }
                 }
@@ -49,7 +49,7 @@ public class LightningII extends Spell {
             stormBullet.setInitialPosition(p.position());
             stormBullet.setPos(p.getX() + p.getViewVector(1.0F).x, p.getY() + 1.35, p.getZ() + p.getViewVector(1.0F).z);
             stormBullet.shootFromRotation(p, p.xRot, p.yRot, 1.3F, 1.3F, 1.3F);
-            p.level.addFreshEntity(stormBullet);
+            p.level().addFreshEntity(stormBullet);
             return true;
         };
     }

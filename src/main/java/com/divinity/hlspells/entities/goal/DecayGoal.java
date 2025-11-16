@@ -13,7 +13,7 @@ public class DecayGoal extends Goal {
 
     public DecayGoal(Mob mob) {
         this.mob = mob;
-        this.decayAmount = 20 * (30 + this.mob.level.random.nextInt(50));
+        this.decayAmount = 20 * (30 + this.mob.level().random.nextInt(50));
     }
 
     @Override

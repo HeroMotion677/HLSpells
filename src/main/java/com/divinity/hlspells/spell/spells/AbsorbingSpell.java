@@ -28,14 +28,14 @@ public class AbsorbingSpell extends Spell {
         return p -> {
             boolean used = false;
             for (BlockPos blockPos : BlockPos.betweenClosed(Mth.floor(p.getX() - 2.0D), Mth.floor(p.getY() - 2.0D), Mth.floor(p.getZ() - 2.0D), Mth.floor(p.getX() + 2.0D), Mth.floor(p.getY() + 2.0D), Mth.floor(p.getZ() + 2.0D))) {
-                BlockState blockState = p.level.getBlockState(blockPos);
-                FluidState fluidState = p.level.getFluidState(blockPos);
+                BlockState blockState = p.level().getBlockState(blockPos);
+                FluidState fluidState = p.level().getFluidState(blockPos);
                 if (fluidState.is(FluidTags.WATER)) {
                     used = true;
-                    if (blockState.getBlock() instanceof SimpleWaterloggedBlock block && !block.canPlaceLiquid(p.level, blockPos, blockState, Fluids.WATER)) {
-                        p.level.setBlock(blockPos, blockState.setValue(BlockStateProperties.WATERLOGGED, Boolean.FALSE), 3);
+                    if (blockState.getBlock() instanceof SimpleWaterloggedBlock block && !block.canPlaceLiquid(p.level(), blockPos, blockState, Fluids.WATER)) {
+                        p.level().setBlock(blockPos, blockState.setValue(BlockStateProperties.WATERLOGGED, Boolean.FALSE), 3);
                     }
-                    else p.level.setBlock(blockPos, Blocks.AIR.defaultBlockState(), 3);
+                    else p.level().setBlock(blockPos, Blocks.AIR.defaultBlockState(), 3);
                 }
             }
             return used;

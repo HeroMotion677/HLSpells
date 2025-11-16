@@ -139,7 +139,7 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 	public void onUsingTick(ItemStack stack, LivingEntity livingEntity, int count) {
 
 
-		if (livingEntity instanceof Player player && (FMLEnvironment.dist.isDedicatedServer() || player.level.isClientSide)) {
+		if (livingEntity instanceof Player player && (FMLEnvironment.dist.isDedicatedServer() || player.level().isClientSide)) {
 			Spell spell = SpellUtils.getSpell(stack);
 			ItemStack itemstack = player.getItemInHand(player.getUsedItemHand());
 
@@ -160,7 +160,7 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 						Random pRandom = new Random();
 						for (BlockPos blockpos : EnchantmentTableBlock.BOOKSHELF_OFFSETS) {
 							if (pRandom.nextInt(14) == 0) {
-								livingEntity.getLevel()
+								livingEntity.level()
 										.addParticle(ParticleTypes.ENCHANT,
 												(double) livingEntity.getX(),
 												(double) livingEntity.getY() + 2.0D,
@@ -186,13 +186,13 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 				capability.ifPresent(cap -> {
 					if (cap.getSpellSoundBuffer() == 0) {
 						if (spell instanceof Illuminate || spell instanceof IlluminateII) {
-							player.level.playSound(null, player.blockPosition(), SoundInit.HELD_ILLUMINATE.get(), SoundSource.PLAYERS, 0.35F, 0.5F);
+							player.level().playSound(null, player.blockPosition(), SoundInit.HELD_ILLUMINATE.get(), SoundSource.PLAYERS, 0.35F, 0.5F);
 							cap.setSpellSoundBuffer(13);
 						} else if (spell.getMarkerType() == SpellAttributes.Marker.COMBAT) {
-							player.level.playSound(null, player.blockPosition(), SoundInit.HELD_COMBAT.get(), SoundSource.PLAYERS, 2.1F, 1.0F);
+							player.level().playSound(null, player.blockPosition(), SoundInit.HELD_COMBAT.get(), SoundSource.PLAYERS, 2.1F, 1.0F);
 							cap.setSpellSoundBuffer(23);
 						} else if (spell.getMarkerType() == SpellAttributes.Marker.UTILITY) {
-							player.level.playSound(null, player.blockPosition(), SoundInit.HELD_UTILITY.get(), SoundSource.PLAYERS, 1.8F, 1.3F);
+							player.level().playSound(null, player.blockPosition(), SoundInit.HELD_UTILITY.get(), SoundSource.PLAYERS, 1.8F, 1.3F);
 							cap.setSpellSoundBuffer(23);
 						}
 					} else

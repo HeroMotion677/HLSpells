@@ -52,15 +52,15 @@ public class SummonSpell<T extends Entity & Summonable> extends Spell {
     public SpellConsumer<Player> getAction() {
         return p -> {
             for (int i = 0; i < this.summonCount; i++) {
-                Entity summoned = this.summoned.create(p.level);
+                Entity summoned = this.summoned.create(p.level());
                 if (summoned instanceof Mob mob && summoned instanceof Summonable summonable) {
-                    BlockPos blockPos = p.blockPosition().offset(-2 + p.level.random.nextInt(5), 0, -2 + p.level.random.nextInt(5));
+                    BlockPos blockPos = p.blockPosition().offset(-2 + p.level().random.nextInt(5), 0, -2 + p.level().random.nextInt(5));
                     mob.moveTo(blockPos, 0.0F, 0.0F);
                     if(mob instanceof SummonedVexEntity vex){
                         vex.setBoundOrigin(blockPos);
                     }
                     summonable.setSummonedOwner(p);
-                    if (p.level instanceof ServerLevel level) {
+                    if (p.level() instanceof ServerLevel level) {
                         this.items.stream().filter(item -> item instanceof ArmorItem || item instanceof TieredItem).forEach(item -> mob.setItemSlot(this.getSlotForItem(new ItemStack(item)), new ItemStack(item)));
                         this.doAttributeModification(mob);
                         mob.finalizeSpawn(level, level.getCurrentDifficultyAt(blockPos), MobSpawnType.MOB_SUMMONED, null, null);

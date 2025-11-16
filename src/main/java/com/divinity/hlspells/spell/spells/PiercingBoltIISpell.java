@@ -35,7 +35,7 @@ public class PiercingBoltIISpell extends Spell {
     @Override
     protected SpellConsumer<Player> getAction() {
         return p -> {
-            Projectile projectile = new PiercingBoltEntity(EntityInit.PIERCING_BOLT_ENTITY.get(), p.level, true);
+            Projectile projectile = new PiercingBoltEntity(EntityInit.PIERCING_BOLT_ENTITY.get(), p.level(), true);
             BaseBoltEntity bolt = (BaseBoltEntity) projectile;
             bolt.setInitialPosition(p.position());
             this.velocity = 2.5F;
@@ -44,7 +44,7 @@ public class PiercingBoltIISpell extends Spell {
             Util.shootSpellRelative(p, bolt, positionVector, this.zRot, this.velocity, this.inaccuracy, this.noVerticalMovement);
             playSound(bolt);
             if(projectile instanceof PiercingBoltEntity){
-                Level world = p.getLevel();
+                Level world = p.level();
                 double d0 = (projectile.getX());
                 double d1 = (projectile.getY());
                 double d2 = (projectile.getZ());

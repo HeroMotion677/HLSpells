@@ -193,7 +193,7 @@ public class ForgeEventHandler {
 
     @SubscribeEvent
     public static void onEntityCloned(PlayerEvent.Clone event) {
-        if (event.isWasDeath() && !event.getEntity().level.isClientSide()) {
+        if (event.isWasDeath() && !event.getEntity().level().isClientSide()) {
             Player original = event.getOriginal();
             Player current = event.getEntity();
             boolean keepingActivated = false;
@@ -224,7 +224,7 @@ public class ForgeEventHandler {
             }
             if (keepingActivated) {
                 current.inventory.replaceWith(original.inventory);
-                current.level.broadcastEntityEvent(current, (byte) 35);
+                current.level().broadcastEntityEvent(current, (byte) 35);
                 displayActivationOnDeath = true;
             }
             // TOTEM OF RETURNING (Adds totem to the inventory)
@@ -252,7 +252,7 @@ public class ForgeEventHandler {
 
     @SubscribeEvent
     public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
-        if (!event.player.level.isClientSide()) {
+        if (!event.player.level().isClientSide()) {
             if (event.phase == TickEvent.Phase.END && displayActivationOnDeath) {
                 displayActivationOnDeath = false;
                 Util.displayActivation(event.player, ItemInit.TOTEM_OF_KEEPING.get());

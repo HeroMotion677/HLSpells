@@ -34,7 +34,7 @@ public class FollowOwnerGoal extends Goal {
             Player owner = summonable.getSummonedOwner();
             if (!owner.isAlive() && this.mob.isAlive()) this.mob.kill();
             else {
-                BlockPos ownerPos = owner.blockPosition().offset(-2 + owner.level.random.nextInt(5), 1, -2 + owner.level.random.nextInt(5));
+                BlockPos ownerPos = owner.blockPosition().offset(-2 + owner.level().random.nextInt(5), 1, -2 + owner.level().random.nextInt(5));
                 if (this.mob instanceof Vex vex) vex.setBoundOrigin(ownerPos);
                 if (this.mob.distanceTo(owner) > 12.0D && this.mob.distanceTo(owner) <= 50.0D) {
                     this.mob.moveControl.setWantedPosition(ownerPos.getX(), ownerPos.getY(), ownerPos.getZ(), 0.75D);

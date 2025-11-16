@@ -26,7 +26,7 @@ public class FreezingCircleSpell extends Spell {
                 p.getCapability(PlayerCapProvider.PLAYER_CAP).ifPresent(cap -> {
                     cap.setSpellTimer(cap.getSpellTimer() + 1);
                     if (cap.getSpellTimer() % 10 == 0) {
-                        doEnchantParticleInterior(p, p.level);
+                        doEnchantParticleInterior(p, p.level());
                         cap.setSpellTimer(0);
                     }
                     livingEntities.stream().filter(e -> e != null && e != p).forEach(e -> {

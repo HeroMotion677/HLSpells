@@ -27,7 +27,7 @@ public class BlizzardSpell extends Spell {
     @Override
     public SpellConsumer<Player> getAction() {
         return p -> {
-            InvisibleTargetingEntity stormBullet = new InvisibleTargetingEntity(EntityInit.INVISIBLE_TARGETING_ENTITY.get(), p.level) {
+            InvisibleTargetingEntity stormBullet = new InvisibleTargetingEntity(EntityInit.INVISIBLE_TARGETING_ENTITY.get(), p.level()) {
                 @Override
                 public void tick() {
                     super.tick();

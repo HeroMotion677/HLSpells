@@ -39,7 +39,7 @@ public class SonicBoomSpell extends Spell {
     @Override
     protected SpellConsumer<Player> getAction() {
         return p -> {
-            var entity = Util.rayTrace(p.level, p, 150D);
+            var entity = Util.rayTrace(p.level(), p, 150D);
             if(entity !=null){
                 Vec3 vec3 = p.position().add(0.0D, (double)1.6F, 0.0D);
                 Vec3 vec31 = entity.getEyePosition().subtract(vec3);
@@ -47,7 +47,7 @@ public class SonicBoomSpell extends Spell {
 
                 for(int i = 1; i < Mth.floor(vec31.length()) + 7; ++i) {
                     Vec3 vec33 = vec3.add(vec32.scale((double)i));
-                    p.getLevel().addParticle(ParticleTypes.SONIC_BOOM, vec33.x, vec33.y, vec33.z, 0.0D, 0.0D, 0.0D);
+                    p.level().addParticle(ParticleTypes.SONIC_BOOM, vec33.x, vec33.y, vec33.z, 0.0D, 0.0D, 0.0D);
                 }
 
                 p.playSound(SoundEvents.WARDEN_SONIC_BOOM, 2.0F, 1.0F);
@@ -67,7 +67,7 @@ public class SonicBoomSpell extends Spell {
 
                 for(int i = 1; i < Mth.floor(vec31.length()) + 7; ++i) {
                     Vec3 vec33 = vec3.add(vec32.scale((double)i));
-                    p.getLevel().addParticle(ParticleTypes.SONIC_BOOM, vec33.x, vec33.y, vec33.z, 0.0D, 0.0D, 0.0D);
+                    p.level().addParticle(ParticleTypes.SONIC_BOOM, vec33.x, vec33.y, vec33.z, 0.0D, 0.0D, 0.0D);
                 }
 
                 p.playSound(SoundEvents.WARDEN_SONIC_BOOM, 2.0F, 1.0F);

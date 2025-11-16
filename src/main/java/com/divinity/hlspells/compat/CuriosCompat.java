@@ -39,7 +39,8 @@ public final class CuriosCompat {
     private CuriosCompat() {} // To prevent any accidental instances from being created
 
     public static Optional<SlotResult> getItemInCuriosSlot(LivingEntity entity, Item item) {
-        return CuriosApi.getCuriosHelper().findFirstCurio(entity, item);
+        return CuriosApi.
+                .getCuriosHelper().findFirstCurio(entity, item);
     }
 
     public static Optional<SlotResult> getItemInCuriosSlot(LivingEntity entity, Predicate<ItemStack> filter) {

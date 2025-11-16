@@ -24,15 +24,15 @@ public class ArrowRainSpell extends Spell {
         return p -> {
             p.getCapability(PlayerCapProvider.PLAYER_CAP).ifPresent(cap -> {
                 cap.setSpellTimer(cap.getSpellTimer() + 1);
-                if (p.level.isClientSide()) {
+                if (p.level().isClientSide()) {
                     if (cap.getSpellTimer() % 8 == 0) {
-                        doCloudParticles(p, p.level);
+                        doCloudParticles(p, p.level());
                     }
                 }
                 else {
                     if (cap.getSpellTimer() % 8 == 0) {
                         for (int i = 0; i < 10; i++) {
-                            doArrowSpawn(p, p.level);
+                            doArrowSpawn(p, p.level());
                         }
                         cap.setSpellTimer(0);
                     }

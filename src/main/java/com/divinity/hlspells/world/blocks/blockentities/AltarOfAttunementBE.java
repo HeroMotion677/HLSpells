@@ -52,7 +52,7 @@ public class AltarOfAttunementBE extends EnchantmentTableBlockEntity implements 
     public void setChanged() {
         super.setChanged();
         if (this.level != null) {
-            this.level.sendBlockUpdated(this.worldPosition, this.getBlockState(), this.getBlockState(), 3);
+            this.level().sendBlockUpdated(this.worldPosition, this.getBlockState(), this.getBlockState(), 3);
         }
     }
 

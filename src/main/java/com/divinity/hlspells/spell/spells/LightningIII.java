@@ -38,9 +38,9 @@ public class LightningIII extends Spell {
                 }
                 return !(f instanceof Summonable) && !(f.isAlliedTo(p)) && !predicate && f != p && !(f instanceof ArmorStand);
             }).forEach(t -> {
-                LightningBolt lightning = new LightningBolt(EntityType.LIGHTNING_BOLT, p.level);
+                LightningBolt lightning = new LightningBolt(EntityType.LIGHTNING_BOLT, p.level());
                 lightning.moveTo(t.getX(), t.getOnPos().getY(), t.getZ());
-                p.level.addFreshEntity(lightning);
+                p.level().addFreshEntity(lightning);
             });
             return true;
         };

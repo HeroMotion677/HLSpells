@@ -21,7 +21,7 @@ public class FrostWallSpell extends Spell {
     @Override
     protected SpellConsumer<Player> getAction() {
         return p -> {
-            if (!p.level.isClientSide) {
+            if (!p.level().isClientSide) {
                 BlockPos pos = p.blockPosition().relative(p.getDirection(), 2);
                 boolean orient_x = p.getDirection().getAxis() == Direction.Axis.Z;
                 int yPos = pos.getY();
@@ -29,11 +29,11 @@ public class FrostWallSpell extends Spell {
 
                 BlockState ice = BlockInit.CUSTOM_FROSTED_ICE.get().defaultBlockState();
                 BlockPos.MutableBlockPos _pos = pos.mutable();
-                p.level.setBlockAndUpdate(_pos,ice);
+                p.level().setBlockAndUpdate(_pos,ice);
 
                 for (int y = yPos; y < yPos + 3; ++y)
                     for (int w = wPos-1; w <= wPos+1; ++w)
-                        p.level.setBlockAndUpdate(_pos.set(orient_x? w:pos.getX(),y,orient_x? pos.getZ():w),
+                        p.level().setBlockAndUpdate(_pos.set(orient_x? w:pos.getX(),y,orient_x? pos.getZ():w),
                          BlockInit.CUSTOM_FROSTED_ICE.get().defaultBlockState());
             } return true;
         };

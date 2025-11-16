@@ -49,7 +49,7 @@ public class ProjectileSpell<T extends Projectile> extends Spell {
     @Override
     public SpellConsumer<Player> getAction() {
         return p -> {
-            Entity projectile = this.projectile.create(p.level);
+            Entity projectile = this.projectile.create(p.level());
 
             if (projectile instanceof Projectile trueProjectile) {
                 if (trueProjectile instanceof BaseBoltEntity bolt) {
@@ -65,70 +65,70 @@ public class ProjectileSpell<T extends Projectile> extends Spell {
                 Util.shootSpellRelative(p, trueProjectile, positionVector, this.zRot, this.velocity, this.inaccuracy, this.noVerticalMovement);
                 playSound(trueProjectile);
                 if(projectile instanceof FlamingBoltEntity){
-                    Level world = p.getLevel();
+                    Level world = p.level();
                     double d0 = (projectile.getX());
                     double d1 = (projectile.getY() - 0.2);
                     double d2 = (projectile.getZ());
                     world.addParticle(ParticlesInit.ORANGE_BOLT_BOOM.get(), d0, d1, d2, 0, 0, 0);
                 }
                 if(projectile instanceof FreezingBoltEntity){
-                    Level world = p.getLevel();
+                    Level world = p.level();
                     double d0 = (projectile.getX());
                     double d1 = (projectile.getY() - 0.2);
                     double d2 = (projectile.getZ());
                     world.addParticle(ParticlesInit.BLUE_BOLT_BOOM.get(), d0, d1, d2, 0, 0, 0);
                 }
                 if(projectile instanceof BaseBoltEntity e && !(e instanceof FreezingBoltEntity || e instanceof FlamingBoltEntity || e instanceof InvisibleTargetingEntity)) {
-                    Level world = p.getLevel();
+                    Level world = p.level();
                     double d0 = (projectile.getX());
                     double d1 = (projectile.getY() - 0.2);
                     double d2 = (projectile.getZ());
                     world.addParticle(ParticlesInit.WHITE_BOLT_BOOM.get(), d0, d1, d2, 0, 0, 0);
                 }
                 if(projectile instanceof PiercingBoltEntity){
-                    Level world = p.getLevel();
+                    Level world = p.level();
                     double d0 = (projectile.getX());
                     double d1 = (projectile.getY() - 0.2);
                     double d2 = (projectile.getZ());
                     world.addParticle(ParticlesInit.GREEN_BOLT_BOOM.get(), d0, d1, d2, 0, 0, 0);
                 }
                 if(projectile instanceof ChorusBoltEntity){
-                    Level world = p.getLevel();
+                    Level world = p.level();
                     double d0 = (projectile.getX());
                     double d1 = (projectile.getY() - 0.2);
                     double d2 = (projectile.getZ());
                     world.addParticle(ParticlesInit.PURPLE_BOLT_BOOM.get(), d0, d1, d2, 0, 0, 0);
                 }
                 if(projectile instanceof WitherSkullEntity){
-                    Level world = p.getLevel();
+                    Level world = p.level();
                     double d0 = (projectile.getX());
                     double d1 = (projectile.getY());
                     double d2 = (projectile.getZ());
                     world.addParticle(ParticlesInit.BLACK_BOLT_BOOM.get(), d0, d1, d2, 0, 0, 0);
                 }
                 if(projectile instanceof FireballEntity){
-                    Level world = p.getLevel();
+                    Level world = p.level();
                     double d0 = (projectile.getX());
                     double d1 = (projectile.getY() - 0.2);
                     double d2 = (projectile.getZ());
                     world.addParticle(ParticlesInit.ORANGE_BOLT_BOOM.get(), d0, d1, d2, 0, 0, 0);
                 }
                 if(projectile instanceof Fireball2Entity){
-                    Level world = p.getLevel();
+                    Level world = p.level();
                     double d0 = (projectile.getX());
                     double d1 = (projectile.getY() - 0.2);
                     double d2 = (projectile.getZ());
                     world.addParticle(ParticlesInit.PURPLE_BOLT_BOOM.get(), d0, d1, d2, 0, 0, 0);
                 }
                 if(projectile instanceof SmartShulkerBolt){
-                    Level world = p.getLevel();
+                    Level world = p.level();
                     double d0 = (projectile.getX());
                     double d1 = (projectile.getY() - 0.2);
                     double d2 = (projectile.getZ());
                     world.addParticle(ParticlesInit.WHITE_BOLT_BOOM.get(), d0, d1, d2, 0, 0, 0);
                 }
                 if(projectile instanceof AquaBoltEntity){
-                    Level world = p.getLevel();
+                    Level world = p.level();
                     double d0 = (projectile.getX());
                     double d1 = (projectile.getY() - 0.2);
                     double d2 = (projectile.getZ());

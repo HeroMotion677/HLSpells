@@ -94,7 +94,7 @@ public final class Util {
         Vec3 vector3d = entity.getEyePosition(height);
         Vec3 vector3d1 = entity.getViewVector(height);
         Vec3 vector3d2 = vector3d.add(vector3d1.x * range, vector3d1.y * range, vector3d1.z * range);
-        return entity.level.clip(new ClipContext(vector3d, vector3d2, ClipContext.Block.VISUAL, includeFluids ? ClipContext.Fluid.ANY : ClipContext.Fluid.NONE, entity));
+        return entity.level().clip(new ClipContext(vector3d, vector3d2, ClipContext.Block.VISUAL, includeFluids ? ClipContext.Fluid.ANY : ClipContext.Fluid.NONE, entity));
     }
 
     /**
@@ -116,7 +116,7 @@ public final class Util {
      * Returns a list of entities (targets) from a relative entity within the specified x, y, and z bounds.
      */
     public static <T extends LivingEntity> List<T> getEntitiesInRange(LivingEntity relativeEntity, Class<T> targets, double xBound, double yBound, double zBound) {
-        return relativeEntity.level.getEntitiesOfClass(targets,
+        return relativeEntity.level().getEntitiesOfClass(targets,
                         new AABB(relativeEntity.getX() - xBound, relativeEntity.getY() - yBound, relativeEntity.getZ() - zBound,
                                 relativeEntity.getX() + xBound, relativeEntity.getY() + yBound, relativeEntity.getZ() + zBound))
                 .stream().sorted(getEntityComparator(relativeEntity)).collect(Collectors.toList());
@@ -133,14 +133,14 @@ public final class Util {
         double d2 = entity.getZ();
         for (int i = 0; i < 16; ++i) {
             double d3 = entity.getX() + (entity.getRandom().nextDouble() - 0.5D) * 16.0D;
-            double d4 = Mth.clamp(entity.getY() + (entity.getRandom().nextInt(16) - 8), 0.0D, (entity.level.getHeight() - 1));
+            double d4 = Mth.clamp(entity.getY() + (entity.getRandom().nextInt(16) - 8), 0.0D, (entity.level().getHeight() - 1));
             double d5 = entity.getZ() + (entity.getRandom().nextDouble() - 0.5D) * 16.0D;
             if (entity.isPassenger()) {
                 entity.stopRiding();
             }
             if (entity.randomTeleport(d3, d4, d5, true)) {
                 SoundEvent soundevent = SoundEvents.CHORUS_FRUIT_TELEPORT;
-                entity.level.playSound(null, d0, d1, d2, soundevent, SoundSource.PLAYERS, 1.0F, 1.0F);
+                entity.level().playSound(null, d0, d1, d2, soundevent, SoundSource.PLAYERS, 1.0F, 1.0F);
                 entity.playSound(soundevent, 1.0F, 1.0F);
                 break;
             }
@@ -191,10 +191,10 @@ public final class Util {
     }
 
     public static void doParticles(Player player) {
-        if (player.level instanceof ClientLevel level) {
+        if (player.level() instanceof ClientLevel level) {
             doBookParticles(level, new BlockPos(player.getX(), (player.getY() + 1), player.getZ()), 50);
         }
-        player.level.playSound(null, new BlockPos(player.getX(), player.getY(), player.getZ()), SoundEvents.ENCHANTMENT_TABLE_USE,
+        player.level().playSound(null, new BlockPos(player.getX(), player.getY(), player.getZ()), SoundEvents.ENCHANTMENT_TABLE_USE,
                 SoundSource.AMBIENT, 0.6f, 1.0f);
     }
 
@@ -205,7 +205,7 @@ public final class Util {
         entity.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 900, 1));
         entity.addEffect(new MobEffectInstance(MobEffects.ABSORPTION, 100, 1));
         displayActivation(entity, animationItem);
-        entity.level.playSound(null, entity.getX(), entity.getY(), entity.getZ(), SoundEvents.TOTEM_USE, SoundSource.PLAYERS, 1.0F, 1.0F);
+        entity.level().playSound(null, entity.getX(), entity.getY(), entity.getZ(), SoundEvents.TOTEM_USE, SoundSource.PLAYERS, 1.0F, 1.0F);
         entity.playSound(SoundEvents.TOTEM_USE, 1.0F, 1.0F);
     }
 
@@ -216,7 +216,7 @@ public final class Util {
         if (ignoreVerticalMovement) {
             projectile.setDeltaMovement(Mth.cos((float) Math.toRadians(entity.yRot + 90)), 0, Mth.sin((float) Math.toRadians(entity.yRot + 90)));
         }
-        entity.level.addFreshEntity(projectile);
+        entity.level().addFreshEntity(projectile);
     }
 
     /**

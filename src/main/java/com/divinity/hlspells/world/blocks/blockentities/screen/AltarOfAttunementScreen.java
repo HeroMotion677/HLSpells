@@ -61,7 +61,7 @@ public class AltarOfAttunementScreen extends AbstractContainerScreen<AltarOfAttu
                      if (!isCreative) {
                         list.add(Component.empty());
                         if (this.minecraft.player.experienceLevel < k) {
-                            list.add((Component.translatable("container.spell.level.requirement", this.menu.costs[j])).withStyle(ChatFormatting.RED));
+                            list.add((Component.translatable("container.spell.level().requirement", this.menu.costs[j])).withStyle(ChatFormatting.RED));
                         }
                         else {
                             Item materialItem = this.handler.getStackInSlot(2).getItem();

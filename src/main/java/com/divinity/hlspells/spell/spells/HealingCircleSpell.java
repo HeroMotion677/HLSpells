@@ -29,11 +29,11 @@ public class HealingCircleSpell extends Spell {
             p.getCapability(PlayerCapProvider.PLAYER_CAP).ifPresent(cap -> {
                 cap.setSpellTimer(cap.getSpellTimer() + 1);
                 if (cap.getSpellTimer() % 10 == 0) {
-                    doEnchantParticleInterior(p, p.level);
+                    doEnchantParticleInterior(p, p.level());
                 }
                 if (cap.getSpellTimer() % 20 == 0) {
                     for (LivingEntity livingEntity : livingEntities) {
-                        doHealingCircleEntityParticle(livingEntity, p.level);
+                        doHealingCircleEntityParticle(livingEntity, p.level());
                         if (livingEntity.isInvertedHealAndHarm()) {
                             livingEntity.setLastHurtByPlayer(p);
                             livingEntity.hurt(DamageSource.MAGIC, 1.0F);

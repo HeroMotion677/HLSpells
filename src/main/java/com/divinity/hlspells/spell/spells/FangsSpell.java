@@ -31,7 +31,7 @@ public class FangsSpell extends Spell {
         return p -> {
             float f = (float) Mth.atan2(p.getZ(), p.getX());
             if (!p.isShiftKeyDown()) {
-                InvisibleTargetingEntity stormBullet = new InvisibleTargetingEntity(EntityInit.INVISIBLE_TARGETING_ENTITY.get(), p.level) {
+                InvisibleTargetingEntity stormBullet = new InvisibleTargetingEntity(EntityInit.INVISIBLE_TARGETING_ENTITY.get(), p.level()) {
                     @Override
                     public void tick() {
                         super.tick();
@@ -40,9 +40,9 @@ public class FangsSpell extends Spell {
                             if (distance >= 10) {
                                 this.remove(RemovalReason.DISCARDED);
                             }
-                            if (this.level.getGameTime() % 2 == 0) {
+                            if (this.level().getGameTime() % 2 == 0) {
                                 if (this.getOwner() instanceof Player) {
-                                    createFangsEntity((LivingEntity) this.getOwner(), this.level, this.xOld, this.zOld, getY(), 0, 0);
+                                    createFangsEntity((LivingEntity) this.getOwner(), this.level(), this.xOld, this.zOld, getY(), 0, 0);
                                 }
                             }
                         }
@@ -53,16 +53,16 @@ public class FangsSpell extends Spell {
                 stormBullet.setPos(p.getX(), p.getY(), p.getZ());
                 stormBullet.shootFromRotation(p, p.xRot, p.yRot, 1.2F, 1.2F, 1.2F);
                 stormBullet.setDeltaMovement(Mth.cos((float) Math.toRadians(p.yRot + 90)), 0, Mth.sin((float) Math.toRadians(p.yRot + 90)));
-                p.level.addFreshEntity(stormBullet);
+                p.level().addFreshEntity(stormBullet);
             }
             else {
                 for (int i = 0; i < 5; ++i) {
                     float f1 = f + i * (float) Math.PI * 0.4F;
-                    createFangsEntity(p, p.level, p.getX() + Mth.cos(f1) * 1.5D, p.getZ() + Mth.sin(f1) * 1.5D, p.getY(), f1, 0);
+                    createFangsEntity(p, p.level(), p.getX() + Mth.cos(f1) * 1.5D, p.getZ() + Mth.sin(f1) * 1.5D, p.getY(), f1, 0);
                 }
                 for (int k = 0; k < 8; ++k) {
                     float f2 = f + k * (float) Math.PI * 2.0F / 8.0F + 1.2566371F;
-                    createFangsEntity(p, p.level, p.getX() + Mth.cos(f2) * 2.5D, p.getZ() + Mth.sin(f2) * 2.5D, p.getY(), f2, 3);
+                    createFangsEntity(p, p.level(), p.getX() + Mth.cos(f2) * 2.5D, p.getZ() + Mth.sin(f2) * 2.5D, p.getY(), f2, 3);
                 }
             }
             return true;

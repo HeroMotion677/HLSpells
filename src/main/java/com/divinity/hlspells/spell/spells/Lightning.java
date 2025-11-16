@@ -39,9 +39,9 @@ public class Lightning extends Spell {
             double dx = location.x() + stepX;
             double dy = location.y() + stepY - 1;
             double dz = location.z() + stepZ;
-            LightningBolt lightning = new LightningBolt(EntityType.LIGHTNING_BOLT, p.level);
+            LightningBolt lightning = new LightningBolt(EntityType.LIGHTNING_BOLT, p.level());
             lightning.moveTo(dx, dy, dz);
-            p.level.addFreshEntity(lightning);
+            p.level().addFreshEntity(lightning);
             return true;
         };
     }

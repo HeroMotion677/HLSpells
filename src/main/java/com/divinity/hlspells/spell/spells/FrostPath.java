@@ -30,7 +30,7 @@ public class FrostPath extends Spell {
     @Override
     protected SpellConsumer<Player> getAction() {
         return p -> {
-            if (p.isOnGround()) {
+            if (p.onGround()) {
                 BlockState blockstate = Blocks.FROSTED_ICE.defaultBlockState();
                 float f = (float) Math.min(16, 3);
                 BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos();
@@ -39,14 +39,14 @@ public class FrostPath extends Spell {
                 for (BlockPos blockpos : BlockPos.betweenClosed(pPos.offset(-f, -1.0D, -f), pPos.offset(f, -1.0D, f))) {
                     if (blockpos.closerToCenterThan(p.position(), f)) {
                         blockpos$mutableblockpos.set(blockpos.getX(), blockpos.getY() + 1, blockpos.getZ());
-                        BlockState blockstate1 = p.level.getBlockState(blockpos$mutableblockpos);
+                        BlockState blockstate1 = p.level().getBlockState(blockpos$mutableblockpos);
                         if (blockstate1.isAir()) {
-                            BlockState blockstate2 = p.level.getBlockState(blockpos);
+                            BlockState blockstate2 = p.level().getBlockState(blockpos);
                             boolean isFull = blockstate2.getBlock() == Blocks.WATER && blockstate2.getValue(LiquidBlock.LEVEL) == 0;
-                            if (blockstate2.getMaterial() == Material.WATER && isFull && blockstate.canSurvive(p.level, blockpos) && p.level.isUnobstructed(blockstate, blockpos, CollisionContext.empty()) && !ForgeEventFactory.onBlockPlace(p, BlockSnapshot.create(p.level.dimension(), p.level, blockpos), Direction.UP)) {
+                            if (blockstate2.getMaterial() == Material.WATER && isFull && blockstate.canSurvive(p.level(), blockpos) && p.level().isUnobstructed(blockstate, blockpos, CollisionContext.empty()) && !ForgeEventFactory.onBlockPlace(p, BlockSnapshot.create(p.level().dimension(), p.level(), blockpos), Direction.UP)) {
                                 used = true;
-                                p.level.setBlockAndUpdate(blockpos, blockstate);
-                                p.level.scheduleTick(blockpos, Blocks.FROSTED_ICE, Mth.nextInt(p.getRandom(), 60, 120));
+                                p.level().setBlockAndUpdate(blockpos, blockstate);
+                                p.level().scheduleTick(blockpos, Blocks.FROSTED_ICE, Mth.nextInt(p.getRandom(), 60, 120));
                             }
                         }
                     }

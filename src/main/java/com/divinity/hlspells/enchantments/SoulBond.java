@@ -25,7 +25,7 @@ public class SoulBond extends Enchantment {
 
     @SubscribeEvent
     public static void onEntityHit(LivingHurtEvent event) {
-        if (event.getSource().getDirectEntity() instanceof Player player && event.getEntity() != null && !player.level.isClientSide()) {
+        if (event.getSource().getDirectEntity() instanceof Player player && event.getEntity() != null && !player.level().isClientSide()) {
             for (InteractionHand hand : InteractionHand.values()) {
                 if (EnchantmentHelper.getItemEnchantmentLevel(EnchantmentInit.SOUL_SYPHON.get(), player.getItemInHand(hand)) > 0) {
                     if (player.getRandom().nextInt(4) == 1) player.heal(0.5F);

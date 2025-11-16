@@ -38,16 +38,16 @@ public class BoltII extends Spell {
     @Override
     public SpellConsumer<Player> getAction() {
         return p -> {
-            if (Util.rayTrace(p.level, p, 100D) != null && p.isShiftKeyDown()) {
-                Entity entity = Util.rayTrace(p.level, p, 100D);
+            if (Util.rayTrace(p.level(), p, 100D) != null && p.isShiftKeyDown()) {
+                Entity entity = Util.rayTrace(p.level(), p, 100D);
                 if (entity != null) {
-                    ShulkerBullet smartBullet = new SmartShulkerBolt(p.level, p, entity, p.getDirection().getAxis());
+                    ShulkerBullet smartBullet = new SmartShulkerBolt(p.level(), p, entity, p.getDirection().getAxis());
                     smartBullet.setPos(p.getX() + p.getViewVector(1.0F).x, p.getY() + 1.35, p.getZ() + p.getViewVector(1.0F).z);
-                    p.level.addFreshEntity(smartBullet);
+                    p.level().addFreshEntity(smartBullet);
                 }
             }
             else {
-                ShulkerBullet dumbBullet = new ShulkerBullet(EntityType.SHULKER_BULLET, p.level) {
+                ShulkerBullet dumbBullet = new ShulkerBullet(EntityType.SHULKER_BULLET, p.level()) {
                     @Override
                     public void selectNextMoveDirection(@Nullable Direction.Axis axis) {}
 
@@ -92,7 +92,7 @@ public class BoltII extends Spell {
                 dumbBullet.setOwner(p);
                 dumbBullet.setPos(p.getX() + p.getViewVector(1.0F).x, p.getY() + 1.35, p.getZ() + p.getViewVector(1.0F).z);
                 dumbBullet.shootFromRotation(p, p.xRot, p.yRot, 1.3F, 2.5F, 1.3F);
-                p.level.addFreshEntity(dumbBullet);
+                p.level().addFreshEntity(dumbBullet);
             }
             return true;
         };
