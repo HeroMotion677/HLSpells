@@ -1,6 +1,7 @@
 package com.divinity.hlspells.setup.init;
 
 import com.divinity.hlspells.HLSpells;
+import com.divinity.hlspells.capabilities.spellholdercap.SpellHolderProvider;
 import com.divinity.hlspells.items.spellitems.SpellHoldingItem;
 import com.divinity.hlspells.items.spellitems.StaffItem;
 import com.divinity.hlspells.items.armor.material.WizardArmorMaterial;
@@ -9,7 +10,10 @@ import com.divinity.hlspells.items.totems.EscapingTotem;
 import com.divinity.hlspells.items.totems.GriefingTotem;
 import com.divinity.hlspells.items.totems.KeepingTotem;
 import com.divinity.hlspells.items.totems.ReturningTotem;
+import com.divinity.hlspells.spell.Spell;
 import com.google.common.collect.Lists;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.*;
@@ -22,6 +26,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
 import java.util.List;
+import java.util.Objects;
 
 import static net.minecraft.world.item.Rarity.EPIC;
 import static net.minecraft.world.item.Rarity.RARE;
@@ -101,4 +106,6 @@ public class ItemInit {
             event.accept(ALTAR_ITEM);
         }
     }
+
+
  }

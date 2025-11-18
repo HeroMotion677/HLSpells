@@ -23,6 +23,7 @@ public class ModRegistry {
         bus.addListener(ItemInit::addCreative);
         LootInit.LOOT_MODIFIER_SERIALIZERS.register(bus);
         SpellInit.SPELLS.register(bus);
+        bus.addListener(SpellInit::addCreative);
         BlockInit.BLOCKS.register(bus);
         BlockInit.BLOCK_ENTITIES.register(bus);
         MenuTypeInit.MENUS.register(bus);

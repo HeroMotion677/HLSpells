@@ -1,12 +1,16 @@
 package com.divinity.hlspells.setup.init;
 
 import com.divinity.hlspells.HLSpells;
+import com.divinity.hlspells.capabilities.spellholdercap.SpellHolderProvider;
 import com.divinity.hlspells.spell.Spell;
 import com.divinity.hlspells.spell.SpellAttributes;
 import com.divinity.hlspells.spell.spells.*;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.item.CreativeModeTabs;
+import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.IForgeRegistry;
@@ -14,6 +18,7 @@ import net.minecraftforge.registries.RegistryBuilder;
 import net.minecraftforge.registries.RegistryObject;
 
 import javax.annotation.Nullable;
+import java.util.Objects;
 import java.util.function.Supplier;
 
 @SuppressWarnings("unused")
@@ -102,5 +107,28 @@ public class SpellInit {
 
     private static String numberToRomanNumeral(int number) {
         return "I".repeat(number);
+    }
+
+    public static void addCreative(BuildCreativeModeTabContentsEvent event){
+        if(event.getTabKey() == CreativeModeTabs.TOOLS_AND_UTILITIES){
+            for(Spell spell : SPELLS_REGISTRY.get()){
+                if(spell.isEmpty()){
+                    continue;
+                }
+                event.accept(createSpellBookFor(spell));
+            }
+        }
+
+    }
+
+    public static ItemStack createSpellBookFor(Spell spell) {
+        ItemStack stack = new ItemStack(ItemInit.SPELL_BOOK.get());
+        stack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP).ifPresent(cap -> {
+            ResourceLocation id = SpellInit.SPELLS_REGISTRY.get().getKey(spell);
+            if (id != null) {
+                cap.addSpell(Objects.requireNonNull(SpellInit.SPELLS_REGISTRY.get().getKey(spell)).toString());
+            }
+        });
+        return stack;
     }
 }
