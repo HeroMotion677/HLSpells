@@ -5,7 +5,7 @@
     32
   ],
   "textures": {
-    "0": "hlspells:items/spellbook/book"
+    "0": "hlspells:item/spellbook/book"
   },
   "overrides": [
     {

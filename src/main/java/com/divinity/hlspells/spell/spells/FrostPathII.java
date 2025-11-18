@@ -40,7 +40,7 @@ public class FrostPathII extends Spell {
                     BlockState mutableState = p.level().getBlockState(mutablePos);
                     if (mutableState.isAir()) {
                         BlockState state = p.level().getBlockState(blockpos);
-                        if (state.getMaterial().isReplaceable() && blockstate.canSurvive(p.level(), blockpos) && p.level().isUnobstructed(blockstate, blockpos, CollisionContext.empty()) && !ForgeEventFactory.onBlockPlace(p, BlockSnapshot.create(p.level().dimension(), p.level(), blockpos), Direction.UP)) {
+                        if (state.canBeReplaced() && blockstate.canSurvive(p.level(), blockpos) && p.level().isUnobstructed(blockstate, blockpos, CollisionContext.empty()) && !ForgeEventFactory.onBlockPlace(p, BlockSnapshot.create(p.level().dimension(), p.level(), blockpos), Direction.UP)) {
                             used = true;
                             p.level().setBlockAndUpdate(blockpos, blockstate);
                             p.level().scheduleTick(blockpos, BlockInit.CUSTOM_FROSTED_ICE.get(), Mth.nextInt(p.getRandom(), 60, 120));

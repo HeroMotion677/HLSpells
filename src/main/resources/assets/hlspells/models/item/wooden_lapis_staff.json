@@ -1,6 +1,6 @@
 {
   "parent": "forge:item/default",
-  "loader": "forge:separate-perspective",
+  "loader": "forge:separate_transforms",
   "base": {
     "parent": "hlspells:item/staff/wood/lapis/wood_staff_1"
   },

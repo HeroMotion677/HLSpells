@@ -4,6 +4,7 @@ import com.divinity.hlspells.setup.init.SpellInit;
 import com.divinity.hlspells.spell.Spell;
 import com.divinity.hlspells.spell.SpellAttributes;
 import com.divinity.hlspells.spell.SpellConsumer;
+import net.minecraft.client.resources.model.Material;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.SimpleParticleType;
@@ -12,8 +13,9 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.Material;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraftforge.client.model.obj.ObjMaterialLibrary;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.registries.DeferredRegister;
@@ -32,18 +34,18 @@ public class FrostPath extends Spell {
         return p -> {
             if (p.onGround()) {
                 BlockState blockstate = Blocks.FROSTED_ICE.defaultBlockState();
-                float f = (float) Math.min(16, 3);
+                int f =  Math.min(16, 3);
                 BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos();
                 BlockPos pPos = p.blockPosition();
                 boolean used = false;
-                for (BlockPos blockpos : BlockPos.betweenClosed(pPos.offset(-f, -1.0D, -f), pPos.offset(f, -1.0D, f))) {
+                for (BlockPos blockpos : BlockPos.betweenClosed(pPos.offset(-f, -1, -f), pPos.offset(f, -1, f))) {
                     if (blockpos.closerToCenterThan(p.position(), f)) {
                         blockpos$mutableblockpos.set(blockpos.getX(), blockpos.getY() + 1, blockpos.getZ());
                         BlockState blockstate1 = p.level().getBlockState(blockpos$mutableblockpos);
                         if (blockstate1.isAir()) {
                             BlockState blockstate2 = p.level().getBlockState(blockpos);
                             boolean isFull = blockstate2.getBlock() == Blocks.WATER && blockstate2.getValue(LiquidBlock.LEVEL) == 0;
-                            if (blockstate2.getMaterial() == Material.WATER && isFull && blockstate.canSurvive(p.level(), blockpos) && p.level().isUnobstructed(blockstate, blockpos, CollisionContext.empty()) && !ForgeEventFactory.onBlockPlace(p, BlockSnapshot.create(p.level().dimension(), p.level(), blockpos), Direction.UP)) {
+                            if (blockstate2.equals(Fluids.WATER) && isFull && blockstate.canSurvive(p.level(), blockpos) && p.level().isUnobstructed(blockstate, blockpos, CollisionContext.empty()) && !ForgeEventFactory.onBlockPlace(p, BlockSnapshot.create(p.level().dimension(), p.level(), blockpos), Direction.UP)) {
                                 used = true;
                                 p.level().setBlockAndUpdate(blockpos, blockstate);
                                 p.level().scheduleTick(blockpos, Blocks.FROSTED_ICE, Mth.nextInt(p.getRandom(), 60, 120));

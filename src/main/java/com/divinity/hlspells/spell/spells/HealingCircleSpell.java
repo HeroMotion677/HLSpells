@@ -36,7 +36,7 @@ public class HealingCircleSpell extends Spell {
                         doHealingCircleEntityParticle(livingEntity, p.level());
                         if (livingEntity.isInvertedHealAndHarm()) {
                             livingEntity.setLastHurtByPlayer(p);
-                            livingEntity.hurt(DamageSource.MAGIC, 1.0F);
+                            livingEntity.hurt(livingEntity.damageSources().magic(), 1.0F);
                         }
                         else if (livingEntity.getHealth() < livingEntity.getMaxHealth()) {
                             livingEntity.heal(2.5F);

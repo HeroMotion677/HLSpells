@@ -16,7 +16,7 @@ import net.minecraftforge.eventbus.api.Event;
 public class ReturningTotem extends Item implements ITotem {
 
     public ReturningTotem() {
-        super(new Item.Properties().tab(CreativeModeTab.TAB_COMBAT).stacksTo(1).rarity(Rarity.UNCOMMON));
+        super(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON));
     }
 
     @Override

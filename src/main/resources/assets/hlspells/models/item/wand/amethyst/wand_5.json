@@ -1,7 +1,7 @@
 {
   "parent": "hlspells:item/amethyst_wand",
   "textures": {
-    "layer0": "hlspells:items/wand/amethyst/wand_5"
+    "layer0": "hlspells:item/wand/amethyst/wand_5"
   },
   "display": {
     "thirdperson_righthand": {

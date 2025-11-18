@@ -2,7 +2,7 @@
   "credit": "Made with Blockbench",
   "parent": "item/generated",
   "textures": {
-    "layer0": "hlspells:items/wand/amethyst/wand"
+    "layer0": "hlspells:item/wand/amethyst/wand"
   },
   "overrides": [
     {

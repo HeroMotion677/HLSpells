@@ -6,6 +6,7 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageSources;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -39,8 +40,8 @@ public class AquaBoltEntity extends BaseBoltEntity {
                 break;
             }
         }
-        boolean hasHurt = entity.hurt(DamageSource.indirectMobAttack(this, livingentity).setProjectile(), (this.isUnderWater() || predicate) ? 7.0F : 3.0F);
-        if (hasHurt && this.level instanceof ServerLevel level) {
+        boolean hasHurt = entity.hurt(new DamageSources(this.level().registryAccess()).mobProjectile(this, livingentity), (this.isUnderWater() || predicate) ? 7.0F : 3.0F);
+        if (hasHurt && this.level() instanceof ServerLevel level) {
             level.sendParticles(ParticleTypes.BUBBLE_POP, this.getX() - this.random.nextInt(2), this.getY(), this.getZ() - this.random.nextFloat(), 12, 0.2D, 0.2D, 0.2D, 0.0D);
             entity.clearFire();
             if (livingentity != null) this.doEnchantDamageEffects(livingentity, entity);
@@ -50,11 +51,11 @@ public class AquaBoltEntity extends BaseBoltEntity {
 
     @Override
     protected void onHitBlock(@NotNull BlockHitResult result) {
-        if (this.level instanceof ServerLevel level) {
+        if (this.level() instanceof ServerLevel level) {
             BlockState airState = Blocks.AIR.defaultBlockState();
             for (BlockPos blockPos : BlockPos.withinManhattan(this.blockPosition(), 1, 0, 1)) {
-                if (this.level.getBlockState(blockPos).getBlock() == Blocks.FIRE) {
-                    this.level.setBlockAndUpdate(blockPos, airState);
+                if (this.level().getBlockState(blockPos).getBlock() == Blocks.FIRE) {
+                    this.level().setBlockAndUpdate(blockPos, airState);
                 }
             }
             level.sendParticles(ParticleTypes.BUBBLE_POP, this.getX(), this.getY(), this.getZ(), 12, 0.25D, 0.25D, 0.25D, 0D);

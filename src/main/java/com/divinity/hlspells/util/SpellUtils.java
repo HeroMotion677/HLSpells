@@ -38,7 +38,7 @@ public final class SpellUtils {
     }
 
     public static Spell getSpellByID(@Nonnull String id) {
-        Spell spell = SpellInit.SPELLS_REGISTRY.get().getValue(new ResourceLocation(id));
+        Spell spell = SpellInit.SPELLS_REGISTRY.get().getValue(ResourceLocation.parse(id));
         if (spell != null) return spell;
         else return SpellInit.EMPTY.get();
     }

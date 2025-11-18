@@ -1,6 +1,6 @@
 {
   "parent": "hlspells:item/staff/netherite/lapis/gui/netherite_staff_gui_1",
   "textures": {
-    "layer0": "hlspells:items/staff/netherite/lapis/gui/netherite_staff_gui_5"
+    "layer0": "hlspells:item/staff/netherite/lapis/gui/netherite_staff_gui_5"
   }
 }

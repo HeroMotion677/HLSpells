@@ -1,6 +1,6 @@
 {
   "parent": "hlspells:item/staff/golden/lapis/golden_staff_1",
   "textures": {
-    "layer0": "hlspells:items/staff/golden/lapis/model/golden_staff_6"
+    "layer0": "hlspells:item/staff/golden/lapis/model/golden_staff_6"
   }
 }

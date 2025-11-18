@@ -4,28 +4,34 @@ import com.divinity.hlspells.items.spellitems.SpellHoldingItem;
 import com.divinity.hlspells.setup.init.SpellInit;
 import com.divinity.hlspells.util.SpellUtils;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Vector3f;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.ItemInHandRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.block.model.ItemTransform;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import static com.mojang.math.Axis.YP;
+import static com.mojang.math.Axis.ZP;
+
 @Mixin(ItemInHandRenderer.class)
 public abstract class MixinItemRenderer {
 
     @Shadow protected abstract void applyItemArmTransform(PoseStack pMatrixStack, HumanoidArm pHand, float pEquippedProg);
 
-    @Shadow public abstract void renderItem(LivingEntity pLivingEntity, ItemStack pItemStack, ItemTransforms.TransformType pTransformType, boolean pLeftHand, PoseStack pMatrixStack, MultiBufferSource pBuffer, int pCombinedLight);
+    @Shadow public abstract void renderItem(LivingEntity pLivingEntity, ItemStack pItemStack, ItemDisplayContext pTransformType, boolean pLeftHand, PoseStack pMatrixStack, MultiBufferSource pBuffer, int pCombinedLight);
 
     @Shadow protected abstract void applyItemArmAttackTransform(PoseStack pMatrixStack, HumanoidArm pHand, float pSwingProgress);
 
@@ -49,8 +55,8 @@ public abstract class MixinItemRenderer {
                         this.applyItemArmTransform(pMatrixStack, humanoidarm, pEquippedProgress);
                         int j = flag3 ? 1 : -1;
                         pMatrixStack.translate((float) j * -0.4F, 0.8F, 0.3F);
-                        pMatrixStack.mulPose(Vector3f.YP.rotationDegrees((float) j * 65.0F));
-                        pMatrixStack.mulPose(Vector3f.ZP.rotationDegrees((float) j * -85.0F));
+                        pMatrixStack.mulPose(YP.rotationDegrees((float) j * 65.0F));
+                        pMatrixStack.mulPose(ZP.rotationDegrees((float) j * -85.0F));
                     }
                     else {
                         float f5 = -0.4F * Mth.sin(Mth.sqrt(pSwingProgress) * (float) Math.PI);
@@ -61,7 +67,7 @@ public abstract class MixinItemRenderer {
                         this.applyItemArmTransform(pMatrixStack, humanoidarm, pEquippedProgress);
                         this.applyItemArmAttackTransform(pMatrixStack, humanoidarm, pSwingProgress);
                     }
-                    this.renderItem(pPlayer, pStack, flag3 ? ItemTransforms.TransformType.FIRST_PERSON_RIGHT_HAND : ItemTransforms.TransformType.FIRST_PERSON_LEFT_HAND, !flag3, pMatrixStack, pBuffer, pCombinedLight);
+                    this.renderItem(pPlayer, pStack, flag3 ? ItemDisplayContext.FIRST_PERSON_RIGHT_HAND : ItemDisplayContext.FIRST_PERSON_LEFT_HAND, !flag3, pMatrixStack, pBuffer, pCombinedLight);
                     pMatrixStack.popPose();
                     ci.cancel();
                 }

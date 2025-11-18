@@ -155,7 +155,7 @@ public final class Util {
     }
 
     public static void updateDimensions(Player entity) {
-        if (entity.level.isClientSide)
+        if (entity.level().isClientSide)
             return;
         entity.refreshDimensions();
         NetworkManager.INSTANCE.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity), new UpdateDimensionsPacket(entity.getUUID()));
@@ -192,9 +192,9 @@ public final class Util {
 
     public static void doParticles(Player player) {
         if (player.level() instanceof ClientLevel level) {
-            doBookParticles(level, new BlockPos(player.getX(), (player.getY() + 1), player.getZ()), 50);
+            doBookParticles(level, new BlockPos((int)player.getX(), (int)(player.getY() + 1), (int)player.getZ()), 50);
         }
-        player.level().playSound(null, new BlockPos(player.getX(), player.getY(), player.getZ()), SoundEvents.ENCHANTMENT_TABLE_USE,
+        player.level().playSound(null, new BlockPos((int)player.getX(), (int)player.getY(), (int)player.getZ()), SoundEvents.ENCHANTMENT_TABLE_USE,
                 SoundSource.AMBIENT, 0.6f, 1.0f);
     }
 

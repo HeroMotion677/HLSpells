@@ -54,7 +54,7 @@ public interface  IPacket {
     static <T extends IPacket> void register(SimpleChannel.MessageBuilder<T> builder, Function<FriendlyByteBuf, T> decoder) {
         builder.encoder(IPacket::encode)
                .decoder(decoder)
-               .consumer(IPacket::handleOnThread)
+               .consumerNetworkThread(IPacket::handleOnThread)
                .add();
     }
 }

@@ -51,7 +51,7 @@ public class HLSpells {
         CONFIG = specPair.getLeft();
         CONFIG_SPEC = specPair.getRight();
     }
-
+    @SuppressWarnings("deprecation")
     public HLSpells() {
         final IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
         // Init the RegistryHandler class
@@ -65,7 +65,7 @@ public class HLSpells {
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, CONFIG_SPEC);
         isCurioLoaded = ModList.get().isLoaded("curios");
 
-        bus.addListener(this::commonSetup);
+        //bus.addListener(this::commonSetup);
 
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
             bus.addListener(this::registerLayer);
@@ -110,9 +110,9 @@ public class HLSpells {
         }
     }
 
-    private void commonSetup(final FMLCommonSetupEvent event){
-        event.enqueueWork(()-> {
-            VillagerInit.registerPOIs();
-        });
-    }
+//    private void commonSetup(final FMLCommonSetupEvent event){
+//        event.enqueueWork(()-> {
+//            VillagerInit.registerPOIs();
+//        });
+//    }
 }

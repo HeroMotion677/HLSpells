@@ -70,7 +70,7 @@ public class FangsSpell extends Spell {
     }
 
     public static void createFangsEntity(LivingEntity entity, Level world, double x, double z, double y, float yaw, int warmup) {
-        BlockPos blockpos = new BlockPos(x, y, z);
+        BlockPos blockpos = new BlockPos((int)x, (int)y, (int)z);
         boolean flag = false;
         double d0 = 0.0D;
         do {

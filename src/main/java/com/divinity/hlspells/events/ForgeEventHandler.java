@@ -66,7 +66,7 @@ public class ForgeEventHandler {
     @SubscribeEvent
     public static void onAttachEntityCaps(AttachCapabilitiesEvent<Entity> event) {
         if (event.getObject() instanceof Player && !event.getObject().getCapability(PlayerCapProvider.PLAYER_CAP).isPresent()) {
-            event.addCapability(new ResourceLocation(MODID, "playereffectcap"), new PlayerCapProvider());
+            event.addCapability(ResourceLocation.fromNamespaceAndPath(MODID, "playereffectcap"), new PlayerCapProvider());
         }
     }
 
@@ -74,7 +74,7 @@ public class ForgeEventHandler {
     public static void onAttachItemStackCaps(AttachCapabilitiesEvent<ItemStack> event) {
         ItemStack item = event.getObject();
         if (item.getItem() == ItemInit.TOTEM_OF_RETURNING.get() || item.getItem() == ItemInit.TOTEM_OF_KEEPING.get()) {
-            event.addCapability(new ResourceLocation(MODID, "totemcap"), new TotemItemProvider());
+            event.addCapability(ResourceLocation.fromNamespaceAndPath(MODID, "totemcap"), new TotemItemProvider());
         }
         if (HLSpells.isCurioLoaded) {
             CuriosCompat.attachCapabilities(event);
@@ -205,7 +205,7 @@ public class ForgeEventHandler {
                 for (int i = 0; i < inv.items.size(); ++i) {
                     ItemStack stackInSlot = inv.items.get(i);
                     if (!stackInSlot.isEmpty() && original.getMainHandItem().getItem() == stackInSlot.getItem() &&
-                            ItemStack.tagMatches(original.getMainHandItem(), stackInSlot)) {
+                            ItemStack.isSameItemSameTags(original.getMainHandItem(), stackInSlot)) {
                         mainSlot = i;
                     }
                 }
@@ -265,7 +265,7 @@ public class ForgeEventHandler {
     public static void onPlayerRightClick(PlayerInteractEvent.RightClickItem event) {
         if (event.getEntity() != null) {
             Player player = event.getEntity();
-            Level world = player.level;
+            Level world = player.level();
             if (!world.isClientSide()) {
                 for (InteractionHand hand : InteractionHand.values()) {
                     ItemStack stack = player.getItemInHand(hand);
@@ -314,7 +314,7 @@ public class ForgeEventHandler {
     }
     @SubscribeEvent
     public static void SpellCap(TickEvent.PlayerTickEvent event) {
-        if (!event.player.level.isClientSide()) {
+        if (!event.player.level().isClientSide()) {
             if (event.phase == TickEvent.Phase.END && displayActivationOnDeath) {
                 displayActivationOnDeath = false;
                 Util.displayActivation(event.player, ItemInit.TOTEM_OF_KEEPING.get());
@@ -324,7 +324,7 @@ public class ForgeEventHandler {
     @SubscribeEvent
     public static void clearEffectsAfterUse(TickEvent.PlayerTickEvent event) {
         Player player = event.player;
-        if (player != null && !player.level.isClientSide()) {
+        if (player != null && !player.level().isClientSide()) {
             if (event.phase == TickEvent.Phase.END) {
                 if (!(player.getUseItem().getItem() instanceof SpellHoldingItem)) {
                     Util.clearEffects(player);
@@ -338,7 +338,7 @@ public class ForgeEventHandler {
         if (event.getEntity() instanceof Player player) {
             if (player.isUsingItem()) {
                 if (SpellUtils.getSpell(player.getUseItem()) instanceof Phasing spell && spell.canUseSpell()) {
-                    if (event.getSource() == DamageSource.IN_WALL) {
+                    if (event.getSource() == player.damageSources().inWall()) {
                         event.setCanceled(true);
                     }
                 }
@@ -351,7 +351,7 @@ public class ForgeEventHandler {
         if (event.getEntity() instanceof Player player) {
             if (player.isUsingItem()) {
                 if (SpellUtils.getSpell(player.getUseItem()) instanceof PhasingII spell && spell.canUseSpell()) {
-                    if (event.getSource() == DamageSource.IN_WALL) {
+                    if (event.getSource() == player.damageSources().inWall()) {
                         event.setCanceled(true);
                     }
                 }
@@ -364,7 +364,7 @@ public class ForgeEventHandler {
     }
 
     private static LootPoolEntryContainer.Builder<?> getInjectEntry(String name) {
-        ResourceLocation table = new ResourceLocation(HLSpells.MODID, "inject/" + name);
+        ResourceLocation table = ResourceLocation.fromNamespaceAndPath(HLSpells.MODID, "inject/" + name);
         return LootTableReference.lootTableReference(table).setWeight(1);
     }
 
@@ -385,39 +385,39 @@ public class ForgeEventHandler {
             if (targetTotem.isDisposableOnDeath()) {
                 if (main.getItem() == target) {
                     compatibleTotems = !(isSameTotem(main, off) || curiosStack != null && isSameTotem(main, curiosStack));
-                    targetTotem.performAction(event, player, player.level, main, InteractionHand.MAIN_HAND, false);
+                    targetTotem.performAction(event, player, player.level(), main, InteractionHand.MAIN_HAND, false);
                 }
                 if (off.getItem() == target && compatibleTotems) {
                     compatibleTotems = !(isSameTotem(off, main) || curiosStack != null && isSameTotem(off, curiosStack));
-                    targetTotem.performAction(event, player, player.level, off, InteractionHand.OFF_HAND, false);
+                    targetTotem.performAction(event, player, player.level(), off, InteractionHand.OFF_HAND, false);
                 }
                 if (curiosStack != null) {
                     if (curiosStack.getItem() == target && compatibleTotems) {
-                        targetTotem.performAction(event, player, player.level, main, InteractionHand.MAIN_HAND, true);
+                        targetTotem.performAction(event, player, player.level(), main, InteractionHand.MAIN_HAND, true);
                     }
                 }
             } else if (targetTotem.doesCancelDeath()) {
                 if (main.getItem() == target) {
-                    targetTotem.performAction(event, player, player.level, main, InteractionHand.MAIN_HAND, false);
+                    targetTotem.performAction(event, player, player.level(), main, InteractionHand.MAIN_HAND, false);
                 } else if (off.getItem() == target) {
-                    targetTotem.performAction(event, player, player.level, off, InteractionHand.OFF_HAND, false);
+                    targetTotem.performAction(event, player, player.level(), off, InteractionHand.OFF_HAND, false);
                 } else if (curiosStack != null) {
                     if (curiosStack.getItem() == target) {
-                        targetTotem.performAction(event, player, player.level, main, InteractionHand.MAIN_HAND, true);
+                        targetTotem.performAction(event, player, player.level(), main, InteractionHand.MAIN_HAND, true);
                     }
                 }
             } else if (!targetTotem.isDisposableOnDeath() && !targetTotem.doesCancelDeath() && !event.isCanceled()) {
                 if (main.getItem() == target) {
                     otherTotems = !(isSameTotem(main, off) || curiosStack != null && isSameTotem(main, curiosStack));
-                    targetTotem.performAction(event, player, player.level, main, InteractionHand.MAIN_HAND, false);
+                    targetTotem.performAction(event, player, player.level(), main, InteractionHand.MAIN_HAND, false);
                 }
                 if (off.getItem() == target && otherTotems) {
                     otherTotems = !(isSameTotem(off, main) || curiosStack != null && isSameTotem(off, curiosStack));
-                    targetTotem.performAction(event, player, player.level, off, InteractionHand.OFF_HAND, false);
+                    targetTotem.performAction(event, player, player.level(), off, InteractionHand.OFF_HAND, false);
                 }
                 if (curiosStack != null) {
                     if (curiosStack.getItem() == target && otherTotems) {
-                        targetTotem.performAction(event, player, player.level, main, InteractionHand.MAIN_HAND, true);
+                        targetTotem.performAction(event, player, player.level(), main, InteractionHand.MAIN_HAND, true);
                     }
                 }
             }

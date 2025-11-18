@@ -1,6 +1,8 @@
 package com.divinity.hlspells.entities.goal;
 
-import net.minecraft.world.damagesource.DamageSource;
+
+import net.minecraft.world.damagesource.DamageSources;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
@@ -30,7 +32,7 @@ public class DecayGoal extends Goal {
     public void tick() {
         if (--this.decayAmount <= 0) {
             this.decayAmount = 20;
-            this.mob.hurt(DamageSource.STARVE, 3.0F);
+            this.mob.hurt(new DamageSources(this.mob.level().registryAccess()).starve(), 3.0F);
         }
     }
 }

@@ -3,6 +3,7 @@ package com.divinity.hlspells.langproviders;
 import com.divinity.hlspells.HLSpells;
 import com.divinity.hlspells.setup.init.*;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.data.PackOutput;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.BlockItem;
 import net.minecraftforge.common.data.LanguageProvider;
@@ -11,7 +12,7 @@ import org.apache.commons.lang3.text.WordUtils;
 
 public class EnUsLangProvider extends LanguageProvider {
 
-    public EnUsLangProvider(DataGenerator gen) {
+    public EnUsLangProvider(PackOutput gen) {
         super(gen, HLSpells.MODID, "en_us");
     }
 

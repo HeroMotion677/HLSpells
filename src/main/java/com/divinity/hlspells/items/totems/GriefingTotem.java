@@ -17,7 +17,7 @@ import net.minecraftforge.eventbus.api.Event;
 public class GriefingTotem extends Item implements ITotem  {
 
     public GriefingTotem() {
-        super(new Item.Properties().tab(CreativeModeTab.TAB_COMBAT).stacksTo(1).rarity(Rarity.UNCOMMON));
+        super(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON));
     }
 
     @Override
@@ -35,7 +35,7 @@ public class GriefingTotem extends Item implements ITotem  {
         if (event instanceof LivingDeathEvent) {
             if (!isCurios) player.setItemInHand(hand, ItemStack.EMPTY);
             else CuriosCompat.getItemInCuriosSlot(player, ItemInit.TOTEM_OF_GRIEFING.get()).ifPresent(map -> map.stack().shrink(1));
-            world.explode(player, player.getX(), player.getY(), player.getZ(), 5.0F, Explosion.BlockInteraction.BREAK);
+            world.explode(player, player.getX(), player.getY(), player.getZ(), 5.0F, Level.ExplosionInteraction.TNT);
             Util.displayActivation(player, ItemInit.TOTEM_OF_GRIEFING.get());
         }
     }

@@ -2,7 +2,7 @@
 	"credit": "Made with Blockbench",
 	"texture_size": [32, 32],
 	"textures": {
-		"layer0": "hlspells:items/staff/golden/lapis/model/golden_staff_1"
+		"layer0": "hlspells:item/staff/golden/lapis/model/golden_staff_1"
 	},
 	"elements": [
 		{

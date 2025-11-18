@@ -24,7 +24,7 @@ public class NetworkManager {
     private static final String PROTOCOL_VERSION = "1";
     private static int index = 0;
     public static SimpleChannel INSTANCE = NetworkRegistry.newSimpleChannel(
-            new ResourceLocation(HLSpells.MODID, "main"), () -> NetworkManager.PROTOCOL_VERSION,
+            ResourceLocation.fromNamespaceAndPath(HLSpells.MODID, "main"), () -> NetworkManager.PROTOCOL_VERSION,
             NetworkManager.PROTOCOL_VERSION::equals, NetworkManager.PROTOCOL_VERSION::equals);
 
     @SubscribeEvent

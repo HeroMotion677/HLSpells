@@ -8,8 +8,10 @@ import com.divinity.hlspells.spell.SpellConsumer;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageSources;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -19,13 +21,9 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.network.NetworkHooks;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.RegistryObject;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
-
-import net.minecraft.world.entity.Entity.RemovalReason;
 
 public class Bolt extends Spell {
 
@@ -59,8 +57,7 @@ public class Bolt extends Spell {
                 }
 
                 @Override
-                @NotNull
-                public Packet<?> getAddEntityPacket() { return NetworkHooks.getEntitySpawningPacket(this); }
+                public Packet<ClientGamePacketListener> getAddEntityPacket() { return NetworkHooks.getEntitySpawningPacket(this); }
 
                 @Override
                 public void onHitEntity(EntityHitResult result) {
@@ -69,7 +66,7 @@ public class Bolt extends Spell {
                         Entity entity1 = this.getOwner();
                         LivingEntity livingentity = entity1 instanceof LivingEntity entity2 ? entity2 : null;
                         if (result.getEntity() == this.getOwner()) return;
-                        boolean flag = entity.hurt(DamageSource.indirectMobAttack(this, livingentity).setProjectile(), 6.0F);
+                        boolean flag = entity.hurt(new DamageSources(this.level().registryAccess()).mobProjectile(this, livingentity), 6.0F);
                         if (flag) {
                             if (livingentity != null) this.doEnchantDamageEffects(livingentity, entity);
                             this.remove(RemovalReason.KILLED);

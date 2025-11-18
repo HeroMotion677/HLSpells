@@ -1,5 +1,6 @@
 package com.divinity.hlspells.entities.projectile;
 
+import net.minecraft.world.damagesource.DamageSources;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.AreaEffectCloud;
@@ -35,14 +36,14 @@ public class Fireball2Entity extends BaseBoltEntity {
         Entity entity1 = this.getOwner();
         LivingEntity livingentity = entity1 instanceof LivingEntity livingEntity ? livingEntity : null;
         if (result.getEntity() == this.getOwner()) return;
-        boolean hasHurt = entity.hurt(DamageSource.indirectMobAttack(this, livingentity).setProjectile(), 13.0F);
-        if (hasHurt && level instanceof ServerLevel level) {
+        boolean hasHurt = entity.hurt(new DamageSources(this.level().registryAccess()).mobProjectile(this, livingentity), 13.0F);
+        if (hasHurt && level() instanceof ServerLevel level) {
             for (int i = 0; i < 3; i++) {
                 level.sendParticles(ParticleTypes.FLAME, this.getX() - this.random.nextInt(2),
                         this.getY(), this.getZ() - this.random.nextFloat(), 2, 0.2D, 0.2D, 0.2D, 0.0D);
             }
             entity.setSecondsOnFire(5);
-            level.explode((Entity)null, this.getX(), this.getY(), this.getZ(),3, Explosion.BlockInteraction.DESTROY);
+            level.explode((Entity)null, this.getX(), this.getY(), this.getZ(),3, Level.ExplosionInteraction.BLOCK);
             level.sendParticles(ParticleTypes.CRIT, this.getX(), this.getY(), this.getZ(), 15, 0.2D, 0.2D, 0.2D, 0.0D);
             if (livingentity != null) this.doEnchantDamageEffects(livingentity, entity);
             this.remove(RemovalReason.KILLED);
@@ -51,11 +52,11 @@ public class Fireball2Entity extends BaseBoltEntity {
 
     @Override
     protected void onHitBlock(@NotNull BlockHitResult result) {
-        if (this.level instanceof ServerLevel level) {
+        if (this.level() instanceof ServerLevel level) {
             level.sendParticles(ParticleTypes.CAMPFIRE_COSY_SMOKE, this.getX(), this.getY(), this.getZ(), 2, 0.2D, 0.2D, 0.2D, 0.0D);
-            level.explode((Entity)null, this.getX(), this.getY(), this.getZ(),4, Explosion.BlockInteraction.DESTROY);
+            level.explode((Entity)null, this.getX(), this.getY(), this.getZ(),4, Level.ExplosionInteraction.BLOCK);
             BlockPos blockpos = result.getBlockPos().relative(result.getDirection());
-            if (this.level.isEmptyBlock(blockpos)) this.level.setBlockAndUpdate(blockpos, BaseFireBlock.getState(this.level, blockpos));
+            if (this.level().isEmptyBlock(blockpos)) this.level().setBlockAndUpdate(blockpos, BaseFireBlock.getState(this.level(), blockpos));
             this.playSound(SoundEvents.SHULKER_BULLET_HIT, 1.0F, 1.0F);
             this.remove(RemovalReason.KILLED);
         }
@@ -64,8 +65,8 @@ public class Fireball2Entity extends BaseBoltEntity {
     protected void onHit(HitResult pResult) {
         super.onHit(pResult);
         if (pResult.getType() != HitResult.Type.ENTITY || !this.ownedBy(((EntityHitResult)pResult).getEntity())) {
-            if (!this.level.isClientSide) {
-                List<LivingEntity> list = this.level.getEntitiesOfClass(LivingEntity.class, this.getBoundingBox().inflate(4.0D, 2.0D, 4.0D));
+            if (!this.level().isClientSide) {
+                List<LivingEntity> list = this.level().getEntitiesOfClass(LivingEntity.class, this.getBoundingBox().inflate(4.0D, 2.0D, 4.0D));
                 Entity entity = this.getOwner();
                 if (!list.isEmpty()) {
                     for(LivingEntity livingentity : list) {
@@ -73,7 +74,7 @@ public class Fireball2Entity extends BaseBoltEntity {
                     }
                 }
 
-                this.level.levelEvent(2006, this.blockPosition(), this.isSilent() ? -1 : 1);
+                this.level().levelEvent(2006, this.blockPosition(), this.isSilent() ? -1 : 1);
                 this.discard();
             }
 

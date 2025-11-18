@@ -47,7 +47,7 @@ public abstract class MixinPhasing {
             if (collisionContext.getEntity() instanceof Player player) {
                 if (SpellUtils.getSpell(player.getUseItem()) instanceof Phasing spell && spell.canUseSpell() || SpellUtils.getSpell(player.getUseItem()) instanceof PhasingII spell2 && spell2.canUseSpell()) {
                     if (pPos.getY() >= player.getY()) { // Prevents the player from falling through the ground
-                        if (player.level.getBlockState(pPos).getBlock().defaultDestroyTime() >= 0.0F) { // Check if the block is not unbreakable (aka, not bedrock)
+                        if (player.level().getBlockState(pPos).getBlock().defaultDestroyTime() >= 0.0F) { // Check if the block is not unbreakable (aka, not bedrock)
                             cir.setReturnValue(Shapes.empty());
                         }
                     }

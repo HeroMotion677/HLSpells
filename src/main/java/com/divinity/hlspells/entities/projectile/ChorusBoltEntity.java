@@ -7,6 +7,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageSources;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -32,12 +33,12 @@ public class ChorusBoltEntity extends BaseBoltEntity {
         Entity entity1 = this.getOwner();
         LivingEntity livingentity = entity1 instanceof LivingEntity livingEntity ? livingEntity : null;
         if (entity == this.getOwner()) return;
-        boolean flag = entity.hurt(DamageSource.indirectMobAttack(this, livingentity).setProjectile(), 4.0F);
-        if (flag && this.level instanceof ServerLevel level) {
+        boolean flag = entity.hurt(new DamageSources(this.level().registryAccess()).mobProjectile(this, livingentity), 4.0F);
+        if (flag && this.level() instanceof ServerLevel level) {
             level.sendParticles(ParticleTypes.CRIT, this.getX(), this.getY(), this.getZ(), 2, 0.2D, 0.2D, 0.2D, 0.0D);
             if (livingentity != null) {
                 if (entity instanceof LivingEntity livingEntity) {
-                    Level livingLevel = livingEntity.level;
+                    Level livingLevel = livingEntity.level();
                     if (!livingLevel.isClientSide) {
                         this.doChorusTeleport(livingEntity, livingLevel);
                     }
@@ -50,7 +51,7 @@ public class ChorusBoltEntity extends BaseBoltEntity {
 
     @Override
     protected void onHitBlock(@NotNull BlockHitResult result) {
-        if (this.level instanceof ServerLevel level) {
+        if (this.level() instanceof ServerLevel level) {
             level.sendParticles(ParticleTypes.CRIT, this.getX(), this.getY(), this.getZ(), 2, 0.2D, 0.2D, 0.2D, 0.0D);
             this.playSound(SoundEvents.SHULKER_BULLET_HIT, 1.0F, 1.0F);
             this.remove(RemovalReason.KILLED);
@@ -68,7 +69,7 @@ public class ChorusBoltEntity extends BaseBoltEntity {
             if (livingEntity.isPassenger()) livingEntity.stopRiding();
             if (livingEntity.randomTeleport(d3, d4, d5, true)) {
                 SoundEvent soundevent = livingEntity instanceof Fox ? SoundEvents.FOX_TELEPORT : SoundEvents.CHORUS_FRUIT_TELEPORT;
-                livingEntity.level.playSound(null, d0, d1, d2, soundevent, SoundSource.PLAYERS, 1.0F, 1.0F);
+                livingEntity.level().playSound(null, d0, d1, d2, soundevent, SoundSource.PLAYERS, 1.0F, 1.0F);
                 livingEntity.playSound(soundevent, 1.0F, 1.0F);
                 break;
             }

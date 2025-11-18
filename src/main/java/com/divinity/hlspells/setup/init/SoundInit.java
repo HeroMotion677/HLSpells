@@ -12,7 +12,7 @@ public class SoundInit {
     public static final DeferredRegister<SoundEvent> SOUNDS = DeferredRegister.create(ForgeRegistries.SOUND_EVENTS, HLSpells.MODID);
 
     private static RegistryObject<SoundEvent> registerSoundEvent(String name) {
-        return SOUNDS.register(name, () -> new SoundEvent(new ResourceLocation(HLSpells.MODID, name)));
+        return SOUNDS.register(name, () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(HLSpells.MODID, name)));
     }
 
     public static final RegistryObject<SoundEvent> ALTAR_TRANSFER = registerSoundEvent("altar_transfer");

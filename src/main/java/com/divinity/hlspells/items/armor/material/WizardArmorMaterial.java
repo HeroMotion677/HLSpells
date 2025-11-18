@@ -2,6 +2,7 @@ package com.divinity.hlspells.items.armor.material;
 
 
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -53,10 +54,14 @@ public enum WizardArmorMaterial implements ArmorMaterial {
         return MODID + ":" + this.name;
     }
 
-    @Override public int getDurabilityForSlot(EquipmentSlot type) { return HEALTH_PER_SLOT[type.getIndex()] * this.durabilityMultiplier; }
+    @Override
+    public int getDurabilityForType(ArmorItem.Type pType) {
+        return HEALTH_PER_SLOT[pType.getSlot().getIndex()] * this.durabilityMultiplier;
+    }
 
-    @Override public int getDefenseForSlot(EquipmentSlot type) {
-        return this.slotProtections[type.getIndex()];
+    @Override
+    public int getDefenseForType(ArmorItem.Type pType) {
+        return this.slotProtections[pType.getSlot().getIndex()];
     }
 
     @Override public int getEnchantmentValue() {

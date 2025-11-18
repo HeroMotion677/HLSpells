@@ -3,6 +3,7 @@ package com.divinity.hlspells.entities.projectile;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.damagesource.DamageSource;
@@ -30,7 +31,7 @@ public class WitherSkullEntity extends WitherSkull {
         super.tick();
        // Remove if it's more than 40 block away from entity pos
         if(this.tickCount == 50){
-            if(this.level instanceof ServerLevel level){
+            if(this.level() instanceof ServerLevel level){
                 level.sendParticles(ParticleTypes.SMOKE, this.getX() - this.random.nextInt(2),
                         this.getY(), this.getZ() - this.random.nextFloat(), 70, 0.2D, 0.2D, 0.2D, 0.0D);
             }
@@ -42,10 +43,11 @@ public class WitherSkullEntity extends WitherSkull {
     @Override
     public void checkDespawn() {
         super.checkDespawn();
-        if (this.level.getDifficulty() == Difficulty.PEACEFUL) this.discard();
+        if (this.level().getDifficulty() == Difficulty.PEACEFUL) this.discard();
     }
 
-    @Override @NotNull public Packet<?> getAddEntityPacket() { return NetworkHooks.getEntitySpawningPacket(this); }
+    @Override
+    public Packet<ClientGamePacketListener> getAddEntityPacket() { return NetworkHooks.getEntitySpawningPacket(this); }
 
     @Override public boolean isNoGravity() { return true; }
 

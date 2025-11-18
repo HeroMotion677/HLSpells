@@ -18,7 +18,7 @@ import static com.divinity.hlspells.HLSpells.MODID;
 public class WizardHatArmorItem extends ArmorItem {
 
 
-    public WizardHatArmorItem(ArmorMaterial material, EquipmentSlot type, Properties properties) {
+    public WizardHatArmorItem(ArmorMaterial material, ArmorItem.Type type, Properties properties) {
         super(material, type, properties);
     }
 
@@ -26,7 +26,7 @@ public class WizardHatArmorItem extends ArmorItem {
     @Override
 
     public String getArmorTexture(ItemStack stack, Entity entity, EquipmentSlot slot, String type) {
-        return slot == EquipmentSlot.HEAD ? "%s:%s".formatted(MODID, "textures/items/armor/model/wizard_hat.png") : null;
+        return slot == EquipmentSlot.HEAD ? "%s:%s".formatted(MODID, "textures/item/armor/model/wizard_hat.png") : null;
     }
 
     @Override

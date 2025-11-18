@@ -8,6 +8,7 @@ import com.divinity.hlspells.entities.goal.FollowOwnerGoal;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -43,7 +44,7 @@ public class SummonedVexEntity extends Vex implements Summonable {
 
     @Override
     public void readAdditionalSaveData(CompoundTag nbt) {
-        if (nbt.contains("Owner")) this.setSummonedOwner(this.level.getPlayerByUUID(nbt.getUUID("Owner")));
+        if (nbt.contains("Owner")) this.setSummonedOwner(this.level().getPlayerByUUID(nbt.getUUID("Owner")));
         super.readAdditionalSaveData(nbt);
     }
 
@@ -53,7 +54,8 @@ public class SummonedVexEntity extends Vex implements Summonable {
         super.addAdditionalSaveData(nbt);
     }
 
-    @Override @NotNull public Packet<?> getAddEntityPacket() { return NetworkHooks.getEntitySpawningPacket(this); }
+    @Override
+    public Packet<ClientGamePacketListener> getAddEntityPacket() { return NetworkHooks.getEntitySpawningPacket(this); }
 
     @Override
     public boolean isAlliedTo(@NotNull Entity entity) {
@@ -201,7 +203,7 @@ public class SummonedVexEntity extends Vex implements Summonable {
 
             for (int i = 0; i < 3; ++i) {
                 BlockPos blockpos1 = blockPos.offset(SummonedVexEntity.this.random.nextInt(15) - 7, SummonedVexEntity.this.random.nextInt(11) - 5, SummonedVexEntity.this.random.nextInt(15) - 7);
-                if (SummonedVexEntity.this.level.isEmptyBlock(blockpos1)) {
+                if (SummonedVexEntity.this.level().isEmptyBlock(blockpos1)) {
                     SummonedVexEntity.this.moveControl.setWantedPosition(blockpos1.getX() + 0.5D, blockpos1.getY() + 0.5D, blockpos1.getZ() + 0.5D, 0.25D);
                     if (SummonedVexEntity.this.getTarget() == null) {
                         SummonedVexEntity.this.getLookControl().setLookAt(blockpos1.getX() + 0.5D, blockpos1.getY() + 0.5D, blockpos1.getZ() + 0.5D, 180.0F, 20.0F);

@@ -19,7 +19,7 @@ import top.theillusivec4.curios.api.SlotResult;
 public class EscapingTotem extends Item implements ITotem {
 
     public EscapingTotem() {
-        super(new Item.Properties().tab(CreativeModeTab.TAB_COMBAT).stacksTo(1).rarity(Rarity.UNCOMMON));
+        super(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON));
     }
 
     @Override

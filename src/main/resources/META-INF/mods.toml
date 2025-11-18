@@ -24,19 +24,19 @@ side = "BOTH"
 [[dependencies.hlspells]]
 modId = "minecraft"
 mandatory = true
-versionRange = "[1.19.2,1.19.4)"
+versionRange = "[1.20.1,)"
 ordering = "NONE"
 
 [[dependencies.hlspells]]
 modId = "curios"
 mandatory = false
-versionRange = "[1.18.2-5.0.6.3,)"
+versionRange = "[5.14.1+1.20.1,)"
 ordering = "NONE"
 
 [[dependencies.hlspells]]
 modId="lucent"
 mandatory=true
-versionRange="[1.4.0,1.4.1]"
+versionRange="[1.5.3,]"
 ordering="NONE"
 side="BOTH"
 

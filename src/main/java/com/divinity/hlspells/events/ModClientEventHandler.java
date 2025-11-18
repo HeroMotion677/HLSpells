@@ -45,13 +45,14 @@ public class ModClientEventHandler {
         public static void okKeyRegister(RegisterKeyMappingsEvent event) {
         event.register(WAND_BINDING);}
         @SubscribeEvent
+        @SuppressWarnings("deprecation")
         public static void init(final FMLClientSetupEvent event) {
             event.enqueueWork(() -> {
-                registerItemModel(ItemInit.SPELL_BOOK.get(), new ResourceLocation("using"), 3, 0.2F, 0.4F, 0.6F, 0.8F, 1F);
-                registerItemModel(ItemInit.WAND.get(), new ResourceLocation("pull"), 3, 0.2F, 0.4F, 0.6F, 0.8F, 1F);
-                registerItemModel(ItemInit.AMETHYST_WAND.get(), new ResourceLocation("pull"), 3, 0.2F, 0.4F, 0.6F, 0.8F, 1F);
-                ItemInit.STAFFS.forEach(staff -> registerItemModel(staff.get(), new ResourceLocation("pull"), 3, 0.2F, 0.4F, 0.6F, 0.8F, 1F));
-                ItemProperties.register(ItemInit.TOTEM_OF_RETURNING.get(), new ResourceLocation("used"), (stack, world, living, integer) -> {
+                registerItemModel(ItemInit.SPELL_BOOK.get(), ResourceLocation.parse("using"), 3, 0.2F, 0.4F, 0.6F, 0.8F, 1F);
+                registerItemModel(ItemInit.WAND.get(), ResourceLocation.parse("pull"), 3, 0.2F, 0.4F, 0.6F, 0.8F, 1F);
+                registerItemModel(ItemInit.AMETHYST_WAND.get(), ResourceLocation.parse("pull"), 3, 0.2F, 0.4F, 0.6F, 0.8F, 1F);
+                ItemInit.STAFFS.forEach(staff -> registerItemModel(staff.get(), ResourceLocation.parse("pull"), 3, 0.2F, 0.4F, 0.6F, 0.8F, 1F));
+                ItemProperties.register(ItemInit.TOTEM_OF_RETURNING.get(), ResourceLocation.parse("used"), (stack, world, living, integer) -> {
                     if (living instanceof Player) {
                         var totemCap = stack.getCapability(TotemItemProvider.TOTEM_CAP);
                         if (totemCap.isPresent())
@@ -81,7 +82,7 @@ public class ModClientEventHandler {
                 }
                 @Override
                 public ResourceLocation getTextureLocation(InvisibleTargetingEntity pEntity) {
-                    return new ResourceLocation("");
+                    return ResourceLocation.parse("");
                 }
             });
             event.registerEntityRenderer(EntityInit.PIERCING_BOLT_ENTITY.get(), ctx -> new BaseBoltRenderer<>(ctx, getBoltLocation("textures/entity/bolt/green_bolt.png")));

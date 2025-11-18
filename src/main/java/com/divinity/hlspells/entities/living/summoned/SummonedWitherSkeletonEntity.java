@@ -7,6 +7,7 @@ import com.divinity.hlspells.entities.goal.DecayGoal;
 import com.divinity.hlspells.entities.goal.FollowOwnerGoal;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.RandomSource;
@@ -38,7 +39,7 @@ public class SummonedWitherSkeletonEntity extends WitherSkeleton implements Summ
 
     @Override
     public void readAdditionalSaveData(CompoundTag nbt) {
-        if (nbt.contains("Owner")) this.setSummonedOwner(this.level.getPlayerByUUID(nbt.getUUID("Owner")));
+        if (nbt.contains("Owner")) this.setSummonedOwner(this.level().getPlayerByUUID(nbt.getUUID("Owner")));
         super.readAdditionalSaveData(nbt);
     }
 
@@ -69,8 +70,7 @@ public class SummonedWitherSkeletonEntity extends WitherSkeleton implements Summ
     @Override protected @NotNull SoundEvent getStepSound() { return SoundEvents.WITHER_SKELETON_STEP; }
 
     @Override
-    @NotNull
-    public Packet<?> getAddEntityPacket() {
+    public Packet<ClientGamePacketListener> getAddEntityPacket() {
         return NetworkHooks.getEntitySpawningPacket(this);
     }
 

@@ -108,7 +108,7 @@ public class SummonSpell<T extends Entity & Summonable> extends Spell {
     private EquipmentSlot getSlotForItem(ItemStack stack) {
         if (stack != null) {
             if (stack.getItem() instanceof ArmorItem item) {
-                return item.getSlot();
+                return item.getEquipmentSlot();
             }
             else if (stack.getItem() instanceof TieredItem) {
                 return EquipmentSlot.MAINHAND;

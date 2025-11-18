@@ -1,26 +1,19 @@
 package com.divinity.hlspells.entities.projectile;
 
 import net.minecraft.core.Direction;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageSources;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.ShulkerBullet;
-import net.minecraft.world.inventory.AnvilMenu;
-import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.AnvilBlock;
-import net.minecraft.world.level.block.CraftingTableBlock;
-import net.minecraft.world.level.block.entity.EnchantmentTableBlockEntity;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraftforge.network.NetworkHooks;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
-
-import net.minecraft.world.entity.Entity.RemovalReason;
 
 public class KnockbackBoltEntity extends ShulkerBullet {
 
@@ -40,8 +33,7 @@ public class KnockbackBoltEntity extends ShulkerBullet {
     }
 
     @Override
-    @NotNull
-    public Packet<?> getAddEntityPacket() {
+    public Packet<ClientGamePacketListener> getAddEntityPacket() {
         return NetworkHooks.getEntitySpawningPacket(this);
     }
 
@@ -55,7 +47,7 @@ public class KnockbackBoltEntity extends ShulkerBullet {
             return;
         }
 
-        boolean flag = entity.hurt(DamageSource.indirectMobAttack(this, livingentity).setProjectile(), 0.0F);
+        boolean flag = entity.hurt(new DamageSources(this.level().registryAccess()).mobProjectile(this, livingentity), 0.0F);
         if (flag) {
             entity.setDeltaMovement(this.getLookAngle().reverse().multiply(5.0D, 0, 5.0D));
             this.remove(RemovalReason.KILLED);

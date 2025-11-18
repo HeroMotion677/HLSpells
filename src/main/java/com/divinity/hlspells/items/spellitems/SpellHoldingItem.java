@@ -36,6 +36,7 @@ import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.EnchantmentTableBlock;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.common.extensions.IForgeItem;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import org.jetbrains.annotations.NotNull;
 
@@ -57,25 +58,24 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 		this.isSpellBook = isSpellBook;
 	}
 
-	@Override
-	@ParametersAreNonnullByDefault
-	public void fillItemCategory(CreativeModeTab pGroup, NonNullList<ItemStack> pItems) {
-		if (isSpellBook) {
-			if (allowedIn(pGroup)) {
-				for (Spell spell : SpellInit.SPELLS_REGISTRY.get()) {
-					ItemStack stack = new ItemStack(this);
-					stack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP).ifPresent(cap -> {
-						if (spell != SpellInit.EMPTY.get())
-							cap.addSpell(Objects.requireNonNull(SpellInit.SPELLS_REGISTRY.get().getKey(spell)).toString());
-					});
-					pItems.add(stack);
-				}
-			}
-
-		} else
-			super.fillItemCategory(pGroup, pItems);
-	}
-
+//	@Override
+//	@ParametersAreNonnullByDefault
+//	public void fillItemCategory(CreativeModeTab pGroup, NonNullList<ItemStack> pItems) {
+//		if (isSpellBook) {
+//			if (allowedIn(pGroup)) {
+//				for (Spell spell : SpellInit.SPELLS_REGISTRY.get()) {
+//					ItemStack stack = new ItemStack(this);
+//					stack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP).ifPresent(cap -> {
+//						if (spell != SpellInit.EMPTY.get())
+//							cap.addSpell(Objects.requireNonNull(SpellInit.SPELLS_REGISTRY.get().getKey(spell)).toString());
+//					});
+//					pItems.add(stack);
+//				}
+//			}
+//
+//		} else
+//			super.fillItemCategory(pGroup, pItems);
+//	}
 	@Override
 	@ParametersAreNonnullByDefault
 	public void appendHoverText(ItemStack stack, @Nullable Level pLevel, List<Component> text, TooltipFlag pFlag) {
@@ -136,7 +136,7 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 	}
 
 	@Override
-	public void onUsingTick(ItemStack stack, LivingEntity livingEntity, int count) {
+	public void onUseTick(Level pLevel, LivingEntity livingEntity, ItemStack stack, int pRemainingUseDuration) {
 
 
 		if (livingEntity instanceof Player player && (FMLEnvironment.dist.isDedicatedServer() || player.level().isClientSide)) {
@@ -154,7 +154,7 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 			} else {
 				try {
 					if (spell instanceof HealingCircleSpell || spell instanceof LightningIII || spell instanceof FlamingCircleSpell || spell instanceof FreezingCircleSpell || spell instanceof SummonSpell<?> || spell instanceof FrostWallSpell || spell instanceof IlluminateII) {
-						ResourceLocation fileLocation = new ResourceLocation(HLSpells.MODID + ":functions/large/large_rune_2.mcfunction");
+						ResourceLocation fileLocation = ResourceLocation.parse(HLSpells.MODID + ":functions/large/large_rune_2.mcfunction");
 						GenerateParticles.generateParticleRune(fileLocation, livingEntity, spell.getRune());
 					} else {
 						Random pRandom = new Random();
@@ -171,7 +171,7 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 										);
 							}
 						}
-						ResourceLocation fileLocation = new ResourceLocation(HLSpells.MODID + ":functions/small/small_rune_2.mcfunction");
+						ResourceLocation fileLocation = ResourceLocation.parse(HLSpells.MODID + ":functions/small/small_rune_2.mcfunction");
 						GenerateParticles.generateParticleRune(fileLocation, livingEntity, spell.getRune());
 					}
 				} catch (Exception e) {

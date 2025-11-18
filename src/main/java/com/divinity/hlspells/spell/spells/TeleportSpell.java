@@ -10,7 +10,9 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.material.Material;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.material.Fluids;
+
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
@@ -32,7 +34,7 @@ public class TeleportSpell extends Spell {
             int stepX = 0;
             int stepY = 1;
             int stepZ = 0;
-            if ((rayTraceResult instanceof BlockHitResult result) && p.level().getBlockState(new BlockPos(loc).above()).getMaterial() != Material.AIR) {
+            if ((rayTraceResult instanceof BlockHitResult result) && !p.level().getBlockState(new BlockPos(loc).above()).isAir()) {
                 Direction rayTraceDirection = result.getDirection();
                 stepX = rayTraceDirection.getStepX();
                 stepY = rayTraceDirection.getStepY();

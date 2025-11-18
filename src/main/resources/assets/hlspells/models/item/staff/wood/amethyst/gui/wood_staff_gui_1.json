@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "hlspells:items/staff/wood/amethyst/gui/wood_staff_gui_1"
+    "layer0": "hlspells:item/staff/wood/amethyst/gui/wood_staff_gui_1"
   }
 }

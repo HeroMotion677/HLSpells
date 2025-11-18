@@ -1,7 +1,7 @@
 {
     "required": true,
     "package": "com.divinity.hlspells.mixin",
-    "compatibilityLevel": "JAVA_8",
+    "compatibilityLevel": "JAVA_17",
     "refmap": "hlspells.refmap.json",
     "mixins": [
         "FriendlyByteBufMixin",
@@ -10,8 +10,7 @@
         "MixinGrindstoneExperience",
         "MixinItemRenderer",
         "MixinPhasing",
-        "MixinPose",
-        "MixinSmithingRecipe"
+        "MixinPose"
     ],
     "minVersion": "0.8",
     "injectors": {

@@ -19,7 +19,7 @@ import java.util.function.Supplier;
 @SuppressWarnings("unused")
 public class SpellInit {
 
-    public static final DeferredRegister<Spell> SPELLS = DeferredRegister.create(new ResourceLocation("spell"), HLSpells.MODID);
+    public static final DeferredRegister<Spell> SPELLS = DeferredRegister.create(ResourceLocation.parse("spell"), HLSpells.MODID);
 
     public static final RegistryObject<Spell> EMPTY = register("no_spell", () -> new EmptySpell(SpellAttributes.Type.CAST, SpellAttributes.Rarity.COMMON, SpellAttributes.Tier.ONE, SpellAttributes.Marker.UTILITY, "No Spell", 0, true, 1));
     public static final RegistryObject<Spell> DESCENT = register("descent", () -> new EffectSpell<>(MobEffects.SLOW_FALLING, SpellAttributes.Type.HELD, SpellAttributes.Rarity.UNCOMMON, SpellAttributes.Tier.ONE, SpellAttributes.Marker.UTILITY, "Descent", 2, 15, false, 1));
@@ -65,7 +65,7 @@ public class SpellInit {
 
     public static Supplier<IForgeRegistry<Spell>> SPELLS_REGISTRY = SPELLS.makeRegistry(() -> new RegistryBuilder<Spell>().setMaxID(Integer.MAX_VALUE - 1)
             .onAdd((owner, stage, id, key, obj, oldObj ) -> {})
-            .setDefaultKey(new ResourceLocation(HLSpells.MODID, "empty")));
+            .setDefaultKey(ResourceLocation.fromNamespaceAndPath(HLSpells.MODID, "empty")));
 
     private static RegistryObject<Spell> register(String name, Supplier<Spell> spell) {
         RegistryObject<Spell> registryObject = SPELLS.register(name, spell);

@@ -1,7 +1,7 @@
 {
   "parent": "hlspells:item/lapis_wand",
   "textures": {
-    "layer0": "hlspells:items/wand/lapis/wand_6"
+    "layer0": "hlspells:item/wand/lapis/wand_6"
   },
   "display": {
     "thirdperson_righthand": {

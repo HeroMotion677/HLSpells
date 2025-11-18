@@ -32,12 +32,12 @@ public class VillagerInit {
         return ImmutableSet.copyOf(BlockInit.ORB_OF_ENCHANTING.get().getStateDefinition().getPossibleStates());
     }
 
-    public static void registerPOIs(){
-        try{
-            ObfuscationReflectionHelper.findMethod(PoiType.class,
-                    "registerBlockStates", PoiType.class).invoke(null, MAGE_POI.get());
-        }catch(InvocationTargetException | IllegalAccessException exception){
-            exception.printStackTrace();
-        }
-    }
+//    public static void registerPOIs(){
+//        try{
+//            ObfuscationReflectionHelper.findMethod(PoiType.class,
+//                    "registerBlockStates", PoiType.class).invoke(null, MAGE_POI.get());
+//        }catch(InvocationTargetException | IllegalAccessException exception){
+//            exception.printStackTrace();
+//        }
+//    }
 }

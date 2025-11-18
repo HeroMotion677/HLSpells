@@ -14,6 +14,7 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.client.event.RenderTooltipEvent;
 import net.minecraftforge.common.capabilities.Capability;
@@ -33,14 +34,13 @@ import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
-
+@SuppressWarnings("deprecation")
 public final class CuriosCompat {
 
     private CuriosCompat() {} // To prevent any accidental instances from being created
 
     public static Optional<SlotResult> getItemInCuriosSlot(LivingEntity entity, Item item) {
-        return CuriosApi.
-                .getCuriosHelper().findFirstCurio(entity, item);
+        return CuriosApi. getCuriosHelper().findFirstCurio(entity, item);
     }
 
     public static Optional<SlotResult> getItemInCuriosSlot(LivingEntity entity, Predicate<ItemStack> filter) {
@@ -65,7 +65,7 @@ public final class CuriosCompat {
         }
         return list;
     }
-
+    @SuppressWarnings("deprecation")
     public static void restoreCuriosInv(Player player, ListTag curiosNBT) {
         CuriosApi.getCuriosHelper().getCuriosHandler(player).ifPresent(handler -> handler.loadInventory(curiosNBT));
     }
@@ -82,7 +82,7 @@ public final class CuriosCompat {
                 matrixStack.scale(0.35F, 0.35F, 0.35F);
                 matrixStack.translate(0.0F, 0.5F, -0.4F);
                 matrixStack.mulPose(Direction.DOWN.getRotation());
-                Minecraft.getInstance().getItemRenderer().renderStatic(stack, ItemTransforms.TransformType.NONE, light, OverlayTexture.NO_OVERLAY, matrixStack, renderTypeBuffer, 1);
+                Minecraft.getInstance().getItemRenderer().renderStatic(stack, ItemDisplayContext.NONE, light, OverlayTexture.NO_OVERLAY, matrixStack, renderTypeBuffer, null, 1);
             }
         };
         totemList.forEach(totem -> CuriosRendererRegistry.register(totem.get(), () -> renderer));

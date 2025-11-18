@@ -15,6 +15,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -33,38 +34,38 @@ public class ItemInit {
     public static final RegistryObject<Item> TOTEM_OF_RETURNING = ITEMS.register("totem_of_returning", ReturningTotem::new);
     public static final RegistryObject<Item> TOTEM_OF_GRIEFING = ITEMS.register("totem_of_griefing", GriefingTotem::new);
     public static final RegistryObject<Item> TOTEM_OF_KEEPING = ITEMS.register("totem_of_keeping", KeepingTotem::new);
-    public static final RegistryObject<Item> SPELL_BOOK = ITEMS.register("spell_book", () -> new SpellHoldingItem(new Item.Properties().tab(CreativeModeTab.TAB_TOOLS).durability(50), true));
-    public static final RegistryObject<Item> WAND = ITEMS.register("lapis_wand", () -> new SpellHoldingItem(new Item.Properties().tab(CreativeModeTab.TAB_TOOLS).durability(60), false));
-    public static final RegistryObject<Item> AMETHYST_WAND = ITEMS.register("amethyst_wand", () -> new SpellHoldingItem(new Item.Properties().tab(CreativeModeTab.TAB_TOOLS).durability(60), false));
-    public static final RegistryObject<Item> WIZARD_HAT = ITEMS.register("wizard_hat", () -> new WizardHatArmorItem(WizardArmorMaterial.WIZHAT, EquipmentSlot.HEAD, new Item.Properties().tab(CreativeModeTab.TAB_COMBAT).rarity(RARE)));
-    public static final RegistryObject<BlockItem> ALTAR_ITEM = ITEMS.register("altar_of_attunement", () -> new BlockItem(BlockInit.ALTAR_OF_ATTUNEMENT_BLOCK.get(), new Item.Properties().tab(CreativeModeTab.TAB_DECORATIONS)));
+    public static final RegistryObject<Item> SPELL_BOOK = ITEMS.register("spell_book", () -> new SpellHoldingItem(new Item.Properties().durability(50), true));
+    public static final RegistryObject<Item> WAND = ITEMS.register("lapis_wand", () -> new SpellHoldingItem(new Item.Properties().durability(60), false));
+    public static final RegistryObject<Item> AMETHYST_WAND = ITEMS.register("amethyst_wand", () -> new SpellHoldingItem(new Item.Properties().durability(60), false));
+    public static final RegistryObject<Item> WIZARD_HAT = ITEMS.register("wizard_hat", () -> new WizardHatArmorItem(WizardArmorMaterial.WIZHAT, ArmorItem.Type.HELMET, new Item.Properties().rarity(RARE)));
+    public static final RegistryObject<BlockItem> ALTAR_ITEM = ITEMS.register("altar_of_attunement", () -> new BlockItem(BlockInit.ALTAR_OF_ATTUNEMENT_BLOCK.get(), new Item.Properties()));
 
-    public static final RegistryObject<BlockItem> ORB_ITEM = ITEMS.register("orb_of_enchanting", () -> new BlockItem(BlockInit.ORB_OF_ENCHANTING.get(), new Item.Properties().tab(CreativeModeTab.TAB_DECORATIONS)));
+    public static final RegistryObject<BlockItem> ORB_ITEM = ITEMS.register("orb_of_enchanting", () -> new BlockItem(BlockInit.ORB_OF_ENCHANTING.get(), new Item.Properties()));
 
     // Staffs
     public static final RegistryObject<Item> WOODEN_STAFF = ITEMS.register("wooden_lapis_staff", () ->
-            new StaffItem(new Item.Properties().tab(CreativeModeTab.TAB_COMBAT).rarity(RARE).durability(70),
+            new StaffItem(new Item.Properties().rarity(RARE).durability(70),
                     2D, -3.2D, true,0.25 * 20, false, false, 30, () ->  Ingredient.of(ItemTags.PLANKS)));
 
     public static final RegistryObject<Item> GOLDEN_STAFF = ITEMS.register("golden_lapis_staff", () ->
-            new StaffItem(new Item.Properties().tab(CreativeModeTab.TAB_COMBAT).rarity(EPIC).durability(350),
+            new StaffItem(new Item.Properties().rarity(EPIC).durability(350),
                     5D, -2.5D, true,0.65 * 20, false, false, 3.5, () ->  Ingredient.of(new ItemLike[]{Items.GOLD_INGOT})));
 
     public static final RegistryObject<Item> NETHER_STAFF = ITEMS.register("netherite_lapis_staff", () ->
-            new StaffItem(new Item.Properties().tab(CreativeModeTab.TAB_COMBAT).rarity(EPIC).durability(700),
+            new StaffItem(new Item.Properties().rarity(EPIC).durability(700),
                     7D, -3D, true,0.37 * 20, false, true, 13, () ->  Ingredient.of(new ItemLike[]{Items.NETHERITE_INGOT})));
 
     // Amethyst Variants
     public static final RegistryObject<Item> WOODEN_STAFF_AMETHYST = ITEMS.register("wooden_amethyst_staff", () ->
-            new StaffItem(new Item.Properties().tab(CreativeModeTab.TAB_COMBAT).rarity(RARE).durability(70),
+            new StaffItem(new Item.Properties().rarity(RARE).durability(70),
                     2D, -3.2D, true,0.25 * 20, true, false, 30, () ->  Ingredient.of(ItemTags.PLANKS)));
 
     public static final RegistryObject<Item> GOLDEN_STAFF_AMETHYST = ITEMS.register("golden_amethyst_staff", () ->
-            new StaffItem(new Item.Properties().tab(CreativeModeTab.TAB_COMBAT).rarity(EPIC).durability(350),
+            new StaffItem(new Item.Properties().rarity(EPIC).durability(350),
                     5D, -2.5D, true, 0.65 * 20, true, false, 3.5, () ->  Ingredient.of(new ItemLike[]{Items.GOLD_INGOT})));
 
     public static final RegistryObject<Item> NETHER_STAFF_AMETHYST = ITEMS.register("netherite_amethyst_staff", () ->
-            new StaffItem(new Item.Properties().tab(CreativeModeTab.TAB_COMBAT).rarity(EPIC).durability(700),
+            new StaffItem(new Item.Properties().rarity(EPIC).durability(700),
                     7D, -3D,  true, 0.37 * 20, true, true, 13, () ->  Ingredient.of(new ItemLike[]{Items.NETHERITE_INGOT})));
 
 
@@ -75,4 +76,29 @@ public class ItemInit {
                                                                                TOTEM_OF_ESCAPING,
                                                                                TOTEM_OF_RETURNING,
                                                                                TOTEM_OF_KEEPING);
+
+    public static void addCreative(BuildCreativeModeTabContentsEvent event){
+        if(event.getTabKey() == CreativeModeTabs.COMBAT){
+            event.accept(WOODEN_STAFF);
+            event.accept(GOLDEN_STAFF);
+            event.accept(NETHER_STAFF);
+            event.accept(WOODEN_STAFF_AMETHYST);
+            event.accept(GOLDEN_STAFF_AMETHYST);
+            event.accept(NETHER_STAFF_AMETHYST);
+            event.accept(WIZARD_HAT);
+            event.accept(TOTEM_OF_ESCAPING);
+            event.accept(TOTEM_OF_GRIEFING);
+            event.accept(TOTEM_OF_KEEPING);
+            event.accept(TOTEM_OF_RETURNING);
+        }
+        if(event.getTabKey() == CreativeModeTabs.TOOLS_AND_UTILITIES){
+            event.accept(SPELL_BOOK);
+            event.accept(WAND);
+            event.accept(AMETHYST_WAND);
+        }
+        if(event.getTabKey() == CreativeModeTabs.FUNCTIONAL_BLOCKS){
+            event.accept(ORB_ITEM);
+            event.accept(ALTAR_ITEM);
+        }
+    }
  }

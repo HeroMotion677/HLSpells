@@ -3,7 +3,6 @@ import com.divinity.hlspells.client.models.FireballModel;
 import com.divinity.hlspells.events.ModelLayers;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Vector3f;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
@@ -16,6 +15,8 @@ import net.minecraft.world.entity.projectile.Projectile;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.ParametersAreNonnullByDefault;
+
+import static com.mojang.math.Axis.*;
 
 public class FireballRenderer<T extends Projectile> extends EntityRenderer<T> {
 
@@ -38,9 +39,9 @@ public class FireballRenderer<T extends Projectile> extends EntityRenderer<T> {
         float f2 = (float) entity.tickCount + v2;
         //
         stack.translate(0.0D, 0.0F, 0.0D);
-        stack.mulPose(Vector3f.YP.rotationDegrees(Mth.sin(f2 * 0.1F) * 180.0F));
-        stack.mulPose(Vector3f.XP.rotationDegrees(Mth.cos(f2 * 0.1F) * 180.0F));
-        stack.mulPose(Vector3f.ZP.rotationDegrees(Mth.sin(f2 * 0.15F) * 360.0F));
+        stack.mulPose(YP.rotationDegrees(Mth.sin(f2 * 0.1F) * 180.0F));
+        stack.mulPose(XP.rotationDegrees(Mth.cos(f2 * 0.1F) * 180.0F));
+        stack.mulPose(ZP.rotationDegrees(Mth.sin(f2 * 0.15F) * 360.0F));
         stack.scale(-0.5F, -0.5F, 0.5F);
         //
         this.model.setupAnim(entity, 0.0F, 0.0F, 0.0F, f, f1); // Needed

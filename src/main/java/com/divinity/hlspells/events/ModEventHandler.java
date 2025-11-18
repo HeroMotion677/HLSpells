@@ -13,7 +13,10 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.data.event.GatherDataEvent;
+import net.minecraftforge.registries.RegistryObject;
+
 import static com.divinity.hlspells.HLSpells.LOGGER;
+import static net.minecraft.core.registries.BuiltInRegistries.LOOT_FUNCTION_TYPE;
 
 
 @Mod.EventBusSubscriber(modid = HLSpells.MODID, bus = Bus.MOD)
@@ -34,13 +37,13 @@ public class ModEventHandler {
         LOGGER.info("Gathering data providers!");
         DataGenerator generator = event.getGenerator();
         if (event.includeClient()) {
-            generator.addProvider(event.includeServer(), new EnUsLangProvider(generator));
+            generator.addProvider(event.includeServer(), new EnUsLangProvider(generator.getPackOutput()));
         }
     }
 
     @SuppressWarnings("all")
     private static LootItemFunctionType register(String id, LootItemConditionalFunction.Serializer<? extends LootItemFunction> serializer) {
-        return Registry.register(Registry.LOOT_FUNCTION_TYPE, new ResourceLocation(HLSpells.MODID, id), new LootItemFunctionType(serializer));
+        return Registry.register(LOOT_FUNCTION_TYPE, ResourceLocation.fromNamespaceAndPath(HLSpells.MODID, id), new LootItemFunctionType(serializer));
     }
 
 }
