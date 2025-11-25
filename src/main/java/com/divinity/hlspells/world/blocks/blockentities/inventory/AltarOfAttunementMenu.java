@@ -137,10 +137,10 @@ public class AltarOfAttunementMenu extends AbstractContainerMenu implements Cont
                         this.broadcastChanges();
                     });
                 }
-                else resetSpellSlots();
+                else resetSpellSlotsAndSync();
             });
         }
-        else resetSpellSlots();
+        else resetSpellSlotsAndSync();
         if (this.playerEntity instanceof ServerPlayer player) {
             NetworkManager.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), new SpellCluePacket(player.getUUID(), this.spellClues));
         }
@@ -274,5 +274,10 @@ public class AltarOfAttunementMenu extends AbstractContainerMenu implements Cont
             this.costs[i] = 0;
             this.spellClues[i] = "";
         }
+    }
+
+    private void resetSpellSlotsAndSync() {
+        resetSpellSlots();
+        this.broadcastChanges();
     }
 }
