@@ -104,10 +104,10 @@ public class AltarOfAttunementScreen extends AbstractContainerScreen<AltarOfAttu
     @Override
     protected void init() {
         super.init();
-        this.addRenderableWidget(new ImageButton(this.leftPos + 19, this.topPos + 49, 11, 7, 93, 227, 7, GUI, onPress -> NetworkManager.INSTANCE.sendToServer(new TransferSpellsPacket())) {
+        this.addRenderableWidget(new ImageButton(this.leftPos + 19, this.topPos + 49, 11, 7, 93, 227, 7, GUI, onPress ->
+                NetworkManager.INSTANCE.sendToServer(new TransferSpellsPacket())) {
             @Override
             public void renderWidget(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
-                super.renderWidget(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
                 if (this.isHovered) {
                     if (!AltarOfAttunementScreen.this.handler.getStackInSlot(0).isEmpty()) {
                         List<Component> list = new ArrayList<>();
@@ -116,12 +116,8 @@ public class AltarOfAttunementScreen extends AbstractContainerScreen<AltarOfAttu
                         pGuiGraphics.renderComponentTooltip(font, list, pMouseX, pMouseY);
                     }
                 }
-            }
-            @Override
-            public void onPress() {
-                super.onPress();
-                this.setFocused(false);      // stop keeping the focused tint
-                this.isHovered = false;      // optional: also remove hover highlight
+                super.renderWidget(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
+                this.setFocused(false);
             }
         });
     }
