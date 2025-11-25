@@ -64,7 +64,7 @@ public class AltarOfAttunementScreen extends AbstractContainerScreen<AltarOfAttu
                      if (!isCreative) {
                         list.add(Component.empty());
                         if (this.minecraft.player.experienceLevel < k) {
-                            list.add((Component.translatable("container.spell.level().requirement", this.menu.costs[j])).withStyle(ChatFormatting.RED));
+                            list.add((Component.translatable("container.spell.level.requirement", this.menu.costs[j])).withStyle(ChatFormatting.RED));
                         }
                         else {
                             Item materialItem = this.handler.getStackInSlot(2).getItem();
@@ -93,6 +93,7 @@ public class AltarOfAttunementScreen extends AbstractContainerScreen<AltarOfAttu
             if (this.minecraft != null && this.minecraft.player != null && this.minecraft.gameMode != null) {
                 if (d0 >= 0.0D && d1 >= 0.0D && d0 < 87.0D && d1 < 19.0D && this.menu.clickMenuButton(this.minecraft.player, k)) {
                     this.minecraft.gameMode.handleInventoryButtonClick(this.menu.containerId, k);
+                    this.setFocused(false);      // stop keeping the focused tint
                     return true;
                 }
             }
@@ -107,7 +108,7 @@ public class AltarOfAttunementScreen extends AbstractContainerScreen<AltarOfAttu
             @Override
             public void renderWidget(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
                 super.renderWidget(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
-                if (this.isHoveredOrFocused()) {
+                if (this.isHovered) {
                     if (!AltarOfAttunementScreen.this.handler.getStackInSlot(0).isEmpty()) {
                         List<Component> list = new ArrayList<>();
                         ItemStack stack = AltarOfAttunementScreen.this.handler.getStackInSlot(0);
@@ -115,6 +116,12 @@ public class AltarOfAttunementScreen extends AbstractContainerScreen<AltarOfAttu
                         pGuiGraphics.renderComponentTooltip(font, list, pMouseX, pMouseY);
                     }
                 }
+            }
+            @Override
+            public void onPress() {
+                super.onPress();
+                this.setFocused(false);      // stop keeping the focused tint
+                this.isHovered = false;      // optional: also remove hover highlight
             }
         });
     }
@@ -134,6 +141,7 @@ public class AltarOfAttunementScreen extends AbstractContainerScreen<AltarOfAttu
             for (int k = 0; k < 3; k++) {
                 int distanceToEnchantSlot = i + 42;
                 int offsetDistance = distanceToEnchantSlot + 2;
+                //this.setBlitOffset(0);
                 RenderSystem.setShader(GameRenderer::getPositionTexShader);
                 RenderSystem.setShaderTexture(0, GUI);
                 int cost = this.menu.costs[k];
@@ -147,7 +155,7 @@ public class AltarOfAttunementScreen extends AbstractContainerScreen<AltarOfAttu
                     int j2 = 6839882;
                     if (((materialCount < k + 1 || this.minecraft.player.experienceLevel < cost) && !this.minecraft.player.getAbilities().instabuild)) {
                         pGuiGraphics.blit(GUI, distanceToEnchantSlot, j + 22 + 19 * k, 90, 202, 89, 19);
-                        this.font.wordWrapHeight(formattedtext,  j + 24 + 19 * k);
+                        pGuiGraphics.drawWordWrap(this.font, formattedtext, offsetDistance, j + 24 + 19 * k, fontWidth, (j2 & 16711422) >> 1);
                         j2 = 4226832;
                     }
                     else {
@@ -158,9 +166,10 @@ public class AltarOfAttunementScreen extends AbstractContainerScreen<AltarOfAttu
                             j2 = 16777088;
                         }
                         else pGuiGraphics.blit(GUI,distanceToEnchantSlot, j + 22 + 19 * k, 0, 202, 89, 19);
-                        this.font.wordWrapHeight(formattedtext,  j + 24 + 19 * k);
+                        pGuiGraphics.drawWordWrap(this.font, formattedtext, offsetDistance, j + 24 + 19 * k, fontWidth, j2);
                         j2 = 8453920;
                     }
+                    pGuiGraphics.drawString(this.font, costWord, (float) (offsetDistance + 86 - this.font.width(costWord)), (float) (j + 24 + 19 * k + 7), j2, true);
                 }
             }
         }
