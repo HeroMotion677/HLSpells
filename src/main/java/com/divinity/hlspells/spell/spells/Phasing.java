@@ -21,6 +21,7 @@ public class Phasing extends Spell {
     public SpellConsumer<Player> getAction() {
         return p -> {
             this.canUse = !p.noPhysics && !p.onClimbable() && !p.isPassenger();
+            p.setInvulnerable(true);
             return this.canUse;
         };
     }

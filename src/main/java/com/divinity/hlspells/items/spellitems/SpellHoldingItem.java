@@ -220,6 +220,12 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 				player.setSilent(false);
 			}
 
+			if (spell instanceof Phasing) {
+				player.setInvulnerable(false);
+				player.setInvisible(false);
+				player.setSilent(false);
+			}
+
 			if (this.castTimeCondition(player, stack)) {
 				if (spell.getSpellType() == SpellAttributes.Type.CAST) {
 					world.playSound(null, player.blockPosition(), spell.getSpellSound(), SoundSource.PLAYERS, 0.3F, 0.7F);

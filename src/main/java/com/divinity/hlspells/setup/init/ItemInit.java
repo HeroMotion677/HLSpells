@@ -86,24 +86,35 @@ public class ItemInit {
 
     public static void addCreative(BuildCreativeModeTabContentsEvent event){
         if(event.getTabKey() == CreativeModeTabs.COMBAT){
-            event.accept(WOODEN_STAFF);
-            event.accept(GOLDEN_STAFF);
-            event.accept(NETHER_STAFF);
-            event.accept(WOODEN_STAFF_AMETHYST);
-            event.accept(GOLDEN_STAFF_AMETHYST);
-            event.accept(NETHER_STAFF_AMETHYST);
             event.accept(WIZARD_HAT);
+
+            event.accept(WOODEN_STAFF);
+            event.accept(WOODEN_STAFF_AMETHYST);
+
+            event.accept(GOLDEN_STAFF);
+            event.accept(GOLDEN_STAFF_AMETHYST);
+
+            event.accept(NETHER_STAFF);
+            event.accept(NETHER_STAFF_AMETHYST);
+
             event.accept(TOTEM_OF_ESCAPING);
             event.accept(TOTEM_OF_GRIEFING);
             event.accept(TOTEM_OF_KEEPING);
             event.accept(TOTEM_OF_RETURNING);
         }
         if(event.getTabKey() == CreativeModeTabs.TOOLS_AND_UTILITIES){
-            event.accept(SPELL_BOOK);
             event.accept(WAND);
             event.accept(AMETHYST_WAND);
+
             event.accept(GEM_UPGRADE_TEMPLATE);
             event.accept(GOLD_UPGRADE_TEMPLATE);
+
+            event.accept(SPELL_BOOK);
+        }
+        if(event.getTabKey() == CreativeModeTabs.INGREDIENTS){
+            event.accept(GEM_UPGRADE_TEMPLATE);
+            event.accept(GOLD_UPGRADE_TEMPLATE);
+
         }
         if(event.getTabKey() == CreativeModeTabs.FUNCTIONAL_BLOCKS){
             event.accept(ORB_ITEM);
