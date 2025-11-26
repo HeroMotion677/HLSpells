@@ -7,7 +7,7 @@
         "item": "minecraft:amethyst_shard"
     },
     "template": {
-        "item": "minecraft:netherite_upgrade_smithing_template"
+        "item": "hlspells:gem_upgrade_template"
     },
     "result": {
         "item": "hlspells:amethyst_wand"

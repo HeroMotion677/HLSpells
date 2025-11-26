@@ -35,6 +35,8 @@ import static net.minecraft.world.item.Rarity.RARE;
 public class ItemInit {
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, HLSpells.MODID);
 
+    public static final RegistryObject<Item> GEM_UPGRADE_TEMPLATE = ITEMS.register("gem_upgrade_template", () -> new Item(new Item.Properties()));
+    public static final RegistryObject<Item> GOLD_UPGRADE_TEMPLATE = ITEMS.register("gold_upgrade_template", () -> new Item(new Item.Properties()));
     public static final RegistryObject<Item> TOTEM_OF_ESCAPING = ITEMS.register("totem_of_escaping", EscapingTotem::new);
     public static final RegistryObject<Item> TOTEM_OF_RETURNING = ITEMS.register("totem_of_returning", ReturningTotem::new);
     public static final RegistryObject<Item> TOTEM_OF_GRIEFING = ITEMS.register("totem_of_griefing", GriefingTotem::new);
@@ -100,6 +102,8 @@ public class ItemInit {
             event.accept(SPELL_BOOK);
             event.accept(WAND);
             event.accept(AMETHYST_WAND);
+            event.accept(GEM_UPGRADE_TEMPLATE);
+            event.accept(GOLD_UPGRADE_TEMPLATE);
         }
         if(event.getTabKey() == CreativeModeTabs.FUNCTIONAL_BLOCKS){
             event.accept(ORB_ITEM);

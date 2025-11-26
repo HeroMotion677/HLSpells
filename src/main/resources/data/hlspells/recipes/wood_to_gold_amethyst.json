@@ -7,7 +7,7 @@
         "item": "minecraft:gold_ingot"
     },
     "template": {
-        "item": "minecraft:netherite_upgrade_smithing_template"
+        "item": "hlspells:gold_upgrade_template"
     },
     "result": {
         "item": "hlspells:golden_amethyst_staff"

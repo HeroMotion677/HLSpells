@@ -7,7 +7,7 @@
         "item": "minecraft:lapis_lazuli"
     },
     "template": {
-        "item": "minecraft:netherite_upgrade_smithing_template"
+        "item": "hlspells:gem_upgrade_template"
     },
     "result": {
         "item": "hlspells:netherite_lapis_staff"

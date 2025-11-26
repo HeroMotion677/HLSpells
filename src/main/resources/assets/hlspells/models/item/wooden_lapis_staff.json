@@ -12,6 +12,7 @@
       "parent": "hlspells:item/staff/wood/lapis/gui/wood_staff_gui_1"
     }
   },
+
   "overrides": [
     {"predicate": {"pull": 0.2}, "model": "hlspells:item/staff/wood/lapis/perspective/wood_staff_2_with_perspective"},
     {"predicate": {"pull": 0.4}, "model": "hlspells:item/staff/wood/lapis/perspective/wood_staff_3_with_perspective"},
