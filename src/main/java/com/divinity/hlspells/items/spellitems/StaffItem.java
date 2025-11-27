@@ -4,6 +4,7 @@ import com.divinity.hlspells.setup.init.EnchantmentInit;
 import com.divinity.hlspells.setup.init.ItemInit;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
+import com.google.common.collect.Sets;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -21,9 +22,11 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 import net.minecraft.world.item.Item.Properties;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 
+import java.util.Set;
 import java.util.function.Supplier;
 
 public class StaffItem extends SpellHoldingItem {
@@ -80,7 +83,8 @@ public class StaffItem extends SpellHoldingItem {
     }
 
     @Override
-    public boolean isBookEnchantable(ItemStack stack, ItemStack book) {
+   /* public boolean isBookEnchantable(ItemStack stack, ItemStack book) {
+
         if (EnchantedBookItem.getEnchantments(book).size() > 0) {
             for (int i = 0; i < EnchantedBookItem.getEnchantments(book).size(); i++) {
                 CompoundTag tag = EnchantedBookItem.getEnchantments(book).getCompound(i);
@@ -88,27 +92,39 @@ public class StaffItem extends SpellHoldingItem {
                 if (enchantment != null) {
                     switch (enchantment.toString()) {
                         case "minecraft:mending":
-                            if (EnchantmentHelper.getItemEnchantmentLevel(Enchantments.MENDING, stack) >= 1) {
-                                return stack.getItem() instanceof StaffItem;
-                            }
-                        case "minecraft:unbreaking":
-                            if (EnchantmentHelper.getItemEnchantmentLevel(Enchantments.UNBREAKING, stack) <= EnchantmentHelper.getEnchantmentLevel(tag)) {
-                                if (EnchantmentHelper.getItemEnchantmentLevel(Enchantments.UNBREAKING, stack) != 3) {
+                            if (EnchantmentHelper.getItemEnchantmentLevel(Enchantments.MENDING, stack) <= EnchantmentHelper.getEnchantmentLevel(tag)) {
+                                if (EnchantmentHelper.getItemEnchantmentLevel(Enchantments.MENDING, stack) >= 1) {
                                     return stack.getItem() instanceof StaffItem;
                                 }
                             }
-                        case "hlspells:soul_bond":
-                            if (EnchantmentHelper.getItemEnchantmentLevel(EnchantmentInit.SOUL_BOND.get(), stack) >= 0) {
-                                return stack.getItem() instanceof StaffItem;
-                            }
-                            break;
-                    }
-                }
-            }
-        }
-        return false;
-    }
+                                case "minecraft:unbreaking":
+                                    if (EnchantmentHelper.getItemEnchantmentLevel(Enchantments.UNBREAKING, stack) <= EnchantmentHelper.getEnchantmentLevel(tag)) {
+                                        if (EnchantmentHelper.getItemEnchantmentLevel(Enchantments.UNBREAKING, stack) != 3) {
+                                            return stack.getItem() instanceof StaffItem;
+                                        }
+                                    }
+                                case "hlspells:soul_bond":
+                                    if (EnchantmentHelper.getItemEnchantmentLevel(EnchantmentInit.SOUL_BOND.get(), stack) <= EnchantmentHelper.getEnchantmentLevel(tag)) {
 
+                                        if (EnchantmentHelper.getItemEnchantmentLevel(EnchantmentInit.SOUL_BOND.get(), stack) >= 0) {
+                                            return stack.getItem() instanceof StaffItem;
+                                        }
+                                    }
+                                    break;
+                            }
+                    }
+                    }
+            }
+
+        return false;
+    }*/
+    public boolean canApplyAtEnchantingTable(ItemStack stack, net.minecraft.world.item.enchantment.Enchantment enchantment) {
+        Set<Enchantment> ALLOWED_ENCHANTMENTS = Sets.newHashSet(Enchantments.UNBREAKING, Enchantments.MENDING, EnchantmentInit.SOUL_BOND.get());
+        if (ALLOWED_ENCHANTMENTS.contains(enchantment)) {
+            return true;
+        }
+        return enchantment.category.canEnchant(stack.getItem());
+    }
     @Override
     @ParametersAreNonnullByDefault
     public boolean hurtEnemy(ItemStack pStack, LivingEntity pTarget, LivingEntity pAttacker) {
