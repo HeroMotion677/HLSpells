@@ -44,6 +44,7 @@ public class HealingCircleSpell extends Spell {
                     }
                     cap.setSpellTimer(0);
                 }
+
             });
             return true;
         };

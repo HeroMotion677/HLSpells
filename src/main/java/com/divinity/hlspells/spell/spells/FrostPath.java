@@ -1,5 +1,6 @@
 package com.divinity.hlspells.spell.spells;
 
+import com.divinity.hlspells.setup.init.BlockInit;
 import com.divinity.hlspells.setup.init.SpellInit;
 import com.divinity.hlspells.spell.Spell;
 import com.divinity.hlspells.spell.SpellAttributes;
@@ -11,6 +12,7 @@ import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.FrostedIceBlock;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
@@ -28,13 +30,13 @@ public class FrostPath extends Spell {
     public FrostPath(SpellAttributes.Type type, SpellAttributes.Rarity rarity, SpellAttributes.Tier tier, SpellAttributes.Marker marker, String displayName, int xpCost, int tickDelay, boolean treasureOnly, int maxSpellLevel, SimpleParticleType rune) {
         super(type, rarity, tier, marker, displayName, xpCost, tickDelay, treasureOnly, maxSpellLevel, rune);
     }
-
+/*
     @Override
     protected SpellConsumer<Player> getAction() {
         return p -> {
             if (p.onGround()) {
                 BlockState blockstate = Blocks.FROSTED_ICE.defaultBlockState();
-                int f =  Math.min(16, 3);
+                int f = Math.min(16, 3);
                 BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos();
                 BlockPos pPos = p.blockPosition();
                 boolean used = false;
@@ -51,7 +53,43 @@ public class FrostPath extends Spell {
                                 p.level().scheduleTick(blockpos, Blocks.FROSTED_ICE, Mth.nextInt(p.getRandom(), 60, 120));
                             }
                         }
+
                     }
+
+                }
+
+            }
+
+           return false;
+        };
+    }*/
+
+    @Override
+    public SpellConsumer<Player> getAction() {
+        return p -> {
+            if (p.onGround()) {
+                BlockPos pos = p.blockPosition();
+                BlockState blockstate = Blocks.FROSTED_ICE.defaultBlockState();
+
+                int f = 3;
+                BlockPos.MutableBlockPos mutablePos = new BlockPos.MutableBlockPos();
+                boolean used = false;
+                for (BlockPos blockpos : BlockPos.betweenClosed(pos.offset((-f), -1, (-f)), pos.offset(f, -1, f))) {
+                    if (blockpos.closerToCenterThan(p.position(), f)) {
+                        mutablePos.set(blockpos.getX(), blockpos.getY() + 1, blockpos.getZ());
+                        BlockState mutableState = p.level().getBlockState(mutablePos);
+                        if (mutableState.isAir()) {
+
+                            BlockState blockstate2 = p.level().getBlockState(blockpos);
+                            boolean isFull = blockstate2.getBlock() == Blocks.WATER && blockstate2.getValue(LiquidBlock.LEVEL) == 0;
+                            if (blockstate2 == FrostedIceBlock.meltsInto() && blockstate.canSurvive(p.level(), blockpos) && p.level().isUnobstructed(blockstate, blockpos, CollisionContext.empty()) && !net.minecraftforge.event.ForgeEventFactory.onBlockPlace(p, net.minecraftforge.common.util.BlockSnapshot.create(p.level().dimension(), p.level(), blockpos), net.minecraft.core.Direction.UP)) {
+                                used = true;
+                                p.level().setBlockAndUpdate(blockpos, blockstate);
+                                p.level().scheduleTick(blockpos, Blocks.FROSTED_ICE, Mth.nextInt(p.getRandom(), 60, 120));
+                            }
+                        }
+                    }
+
                 }
                 return used;
             }

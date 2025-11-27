@@ -138,8 +138,9 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 	@Override
 	public void onUseTick(Level pLevel, LivingEntity livingEntity, ItemStack stack, int pRemainingUseDuration) {
 
+		 //&& (FMLEnvironment.dist.isDedicatedServer() || player.level().isClientSide)
 
-		if (livingEntity instanceof Player player && (FMLEnvironment.dist.isDedicatedServer() || player.level().isClientSide)) {
+		if (livingEntity instanceof Player player) {
 			Spell spell = SpellUtils.getSpell(stack);
 			ItemStack itemstack = player.getItemInHand(player.getUsedItemHand());
 

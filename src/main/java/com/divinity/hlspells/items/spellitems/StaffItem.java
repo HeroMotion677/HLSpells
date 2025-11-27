@@ -49,7 +49,7 @@ public class StaffItem extends SpellHoldingItem {
     }
 
     public int getEnchantmentValue() {
-        return 1;
+        return 4;
     }
 
 
