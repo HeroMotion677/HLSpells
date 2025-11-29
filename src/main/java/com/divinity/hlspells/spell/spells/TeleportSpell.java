@@ -28,7 +28,7 @@ public class TeleportSpell extends Spell {
     @Override
     public SpellConsumer<Player> getAction() {
         return p -> {
-            HitResult rayTraceResult = Util.lookAt(p, 350, 1F, false);
+            HitResult rayTraceResult = Util.lookAt(p, 100, 1F, false);
             Vec3 location = rayTraceResult.getLocation();
             Vec3i loc = new Vec3i((int)location.x, (int)location.y, (int)location.z);
             int stepX = 0;

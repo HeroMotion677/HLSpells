@@ -10,6 +10,9 @@ import com.divinity.hlspells.spell.SpellConsumer;
 import com.divinity.hlspells.util.Util;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.particles.SimpleParticleType;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
@@ -33,10 +36,10 @@ public class ProjectileSpell<T extends Projectile> extends Spell {
     private float inaccuracy;
     private boolean noVerticalMovement;
 
-    public ProjectileSpell(EntityType<T> projectile, SpellAttributes.Type type, SpellAttributes.Rarity rarity, SpellAttributes.Tier tier, SpellAttributes.Marker marker, String displayName, int xpCost, boolean treasureOnly, int maxSpellLevel, SimpleParticleType rune) {
-        super(type, rarity, tier, marker, displayName, xpCost, treasureOnly, maxSpellLevel, rune);
+    public ProjectileSpell(EntityType<T> projectile, SpellAttributes.Type type, SpellAttributes.Rarity rarity, SpellAttributes.Tier tier, SpellAttributes.Marker marker, String displayName, int xpCost, boolean treasureOnly, int tickDelay, int maxSpellLevel, SimpleParticleType rune) {
+        super(type, rarity, tier, marker, displayName, xpCost, tickDelay, treasureOnly, maxSpellLevel, rune);
         this.projectile = projectile;
-        this.viewVectorOffset = 1;
+        this.viewVectorOffset = 1.4;
         this.xOffset = 0;
         this.yOffset = 2;
         this.zOffset = 0;
@@ -44,6 +47,7 @@ public class ProjectileSpell<T extends Projectile> extends Spell {
         this.velocity = 2.5F;
         this.inaccuracy = 1.2F;
         this.noVerticalMovement = false;
+        Vec3 initialPosition;
     }
 
     @Override
@@ -56,9 +60,13 @@ public class ProjectileSpell<T extends Projectile> extends Spell {
                     bolt.setInitialPosition(p.position());
                     this.velocity = 2.5F;
                 }
+                if (trueProjectile instanceof FlamingBreathEntity bolt) {
+                    bolt.setInitialPosition(p.position());
+
+                }
                 if(trueProjectile instanceof WitherSkullEntity bolt){
                     bolt.setInitialPosition(p.position());
-                    this.velocity = 2.7F;
+                    this.velocity = 2.8F;
                 }
                 Vec3 viewVector = p.getViewVector(1.0F);
                 Vec3 positionVector = new Vec3(p.getX() + (viewVector.x * this.viewVectorOffset) + this.xOffset, p.getY() + this.yOffset, p.getZ() + (viewVector.z * this.viewVectorOffset) + this.zOffset);
@@ -71,6 +79,13 @@ public class ProjectileSpell<T extends Projectile> extends Spell {
                     double d2 = (projectile.getZ());
                     world.addParticle(ParticlesInit.ORANGE_BOLT_BOOM.get(), d0, d1, d2, 0, 0, 0);
                 }
+                /*if(projectile instanceof FlamingBreathEntity){
+                    Level world = p.level();
+                    double d0 = (projectile.getX());
+                    double d1 = (projectile.getY() - 0.2);
+                    double d2 = (projectile.getZ());
+                    world.addParticle(ParticlesInit.ORANGE_BOLT_BOOM.get(), d0, d1, d2, 0, 0, 0);
+                }*/
                 if(projectile instanceof FreezingBoltEntity){
                     Level world = p.level();
                     double d0 = (projectile.getX());
@@ -196,6 +211,9 @@ public class ProjectileSpell<T extends Projectile> extends Spell {
         else if (projectile instanceof Fireball2Entity) {
             projectile.playSound(SoundInit.CAST_FLAME.get(), 0.5F, 0.7F);
         }
+        /*else if (projectile instanceof FlamingBreathEntity) {
+            projectile.playSound(SoundEvents.FIRE_AMBIENT, 0.5F, 0.7F);
+        }*/
         else if (projectile instanceof WitherSkull) {
             projectile.playSound(SoundInit.CAST_NECROMANCY.get(), 0.6F, 0.7F);
         }else{

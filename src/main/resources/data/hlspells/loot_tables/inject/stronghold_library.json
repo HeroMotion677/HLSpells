@@ -47,6 +47,18 @@
           "quality": 1,
           "name": "hlspells:wooden_amethyst_staff"
 
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 1,
+          "quality": 1,
+          "name": "hlspells:gem_upgrade_template"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 1,
+          "quality": 1,
+          "name": "hlspells:gold_upgrade_template"
         }
       ],
       "conditions": [

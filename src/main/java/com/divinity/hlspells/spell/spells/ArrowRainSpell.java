@@ -45,7 +45,7 @@ public class ArrowRainSpell extends Spell {
     private static void doArrowSpawn(Player player, Level world) {
         Arrow arrowEntity = new Arrow(world,
                 player.getX() + (world.random.nextDouble() - 0.5D) * player.getBbWidth(),
-                player.getY() + 4, player.getZ() + (world.random.nextDouble() - 0.5D) * player.getBbWidth());
+                player.getY() + 3, player.getZ() + (world.random.nextDouble() - 0.5D) * player.getBbWidth());
 
         arrowEntity.shootFromRotation(player, player.xRot, player.yRot, 1.0F, 1.0F, 1.0F);
         arrowEntity.setDeltaMovement(Mth.cos((float) Math.toRadians(player.yRot + 90)) + (world.random.nextFloat() - 0.5F) * player.getBbWidth(), -0.6, Mth.sin((float) Math.toRadians(player.yRot + 90)) + (world.random.nextFloat() - 0.5F) * player.getBbWidth());
@@ -54,15 +54,15 @@ public class ArrowRainSpell extends Spell {
 
     private static void doCloudParticles(Player player, Level world) {
         for (int i = 0; i < 5; i++) {
-            world.addParticle(ParticleTypes.CLOUD, player.getX(), player.getY() + 5, player.getZ(), 0, 0, 0);
-            world.addParticle(ParticleTypes.CLOUD, player.getX() + 0.45, player.getY() + 5, player.getZ(), 0, 0, 0);
-            world.addParticle(ParticleTypes.CLOUD, player.getX() - 0.45, player.getY() + 5, player.getZ(), 0, 0, 0);
+            world.addParticle(ParticleTypes.CLOUD, player.getX(), player.getY() + 4, player.getZ(), 0, 0, 0);
+            world.addParticle(ParticleTypes.CLOUD, player.getX() + 0.45, player.getY() + 4, player.getZ(), 0, 0, 0);
+            world.addParticle(ParticleTypes.CLOUD, player.getX() - 0.45, player.getY() + 4, player.getZ(), 0, 0, 0);
             world.addParticle(ParticleTypes.CLOUD, player.getX(), player.getY() + 5, player.getZ() + 0.45, 0, 0, 0);
             world.addParticle(ParticleTypes.CLOUD, player.getX(), player.getY() + 5, player.getZ() - 0.45, 0, 0, 0);
-            world.addParticle(ParticleTypes.CLOUD, player.getX() + 0.45, player.getY() + 5, player.getZ() + 0.45, 0, 0, 0);
-            world.addParticle(ParticleTypes.CLOUD, player.getX() - 0.45, player.getY() + 5, player.getZ() - 0.45, 0, 0, 0);
-            world.addParticle(ParticleTypes.CLOUD, player.getX() + 0.45, player.getY() + 5, player.getZ() - 0.45, 0, 0, 0);
-            world.addParticle(ParticleTypes.CLOUD, player.getX() - 0.45, player.getY() + 5, player.getZ() + 0.45, 0, 0, 0);
+            world.addParticle(ParticleTypes.CLOUD, player.getX() + 0.45, player.getY() + 4, player.getZ() + 0.45, 0, 0, 0);
+            world.addParticle(ParticleTypes.CLOUD, player.getX() - 0.45, player.getY() + 4, player.getZ() - 0.45, 0, 0, 0);
+            world.addParticle(ParticleTypes.CLOUD, player.getX() + 0.45, player.getY() + 4, player.getZ() - 0.45, 0, 0, 0);
+            world.addParticle(ParticleTypes.CLOUD, player.getX() - 0.45, player.getY() + 4, player.getZ() + 0.45, 0, 0, 0);
         }
     }
 }

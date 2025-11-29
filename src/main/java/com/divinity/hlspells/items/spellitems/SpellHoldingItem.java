@@ -121,10 +121,10 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 					if (spell.getSpellType() == SpellAttributes.Type.CAST) {
 						switch (spell.getMarkerType()) {
 							case COMBAT:
-								world.playSound(null, player.blockPosition(), SoundInit.CHARGE_COMBAT.get(), SoundSource.PLAYERS, 0.2F, 0.7F);
+								world.playSound(null, player.blockPosition(), SoundInit.CHARGE_COMBAT.get(), SoundSource.PLAYERS, 0.8F, 0.7F);
 								currentCastTime = 0;
 							case UTILITY:
-								world.playSound(null, player.blockPosition(), SoundInit.CHARGE_UTILITY.get(), SoundSource.PLAYERS, 0.2F, 0.8F);
+								world.playSound(null, player.blockPosition(), SoundInit.CHARGE_UTILITY.get(), SoundSource.PLAYERS, 0.8F, 0.8F);
 								currentCastTime = 0;
 						}
 					}
@@ -145,7 +145,7 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 			ItemStack itemstack = player.getItemInHand(player.getUsedItemHand());
 
 			if (player.getItemBySlot(EquipmentSlot.HEAD).getItem() == ItemInit.WIZARD_HAT.get()) {
-				currentCastTime = currentCastTime + 4;
+				currentCastTime = currentCastTime + 3;
 			} else if (player.getItemBySlot(EquipmentSlot.HEAD).getItem() != ItemInit.WIZARD_HAT.get()) {
 				currentCastTime = currentCastTime + 2;
 			}
@@ -189,6 +189,13 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 						if (spell instanceof Illuminate || spell instanceof IlluminateII) {
 							player.level().playSound(null, player.blockPosition(), SoundInit.HELD_ILLUMINATE.get(), SoundSource.PLAYERS, 0.35F, 0.5F);
 							cap.setSpellSoundBuffer(13);
+						} else if (spell.getTrueDisplayName() == "Flaming Breath") {
+								player.level().playSound(null, player.blockPosition(), SoundEvents.FIRE_AMBIENT, SoundSource.PLAYERS, 2.2F, 0.7F);
+								cap.setSpellSoundBuffer(23);
+							    player.level().playSound(null, player.blockPosition(), SoundEvents.BLAZE_AMBIENT, SoundSource.PLAYERS, 0.1F, 1.5F);
+							    cap.setSpellSoundBuffer(30);
+							    player.level().playSound(null, player.blockPosition(), SoundInit.HELD_COMBAT.get(), SoundSource.PLAYERS, 2.0F, 1.0F);
+								cap.setSpellSoundBuffer(23);
 						} else if (spell.getMarkerType() == SpellAttributes.Marker.COMBAT) {
 							player.level().playSound(null, player.blockPosition(), SoundInit.HELD_COMBAT.get(), SoundSource.PLAYERS, 2.1F, 1.0F);
 							cap.setSpellSoundBuffer(23);

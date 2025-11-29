@@ -53,7 +53,7 @@ public class SonicBoomSpell extends Spell {
                 p.playSound(SoundEvents.WARDEN_SONIC_BOOM, 2.0F, 1.0F);
 
 
-                entity.hurt(entity.damageSources().sonicBoom(p), 15.0F);
+                entity.hurt(entity.damageSources().sonicBoom(p), 23.0F);
 
                 double d1 = 0.5D;
                 double d0 = 2.5D;

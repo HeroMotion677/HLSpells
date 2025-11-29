@@ -33,6 +33,6 @@ public enum SpellAttributes {;
 
     public enum Marker {
         COMBAT,
-        UTILITY
+        BREATH, FLAME_BREATH, UTILITY
     }
 }

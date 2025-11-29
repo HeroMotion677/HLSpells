@@ -40,7 +40,7 @@ public class AquaBoltEntity extends BaseBoltEntity {
                 break;
             }
         }
-        boolean hasHurt = entity.hurt(new DamageSources(this.level().registryAccess()).mobProjectile(this, livingentity), (this.isUnderWater() || predicate) ? 7.0F : 3.0F);
+        boolean hasHurt = entity.hurt(new DamageSources(this.level().registryAccess()).mobProjectile(this, livingentity), (this.isUnderWater() || predicate) ? 15.0F : 9.0F);
         if (hasHurt && this.level() instanceof ServerLevel level) {
             level.sendParticles(ParticleTypes.BUBBLE_POP, this.getX() - this.random.nextInt(2), this.getY(), this.getZ() - this.random.nextFloat(), 12, 0.2D, 0.2D, 0.2D, 0.0D);
             entity.clearFire();

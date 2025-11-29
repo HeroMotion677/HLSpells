@@ -11,7 +11,7 @@
           "functions": [
             {
               "function": "hlspells:set_spell",
-              "spell": "hlspells:flaming_bolt"
+              "spell": "hlspells:flaming_breath"
             },
             {
               "function": "minecraft:set_damage",
@@ -59,6 +59,18 @@
               }
             }
           ]
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 1,
+          "quality": 1,
+          "name": "hlspells:gem_upgrade_template"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 1,
+          "quality": 1,
+          "name": "hlspells:gold_upgrade_template"
         }
       ],
       "conditions": [
