@@ -40,7 +40,7 @@ public class ItemInit {
     public static final RegistryObject<Item> TOTEM_OF_ESCAPING = ITEMS.register("totem_of_escaping", EscapingTotem::new);
     public static final RegistryObject<Item> TOTEM_OF_RETURNING = ITEMS.register("totem_of_returning", ReturningTotem::new);
     public static final RegistryObject<Item> TOTEM_OF_GRIEFING = ITEMS.register("totem_of_griefing", GriefingTotem::new);
-    //public static final RegistryObject<Item> TOTEM_OF_KEEPING = ITEMS.register("totem_of_keeping", KeepingTotem::new);
+    public static final RegistryObject<Item> TOTEM_OF_KEEPING = ITEMS.register("totem_of_keeping", KeepingTotem::new);
     public static final RegistryObject<Item> SPELL_BOOK = ITEMS.register("spell_book", () -> new SpellHoldingItem(new Item.Properties().durability(50), true));
     public static final RegistryObject<Item> WAND = ITEMS.register("lapis_wand", () -> new SpellHoldingItem(new Item.Properties().durability(60), false));
     public static final RegistryObject<Item> AMETHYST_WAND = ITEMS.register("amethyst_wand", () -> new SpellHoldingItem(new Item.Properties().durability(60), false));
@@ -81,9 +81,8 @@ public class ItemInit {
     // Totems should be ordered from: Activates Before Death -> Cancels Death -> Requires Death
     public static final List<RegistryObject<Item>> TOTEMS = Lists.newArrayList(TOTEM_OF_GRIEFING,
                                                                                TOTEM_OF_ESCAPING,
-                                                                               TOTEM_OF_RETURNING//,
-                                                                               //TOTEM_OF_KEEPING
-            );
+                                                                               TOTEM_OF_RETURNING,
+                                                                               TOTEM_OF_KEEPING);
 
     public static void addCreative(BuildCreativeModeTabContentsEvent event){
         if(event.getTabKey() == CreativeModeTabs.COMBAT){
@@ -100,7 +99,7 @@ public class ItemInit {
 
             event.accept(TOTEM_OF_ESCAPING);
             event.accept(TOTEM_OF_GRIEFING);
-            //event.accept(TOTEM_OF_KEEPING);
+            event.accept(TOTEM_OF_KEEPING);
             event.accept(TOTEM_OF_RETURNING);
         }
         if(event.getTabKey() == CreativeModeTabs.TOOLS_AND_UTILITIES){
