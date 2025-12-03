@@ -7,6 +7,7 @@ import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.Difficulty;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -44,8 +45,13 @@ public abstract class BaseBreathEntity extends Arrow {
     }
 
     @Override
+    //public void checkDespawn() {
+      //  super.checkDespawn();
+   // }
+
     public void checkDespawn() {
         super.checkDespawn();
+        if (this.tickCount == 5) this.discard();
     }
 
     @Override

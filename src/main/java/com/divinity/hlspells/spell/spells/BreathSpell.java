@@ -35,7 +35,7 @@ public class BreathSpell<T extends Projectile> extends Spell {
     public BreathSpell(EntityType<T> projectile, SpellAttributes.Type type, SpellAttributes.Rarity rarity, SpellAttributes.Tier tier, SpellAttributes.Marker marker, String displayName, int xpCost, boolean treasureOnly, int tickDelay, int maxSpellLevel, SimpleParticleType rune) {
         super(type, rarity, tier, marker, displayName, xpCost, tickDelay, treasureOnly, maxSpellLevel, rune);
         this.projectile = projectile;
-        this.viewVectorOffset = 1.4;
+        this.viewVectorOffset = 1.3;
         this.xOffset = 0;
         this.yOffset = 2;
         this.zOffset = 0;

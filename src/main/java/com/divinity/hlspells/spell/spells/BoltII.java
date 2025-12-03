@@ -76,7 +76,7 @@ public class BoltII extends Spell {
                             Entity entity1 = this.getOwner();
                             LivingEntity livingentity = entity1 instanceof LivingEntity entity2 ? entity2 : null;
                             if (result.getEntity() == this.getOwner()) return;
-                            boolean flag = entity.hurt(new DamageSources(this.level().registryAccess()).mobProjectile(this, livingentity), 6.0F);
+                            boolean flag = entity.hurt(new DamageSources(this.level().registryAccess()).mobProjectile(this, livingentity), 15F);
                             if (flag) {
                                 if (livingentity != null) this.doEnchantDamageEffects(livingentity, entity);
                                 this.remove(RemovalReason.KILLED);
