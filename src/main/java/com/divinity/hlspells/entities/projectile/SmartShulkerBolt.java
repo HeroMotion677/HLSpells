@@ -93,7 +93,7 @@ public class SmartShulkerBolt extends ShulkerBullet {
         Entity entity1 = this.getOwner();
         LivingEntity livingentity = entity1 instanceof LivingEntity livingEntity ? livingEntity : null;
         if (result.getEntity() == this.getOwner()) return;
-        boolean flag = entity.hurt(new DamageSources(this.level().registryAccess()).mobProjectile(this, livingentity), 9.5F);
+        boolean flag = entity.hurt(new DamageSources(this.level().registryAccess()).mobProjectile(this, livingentity), 15F);
         if (flag) {
             if (livingentity != null) this.doEnchantDamageEffects(livingentity, entity);
             this.remove(RemovalReason.KILLED);

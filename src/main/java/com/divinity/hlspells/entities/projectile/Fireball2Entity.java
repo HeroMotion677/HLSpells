@@ -36,7 +36,7 @@ public class Fireball2Entity extends BaseBoltEntity {
         Entity entity1 = this.getOwner();
         LivingEntity livingentity = entity1 instanceof LivingEntity livingEntity ? livingEntity : null;
         if (result.getEntity() == this.getOwner()) return;
-        boolean hasHurt = entity.hurt(new DamageSources(this.level().registryAccess()).mobProjectile(this, livingentity), 13.0F);
+        boolean hasHurt = entity.hurt(new DamageSources(this.level().registryAccess()).mobProjectile(this, livingentity), 20.0F);
         if (hasHurt && level() instanceof ServerLevel level) {
             for (int i = 0; i < 3; i++) {
                 level.sendParticles(ParticleTypes.FLAME, this.getX() - this.random.nextInt(2),

@@ -27,7 +27,7 @@ public class FlamingBreathEntity extends BaseBreathEntity {
         Entity entity1 = this.getOwner();
         LivingEntity livingentity = entity1 instanceof LivingEntity livingEntity ? livingEntity : null;
         if (result.getEntity() == this.getOwner()) return;
-        boolean hasHurt = entity.hurt(new DamageSources(this.level().registryAccess()).mobProjectile(this, livingentity), 3.5F);
+        boolean hasHurt = entity.hurt(new DamageSources(this.level().registryAccess()).mobProjectile(this, livingentity), 7F);
        {
 
                 if (hasHurt && level() instanceof ServerLevel level) {

@@ -26,18 +26,18 @@ public class CustomFrostedIce extends FrostedIceBlock {
     @Override
     @ParametersAreNonnullByDefault
     public void tick(BlockState pState, ServerLevel pLevel, BlockPos pPos, RandomSource pRand) {
-        if ((pRand.nextInt(3) == 0 || this.fewerNeighboursThan(pLevel, pPos, 4)) && this.slightlyMelt(pState, pLevel, pPos)) {
+        if ((pRand.nextInt(3) == 0 || this.fewerNeighboursThan(pLevel, pPos, 2)) && this.slightlyMelt(pState, pLevel, pPos)) {
             BlockPos.MutableBlockPos mutablePos = new BlockPos.MutableBlockPos();
             for (Direction direction : Direction.values()) {
                 mutablePos.setWithOffset(pPos, direction);
                 BlockState blockstate = pLevel.getBlockState(mutablePos);
                 if (blockstate.is(this) && !this.slightlyMelt(blockstate, pLevel, mutablePos)) {
-                    pLevel.scheduleTick(mutablePos, this, Mth.nextInt(pRand, 20, 40));
+                    pLevel.scheduleTick(mutablePos, this, Mth.nextInt(pRand, 20, 90));
                 }
             }
         }
         else {
-            pLevel.scheduleTick(pPos, this, Mth.nextInt(pRand, 20, 40));
+            pLevel.scheduleTick(pPos, this, Mth.nextInt(pRand, 20, 90));
         }
     }
 

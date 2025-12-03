@@ -31,7 +31,7 @@ public class FreezingBoltEntity extends BaseBoltEntity {
         Entity entity1 = this.getOwner();
         LivingEntity livingentity = entity1 instanceof LivingEntity livingEntity ? livingEntity : null;
         if (entity == this.getOwner()) return;
-        boolean flag = entity.hurt(new DamageSources(this.level().registryAccess()).mobProjectile(this, livingentity), 9.5F);
+        boolean flag = entity.hurt(new DamageSources(this.level().registryAccess()).mobProjectile(this, livingentity), 15F);
         if (flag && this.level() instanceof ServerLevel level) {
             level.sendParticles(ParticleTypes.CRIT, this.getX(), this.getY(), this.getZ(), 2, 0.2D, 0.2D, 0.2D, 0.0D);
             if (livingentity != null) {

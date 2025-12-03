@@ -60,7 +60,16 @@
             {
               "function": "minecraft:set_count",
               "count": 1
-            }
+            },
+            {
+              "type": "minecraft:item",
+              "name": "hlspells:totem_of_keeping",
+              "weight": 1,
+              "functions": [
+                {
+                  "function": "minecraft:set_count",
+                  "count": 1
+                }
           ],
           "conditions": [
             {
@@ -68,16 +77,7 @@
               "inverse": false
             }
           ]
-        },
-        {
-          "type": "minecraft:item",
-          "name": "hlspells:totem_of_keeping",
-          "weight": 1,
-          "functions": [
-            {
-              "function": "minecraft:set_count",
-              "count": 1
-            }
+        }
           ],
           "conditions": [
             {
@@ -88,5 +88,5 @@
         }
       ]
     }
-  ]
-}
+
+
