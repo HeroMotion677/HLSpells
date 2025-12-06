@@ -34,7 +34,7 @@ public class LightningII extends Spell {
                     super.tick();
                     if (this.getInitialPosition() != null) {
                         float distance = Mth.sqrt((float) distanceToSqr(this.getInitialPosition()));
-                        if (distance >= 25) {
+                        if (distance >= 35) {
                             this.remove(RemovalReason.DISCARDED);
                         }
                         if (this.level().getGameTime() % 2 == 0) {
@@ -47,8 +47,9 @@ public class LightningII extends Spell {
             };
             stormBullet.setOwner(p);
             stormBullet.setInitialPosition(p.position());
-            stormBullet.setPos(p.getX() + p.getViewVector(1.0F).x, p.getY() + 1.35, p.getZ() + p.getViewVector(1.0F).z);
-            stormBullet.shootFromRotation(p, p.xRot, p.yRot, 1.3F, 1.3F, 1.3F);
+            stormBullet.setPos(p.getX() + p.getViewVector(1.0F).x, p.getEyeY() - 0.6 + p.getViewVector(1.0F).y, p.getZ() + p.getViewVector(1.0F).z);
+            stormBullet.shootFromRotation(p, p.getXRot(), p.getYRot(), 0.0F, 1.3F, 1.2F);
+
             p.level().addFreshEntity(stormBullet);
             return true;
         };

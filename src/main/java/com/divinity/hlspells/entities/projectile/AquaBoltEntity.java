@@ -40,7 +40,7 @@ public class AquaBoltEntity extends BaseBoltEntity {
                 break;
             }
         }
-        boolean hasHurt = entity.hurt(new DamageSources(this.level().registryAccess()).mobProjectile(this, livingentity), (this.isUnderWater() || predicate) ? 15.0F : 9.0F);
+        boolean hasHurt = entity.hurt(new DamageSources(this.level().registryAccess()).mobProjectile(this, livingentity), (this.isUnderWater() || predicate) ? 25.0F : 5.0F);
         if (hasHurt && this.level() instanceof ServerLevel level) {
             level.sendParticles(ParticleTypes.BUBBLE_POP, this.getX() - this.random.nextInt(2), this.getY(), this.getZ() - this.random.nextFloat(), 12, 0.2D, 0.2D, 0.2D, 0.0D);
             entity.clearFire();
@@ -53,7 +53,7 @@ public class AquaBoltEntity extends BaseBoltEntity {
     protected void onHitBlock(@NotNull BlockHitResult result) {
         if (this.level() instanceof ServerLevel level) {
             BlockState airState = Blocks.AIR.defaultBlockState();
-            for (BlockPos blockPos : BlockPos.withinManhattan(this.blockPosition(), 1, 0, 1)) {
+            for (BlockPos blockPos : BlockPos.withinManhattan(this.blockPosition(), 2, 0, 2)) {
                 if (this.level().getBlockState(blockPos).getBlock() == Blocks.FIRE) {
                     this.level().setBlockAndUpdate(blockPos, airState);
                 }

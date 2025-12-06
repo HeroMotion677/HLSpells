@@ -30,7 +30,7 @@ public class IlluminateII extends Spell {
             mobList.stream().filter(m -> p != null && m != null).forEach(m -> {
                 if (m.getMobType() == MobType.UNDEAD) {
                     m.setLastHurtByPlayer(p);
-                    m.setSecondsOnFire(1);
+                    m.setSecondsOnFire(2);
                 }
                 else if (m instanceof Spider spider) {
                     spider.setTarget(null);
