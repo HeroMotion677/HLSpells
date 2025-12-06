@@ -30,35 +30,33 @@ public abstract class BaseBreathEntity extends Arrow {
     @Override
     public void tick() {
         super.tick();
-        // Remove if it's more than 40 block away from initial pos
+        // Remove if it's more than 5 block away from initial pos
+        if(this.tickCount >= 2)
         if (this.initialPosition != null) {
-            if (this.getOwner() != null && Math.sqrt(this.distanceToSqr(this.initialPosition)) > 6) this.discard();
+            if (this.getOwner() != null && Math.sqrt(this.distanceToSqr(this.initialPosition)) > 5) this.discard();
             else if (this.getOwner() == null) this.discard();
             Vec3 vector3d1 = this.getDeltaMovement();
-            double baseYOffset = 0.15D;
-            if (this.level() instanceof ServerLevel level) {
+            double baseYOffset = 0.1D;
+            if (this.level() instanceof ServerLevel level ) {
                 for (int i = 0; i < this.particleTypes.length; i++) {
-                    level.sendParticles(this.particleTypes[i], this.getX() - vector3d1.x, this.getY() - (vector3d1.y + (baseYOffset + ((double) i / 100))), this.getZ() - vector3d1.z, 25, 0, 0, 0, 0.015);
+
+                    level.sendParticles(this.particleTypes[i], this.getX() - (vector3d1.x), this.getY() - (vector3d1.y + (baseYOffset + ((double) i / 100))), this.getZ() - (vector3d1.z), 15, 0, 0, 0, 0.015);
                 }
             }
         }
     }
 
     @Override
-    //public void checkDespawn() {
-      //  super.checkDespawn();
-   // }
-
     public void checkDespawn() {
         super.checkDespawn();
-        if (this.tickCount == 5) this.discard();
+        if (this.tickCount >= 15) this.discard();
     }
 
     @Override
     public boolean hurt(@NotNull DamageSource source, float amount) {
         if (this.level() instanceof ServerLevel level && source.isIndirect() && this.isAlive()) {
             this.playSound(SoundEvents.FIRECHARGE_USE, 0.2F, 1.3F);
-            level.sendParticles(ParticleTypes.CRIT, this.getX(), this.getY(), this.getZ(), 1, 0.2D, 0.2D, 0.2D, 0.0D);
+            level.sendParticles(ParticleTypes.SMOKE, this.getX(), this.getY(), this.getZ(), 1, 0.2D, 0D, 0.2D, 0.3D);
             this.remove(RemovalReason.KILLED);
             return true;
         }

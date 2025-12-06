@@ -30,10 +30,14 @@ public class WitherSkullEntity extends WitherSkull {
     public void tick() {
         super.tick();
        // Remove if it's more than 40 block away from entity pos
-        if(this.tickCount == 50){
+        if(this.tickCount <= 50){
             if(this.level() instanceof ServerLevel level){
-                level.sendParticles(ParticleTypes.SMOKE, this.getX() - this.random.nextInt(2),
-                        this.getY(), this.getZ() - this.random.nextFloat(), 70, 0.2D, 0.2D, 0.2D, 0.0D);
+                Vec3 vector3d1 = this.getDeltaMovement();
+                double baseYOffset = 0D;
+                if(this.tickCount >= 2)
+                level.sendParticles(ParticleTypes.SMOKE, this.getX() - vector3d1.x, this.getY() - (vector3d1.y + (baseYOffset / 100)), this.getZ() - vector3d1.z, 25, 0, 0, 0, 0.015);
+
+            //level.sendParticles(ParticleTypes.SMOKE, this.getX() - this.random.nextInt(5), this.getY(), this.getZ() - this.random.nextFloat(), 100, 0.0D, 0.0D, 0.0D, 0.0015D);
             }
         }
         if(this.tickCount >= 52){

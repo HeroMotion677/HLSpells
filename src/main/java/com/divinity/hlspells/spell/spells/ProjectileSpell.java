@@ -39,12 +39,12 @@ public class ProjectileSpell<T extends Projectile> extends Spell {
     public ProjectileSpell(EntityType<T> projectile, SpellAttributes.Type type, SpellAttributes.Rarity rarity, SpellAttributes.Tier tier, SpellAttributes.Marker marker, String displayName, int xpCost, boolean treasureOnly, int tickDelay, int maxSpellLevel, SimpleParticleType rune) {
         super(type, rarity, tier, marker, displayName, xpCost, tickDelay, treasureOnly, maxSpellLevel, rune);
         this.projectile = projectile;
-        this.viewVectorOffset = 1.4;
+        this.viewVectorOffset = 0;
         this.xOffset = 0;
-        this.yOffset = 2;
+        this.yOffset = 0;
         this.zOffset = 0;
         this.zRot = 1.2F;
-        this.velocity = 2.5F;
+        this.velocity = 2.7F;
         this.inaccuracy = 1.2F;
         this.noVerticalMovement = false;
         Vec3 initialPosition;
@@ -58,95 +58,84 @@ public class ProjectileSpell<T extends Projectile> extends Spell {
             if (projectile instanceof Projectile trueProjectile) {
                 if (trueProjectile instanceof BaseBoltEntity bolt) {
                     bolt.setInitialPosition(p.position());
-                    this.velocity = 2.5F;
-                }
-                if (trueProjectile instanceof FlamingBreathEntity bolt) {
-                    bolt.setInitialPosition(p.position());
-
+                    this.velocity = 2.7F;
                 }
                 if(trueProjectile instanceof WitherSkullEntity bolt){
                     bolt.setInitialPosition(p.position());
-                    this.velocity = 2.8F;
+                    this.velocity = 4.7F;
                 }
                 Vec3 viewVector = p.getViewVector(1.0F);
-                Vec3 positionVector = new Vec3(p.getX() + (viewVector.x * this.viewVectorOffset) + this.xOffset, p.getY() + this.yOffset, p.getZ() + (viewVector.z * this.viewVectorOffset) + this.zOffset);
+                Vec3 positionVector = new Vec3(p.getX() + (viewVector.x * this.viewVectorOffset) + this.xOffset, p.getEyeY() - 0.1 + this.viewVectorOffset + this.yOffset, p.getZ() + (viewVector.z * this.viewVectorOffset) + this.zOffset);
                 Util.shootSpellRelative(p, trueProjectile, positionVector, this.zRot, this.velocity, this.inaccuracy, this.noVerticalMovement);
                 playSound(trueProjectile);
                 if(projectile instanceof FlamingBoltEntity){
                     Level world = p.level();
-                    double d0 = (projectile.getX());
-                    double d1 = (projectile.getY() - 0.2);
-                    double d2 = (projectile.getZ());
+                    double d0 = (projectile.getX() + (viewVector.x * 1F));
+                    double d1 = (projectile.getY() + (viewVector.y * 1F));
+                    double d2 = (projectile.getZ() + (viewVector.z * 1F));
                     world.addParticle(ParticlesInit.ORANGE_BOLT_BOOM.get(), d0, d1, d2, 0, 0, 0);
                 }
-                /*if(projectile instanceof FlamingBreathEntity){
-                    Level world = p.level();
-                    double d0 = (projectile.getX());
-                    double d1 = (projectile.getY() - 0.2);
-                    double d2 = (projectile.getZ());
-                    world.addParticle(ParticlesInit.ORANGE_BOLT_BOOM.get(), d0, d1, d2, 0, 0, 0);
-                }*/
                 if(projectile instanceof FreezingBoltEntity){
                     Level world = p.level();
-                    double d0 = (projectile.getX());
-                    double d1 = (projectile.getY() - 0.2);
-                    double d2 = (projectile.getZ());
+                    double d0 = (projectile.getX() + (viewVector.x * 1F));
+                    double d1 = (projectile.getY() + (viewVector.y * 1F));
+                    double d2 = (projectile.getZ() + (viewVector.z * 1F));
                     world.addParticle(ParticlesInit.BLUE_BOLT_BOOM.get(), d0, d1, d2, 0, 0, 0);
                 }
                 if(projectile instanceof BaseBoltEntity e && !(e instanceof FreezingBoltEntity || e instanceof FlamingBoltEntity || e instanceof InvisibleTargetingEntity)) {
                     Level world = p.level();
-                    double d0 = (projectile.getX());
-                    double d1 = (projectile.getY() - 0.2);
-                    double d2 = (projectile.getZ());
+                    double d0 = (projectile.getX() + (viewVector.x * 1F));
+                    double d1 = (projectile.getY() + (viewVector.y * 1F));
+                    double d2 = (projectile.getZ() + (viewVector.z * 1F));
                     world.addParticle(ParticlesInit.WHITE_BOLT_BOOM.get(), d0, d1, d2, 0, 0, 0);
                 }
                 if(projectile instanceof PiercingBoltEntity){
                     Level world = p.level();
-                    double d0 = (projectile.getX());
-                    double d1 = (projectile.getY() - 0.2);
-                    double d2 = (projectile.getZ());
+                    double d0 = (projectile.getX() + (viewVector.x * 1F));
+                    double d1 = (projectile.getY() + (viewVector.y * 1F));
+                    double d2 = (projectile.getZ() + (viewVector.z * 1F));
                     world.addParticle(ParticlesInit.GREEN_BOLT_BOOM.get(), d0, d1, d2, 0, 0, 0);
                 }
                 if(projectile instanceof ChorusBoltEntity){
                     Level world = p.level();
-                    double d0 = (projectile.getX());
-                    double d1 = (projectile.getY() - 0.2);
-                    double d2 = (projectile.getZ());
+                    double d0 = (projectile.getX() + (viewVector.x * 1F));
+                    double d1 = (projectile.getY() + (viewVector.y * 1F));
+                    double d2 = (projectile.getZ() + (viewVector.z * 1F));
                     world.addParticle(ParticlesInit.PURPLE_BOLT_BOOM.get(), d0, d1, d2, 0, 0, 0);
                 }
                 if(projectile instanceof WitherSkullEntity){
                     Level world = p.level();
-                    double d0 = (projectile.getX());
-                    double d1 = (projectile.getY());
-                    double d2 = (projectile.getZ());
+                    double d0 = (projectile.getX() + (viewVector.x * 1F));
+                    double d1 = (projectile.getY() + (viewVector.y * 1F));
+                    double d2 = (projectile.getZ() + (viewVector.z * 1F));
                     world.addParticle(ParticlesInit.BLACK_BOLT_BOOM.get(), d0, d1, d2, 0, 0, 0);
                 }
                 if(projectile instanceof FireballEntity){
                     Level world = p.level();
-                    double d0 = (projectile.getX());
-                    double d1 = (projectile.getY() - 0.2);
-                    double d2 = (projectile.getZ());
+                    double d0 = (projectile.getX() + (viewVector.x * 1F));
+                    double d1 = (projectile.getY() + (viewVector.y * 1F));
+                    double d2 = (projectile.getZ() + (viewVector.z * 1F));
                     world.addParticle(ParticlesInit.ORANGE_BOLT_BOOM.get(), d0, d1, d2, 0, 0, 0);
                 }
                 if(projectile instanceof Fireball2Entity){
                     Level world = p.level();
-                    double d0 = (projectile.getX());
-                    double d1 = (projectile.getY() - 0.2);
-                    double d2 = (projectile.getZ());
+                    double d0 = (projectile.getX() + (viewVector.x * 1F));
+                    double d1 = (projectile.getY() + (viewVector.y * 1F));
+                    double d2 = (projectile.getZ() + (viewVector.z * 1F));
                     world.addParticle(ParticlesInit.PURPLE_BOLT_BOOM.get(), d0, d1, d2, 0, 0, 0);
                 }
                 if(projectile instanceof SmartShulkerBolt){
                     Level world = p.level();
-                    double d0 = (projectile.getX());
-                    double d1 = (projectile.getY() - 0.2);
-                    double d2 = (projectile.getZ());
+                    double d0 = (projectile.getX() + (viewVector.x * 1F));
+                    double d1 = (projectile.getY() + (viewVector.y * 1F));
+                    double d2 = (projectile.getZ() + (viewVector.z * 1F));
                     world.addParticle(ParticlesInit.WHITE_BOLT_BOOM.get(), d0, d1, d2, 0, 0, 0);
                 }
                 if(projectile instanceof AquaBoltEntity){
                     Level world = p.level();
-                    double d0 = (projectile.getX());
-                    double d1 = (projectile.getY() - 0.2);
-                    double d2 = (projectile.getZ());
+                    double d0 = (projectile.getX() + (viewVector.x * 1F));
+                    double d1 = (projectile.getY() + (viewVector.y * 1F));
+                    double d2 = (projectile.getZ() + (viewVector.z * 1F));
                     world.addParticle(ParticlesInit.BLUE_BOLT_BOOM.get(), d0, d1, d2, 0, 0, 0);
                 }
                 return true;

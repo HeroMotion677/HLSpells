@@ -34,7 +34,8 @@ public abstract class BaseBoltEntity extends Arrow {
             if (this.getOwner() != null && Math.sqrt(this.distanceToSqr(this.initialPosition)) > 100) this.discard();
             else if (this.getOwner() == null) this.discard();
             Vec3 vector3d1 = this.getDeltaMovement();
-            double baseYOffset = 0.15D;
+            double baseYOffset = 0D;
+            if(this.tickCount >= 2)
             if (this.level() instanceof ServerLevel level && !(this instanceof InvisibleTargetingEntity)) {
                 for (int i = 0; i < this.particleTypes.length; i++) {
                     level.sendParticles(this.particleTypes[i], this.getX() - vector3d1.x, this.getY() - (vector3d1.y + (baseYOffset + ((double) i / 100))), this.getZ() - vector3d1.z, 25, 0, 0, 0, 0.015);

@@ -1,5 +1,6 @@
 package com.divinity.hlspells.spell.spells;
 
+import com.divinity.hlspells.setup.init.ParticlesInit;
 import com.divinity.hlspells.setup.init.SoundInit;
 import com.divinity.hlspells.setup.init.SpellInit;
 import com.divinity.hlspells.spell.Spell;
@@ -17,9 +18,11 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ShulkerBullet;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 
@@ -74,11 +77,18 @@ public class Bolt extends Spell {
                     }
                 }
             };
+            Vec3 viewVector = p.getViewVector(1.0F);
             dumbBullet.setNoGravity(true);
             dumbBullet.setOwner(p);
-            dumbBullet.setPos(p.getX() + p.getViewVector(1.0F).x, p.getY() + 1.35, p.getZ() + p.getViewVector(1.0F).z);
-            dumbBullet.shootFromRotation(p, p.xRot, p.yRot, 1.3F, 2.5F, 1.3F);
+            dumbBullet.setPos(p.getX() + p.getViewVector(1.0F).x, p.getEyeY() - 0.1 + p.getViewVector(1.0F).y, p.getZ() + p.getViewVector(1.0F).z);
+            dumbBullet.shootFromRotation(p, p.getXRot(), p.getYRot(), 0.0F, 2.7F, 1.2F);
             p.level().addFreshEntity(dumbBullet);
+
+            Level world = p.level();
+            double d0 = (p.getX() + (viewVector.x));
+            double d1 = (p.getEyeY() + (viewVector.y));
+            double d2 = (p.getZ() + (viewVector.z));
+            world.addParticle(ParticlesInit.WHITE_BOLT_BOOM.get(), d0, d1, d2, 0, 0, 0);
 
             return true;
         };

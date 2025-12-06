@@ -1,5 +1,6 @@
 package com.divinity.hlspells.entities.projectile;
 
+import com.divinity.hlspells.setup.init.ParticlesInit;
 import net.minecraft.world.damagesource.DamageSources;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -27,7 +28,7 @@ import net.minecraft.world.entity.Entity.RemovalReason;
 public class Fireball2Entity extends BaseBoltEntity {
 
     public Fireball2Entity(EntityType<? extends BaseBoltEntity> type, Level world) {
-        super(type, world, ParticleTypes.PORTAL, ParticleTypes.SMOKE,ParticleTypes.PORTAL, ParticleTypes.SMOKE,ParticleTypes.PORTAL, ParticleTypes.SMOKE);
+        super(type, world, ParticleTypes.PORTAL, ParticleTypes.SMOKE, (ParticlesInit.PURPLE_PARTICLE_SMALL.get()), ParticleTypes.SMOKE, ParticleTypes.SMOKE);
     }
 
     @Override

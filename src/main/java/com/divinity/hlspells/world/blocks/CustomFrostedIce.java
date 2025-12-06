@@ -26,18 +26,18 @@ public class CustomFrostedIce extends FrostedIceBlock {
     @Override
     @ParametersAreNonnullByDefault
     public void tick(BlockState pState, ServerLevel pLevel, BlockPos pPos, RandomSource pRand) {
-        if ((pRand.nextInt(3) == 0 || this.fewerNeighboursThan(pLevel, pPos, 2)) && this.slightlyMelt(pState, pLevel, pPos)) {
+        if ((pRand.nextInt(2) == 0 || this.fewerNeighboursThan(pLevel, pPos, 0)) && this.slightlyMelt(pState, pLevel, pPos)) {
             BlockPos.MutableBlockPos mutablePos = new BlockPos.MutableBlockPos();
             for (Direction direction : Direction.values()) {
                 mutablePos.setWithOffset(pPos, direction);
                 BlockState blockstate = pLevel.getBlockState(mutablePos);
                 if (blockstate.is(this) && !this.slightlyMelt(blockstate, pLevel, mutablePos)) {
-                    pLevel.scheduleTick(mutablePos, this, Mth.nextInt(pRand, 20, 90));
+                    pLevel.scheduleTick(mutablePos, this, Mth.nextInt(pRand, 5, 7));
                 }
             }
         }
         else {
-            pLevel.scheduleTick(pPos, this, Mth.nextInt(pRand, 20, 90));
+            pLevel.scheduleTick(pPos, this, Mth.nextInt(pRand, 5, 7));
         }
     }
 
@@ -51,7 +51,7 @@ public class CustomFrostedIce extends FrostedIceBlock {
     // Below methods are copied from super class as they are private
     private boolean slightlyMelt(BlockState pState, Level pLevel, BlockPos pPos) {
         int i = pState.getValue(AGE);
-        if (i < 3) {
+        if (i != 3) {
             pLevel.setBlock(pPos, pState.setValue(AGE, i + 1), 2);
             return false;
         }

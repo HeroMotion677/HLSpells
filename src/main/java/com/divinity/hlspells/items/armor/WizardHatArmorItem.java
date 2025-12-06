@@ -11,11 +11,14 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
+import top.theillusivec4.curios.api.CuriosTriggers;
+import top.theillusivec4.curios.api.type.capability.ICurioItem;
+
 import javax.annotation.Nullable;
 import java.util.function.Consumer;
 import static com.divinity.hlspells.HLSpells.MODID;
 
-public class WizardHatArmorItem extends ArmorItem {
+public class WizardHatArmorItem extends ArmorItem implements ICurioItem {
 
 
     public WizardHatArmorItem(ArmorMaterial material, ArmorItem.Type type, Properties properties) {
@@ -36,7 +39,7 @@ public class WizardHatArmorItem extends ArmorItem {
             public HumanoidModel<?> getHumanoidArmorModel(LivingEntity entity, ItemStack itemStack, EquipmentSlot armorSlot, HumanoidModel<?> properties) {
                 var hatArmorModel = ForgeClientEventHandler.hatArmorModel.get(itemStack.getItem());
                 if (hatArmorModel != null)
-                    hatArmorModel.head.visible = (armorSlot == EquipmentSlot.HEAD);
+                    hatArmorModel.head.visible = (armorSlot.isArmor());
                 return hatArmorModel;
             }
         });

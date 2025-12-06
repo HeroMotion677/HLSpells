@@ -82,7 +82,7 @@ public class SmartShulkerBolt extends ShulkerBullet {
             this.targetDeltaZ = d4 / d5 * 0.38D;
         }
         this.hasImpulse = true;
-        this.flightSteps = 10;
+        this.flightSteps = 7;
     }
 
     @Override @Nonnull public Packet<ClientGamePacketListener> getAddEntityPacket() { return NetworkHooks.getEntitySpawningPacket(this); }

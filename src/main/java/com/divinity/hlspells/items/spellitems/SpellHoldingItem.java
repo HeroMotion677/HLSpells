@@ -341,7 +341,7 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 	@Override
 	@NotNull
 	public Predicate<ItemStack> getAllSupportedProjectiles() {
-		return ARROW_ONLY;
+		return null;
 	}
 
 	@Override
