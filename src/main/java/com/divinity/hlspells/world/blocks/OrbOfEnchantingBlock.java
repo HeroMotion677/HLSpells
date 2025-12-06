@@ -54,9 +54,9 @@ public class OrbOfEnchantingBlock extends BaseEntityBlock {
         if(blockentity instanceof OrbOfEnchantingBE) {
             OrbOfEnchantingBE orb = (OrbOfEnchantingBE) blockentity;
             if (pPlayer.isCrouching()) {
-                if (pPlayer.totalExperience >= 1 && orb.getXP() < MAX_XP) {
+                if (pPlayer.totalExperience >= 1 && !orb.isOrbFull()) {
                     pPlayer.giveExperiencePoints(-10);
-                    orb.addXP(5);
+                    orb.addXP(10);
                     changeState(pState, pLevel, pPos);
                     pLevel.playSound(null, pPos, SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.NEUTRAL, 0.25F, 0.2F);
                     return InteractionResult.SUCCESS;
@@ -66,7 +66,7 @@ public class OrbOfEnchantingBlock extends BaseEntityBlock {
                 }
             } else {
                 if (orb.getXP() >= 1) {
-                    orb.removeXP(5);;
+                    orb.removeXP(10);;
                     changeState(pState, pLevel, pPos);
                     if (pPlayer.isHolding(Items.GLASS_BOTTLE)) {
                         pPlayer.getItemInHand(InteractionHand.MAIN_HAND).setCount(pPlayer.getItemInHand(InteractionHand.MAIN_HAND).getCount() - 1);

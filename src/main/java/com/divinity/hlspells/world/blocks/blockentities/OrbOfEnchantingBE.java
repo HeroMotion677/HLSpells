@@ -11,7 +11,8 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public class OrbOfEnchantingBE extends BlockEntity {
 
-    int xp = 0;
+    private int xp = 0;
+    private final int MAX_XP = 1400;
     public OrbOfEnchantingBE(BlockPos pPos, BlockState pBlockState) {
         super(BlockInit.ORB_BE.get(), pPos, pBlockState);
     }
@@ -38,6 +39,9 @@ public class OrbOfEnchantingBE extends BlockEntity {
     public void removeXP(int xp){
         this.xp -= xp;
         this.setChanged();
+    }
+    public boolean isOrbFull(){
+        return xp > MAX_XP;
     }
 
     @Override
