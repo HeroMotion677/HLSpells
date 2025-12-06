@@ -28,8 +28,8 @@ public class PiercingBoltIISpell extends Spell {
     float yOffset = 0f;
     float zOffset = 0;
     float zRot = 1.2F;
-    float velocity = 2.5F;
-    float inaccuracy = 1.2F;
+    float velocity = 2.7F;
+    float inaccuracy = 1.1F;
     boolean noVerticalMovement = false;
 
     @Override
