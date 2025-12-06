@@ -37,7 +37,7 @@ public class FangsSpell extends Spell {
                         super.tick();
                         if (this.getInitialPosition() != null) {
                             float distance = Mth.sqrt((float) distanceToSqr(this.getInitialPosition()));
-                            if (distance >= 10) {
+                            if (distance >= 16) {
                                 this.remove(RemovalReason.DISCARDED);
                             }
                             if (this.level().getGameTime() % 2 == 0) {
@@ -51,7 +51,7 @@ public class FangsSpell extends Spell {
                 stormBullet.setOwner(p);
                 stormBullet.setInitialPosition(p.position());
                 stormBullet.setPos(p.getX(), p.getY(), p.getZ());
-                stormBullet.shootFromRotation(p, p.xRot, p.yRot, 1.2F, 1.2F, 1.2F);
+                stormBullet.shootFromRotation(p, p.xRot, p.yRot, 1.2F, 1.2F, 0F);
                 stormBullet.setDeltaMovement(Mth.cos((float) Math.toRadians(p.yRot + 90)), 0, Mth.sin((float) Math.toRadians(p.yRot + 90)));
                 p.level().addFreshEntity(stormBullet);
             }
