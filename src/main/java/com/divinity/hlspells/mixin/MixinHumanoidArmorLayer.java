@@ -5,10 +5,10 @@ import com.divinity.hlspells.spell.Spell;
 import com.divinity.hlspells.util.SpellUtils;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.HumanoidModel;
-import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -19,7 +19,8 @@ public class MixinHumanoidArmorLayer<T extends LivingEntity, M extends HumanoidM
 
     @Inject(method = "render(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/world/entity/LivingEntity;FFFFFF)V", at = @At("HEAD"), cancellable = true)
     public void render(PoseStack pMatrixStack, MultiBufferSource pBuffer, int pPackedLight, T pLivingEntity, float pLimbSwing, float pLimbSwingAmount, float pPartialTicks, float pAgeInTicks, float pNetHeadYaw, float pHeadPitch, CallbackInfo ci) {
-        if (pLivingEntity instanceof AbstractClientPlayer player) {
+        // Check for any Player entity (not just AbstractClientPlayer) so it works for all players on all clients
+        if (pLivingEntity instanceof Player player) {
             Spell spell = SpellUtils.getSpell(player.getUseItem());
             if (spell == SpellInit.PHASING_II.get() && spell.canUseSpell()) {
                 ci.cancel();
