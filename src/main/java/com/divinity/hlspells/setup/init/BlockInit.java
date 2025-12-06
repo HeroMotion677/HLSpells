@@ -5,6 +5,7 @@ import com.divinity.hlspells.world.blocks.AltarOfAttunementBlock;
 import com.divinity.hlspells.world.blocks.CustomFrostedIce;
 import com.divinity.hlspells.world.blocks.OrbOfEnchantingBlock;
 import com.divinity.hlspells.world.blocks.blockentities.AltarOfAttunementBE;
+import com.divinity.hlspells.world.blocks.blockentities.OrbOfEnchantingBE;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.level.block.Block;
@@ -41,4 +42,5 @@ public class BlockInit {
     public static final RegistryObject<Block> ORB_OF_ENCHANTING = BLOCKS.register("orb_of_enchanting",
             ()-> new OrbOfEnchantingBlock(BlockBehaviour.Properties.copy(Blocks.GLASS).strength(0.5f)
                     .requiresCorrectToolForDrops()));
+    public static final RegistryObject<BlockEntityType<OrbOfEnchantingBE>> ORB_BE = BLOCK_ENTITIES.register("orb_of_enchanting", () -> BlockEntityType.Builder.of(OrbOfEnchantingBE::new, ORB_OF_ENCHANTING.get()).build(null));
 }
