@@ -9,6 +9,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
 
@@ -29,12 +30,16 @@ public class FrostWallSpell extends Spell {
 
                 BlockState ice = BlockInit.CUSTOM_FROSTED_ICE.get().defaultBlockState();
                 BlockPos.MutableBlockPos _pos = pos.mutable();
-                p.level().setBlockAndUpdate(_pos,ice);
 
-                for (int y = yPos; y < yPos + 3; ++y)
-                    for (int w = wPos-1; w <= wPos+1; ++w)
-                        p.level().setBlockAndUpdate(_pos.set(orient_x? w:pos.getX(),y,orient_x? pos.getZ():w),
-                         BlockInit.CUSTOM_FROSTED_ICE.get().defaultBlockState());
+                for (int y = yPos; y < yPos + 3; ++y) {
+                    for (int w = wPos - 1; w <= wPos + 1; ++w) {
+                        BlockPos targetPos = _pos.set(orient_x ? w : pos.getX(), y, orient_x ? pos.getZ() : w);
+                        BlockState currentState = p.level().getBlockState(targetPos);
+                        if (currentState.isAir()) {
+                            p.level().setBlockAndUpdate(targetPos, ice);
+                        }
+                    }
+                }
             } return true;
         };
     }
