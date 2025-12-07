@@ -23,6 +23,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -339,8 +340,10 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 	@Override
 	@NotNull
 	public Predicate<ItemStack> getAllSupportedProjectiles() {
-		return null;
+		return NONE;
 	}
+
+	public static final Predicate<ItemStack> NONE = (p_43018_) -> p_43018_.is(Items.EXPERIENCE_BOTTLE);
 
 	@Override
 	@NotNull

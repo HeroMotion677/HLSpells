@@ -31,13 +31,13 @@ public abstract class BaseBreathEntity extends Arrow {
     public void tick() {
         super.tick();
         // Remove if it's more than 5 block away from initial pos
-        if(this.tickCount >= 1)
+        if(this.tickCount >= 2)
         if (this.initialPosition != null) {
             if (this.getOwner() != null && Math.sqrt(this.distanceToSqr(this.initialPosition)) > 5) this.discard();
             else if (this.getOwner() == null) this.discard();
             Vec3 vector3d1 = this.getDeltaMovement();
             double baseYOffset = 0.1D;
-            if (this.level() instanceof ServerLevel level && this.tickCount >= 1 ) {
+            if (this.level() instanceof ServerLevel level && this.tickCount >= 2 ) {
                 for (int i = 0; i < this.particleTypes.length; i++) {
 
                     level.sendParticles(this.particleTypes[i], this.getX() - vector3d1.x, this.getY() - vector3d1.y + 0.15D, this.getZ() - vector3d1.z, 25, 0, 0, 0, 0.018);
