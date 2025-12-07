@@ -1,19 +1,13 @@
+
+
+
+
+
+
 {
-  "display": {
-    "icon": {
-      "item": "hlspells:wizard_hat"
-    },
-    "title": "I'm a what?",
-    "description": "Obtain Wizard Hat",
-    "frame": "challenge",
-    "show_toast": true,
-    "announce_to_chat": true,
-    "hidden": false
-  },
   "parent": "hlspells:orb_advancement",
   "criteria": {
-    "iron_boots": {
-      "trigger": "minecraft:inventory_changed",
+    "obtain_hat": {
       "conditions": {
         "items": [
           {
@@ -22,7 +16,28 @@
             ]
           }
         ]
-      }
+      },
+      "trigger": "minecraft:inventory_changed"
     }
-  }
+  },
+
+
+
+  "display": {
+    "announce_to_chat": true,
+    "description": "Obtain a Wizard Hat",
+    "frame": "challenge",
+    "hidden": false,
+    "icon": {
+      "item": "hlspells:wizard_hat"
+    },
+    "show_toast": true,
+    "title": "I'm a what?"
+  },
+  "requirements": [
+    [
+      "obtain_hat"
+    ]
+  ],
+  "sends_telemetry_event": true
 }

@@ -1,19 +1,11 @@
+
+
+
+
 {
-  "display": {
-    "icon": {
-      "item": "hlspells:amethyst_wand"
-    },
-    "title": "...We love casting spells.",
-    "description": "Cast a spell",
-    "frame": "task",
-    "show_toast": true,
-    "announce_to_chat": true,
-    "hidden": false
-  },
   "parent": "hlspells:altar_advancement",
   "criteria": {
-    "requirement": {
-      "trigger": "minecraft:using_item",
+    "cast_spell": {
       "conditions": {
         "item": {
           "items": [
@@ -28,7 +20,26 @@
             "hlspells:spell_book"
           ]
         }
-      }
+      },
+      "trigger": "minecraft:using_item"
     }
-  }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": "Cast a spell",
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "hlspells:amethyst_wand"
+    },
+    "show_toast": true,
+    "title": "...We love casting spells"
+  },
+  "requirements": [
+    [
+      "cast_spell"
+    ]
+  ],
+  "sends_telemetry_event": true
 }
+

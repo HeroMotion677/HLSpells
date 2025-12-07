@@ -1,29 +1,39 @@
 {
+  "parent": "hlspells:spells_advancement",
+  "criteria": {
+    "use_altar": {
+      "conditions": {
+        "location": [
+          {
+            "condition": "minecraft:location_check",
+            "predicate": {
+              "block": {
+                "blocks": [
+                  "hlspells:orb_of_enchanting"
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "trigger": "minecraft:item_used_on_block"
+    }
+  },
   "display": {
+    "announce_to_chat": true,
+    "description": "Use the Orb of Enchanting",
+    "frame": "task",
+    "hidden": false,
     "icon": {
       "item": "hlspells:orb_of_enchanting"
     },
-    "title": "Pondering the Orb.",
-    "description": "Use the Orb of Enchanting",
-
-    "frame": "task",
     "show_toast": true,
-    "announce_to_chat": true,
-    "hidden": false
+    "title": "Pondering the Orb"
   },
-  "parent": "hlspells:spells_advancement",
-  "criteria": {
-    "requirement": {
-      "trigger": "minecraft:item_used_on_block",
-      "conditions": {
-        "location": {
-          "block": {
-            "blocks": [
-              "hlspells:orb_of_enchanting"
-            ]
-          }
-        }
-      }
-    }
-  }
+  "requirements": [
+    [
+      "use_altar"
+    ]
+  ],
+  "sends_telemetry_event": true
 }

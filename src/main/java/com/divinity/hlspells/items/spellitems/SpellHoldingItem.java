@@ -59,24 +59,7 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 		this.isSpellBook = isSpellBook;
 	}
 
-//	@Override
-//	@ParametersAreNonnullByDefault
-//	public void fillItemCategory(CreativeModeTab pGroup, NonNullList<ItemStack> pItems) {
-//		if (isSpellBook) {
-//			if (allowedIn(pGroup)) {
-//				for (Spell spell : SpellInit.SPELLS_REGISTRY.get()) {
-//					ItemStack stack = new ItemStack(this);
-//					stack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP).ifPresent(cap -> {
-//						if (spell != SpellInit.EMPTY.get())
-//							cap.addSpell(Objects.requireNonNull(SpellInit.SPELLS_REGISTRY.get().getKey(spell)).toString());
-//					});
-//					pItems.add(stack);
-//				}
-//			}
-//
-//		} else
-//			super.fillItemCategory(pGroup, pItems);
-//	}
+
 	@Override
 	@ParametersAreNonnullByDefault
 	public void appendHoverText(ItemStack stack, @Nullable Level pLevel, List<Component> text, TooltipFlag pFlag) {
