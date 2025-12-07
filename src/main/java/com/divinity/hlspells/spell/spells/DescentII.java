@@ -37,7 +37,7 @@ public class DescentII extends Spell {
                  */
                 float yaw = p.getYRot();
                 float pitch = p.getXRot();
-                float speed = 1.0F;
+                float speed = 0.85F;
                 double motionX = (double)(-Math.sin(yaw / 180.0F * (float)Math.PI) * Math.cos(pitch / 180.0F * (float)Math.PI) * speed);
                 double motionZ = (double)(Math.cos(yaw / 180.0F * (float)Math.PI) * Math.cos(pitch / 180.0F * (float)Math.PI) * speed);
                 p.setDeltaMovement(motionX, -0.1, motionZ);

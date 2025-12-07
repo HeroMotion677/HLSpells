@@ -53,7 +53,7 @@ import java.util.stream.Collectors;
 public final class Util {
 
     public static final UUID speedUUID = UUID.fromString("05b61a62-ae84-492e-8536-f365b7143296");
-    public static final AttributeModifier speedModifier = new AttributeModifier(speedUUID, "Speed", 2, AttributeModifier.Operation.MULTIPLY_TOTAL);
+    public static final AttributeModifier speedModifier = new AttributeModifier(speedUUID, "Speed", 2.5, AttributeModifier.Operation.MULTIPLY_TOTAL);
 
     private Util() {} // No instances of this class should be created
 

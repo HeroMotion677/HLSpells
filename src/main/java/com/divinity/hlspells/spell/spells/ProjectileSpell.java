@@ -44,8 +44,8 @@ public class ProjectileSpell<T extends Projectile> extends Spell {
         this.yOffset = 0;
         this.zOffset = 0;
         this.zRot = 1.2F;
-        this.velocity = 2.7F;
-        this.inaccuracy = 1.2F;
+        this.velocity = 3F;
+        this.inaccuracy = 1.1F;
         this.noVerticalMovement = false;
         Vec3 initialPosition;
     }
@@ -58,16 +58,19 @@ public class ProjectileSpell<T extends Projectile> extends Spell {
             if (projectile instanceof Projectile trueProjectile) {
                 if (trueProjectile instanceof BaseBoltEntity bolt) {
                     bolt.setInitialPosition(p.position());
-                    this.velocity = 2.7F;
+                    this.velocity = 3F;
                 }
                 if(trueProjectile instanceof WitherSkullEntity bolt){
                     bolt.setInitialPosition(p.position());
                     this.velocity = 4.7F;
                 }
+
                 Vec3 viewVector = p.getViewVector(1.0F);
                 Vec3 positionVector = new Vec3(p.getX() + (viewVector.x * this.viewVectorOffset) + this.xOffset, p.getEyeY() - 0.1 + this.viewVectorOffset + this.yOffset, p.getZ() + (viewVector.z * this.viewVectorOffset) + this.zOffset);
                 Util.shootSpellRelative(p, trueProjectile, positionVector, this.zRot, this.velocity, this.inaccuracy, this.noVerticalMovement);
                 playSound(trueProjectile);
+
+
                 if(projectile instanceof FlamingBoltEntity){
                     Level world = p.level();
                     double d0 = (projectile.getX() + (viewVector.x * 1F));
@@ -87,7 +90,7 @@ public class ProjectileSpell<T extends Projectile> extends Spell {
                     double d0 = (projectile.getX() + (viewVector.x * 1F));
                     double d1 = (projectile.getY() + (viewVector.y * 1F));
                     double d2 = (projectile.getZ() + (viewVector.z * 1F));
-                    world.addParticle(ParticlesInit.WHITE_BOLT_BOOM.get(), d0, d1, d2, 0, 0, 0);
+                    world.addParticle(ParticlesInit.GREEN_BOLT_BOOM.get(), d0, d1, d2, 0, 0, 0);
                 }
                 if(projectile instanceof PiercingBoltEntity){
                     Level world = p.level();
@@ -129,7 +132,7 @@ public class ProjectileSpell<T extends Projectile> extends Spell {
                     double d0 = (projectile.getX() + (viewVector.x * 1F));
                     double d1 = (projectile.getY() + (viewVector.y * 1F));
                     double d2 = (projectile.getZ() + (viewVector.z * 1F));
-                    world.addParticle(ParticlesInit.WHITE_BOLT_BOOM.get(), d0, d1, d2, 0, 0, 0);
+                    world.addParticle(ParticlesInit.GREEN_BOLT_BOOM.get(), d0, d1, d2, 0, 0, 0);
                 }
                 if(projectile instanceof AquaBoltEntity){
                     Level world = p.level();
@@ -137,6 +140,13 @@ public class ProjectileSpell<T extends Projectile> extends Spell {
                     double d1 = (projectile.getY() + (viewVector.y * 1F));
                     double d2 = (projectile.getZ() + (viewVector.z * 1F));
                     world.addParticle(ParticlesInit.BLUE_BOLT_BOOM.get(), d0, d1, d2, 0, 0, 0);
+                }
+                if(projectile instanceof MysticBoltEntity){
+                    Level world = p.level();
+                    double d0 = (projectile.getX() + (viewVector.x * 1F));
+                    double d1 = (projectile.getY() + (viewVector.y * 1F));
+                    double d2 = (projectile.getZ() + (viewVector.z * 1F));
+                    world.addParticle(ParticlesInit.GREEN_BOLT_BOOM.get(), d0, d1, d2, 0, 0, 0);
                 }
                 return true;
             }
@@ -186,13 +196,18 @@ public class ProjectileSpell<T extends Projectile> extends Spell {
 
     private static void playSound(Projectile projectile) {
         if (projectile instanceof BaseBoltEntity e && !(e instanceof FreezingBoltEntity || e instanceof FlamingBoltEntity || e instanceof InvisibleTargetingEntity || e instanceof FireballEntity || e instanceof Fireball2Entity)) {
-            projectile.playSound(SoundInit.CAST_BOLT.get(), 0.3F, 0.7F);
+            projectile.playSound(SoundInit.CAST_SOUND.get(), 0.2F, 0.9F);
+
         }
         else if (projectile instanceof FreezingBoltEntity) {
-            projectile.playSound(SoundInit.CAST_ICE.get(), 0.4F, 0.7F);
+            projectile.playSound(SoundInit.CAST_ICE.get(), 0.3F, 0.7F);
+            projectile.playSound(SoundInit.CAST_SOUND.get(), 0.2F, 0.9F);
+
         }
         else if (projectile instanceof FlamingBoltEntity) {
             projectile.playSound(SoundInit.CAST_FLAME.get(), 0.5F, 0.7F);
+            projectile.playSound(SoundInit.CAST_SOUND.get(), 0.2F, 0.9F);
+
         }
         else if (projectile instanceof FireballEntity) {
             projectile.playSound(SoundInit.CAST_FLAME.get(), 0.5F, 0.7F);
@@ -200,13 +215,13 @@ public class ProjectileSpell<T extends Projectile> extends Spell {
         else if (projectile instanceof Fireball2Entity) {
             projectile.playSound(SoundInit.CAST_FLAME.get(), 0.5F, 0.7F);
         }
-        /*else if (projectile instanceof FlamingBreathEntity) {
-            projectile.playSound(SoundEvents.FIRE_AMBIENT, 0.5F, 0.7F);
-        }*/
         else if (projectile instanceof WitherSkull) {
-            projectile.playSound(SoundInit.CAST_NECROMANCY.get(), 0.6F, 0.7F);
+            projectile.playSound(SoundInit.CAST_NECROMANCY.get(), 0.5F, 0.7F);
+            projectile.playSound(SoundInit.CAST_SOUND.get(), 0.4F, 0.9F);
+
         }else{
-            projectile.playSound(SoundInit.CAST_BOLT.get(), 0.3F, 0.7F);
+            projectile.playSound(SoundInit.CAST_SOUND.get(), 0.2F, 0.9F);
+
         }
     }
 

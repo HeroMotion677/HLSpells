@@ -47,6 +47,8 @@ public class ParticlesInit {
 
     public static final RegistryObject<SimpleParticleType> ORANGE_BOLT_BOOM=
             PARTICLE_TYPES.register("orange_bolt_boom", ()-> new SimpleParticleType(true));
+    public static final RegistryObject<SimpleParticleType> YELLOW_BOLT_BOOM=
+            PARTICLE_TYPES.register("yellow_bolt_boom", ()-> new SimpleParticleType(true));
 
     public static final RegistryObject<SimpleParticleType> WHITE_BOLT_BOOM=
             PARTICLE_TYPES.register("white_bolt_boom", ()-> new SimpleParticleType(true));

@@ -1,6 +1,9 @@
 package com.divinity.hlspells.spell.spells;
 
+import com.divinity.hlspells.entities.projectile.MysticBoltEntity;
+import com.divinity.hlspells.entities.projectile.SmartBoltEntity;
 import com.divinity.hlspells.entities.projectile.SmartShulkerBolt;
+import com.divinity.hlspells.setup.init.EntityInit;
 import com.divinity.hlspells.setup.init.ParticlesInit;
 import com.divinity.hlspells.setup.init.SoundInit;
 import com.divinity.hlspells.setup.init.SpellInit;
@@ -42,7 +45,7 @@ public class BoltII extends Spell {
                 Entity entity = Util.rayTrace(p.level(), p, 100D);
                 if (entity != null) {
                     Vec3 viewVector = p.getViewVector(1.0F);
-                    ShulkerBullet smartBullet = new SmartShulkerBolt(p.level(), p, entity, p.getDirection().getAxis());
+                    SmartBoltEntity smartBullet = new SmartBoltEntity(EntityInit.SMART_BOLT_ENTITY.get(), p.level());
                     smartBullet.setPos(p.getX() + p.getViewVector(1.0F).x, p.getEyeY() - 0.1 + p.getViewVector(1.0F).y, p.getZ() + p.getViewVector(1.0F).z);
                     smartBullet.shootFromRotation(p, p.getXRot(), p.getYRot(), 0.0F, 2.7F, 1.2F);
                     p.level().addFreshEntity(smartBullet);
@@ -51,13 +54,11 @@ public class BoltII extends Spell {
                     double d0 = (p.getX() + (viewVector.x));
                     double d1 = (p.getEyeY() + (viewVector.y));
                     double d2 = (p.getZ() + (viewVector.z));
-                    world.addParticle(ParticlesInit.WHITE_BOLT_BOOM.get(), d0, d1, d2, 0, 0, 0);
+                    world.addParticle(ParticlesInit.GREEN_BOLT_BOOM.get(), d0, d1, d2, 0, 0, 0);
                 }
             }
             else {
-                ShulkerBullet dumbBullet = new ShulkerBullet(EntityType.SHULKER_BULLET, p.level()) {
-                    @Override
-                    public void selectNextMoveDirection(@Nullable Direction.Axis axis) {}
+                MysticBoltEntity dumbBullet = new MysticBoltEntity(EntityInit.MYSTIC_BOLT_ENTITY.get(), p.level()) {
 
                     @Override
                     public void onHit(@NotNull HitResult result) {
@@ -83,7 +84,7 @@ public class BoltII extends Spell {
                     @Override
                     public void onHitEntity(EntityHitResult result) {
                         Entity entity = result.getEntity();
-                        if (!(entity instanceof ShulkerBullet)) {
+                        if (!(entity instanceof MysticBoltEntity)) {
                             Entity entity1 = this.getOwner();
                             LivingEntity livingentity = entity1 instanceof LivingEntity entity2 ? entity2 : null;
                             if (result.getEntity() == this.getOwner()) return;
@@ -108,7 +109,7 @@ public class BoltII extends Spell {
                 double d0 = (p.getX() + (viewVector.x));
                 double d1 = (p.getEyeY() + (viewVector.y));
                 double d2 = (p.getZ() + (viewVector.z));
-                world.addParticle(ParticlesInit.WHITE_BOLT_BOOM.get(), d0, d1, d2, 0, 0, 0);
+                world.addParticle(ParticlesInit.GREEN_BOLT_BOOM.get(), d0, d1, d2, 0, 0, 0);
 
 
             }
@@ -121,9 +122,9 @@ public class BoltII extends Spell {
         return SoundInit.CAST_BOLT.get();
     }
 
-    @Nullable
+ /*   @Nullable
     @Override
     public Spell getUpgradeableSpellPath() {
         return SpellInit.BOLT.get();
-    }
+    }*/
 }

@@ -36,9 +36,11 @@ public abstract class BaseBoltEntity extends Arrow {
             Vec3 vector3d1 = this.getDeltaMovement();
             double baseYOffset = 0D;
             if(this.tickCount >= 2)
-            if (this.level() instanceof ServerLevel level && !(this instanceof InvisibleTargetingEntity)) {
+            if (this.level() instanceof ServerLevel level && !(this instanceof InvisibleTargetingEntity) && this.tickCount >= 2) {
                 for (int i = 0; i < this.particleTypes.length; i++) {
-                    level.sendParticles(this.particleTypes[i], this.getX() - vector3d1.x, this.getY() - (vector3d1.y + (baseYOffset + ((double) i / 100))), this.getZ() - vector3d1.z, 25, 0, 0, 0, 0.015);
+
+                    level.sendParticles(this.particleTypes[i], this.getX() - vector3d1.x, this.getY() - vector3d1.y + 0.15D, this.getZ() - vector3d1.z, 25, 0, 0, 0, 0.015);
+                    //level.sendParticles(this.particleTypes[i], this.getX() - vector3d1.x, this.getY() - (vector3d1.y + (baseYOffset + ((double) i / 100))), this.getZ() - vector3d1.z, 25, 0, 0, 0, 0.015);
                 }
             }
         }

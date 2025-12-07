@@ -56,7 +56,7 @@ public class ForgeClientEventHandler {
                         NetworkManager.INSTANCE.sendToServer(new WandInputPacket(WAND_BINDING.getKey().getValue()));
                         for (InteractionHand hand : InteractionHand.values()) {
                             ItemStack carriedItem = player.getItemInHand(hand);
-                            if (carriedItem.getItem() instanceof SpellHoldingItem item && !item.isSpellBook()) {
+                            if (carriedItem.getItem() instanceof SpellHoldingItem item /*&& !item.isSpellBook()*/) {
                                 carriedItem.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP).ifPresent(cap -> {
                                     if (!cap.getSpells().isEmpty()) {
                                         cap.incrementCurrentSpellCycle();

@@ -20,7 +20,7 @@ import net.minecraft.world.entity.Entity.RemovalReason;
 public class FlamingBoltEntity extends BaseBoltEntity {
 
     public FlamingBoltEntity(EntityType<? extends FlamingBoltEntity> type, Level world) {
-        super(type, world, ParticleTypes.FLAME, ParticleTypes.SMOKE);
+        super(type, world, ParticleTypes.SMALL_FLAME, ParticleTypes.SMOKE);
     }
 
     @Override

@@ -197,7 +197,7 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 						} else if (spell.getMarkerType() == SpellAttributes.Marker.COMBAT) {
 							player.level().playSound(null, player.blockPosition(), SoundInit.HELD_COMBAT.get(), SoundSource.PLAYERS, 2.1F, 1.0F);
 							cap.setSpellSoundBuffer(23);
-						} else if (spell.getMarkerType() == SpellAttributes.Marker.UTILITY) {
+						} else if (spell.getMarkerType() == SpellAttributes.Marker.UTILITY && spell.getTrueDisplayName() != "Phasing II") {
 							player.level().playSound(null, player.blockPosition(), SoundInit.HELD_UTILITY.get(), SoundSource.PLAYERS, 1.8F, 1.3F);
 							cap.setSpellSoundBuffer(23);
 						}
@@ -248,10 +248,10 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 								player.getCooldowns().addCooldown(stack.getItem(), 30);
 								currentCastTime = 0;
 							} else if (!item.isGemAmethyst() && SpellUtils.getSpellByID(cap.getCurrentSpell()).getMarkerType() == SpellAttributes.Marker.COMBAT) {
-								player.getCooldowns().addCooldown(stack.getItem(), 15);
+								player.getCooldowns().addCooldown(stack.getItem(), 10);
 								currentCastTime = 0;
 							} else if (item.isGemAmethyst() && SpellUtils.getSpellByID(cap.getCurrentSpell()).getMarkerType() == SpellAttributes.Marker.UTILITY) {
-								player.getCooldowns().addCooldown(stack.getItem(), 15);
+								player.getCooldowns().addCooldown(stack.getItem(), 10);
 								currentCastTime = 0;
 							}
 						} else if (this.isSpellBook || !this.isSpellBook) {

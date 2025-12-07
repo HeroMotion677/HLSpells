@@ -25,12 +25,12 @@ public class ArrowRainSpell extends Spell {
             p.getCapability(PlayerCapProvider.PLAYER_CAP).ifPresent(cap -> {
                 cap.setSpellTimer(cap.getSpellTimer() + 1);
                 if (p.level().isClientSide()) {
-                    if (cap.getSpellTimer() % 8 == 0) {
+                    if (cap.getSpellTimer() % 6 == 0) {
                         doCloudParticles(p, p.level());
                     }
                 }
                 else {
-                    if (cap.getSpellTimer() % 8 == 0) {
+                    if (cap.getSpellTimer() % 6 == 0) {
                         for (int i = 0; i < 10; i++) {
                             doArrowSpawn(p, p.level());
                         }
@@ -45,9 +45,9 @@ public class ArrowRainSpell extends Spell {
     private static void doArrowSpawn(Player player, Level world) {
         Arrow arrowEntity = new Arrow(world,
                 player.getX() + (world.random.nextDouble() - 0.5D) * player.getBbWidth(),
-                player.getY() + 3, player.getZ() + (world.random.nextDouble() - 0.5D) * player.getBbWidth());
+                player.getY() + 3.2, player.getZ() + (world.random.nextDouble() - 0.5D) * player.getBbWidth());
 
-        arrowEntity.shootFromRotation(player, player.xRot, player.yRot, 1.0F, 1.0F, 1.0F);
+        arrowEntity.shootFromRotation(player, player.xRot, player.yRot, 1.0F, 1.3F, 1.0F);
         arrowEntity.setDeltaMovement(Mth.cos((float) Math.toRadians(player.yRot + 90)) + (world.random.nextFloat() - 0.5F) * player.getBbWidth(), -0.6, Mth.sin((float) Math.toRadians(player.yRot + 90)) + (world.random.nextFloat() - 0.5F) * player.getBbWidth());
         world.addFreshEntity(arrowEntity);
     }

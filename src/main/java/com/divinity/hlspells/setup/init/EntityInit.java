@@ -25,6 +25,7 @@ public class EntityInit {
     public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, HLSpells.MODID);
     private static final List<AttributesRegister<?>> attributeSuppliers = new ArrayList<>();
 
+    public static final RegistryObject<EntityType<MysticBoltEntity>> MYSTIC_BOLT_ENTITY = registerEntity("mystic_bolt", () -> EntityType.Builder.of(MysticBoltEntity::new, MobCategory.MISC).sized(0.3125F, 0.3125F));
     public static final RegistryObject<EntityType<InvisibleTargetingEntity>> INVISIBLE_TARGETING_ENTITY = registerEntity("invisible_targeting_entity", () -> EntityType.Builder.of(InvisibleTargetingEntity::new, MobCategory.MISC).sized(0.3125F, 0.3125F));
     public static final RegistryObject<EntityType<KnockbackBoltEntity>> KNOCKBACK_BOLT_ENTITY = registerEntity("knockback_bolt", () -> EntityType.Builder.of(KnockbackBoltEntity::new, MobCategory.MISC).sized(0.3125F, 0.3125F));
     public static final RegistryObject<EntityType<PiercingBoltEntity>> PIERCING_BOLT_ENTITY = registerEntity("piercing_bolt", () -> EntityType.Builder.<PiercingBoltEntity>of(PiercingBoltEntity::new, MobCategory.MISC).sized(0.3125F, 0.3125F));
@@ -38,6 +39,7 @@ public class EntityInit {
     public static final RegistryObject<EntityType<WitherSkullEntity>> WITHER_SKULL_ENTITY = registerEntity("wither_skull", () -> EntityType.Builder.of(WitherSkullEntity::new, MobCategory.MISC).sized(0.3125F, 0.3125F).clientTrackingRange(4).updateInterval(10));
     public static final RegistryObject<EntityType<SummonedVexEntity>> SUMMONED_VEX_ENTITY = registerEntity("summoned_vex", () -> EntityType.Builder.of(SummonedVexEntity::new, MobCategory.MONSTER).fireImmune().sized(0.4F, 0.8F).clientTrackingRange(8), SummonedVexEntity::createAttributes);
     public static final RegistryObject<EntityType<SummonedWitherSkeletonEntity>> SUMMONED_WITHER_SKELETON_ENTITY = registerEntity("summoned_wither_skeleton", () -> EntityType.Builder.of(SummonedWitherSkeletonEntity::new, MobCategory.MONSTER).sized(0.6F, 2.5F).clientTrackingRange(8), SummonedWitherSkeletonEntity::createAttributes);
+    public static final RegistryObject<EntityType<SmartBoltEntity>> SMART_BOLT_ENTITY = registerEntity("smart_bolt", () -> EntityType.Builder.of(SmartBoltEntity::new, MobCategory.MISC).sized(0.3125F, 0.3125F));
 
     private static <T extends Entity> RegistryObject<EntityType<T>> registerEntity(String name, Supplier<EntityType.Builder<T>> supplier) {
         return ENTITIES.register(name, () -> supplier.get().build(HLSpells.MODID + ":" + name));

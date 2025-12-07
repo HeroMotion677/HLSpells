@@ -89,8 +89,10 @@ public class ModClientEventHandler {
             event.registerEntityRenderer(EntityInit.PIERCING_BOLT_ENTITY.get(), ctx -> new BaseBoltRenderer<>(ctx, getBoltLocation("textures/entity/bolt/green_bolt.png")));
             event.registerEntityRenderer(EntityInit.FLAMING_BOLT_ENTITY.get(), ctx -> new BaseBoltRenderer<>(ctx, getBoltLocation("textures/entity/bolt/orange_bolt.png")));
             event.registerEntityRenderer(EntityInit.AQUA_BOLT_ENTITY.get(), ctx -> new BaseBoltRenderer<>(ctx, getBoltLocation("textures/entity/bolt/blue_bolt.png")));
+            event.registerEntityRenderer(EntityInit.MYSTIC_BOLT_ENTITY.get(), ctx -> new BaseBoltRenderer<>(ctx, getBoltLocation("textures/entity/bolt/green_bolt.png")));
             event.registerEntityRenderer(EntityInit.FREEZING_BOLT_ENTITY.get(), ctx -> new BaseBoltRenderer<>(ctx, getBoltLocation("textures/entity/bolt/white_bolt.png")));
             event.registerEntityRenderer(EntityInit.CHORUS_BOLT_ENTITY.get(), ctx -> new BaseBoltRenderer<>(ctx, getBoltLocation("textures/entity/bolt/purple_bolt.png")));
+            event.registerEntityRenderer(EntityInit.SMART_BOLT_ENTITY.get(), ctx -> new BaseBoltRenderer<>(ctx, getBoltLocation("textures/entity/bolt/green_bolt.png")));
             event.registerEntityRenderer(EntityInit.FIREBALL.get(), ctx -> new FireballRenderer<>(ctx, getBoltLocation("textures/entity/fireball/fireball1.png")));
             event.registerEntityRenderer(EntityInit.FIREBALL2.get(), ctx -> new FireballRenderer<>(ctx, getBoltLocation("textures/entity/fireball/fireball2.png")));
             event.registerEntityRenderer(EntityInit.KNOCKBACK_BOLT_ENTITY.get(), ShulkerBulletRenderer::new);
@@ -150,6 +152,7 @@ public class ModClientEventHandler {
             Minecraft.getInstance().particleEngine.register(ParticlesInit.BLUE_PARTICLE_SMALL.get(), RuneParticle.Provider::new);
             Minecraft.getInstance().particleEngine.register(ParticlesInit.YELLOW_PARTICLE_SMALL.get(), RuneParticle.Provider::new);
 
+            Minecraft.getInstance().particleEngine.register(ParticlesInit.YELLOW_BOLT_BOOM.get(), BoltBoomParticle.Provider::new);
             Minecraft.getInstance().particleEngine.register(ParticlesInit.ORANGE_BOLT_BOOM.get(), BoltBoomParticle.Provider::new);
             Minecraft.getInstance().particleEngine.register(ParticlesInit.BLUE_BOLT_BOOM.get(), BoltBoomParticle.Provider::new);
             Minecraft.getInstance().particleEngine.register(ParticlesInit.BLACK_BOLT_BOOM.get(), BoltBoomParticle.Provider::new);

@@ -26,7 +26,7 @@ import net.minecraft.world.entity.Entity.RemovalReason;
 public class FireballEntity extends BaseBoltEntity {
 
     public FireballEntity(EntityType<? extends BaseBoltEntity> type, Level world) {
-        super(type, world, ParticleTypes.FLAME, ParticleTypes.SMOKE);
+        super(type, world, ParticleTypes.LAVA, ParticleTypes.SMOKE);
     }
 
     @Override

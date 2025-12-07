@@ -12,6 +12,8 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseFireBlock;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LiquidBlock;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
@@ -22,7 +24,7 @@ import net.minecraft.world.entity.Entity.RemovalReason;
 public class FreezingBoltEntity extends BaseBoltEntity {
 
     public FreezingBoltEntity(EntityType<? extends BaseBoltEntity> entityType, Level level) {
-        super(entityType, level, ParticleTypes.SNOWFLAKE, ParticleTypes.SNOWFLAKE);
+        super(entityType, level, ParticleTypes.SNOWFLAKE, ParticleTypes.ELECTRIC_SPARK);
     }
 
     @Override
@@ -51,9 +53,9 @@ public class FreezingBoltEntity extends BaseBoltEntity {
             if (this.level().isEmptyBlock(blockpos)) {
                 this.level().setBlockAndUpdate(blockpos, Blocks.SNOW.defaultBlockState());
             }
-            else if (this.level().getBlockState(blockpos).getFluidState() == Fluids.WATER.defaultFluidState()) {
-                this.level().setBlockAndUpdate(blockpos, Blocks.ICE.defaultBlockState());
-            }
+            else if (this.level().getBlockState(blockpos).getBlock() == Blocks.WATER) {
+                this.level().setBlockAndUpdate(blockpos, Blocks.FROSTED_ICE.defaultBlockState());
+                           }
             this.remove(RemovalReason.KILLED);
         }
     }

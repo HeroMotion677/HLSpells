@@ -26,5 +26,6 @@ public class SoundInit {
     public static final RegistryObject<SoundEvent> HELD_ILLUMINATE = registerSoundEvent("held_illuminate");
     public static final RegistryObject<SoundEvent> HELD_UTILITY = registerSoundEvent("held_utility");
     public static final RegistryObject<SoundEvent> MISCAST_SOUND = registerSoundEvent("miscast_sound");
+    public static final RegistryObject<SoundEvent> CAST_SOUND = registerSoundEvent("cast_sound");
     public static final RegistryObject<SoundEvent> SPELL_ATTUNEMENT = registerSoundEvent("spell_attunement");
 }

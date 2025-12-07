@@ -25,7 +25,7 @@ public class Lightning extends Spell {
     @Override
     public SpellConsumer<Player> getAction() {
         return p -> {
-            HitResult rayTraceResult = Util.lookAt(p, 25D, 1F, false);
+            HitResult rayTraceResult = Util.lookAt(p, 60D, 1F, false);
             Vec3 location = rayTraceResult.getLocation();
             int stepX = 0;
             int stepY = 0;

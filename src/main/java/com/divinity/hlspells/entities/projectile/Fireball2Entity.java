@@ -28,7 +28,7 @@ import net.minecraft.world.entity.Entity.RemovalReason;
 public class Fireball2Entity extends BaseBoltEntity {
 
     public Fireball2Entity(EntityType<? extends BaseBoltEntity> type, Level world) {
-        super(type, world, ParticleTypes.PORTAL, ParticleTypes.SMOKE, (ParticlesInit.PURPLE_PARTICLE_SMALL.get()), ParticleTypes.SMOKE, ParticleTypes.SMOKE);
+        super(type, world, ParticleTypes.DRAGON_BREATH, ParticleTypes.SMOKE, ParticleTypes.WITCH, ParticlesInit.PURPLE_PARTICLE.get());
     }
 
     @Override

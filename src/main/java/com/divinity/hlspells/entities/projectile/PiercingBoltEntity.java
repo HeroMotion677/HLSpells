@@ -1,5 +1,6 @@
 package com.divinity.hlspells.entities.projectile;
 
+import com.divinity.hlspells.setup.init.ParticlesInit;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -25,12 +26,23 @@ public class PiercingBoltEntity extends BaseBoltEntity {
     private static final EntityDataAccessor<Integer> PIERCED_ENEMIES = SynchedEntityData.defineId(PiercingBoltEntity.class, EntityDataSerializers.INT);
     boolean isSpecial;
 
-    public PiercingBoltEntity(EntityType<? extends PiercingBoltEntity> type, Level world) {
-        super(type, world, ParticleTypes.ENCHANTED_HIT, ParticleTypes.ENCHANTED_HIT);
+    //Yellow
+    /*public PiercingBoltEntity(EntityType<? extends PiercingBoltEntity> type, Level world) {
+        super(type, world, ParticleTypes.WAX_ON, (ParticlesInit.YELLOW_PARTICLE.get()));
     }
 
     public PiercingBoltEntity(EntityType<? extends PiercingBoltEntity> type, Level world, boolean isSpecial) {
-        super(type, world, ParticleTypes.ENCHANTED_HIT, ParticleTypes.ENCHANTED_HIT);
+        super(type, world, ParticleTypes.WAX_ON, (ParticlesInit.YELLOW_PARTICLE.get()));
+        this.isSpecial = isSpecial;
+    }*/
+
+    //Green
+    public PiercingBoltEntity(EntityType<? extends PiercingBoltEntity> type, Level world) {
+        super(type, world, ParticleTypes.SCULK_CHARGE_POP, ParticleTypes.SCRAPE);
+    }
+
+    public PiercingBoltEntity(EntityType<? extends PiercingBoltEntity> type, Level world, boolean isSpecial) {
+        super(type, world, ParticleTypes.SCULK_CHARGE_POP, ParticleTypes.SCRAPE);
         this.isSpecial = isSpecial;
     }
 

@@ -59,6 +59,14 @@
       "hlspells:held_utility"
     ]
   },
+  "cast_sound": {
+    "category": "player",
+    "sounds": [
+      "hlspells:cast_mystical_1",
+      "hlspells:cast_mystical_2"],
+    "subtitle": "sounds.subtitle.cast_sound"
+
+  },
   "miscast_sound": {
     "subtitle": "sounds.subtitle.miscast_sound",
     "sounds": [

@@ -24,8 +24,7 @@ public class InvisibleTargetingEntity extends BaseBoltEntity {
 
     @Override
     protected void onHitBlock(@NotNull BlockHitResult result) {
-        this.level().addParticle(ParticleTypes.EXPLOSION, this.getX(), this.getY(), this.getZ(), 0.2D, 0.2D, 0.2D);
-        this.playSound(SoundEvents.SHULKER_BULLET_HIT, 1.0F, 1.0F);
+
         this.remove(RemovalReason.KILLED);
     }
 
