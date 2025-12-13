@@ -29,7 +29,7 @@ public class PiercingBoltIISpell extends Spell {
     float yOffset = 0f;
     float zOffset = 0;
     float zRot = 1.2F;
-    float velocity = 2.7F;
+    float velocity = 3.7F;
     float inaccuracy = 1.1F;
     boolean noVerticalMovement = false;
 
@@ -39,7 +39,7 @@ public class PiercingBoltIISpell extends Spell {
             Projectile projectile = new PiercingBoltEntity(EntityInit.PIERCING_BOLT_ENTITY.get(), p.level(), true);
             BaseBoltEntity bolt = (BaseBoltEntity) projectile;
             bolt.setInitialPosition(p.position());
-            this.velocity = 2.7F;
+            this.velocity = 3.7F;
             Vec3 viewVector = p.getViewVector(1F);
             Vec3 positionVector = new Vec3(p.getX() + (viewVector.x * this.viewVectorOffset) + this.xOffset, p.getEyeY() - 0.1 + this.viewVectorOffset + this.yOffset, p.getZ() + (viewVector.z * this.viewVectorOffset) + this.zOffset);
             Util.shootSpellRelative(p, bolt, positionVector, this.zRot, this.velocity, this.inaccuracy, this.noVerticalMovement);
@@ -57,17 +57,17 @@ public class PiercingBoltIISpell extends Spell {
 
     private static void playSound(Projectile projectile) {
         if (projectile instanceof BaseBoltEntity e && !(e instanceof FreezingBoltEntity || e instanceof FlamingBoltEntity || e instanceof InvisibleTargetingEntity || e instanceof FireballEntity || e instanceof Fireball2Entity)) {
-            projectile.playSound(SoundInit.CAST_SOUND.get(), 0.2F, 0.9F);
+            projectile.playSound(SoundInit.CAST_SOUND.get(), 0.6F, 0.9F);
 
         }
         else if (projectile instanceof FreezingBoltEntity) {
             projectile.playSound(SoundInit.CAST_ICE.get(), 0.4F, 0.7F);
-            projectile.playSound(SoundInit.CAST_SOUND.get(), 0.2F, 0.9F);
+            projectile.playSound(SoundInit.CAST_SOUND.get(), 0.6F, 0.9F);
 
         }
         else if (projectile instanceof FlamingBoltEntity) {
             projectile.playSound(SoundInit.CAST_FLAME.get(), 0.5F, 0.7F);
-            projectile.playSound(SoundInit.CAST_SOUND.get(), 0.2F, 0.9F);
+            projectile.playSound(SoundInit.CAST_SOUND.get(), 0.6F, 0.9F);
 
         }
         else if (projectile instanceof FireballEntity) {
@@ -81,7 +81,7 @@ public class PiercingBoltIISpell extends Spell {
             projectile.playSound(SoundInit.CAST_SOUND.get(), 0.4F, 0.9F);
 
         }else{
-            projectile.playSound(SoundInit.CAST_SOUND.get(), 0.2F, 0.9F);
+            projectile.playSound(SoundInit.CAST_SOUND.get(), 0.6F, 0.9F);
         }
     }
 }

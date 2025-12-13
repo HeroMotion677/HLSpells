@@ -99,16 +99,16 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 			addNbtToSpellItem(player);
 			if (!world.isClientSide()) {
 				if (isSpellBook) {
-					world.playSound(null, player.blockPosition(), SoundEvents.BOOK_PAGE_TURN, SoundSource.NEUTRAL, 0.6F, 0.7F);
+					world.playSound(null, player.blockPosition(), SoundEvents.BOOK_PAGE_TURN, SoundSource.NEUTRAL, 0.8F, 0.7F);
 				}
 				if (spell != SpellInit.EMPTY.get()) {
 					if (spell.getSpellType() == SpellAttributes.Type.CAST) {
 						switch (spell.getMarkerType()) {
 							case COMBAT:
-								world.playSound(null, player.blockPosition(), SoundInit.CHARGE_COMBAT.get(), SoundSource.PLAYERS, 0.8F, 0.7F);
+								world.playSound(null, player.blockPosition(), SoundInit.CHARGE_COMBAT.get(), SoundSource.PLAYERS, 0.9F, 0.7F);
 								currentCastTime = 0;
 							case UTILITY:
-								world.playSound(null, player.blockPosition(), SoundInit.CHARGE_UTILITY.get(), SoundSource.PLAYERS, 0.8F, 0.8F);
+								world.playSound(null, player.blockPosition(), SoundInit.CHARGE_UTILITY.get(), SoundSource.PLAYERS, 0.9F, 0.8F);
 								currentCastTime = 0;
 						}
 					}
@@ -248,7 +248,7 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 					Util.doParticles(player);
 				}
 			} else {
-				player.playSound(SoundInit.MISCAST_SOUND.get(), 0.9f, 0.7f);
+				player.playSound(SoundInit.MISCAST_SOUND.get(), 1.1f, 0.7f);
 				currentCastTime = 0;
 			}
 			resetNbtOnSpellItem(player);
@@ -265,6 +265,14 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 					switch (enchantment.toString()) {
 						case "minecraft:mending":
 							if (EnchantmentHelper.getItemEnchantmentLevel(Enchantments.MENDING, stack) >= 1) {
+								return !isSpellBook || stack.getItem() instanceof StaffItem;
+							}
+						case "minecraft:fire_aspect":
+							if (EnchantmentHelper.getItemEnchantmentLevel(Enchantments.FIRE_ASPECT, stack) >= 1) {
+								return !isSpellBook || stack.getItem() instanceof StaffItem;
+							}
+						case "minecraft:smite":
+							if (EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SMITE, stack) >= 1) {
 								return !isSpellBook || stack.getItem() instanceof StaffItem;
 							}
 						case "minecraft:unbreaking":

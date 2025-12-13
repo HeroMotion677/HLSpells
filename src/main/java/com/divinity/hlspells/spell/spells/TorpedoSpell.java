@@ -24,7 +24,7 @@ public class TorpedoSpell extends Spell {
     public SpellConsumer<Player> getAction() {
         return p -> {
             int i = p.getUseItem().getUseDuration();
-            if (i >= 10) {
+            if (i >= 10 && p.onGround()) {
                 int j = 5;
                 float f7 = p.getYRot();
                 float f = p.getXRot();

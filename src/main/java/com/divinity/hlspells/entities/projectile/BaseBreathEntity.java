@@ -40,7 +40,9 @@ public abstract class BaseBreathEntity extends Arrow {
             if (this.level() instanceof ServerLevel level && this.tickCount >= 2 ) {
                 for (int i = 0; i < this.particleTypes.length; i++) {
 
-                    level.sendParticles(this.particleTypes[i], this.getX() - vector3d1.x, this.getY() - vector3d1.y + 0.15D, this.getZ() - vector3d1.z, 25, 0, 0, 0, 0.018);
+                   /* level.sendParticles(this.particleTypes[i], this.getX() - vector3d1.x, this.getY() - vector3d1.y + 0.15D, this.getZ() - vector3d1.z, 10, 0, 0, 0, 0.012);
+                    level.sendParticles(this.particleTypes[i], this.getX() - vector3d1.x, this.getY() - vector3d1.y + 0.15D, this.getZ() - vector3d1.z, 15, 0, 0, 0, 0.016);*/
+                    level.sendParticles(this.particleTypes[i], this.getX() - vector3d1.x, this.getY() - vector3d1.y /*+ 0.15D*/, this.getZ() - vector3d1.z, 25, 0, 0, 0, 0.018);
                     //level.sendParticles(this.particleTypes[i], this.getX() - (vector3d1.x), this.getY() - (vector3d1.y + (baseYOffset + ((double) i / 110))), this.getZ() - (vector3d1.z), 15, 0, 0, 0, 0.018);
                 }
             }

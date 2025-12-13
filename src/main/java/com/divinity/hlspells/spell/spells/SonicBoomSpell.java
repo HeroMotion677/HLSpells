@@ -9,6 +9,7 @@ import com.divinity.hlspells.spell.SpellConsumer;
 import com.divinity.hlspells.util.Util;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.particles.SimpleParticleType;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
@@ -17,6 +18,7 @@ import net.minecraft.world.entity.ai.behavior.warden.SonicBoom;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.projectile.WitherSkull;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.registries.RegistryObject;
 
@@ -37,17 +39,26 @@ public class SonicBoomSpell extends Spell {
 
 
     @Override
-    protected SpellConsumer<Player> getAction() {
+    public SpellConsumer<Player> getAction() {
         return p -> {
             var entity = Util.rayTrace(p.level(), p, 150D);
+
             if(entity !=null){
                 Vec3 vec3 = p.position().add(0.0D, (double)1.6F, 0.0D);
                 Vec3 vec31 = entity.getEyePosition().subtract(vec3);
                 Vec3 vec32 = vec31.normalize();
 
                 for(int i = 1; i < Mth.floor(vec31.length()) + 7; ++i) {
-                    Vec3 vec33 = vec3.add(vec32.scale((double)i));
-                    p.level().addParticle(ParticleTypes.SONIC_BOOM, vec33.x, vec33.y, vec33.z, 0.0D, 0.0D, 0.0D);
+                    Vec3 vec33 = vec3.add(vec32.scale((double) i));
+                    Level world = p.level();
+
+                    if (p.level() instanceof ServerLevel level) {
+
+
+                        //level.addAlwaysVisibleParticle(ParticleTypes.SONIC_BOOM, vec33.x, vec33.y, vec33.z, 0.0D, 0.0D, 0.0D);
+                        level.sendParticles(ParticleTypes.SONIC_BOOM, vec33.x, vec33.y, vec33.z, 1, 0.0D, 0.0D, 0.0D, 0.0D);
+
+                    }
                 }
 
                 p.playSound(SoundEvents.WARDEN_SONIC_BOOM, 2.0F, 1.0F);
@@ -67,7 +78,14 @@ public class SonicBoomSpell extends Spell {
 
                 for(int i = 1; i < Mth.floor(vec31.length()) + 7; ++i) {
                     Vec3 vec33 = vec3.add(vec32.scale((double)i));
-                    p.level().addParticle(ParticleTypes.SONIC_BOOM, vec33.x, vec33.y, vec33.z, 0.0D, 0.0D, 0.0D);
+                    Level world = p.level();
+                    if (p.level() instanceof ServerLevel level) {
+
+
+                        //level.addAlwaysVisibleParticle(ParticleTypes.SONIC_BOOM, vec33.x, vec33.y, vec33.z, 0.0D, 0.0D, 0.0D);
+                        level.sendParticles(ParticleTypes.SONIC_BOOM, vec33.x, vec33.y, vec33.z, 1, 0.0D, 0.0D, 0.0D, 0.0D);
+
+                    }
                 }
 
                 p.playSound(SoundEvents.WARDEN_SONIC_BOOM, 2.0F, 1.0F);

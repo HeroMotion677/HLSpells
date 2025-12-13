@@ -35,7 +35,8 @@ public class WitherSkullEntity extends WitherSkull {
                 Vec3 vector3d1 = this.getDeltaMovement();
                 double baseYOffset = 0D;
                 if(this.tickCount >= 2)
-                level.sendParticles(ParticleTypes.SMOKE, this.getX() - vector3d1.x, this.getY() - (vector3d1.y + (baseYOffset / 100)), this.getZ() - vector3d1.z, 25, 0, 0, 0, 0.015);
+               // level.sendParticles(ParticleTypes.SMOKE, this.getX() - vector3d1.x, this.getY() - (vector3d1.y + (baseYOffset / 100)), this.getZ() - vector3d1.z, 25, 0, 0, 0, 0.015);
+                level.sendParticles(ParticleTypes.SMOKE, this.getX() - vector3d1.x, this.getY() - vector3d1.y + 0.15D, this.getZ() - vector3d1.z, 25, 0, 0, 0, 0.015);
 
             //level.sendParticles(ParticleTypes.SMOKE, this.getX() - this.random.nextInt(5), this.getY(), this.getZ() - this.random.nextFloat(), 100, 0.0D, 0.0D, 0.0D, 0.0015D);
             }

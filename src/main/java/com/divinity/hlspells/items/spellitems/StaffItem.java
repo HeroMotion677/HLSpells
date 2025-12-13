@@ -119,7 +119,7 @@ public class StaffItem extends SpellHoldingItem {
         return false;
     }*/
     public boolean canApplyAtEnchantingTable(ItemStack stack, net.minecraft.world.item.enchantment.Enchantment enchantment) {
-        Set<Enchantment> ALLOWED_ENCHANTMENTS = Sets.newHashSet(Enchantments.UNBREAKING, Enchantments.MENDING, EnchantmentInit.SOUL_BOND.get());
+        Set<Enchantment> ALLOWED_ENCHANTMENTS = Sets.newHashSet(Enchantments.UNBREAKING, Enchantments.MENDING, Enchantments.SMITE, Enchantments.FIRE_ASPECT, EnchantmentInit.SOUL_BOND.get());
         if (ALLOWED_ENCHANTMENTS.contains(enchantment)) {
             return true;
         }
