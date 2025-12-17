@@ -1,6 +1,7 @@
 {
-  "parent": "hlspells:item/staff/golden/lapis/golden_staff_1",
+  "parent": "hlspells:item/staff/golden/amethyst/golden_staff_1",
   "textures": {
-    "layer0": "hlspells:item/staff/golden/lapis/model/golden_staff_3"
+		"4": "hlspells:item/staff/golden_staff",
+		"5": "hlspells:item/staff/crystals/lapis_crystal_4"
   }
 }

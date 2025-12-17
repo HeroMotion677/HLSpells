@@ -1,6 +1,7 @@
 {
   "parent": "hlspells:item/staff/wood/lapis/wood_staff_1",
   "textures": {
-    "layer0": "hlspells:item/staff/wood/lapis/model/wood_staff_2"
+    "3": "hlspells:item/staff/wood_staff",
+		"5": "hlspells:item/staff/crystals/lapis_crystal_2"
   }
 }

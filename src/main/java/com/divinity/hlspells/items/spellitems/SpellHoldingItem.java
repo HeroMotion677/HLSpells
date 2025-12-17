@@ -178,6 +178,13 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 							    cap.setSpellSoundBuffer(30);
 							    player.level().playSound(null, player.blockPosition(), SoundInit.HELD_COMBAT.get(), SoundSource.PLAYERS, 2.0F, 1.0F);
 								cap.setSpellSoundBuffer(23);
+						} else if (spell.getTrueDisplayName() == "Freezing Breath") {
+							player.level().playSound(null, player.blockPosition(), SoundEvents.WITHER_AMBIENT, SoundSource.PLAYERS, 0.2F, 0.7F);
+							cap.setSpellSoundBuffer(23);
+							player.level().playSound(null, player.blockPosition(), SoundEvents.BLAZE_AMBIENT, SoundSource.PLAYERS, 0.1F, 1.9F);
+							cap.setSpellSoundBuffer(30);
+							player.level().playSound(null, player.blockPosition(), SoundInit.HELD_COMBAT.get(), SoundSource.PLAYERS, 2.0F, 1.0F);
+							cap.setSpellSoundBuffer(23);
 						} else if (spell.getMarkerType() == SpellAttributes.Marker.COMBAT) {
 							player.level().playSound(null, player.blockPosition(), SoundInit.HELD_COMBAT.get(), SoundSource.PLAYERS, 2.1F, 1.0F);
 							cap.setSpellSoundBuffer(23);
