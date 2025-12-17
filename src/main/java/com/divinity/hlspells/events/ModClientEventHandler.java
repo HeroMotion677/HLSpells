@@ -100,6 +100,9 @@ public class ModClientEventHandler {
             event.registerEntityRenderer(EntityInit.SUMMONED_WITHER_SKELETON_ENTITY.get(), WitherSkeletonRenderer::new);
             event.registerEntityRenderer(EntityInit.WITHER_SKULL_ENTITY.get(), WitherSkullRenderer::new);
             event.registerEntityRenderer(EntityInit.FLAMING_BREATH_ENTITY.get(), ctx -> new BaseBoltRenderer<>(ctx, getBoltLocation("textures/entity/bolt/breath_bolt.png")));
+            event.registerEntityRenderer(EntityInit.FREEZING_BREATH_ENTITY.get(), ctx -> new BaseBoltRenderer<>(ctx, getBoltLocation("textures/entity/bolt/breath_bolt.png")));
+            event.registerEntityRenderer(EntityInit.WITHER_BREATH_ENTITY.get(), ctx -> new BaseBoltRenderer<>(ctx, getBoltLocation("textures/entity/bolt/breath_bolt.png")));
+
         }
 
         /**

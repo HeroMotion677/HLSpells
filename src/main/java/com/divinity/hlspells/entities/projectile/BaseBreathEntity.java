@@ -31,18 +31,18 @@ public abstract class BaseBreathEntity extends Arrow {
     public void tick() {
         super.tick();
         // Remove if it's more than 5 block away from initial pos
-        if(this.tickCount >= 2)
+        if(this.tickCount >= 3)
         if (this.initialPosition != null) {
-            if (this.getOwner() != null && Math.sqrt(this.distanceToSqr(this.initialPosition)) > 5) this.discard();
-            else if (this.getOwner() == null) this.discard();
+            if (this.getOwner() != null && Math.sqrt(this.distanceToSqr(this.initialPosition)) > 3.5) this.remove(RemovalReason.KILLED);
+            else if (this.getOwner() == null) this.remove(RemovalReason.KILLED);
             Vec3 vector3d1 = this.getDeltaMovement();
             double baseYOffset = 0.1D;
-            if (this.level() instanceof ServerLevel level && this.tickCount >= 2 ) {
+            if (this.level() instanceof ServerLevel level && this.tickCount >= 3 ) {
                 for (int i = 0; i < this.particleTypes.length; i++) {
 
                    /* level.sendParticles(this.particleTypes[i], this.getX() - vector3d1.x, this.getY() - vector3d1.y + 0.15D, this.getZ() - vector3d1.z, 10, 0, 0, 0, 0.012);
                     level.sendParticles(this.particleTypes[i], this.getX() - vector3d1.x, this.getY() - vector3d1.y + 0.15D, this.getZ() - vector3d1.z, 15, 0, 0, 0, 0.016);*/
-                    level.sendParticles(this.particleTypes[i], this.getX() - vector3d1.x, this.getY() - vector3d1.y /*+ 0.15D*/, this.getZ() - vector3d1.z, 25, 0, 0, 0, 0.018);
+                    level.sendParticles(this.particleTypes[i], this.getX() - vector3d1.x, this.getY() - vector3d1.y + 0.15D, this.getZ() - vector3d1.z, 18, 0, 0, 0, 0.018);
                     //level.sendParticles(this.particleTypes[i], this.getX() - (vector3d1.x), this.getY() - (vector3d1.y + (baseYOffset + ((double) i / 110))), this.getZ() - (vector3d1.z), 15, 0, 0, 0, 0.018);
                 }
             }
@@ -52,14 +52,12 @@ public abstract class BaseBreathEntity extends Arrow {
     @Override
     public void checkDespawn() {
         super.checkDespawn();
-        if (this.tickCount >= 15) this.discard();
+        if (this.tickCount >= 15) this.remove(RemovalReason.KILLED);
     }
 
     @Override
     public boolean hurt(@NotNull DamageSource source, float amount) {
         if (this.level() instanceof ServerLevel level && source.isIndirect() && this.isAlive()) {
-            this.playSound(SoundEvents.FIRECHARGE_USE, 0.3F, 1.3F);
-            level.sendParticles(ParticleTypes.SMOKE, this.getX(), this.getY(), this.getZ(), 1, 0.2D, 0D, 0.2D, 0.3D);
             this.remove(RemovalReason.KILLED);
             return true;
         }

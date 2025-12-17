@@ -93,7 +93,7 @@ public class PiercingBoltEntity extends BaseBoltEntity {
     @Override
     public void checkDespawn() {
         super.checkDespawn();
-        if (this.tickCount >= 50) this.discard();
+        if (this.tickCount >= 35) this.discard();
     }
     @Override
     protected void onHitBlock(@NotNull BlockHitResult blockRayTraceResult) {

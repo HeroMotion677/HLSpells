@@ -40,7 +40,7 @@ public class BreathSpell<T extends Projectile> extends Spell {
         this.yOffset = 0;
         this.zOffset = 0;
         this.zRot = 1.2F;
-        this.velocity = 2.5F;
+        this.velocity = 0.7F;
         this.inaccuracy = 1.1F;
         this.noVerticalMovement = false;
         Vec3 initialPosition;
@@ -54,7 +54,7 @@ public class BreathSpell<T extends Projectile> extends Spell {
             if (projectile instanceof Projectile trueProjectile) {
                 if (trueProjectile instanceof BaseBreathEntity bolt) {
                     bolt.setInitialPosition(p.position());
-                    this.velocity = 1.7F;
+                    this.velocity = 0.7F;
                 }
 
                 Vec3 viewVector = p.getViewVector(1.0F);
@@ -67,6 +67,20 @@ public class BreathSpell<T extends Projectile> extends Spell {
                     double d1 = (projectile.getY() + (viewVector.y * 1F));
                     double d2 = (projectile.getZ() + (viewVector.z * 1F));
                     world.addParticle(ParticleTypes.FLAME, d0, d1, d2, 0, 0, 0);
+                }
+                if(projectile instanceof FreezingBreathEntity){
+                    Level world = p.level();
+                    double d0 = (projectile.getX() + (viewVector.x * 1F));
+                    double d1 = (projectile.getY() + (viewVector.y * 1F));
+                    double d2 = (projectile.getZ() + (viewVector.z * 1F));
+                    world.addParticle(ParticleTypes.SNOWFLAKE, d0, d1, d2, 0, 0, 0);
+                }
+                if(projectile instanceof WitherBreathEntity){
+                    Level world = p.level();
+                    double d0 = (projectile.getX() + (viewVector.x * 1F));
+                    double d1 = (projectile.getY() + (viewVector.y * 1F));
+                    double d2 = (projectile.getZ() + (viewVector.z * 1F));
+                    world.addParticle(ParticleTypes.SMOKE, d0, d1, d2, 0, 0, 0);
                 }
 
                 return true;
