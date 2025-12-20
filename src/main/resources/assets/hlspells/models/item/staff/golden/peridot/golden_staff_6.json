@@ -1,0 +1,7 @@
+{
+  "parent": "hlspells:item/staff/golden/peridot/golden_staff_1",
+  "textures": {
+		"4": "hlspells:item/staff/golden_staff",
+		"5": "hlspells:item/staff/crystals/peridot_crystal_5"
+  }
+}

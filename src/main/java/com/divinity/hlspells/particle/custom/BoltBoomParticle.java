@@ -22,10 +22,15 @@ public class BoltBoomParticle extends HugeExplosionParticle {
 
         return j | k << 16;
     }
+    @Override
+    public ParticleRenderType getRenderType(){
+        return ParticleRenderType.PARTICLE_SHEET_TRANSLUCENT;
+    }
     protected BoltBoomParticle(ClientLevel pLevel, double pX, double pY, double pZ, double pQuadSizeMultiplier, SpriteSet pSprites) {
         super(pLevel, pX, pY, pZ, pQuadSizeMultiplier, pSprites);
         this.lifetime = 16;
         this.quadSize = 0.5F;
+        this.alpha = 0.7F;
         this.setSpriteFromAge(pSprites);
     }
 

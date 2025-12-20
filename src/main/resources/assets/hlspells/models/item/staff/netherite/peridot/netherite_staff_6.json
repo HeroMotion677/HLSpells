@@ -1,0 +1,7 @@
+{
+  "parent": "hlspells:item/staff/netherite/peridot/netherite_staff_1",
+  "textures": {
+    "4": "hlspells:item/staff/netherite_staff",
+		"5": "hlspells:item/staff/crystals/peridot_crystal_5"
+  }
+}

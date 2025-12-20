@@ -1,5 +1,5 @@
 {
-  "parent": "hlspells:item/staff/netherite/lapis/netherite_staff_1",
+  "parent": "hlspells:item/staff/netherite/amethyst/netherite_staff_1",
   "textures": {
     "4": "hlspells:item/staff/netherite_staff",
 		"5": "hlspells:item/staff/crystals/amethyst_crystal_2"

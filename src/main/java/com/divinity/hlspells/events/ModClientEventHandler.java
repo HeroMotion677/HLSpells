@@ -71,7 +71,8 @@ public class ModClientEventHandler {
             ItemBlockRenderTypes.setRenderLayer(BlockInit.ORB_OF_ENCHANTING.get(), RenderType.cutout());
         }
 
-
+  /*  AnimationStack animationStack = PlayerAnimationAccess.getPlayerAnimLayer(clientPlayer);
+animationStack.addAnimLayer(...);*/
         @SuppressWarnings("all")
         @SubscribeEvent
         @OnlyIn(Dist.CLIENT)

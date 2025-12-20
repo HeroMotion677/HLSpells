@@ -40,7 +40,7 @@ public class BreathSpell<T extends Projectile> extends Spell {
         this.yOffset = 0;
         this.zOffset = 0;
         this.zRot = 1.2F;
-        this.velocity = 0.7F;
+        this.velocity = 0.5F;
         this.inaccuracy = 1.1F;
         this.noVerticalMovement = false;
         Vec3 initialPosition;
@@ -54,7 +54,7 @@ public class BreathSpell<T extends Projectile> extends Spell {
             if (projectile instanceof Projectile trueProjectile) {
                 if (trueProjectile instanceof BaseBreathEntity bolt) {
                     bolt.setInitialPosition(p.position());
-                    this.velocity = 0.7F;
+                    this.velocity = 0.5F;
                 }
 
                 Vec3 viewVector = p.getViewVector(1.0F);

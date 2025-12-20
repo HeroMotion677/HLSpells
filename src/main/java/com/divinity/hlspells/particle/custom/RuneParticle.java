@@ -24,11 +24,12 @@ public class RuneParticle extends TextureSheetParticle {
         this.rCol = 1f;
         this.gCol = 1f;
         this.bCol = 1f;
+        this.alpha = 0.7f;
     }
 
     @Override
     public ParticleRenderType getRenderType(){
-        return ParticleRenderType.PARTICLE_SHEET_LIT;
+        return ParticleRenderType.PARTICLE_SHEET_TRANSLUCENT;
     }
 
     public int getLightColor(float pPartialTick) {
