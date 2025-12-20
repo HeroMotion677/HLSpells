@@ -31,7 +31,7 @@ public abstract class BaseBreathEntity extends Arrow {
     public void tick() {
         super.tick();
         // Remove if it's more than 5 block away from initial pos
-        if(this.tickCount >= 3)
+        if(this.tickCount >= 3.5)
         if (this.initialPosition != null) {
             if (this.getOwner() != null && Math.sqrt(this.distanceToSqr(this.initialPosition)) > 3.5) this.remove(RemovalReason.KILLED);
             else if (this.getOwner() == null) this.remove(RemovalReason.KILLED);
@@ -39,11 +39,11 @@ public abstract class BaseBreathEntity extends Arrow {
             double baseYOffset = 0.1D;
             if (this.level() instanceof ServerLevel level && this.tickCount >= 3 ) {
                 for (int i = 0; i < this.particleTypes.length; i++) {
+                    level.sendParticles(this.particleTypes[i], this.getX() - vector3d1.x, this.getY() - vector3d1.y + 0.15D, this.getZ() - vector3d1.z, 5, 0, 0, 0, 0.015);
 
-                   /* level.sendParticles(this.particleTypes[i], this.getX() - vector3d1.x, this.getY() - vector3d1.y + 0.15D, this.getZ() - vector3d1.z, 10, 0, 0, 0, 0.012);
-                    level.sendParticles(this.particleTypes[i], this.getX() - vector3d1.x, this.getY() - vector3d1.y + 0.15D, this.getZ() - vector3d1.z, 15, 0, 0, 0, 0.016);*/
-                    level.sendParticles(this.particleTypes[i], this.getX() - vector3d1.x, this.getY() - vector3d1.y + 0.15D, this.getZ() - vector3d1.z, 18, 0, 0, 0, 0.018);
-                    //level.sendParticles(this.particleTypes[i], this.getX() - (vector3d1.x), this.getY() - (vector3d1.y + (baseYOffset + ((double) i / 110))), this.getZ() - (vector3d1.z), 15, 0, 0, 0, 0.018);
+                if (this.tickCount >= 6 ) {
+                        level.sendParticles(this.particleTypes[i], this.getX() - vector3d1.x, this.getY() - vector3d1.y + 0.15D, this.getZ() - vector3d1.z, 18, 0, 0, 0, 0.02);
+                    }
                 }
             }
         }

@@ -353,7 +353,7 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 	@Override
 	@NotNull
 	public UseAnim getUseAnimation(@NotNull ItemStack pStack) {
-		return isSpellBook ? UseAnim.CROSSBOW : UseAnim.BOW;
+		return isSpellBook ? UseAnim.CROSSBOW : UseAnim.BLOCK;
 	}
 
 	@Override

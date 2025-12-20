@@ -18,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
 public class FreezingBreathEntity extends BaseBreathEntity {
 
     public FreezingBreathEntity(EntityType<? extends FreezingBreathEntity> type, Level world) {
-        super(type, world, ParticleTypes.SNOWFLAKE);
+        super(type, world, ParticleTypes.CLOUD);
     }
 
     @Override
