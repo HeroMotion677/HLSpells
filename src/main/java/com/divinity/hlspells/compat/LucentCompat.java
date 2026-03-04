@@ -4,10 +4,13 @@ import com.divinity.hlspells.HLSpells;
 import com.divinity.hlspells.spell.spells.Illuminate;
 import com.divinity.hlspells.spell.spells.IlluminateII;
 import com.divinity.hlspells.util.SpellUtils;
+import com.legacy.lucent.api.EntityBrightnessMap;
 import com.legacy.lucent.api.plugin.ILucentPlugin;
 import com.legacy.lucent.api.plugin.LucentPlugin;
+import com.legacy.lucent.api.registry.EntityLightSourcePosRegistry;
 import com.legacy.lucent.api.registry.EntityLightingRegistry;
 import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
@@ -22,6 +25,25 @@ public final class LucentCompat implements ILucentPlugin {
         return HLSpells.MODID;
     }
 
+//    @Override
+//    public void registerEntityLightSourcePositionGetter(final EntityLightSourcePosRegistry registry)
+//    {
+//        registry.register(EntityType.PLAYER,Entity::position)  ->
+//        {
+//                    if (player instanceof AbstractClientPlayer clientPlayer) {
+//                        if (SpellUtils.getSpell(clientPlayer.getUseItem()) instanceof Illuminate spell && spell.canUseSpell()) {
+//                            return 10;
+//                        }
+//                        else if(SpellUtils.getSpell(clientPlayer.getUseItem()) instanceof IlluminateII spell2 && spell2.canUseSpell()){
+//
+//                            return 16;
+//                        }
+//                    }
+//                    return 0;
+//        });
+//
+//    }
+
     @Override
     public void registerEntityLightings(EntityLightingRegistry registry) {
         registry.register(EntityType.PLAYER, (Player player) -> {
@@ -30,7 +52,8 @@ public final class LucentCompat implements ILucentPlugin {
                     return 10;
                 }
                 else if(SpellUtils.getSpell(clientPlayer.getUseItem()) instanceof IlluminateII spell2 && spell2.canUseSpell()){
-                    return 16;
+
+                    return 15;
                 }
             }
             return 0;

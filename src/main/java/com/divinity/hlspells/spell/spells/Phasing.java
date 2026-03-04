@@ -5,6 +5,9 @@ import com.divinity.hlspells.spell.Spell;
 import com.divinity.hlspells.spell.SpellAttributes;
 import com.divinity.hlspells.spell.SpellConsumer;
 import net.minecraft.core.particles.SimpleParticleType;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
@@ -22,6 +25,7 @@ public class Phasing extends Spell {
         return p -> {
             this.canUse = !p.noPhysics && !p.onClimbable() && !p.isPassenger();
             p.setInvulnerable(true);
+            p.addEffect(new MobEffectInstance(MobEffects.DARKNESS, 3, 5, false, false, false));
             return this.canUse;
         };
     }

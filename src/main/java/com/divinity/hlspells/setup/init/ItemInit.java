@@ -41,9 +41,9 @@ public class ItemInit {
     public static final RegistryObject<Item> TOTEM_OF_RETURNING = ITEMS.register("totem_of_returning", ReturningTotem::new);
     public static final RegistryObject<Item> TOTEM_OF_GRIEFING = ITEMS.register("totem_of_griefing", GriefingTotem::new);
     public static final RegistryObject<Item> TOTEM_OF_KEEPING = ITEMS.register("totem_of_keeping", KeepingTotem::new);
-    public static final RegistryObject<Item> SPELL_BOOK = ITEMS.register("spell_book", () -> new SpellHoldingItem(new Item.Properties().durability(50), true));
-    public static final RegistryObject<Item> WAND = ITEMS.register("lapis_wand", () -> new SpellHoldingItem(new Item.Properties().durability(60), false));
-    public static final RegistryObject<Item> AMETHYST_WAND = ITEMS.register("amethyst_wand", () -> new SpellHoldingItem(new Item.Properties().durability(60), false));
+    public static final RegistryObject<Item> SPELL_BOOK = ITEMS.register("spell_book", () -> new SpellHoldingItem(new Item.Properties().durability(100), true));
+    public static final RegistryObject<Item> WAND = ITEMS.register("lapis_wand", () -> new SpellHoldingItem(new Item.Properties().durability(150), false));
+    public static final RegistryObject<Item> AMETHYST_WAND = ITEMS.register("amethyst_wand", () -> new SpellHoldingItem(new Item.Properties().durability(150), false));
     public static final RegistryObject<Item> WIZARD_HAT = ITEMS.register("wizard_hat", () -> new WizardHatArmorItem(WizardArmorMaterial.WIZHAT, ArmorItem.Type.HELMET, new Item.Properties().rarity(RARE)));
     public static final RegistryObject<BlockItem> ALTAR_ITEM = ITEMS.register("altar_of_attunement", () -> new BlockItem(BlockInit.ALTAR_OF_ATTUNEMENT_BLOCK.get(), new Item.Properties()));
 
@@ -51,29 +51,29 @@ public class ItemInit {
 
     // Staffs
     public static final RegistryObject<Item> WOODEN_STAFF = ITEMS.register("wooden_lapis_staff", () ->
-            new StaffItem(new Item.Properties().rarity(RARE).durability(70),
-                    2D, -3.2D, true,0.25 * 20, false, false, 30, () ->  Ingredient.of(ItemTags.PLANKS)));
+            new StaffItem(new Item.Properties().rarity(RARE).durability(200),
+                    2D, -3.2D, true,0.26 * 20, false, false, 50, () ->  Ingredient.of(ItemTags.PLANKS)));
 
     public static final RegistryObject<Item> GOLDEN_STAFF = ITEMS.register("golden_lapis_staff", () ->
-            new StaffItem(new Item.Properties().rarity(EPIC).durability(350),
-                    5D, -2.5D, true,0.65 * 20, false, false, 3.5, () ->  Ingredient.of(new ItemLike[]{Items.GOLD_INGOT})));
+            new StaffItem(new Item.Properties().rarity(EPIC).durability(1500),
+                    5D, -2.5D, true,0.41 * 20, false, false, 30, () ->  Ingredient.of(new ItemLike[]{Items.GOLD_INGOT})));
 
     public static final RegistryObject<Item> NETHER_STAFF = ITEMS.register("netherite_lapis_staff", () ->
-            new StaffItem(new Item.Properties().rarity(EPIC).durability(700),
-                    7D, -3D, true,0.37 * 20, false, true, 13, () ->  Ingredient.of(new ItemLike[]{Items.NETHERITE_INGOT})));
+            new StaffItem(new Item.Properties().rarity(EPIC).durability(2000),
+                    7D, -3D, true,0.31 * 20, false, true, 44, () ->  Ingredient.of(new ItemLike[]{Items.NETHERITE_INGOT})));
 
     // Amethyst Variants
     public static final RegistryObject<Item> WOODEN_STAFF_AMETHYST = ITEMS.register("wooden_amethyst_staff", () ->
-            new StaffItem(new Item.Properties().rarity(RARE).durability(70),
-                    2D, -3.2D, true,0.25 * 20, true, false, 30, () ->  Ingredient.of(ItemTags.PLANKS)));
+            new StaffItem(new Item.Properties().rarity(RARE).durability(200),
+                    2D, -3.2D, true,0.40 * 20, true, false, 50, () ->  Ingredient.of(ItemTags.PLANKS)));
 
     public static final RegistryObject<Item> GOLDEN_STAFF_AMETHYST = ITEMS.register("golden_amethyst_staff", () ->
-            new StaffItem(new Item.Properties().rarity(EPIC).durability(350),
-                    5D, -2.5D, true, 0.65 * 20, true, false, 3.5, () ->  Ingredient.of(new ItemLike[]{Items.GOLD_INGOT})));
+            new StaffItem(new Item.Properties().rarity(EPIC).durability(1500),
+                    5D, -2.5D, true, 0.60 * 20, true, false, 25, () ->  Ingredient.of(new ItemLike[]{Items.GOLD_INGOT})));
 
     public static final RegistryObject<Item> NETHER_STAFF_AMETHYST = ITEMS.register("netherite_amethyst_staff", () ->
-            new StaffItem(new Item.Properties().rarity(EPIC).durability(700),
-                    7D, -3D,  true, 0.37 * 20, true, true, 13, () ->  Ingredient.of(new ItemLike[]{Items.NETHERITE_INGOT})));
+            new StaffItem(new Item.Properties().rarity(EPIC).durability(2000),
+                    7D, -3D,  true, 0.45 * 20, true, true, 40, () ->  Ingredient.of(new ItemLike[]{Items.NETHERITE_INGOT})));
 
 
     public static final List<RegistryObject<Item>> STAFFS = Lists.newArrayList(WOODEN_STAFF, WOODEN_STAFF_AMETHYST, GOLDEN_STAFF, GOLDEN_STAFF_AMETHYST, NETHER_STAFF, NETHER_STAFF_AMETHYST);

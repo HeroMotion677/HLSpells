@@ -32,6 +32,7 @@ public class PhasingII extends Spell {
                 p.setInvisible(true);
                 p.setSilent(true);
                 p.setInvulnerable(true);
+                p.addEffect(new MobEffectInstance(MobEffects.DARKNESS, 3, 5, false, false, false));
             }
             return this.canUse;
         };
