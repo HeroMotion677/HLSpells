@@ -13,12 +13,16 @@ import com.divinity.hlspells.spell.SpellAttributes;
 import com.divinity.hlspells.spell.spells.*;
 import com.divinity.hlspells.util.SpellUtils;
 import com.divinity.hlspells.util.Util;
+import com.mojang.logging.LogUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -26,20 +30,24 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.EnchantmentTableBlock;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.extensions.IForgeItem;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -49,7 +57,7 @@ import java.util.Random;
 import java.util.function.Predicate;
 
 public class SpellHoldingItem extends ProjectileWeaponItem {
-
+	private static final Logger LOGGER = LogUtils.getLogger();
 	private int currentCastTime = 0;
 	private final boolean isSpellBook;
 	private boolean wasHolding;
@@ -204,6 +212,45 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 				});
 			}
 		}
+	}
+
+	@Override
+	public InteractionResult useOn(UseOnContext pContext) {
+		Spell spell = SpellUtils.getSpell(pContext.getItemInHand());
+		if(spell instanceof RespawnSpell) {
+			BlockPos blockpos = pContext.getClickedPos();
+			Level level = pContext.getLevel();
+			if (!level.getBlockState(blockpos).is(Blocks.LODESTONE)) {
+				return super.useOn(pContext);
+			} else {
+				level.playSound((Player) null, blockpos, SoundEvents.LODESTONE_COMPASS_LOCK, SoundSource.PLAYERS, 1.0F, 1.0F);
+				Player player = pContext.getPlayer();
+				ItemStack itemstack = pContext.getItemInHand();
+				boolean flag = !player.getAbilities().instabuild && itemstack.getCount() == 1;
+				if (flag) {
+					this.addLodestoneTags(level.dimension(), blockpos, itemstack.getOrCreateTag());
+				} else {
+					CompoundTag compoundtag = itemstack.hasTag() ? itemstack.getTag().copy() : new CompoundTag();
+					itemstack.setTag(compoundtag);
+					if (!player.getAbilities().instabuild) {
+						itemstack.shrink(1);
+					}
+
+					this.addLodestoneTags(level.dimension(), blockpos, compoundtag);
+				}
+
+				return InteractionResult.sidedSuccess(level.isClientSide);
+			}
+		}
+		return super.useOn(pContext);
+	}
+
+	private void addLodestoneTags(ResourceKey<Level> pLodestoneDimension, BlockPos pLodestonePos, CompoundTag pCompoundTag) {
+		pCompoundTag.put("LodestonePos", NbtUtils.writeBlockPos(pLodestonePos));
+		Level.RESOURCE_KEY_CODEC.encodeStart(NbtOps.INSTANCE, pLodestoneDimension).resultOrPartial(LOGGER::error).ifPresent((p_40731_) -> {
+			pCompoundTag.put("LodestoneDimension", p_40731_);
+		});
+		pCompoundTag.putBoolean("LodestoneTracked", true);
 	}
 
 	@Override
