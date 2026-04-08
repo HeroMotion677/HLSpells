@@ -5,7 +5,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "weight": 5,
+          "weight": 1,
           "quality": 1,
           "name": "hlspells:spell_book",
           "functions": [

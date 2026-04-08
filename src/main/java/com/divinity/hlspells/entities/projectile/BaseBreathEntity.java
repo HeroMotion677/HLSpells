@@ -42,7 +42,7 @@ public abstract class BaseBreathEntity extends Arrow {
                     level.sendParticles(this.particleTypes[i], this.getX() - vector3d1.x, this.getY() - vector3d1.y + 0.15D, this.getZ() - vector3d1.z, 5, 0, 0, 0, 0.015);
 
                 if (this.tickCount >= 6 ) {
-                        level.sendParticles(this.particleTypes[i], this.getX() - vector3d1.x, this.getY() - vector3d1.y + 0.15D, this.getZ() - vector3d1.z, 18, 0, 0, 0, 0.02);
+                        level.sendParticles(this.particleTypes[i], this.getX() - vector3d1.x, this.getY() - vector3d1.y + 0.15D, this.getZ() - vector3d1.z, 12, 0, 0, 0, 0.02);
                     }
                 }
             }

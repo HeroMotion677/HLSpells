@@ -5,7 +5,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "weight": 5,
+          "weight": 2,
           "quality": 1,
           "name": "hlspells:spell_book",
           "functions": [
@@ -49,13 +49,13 @@
         },
         {
           "type": "minecraft:item",
-          "weight": 1,
+          "weight": 2,
           "quality": 1,
           "name": "hlspells:gem_upgrade_template"
         },
         {
           "type": "minecraft:item",
-          "weight": 1,
+          "weight": 2,
           "quality": 1,
           "name": "hlspells:gold_upgrade_template"
         }
@@ -64,7 +64,7 @@
       "conditions": [
         {
           "condition": "minecraft:random_chance",
-          "chance": 0.75
+          "chance": 0.55
         }
       ]
     }

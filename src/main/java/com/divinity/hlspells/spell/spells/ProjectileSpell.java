@@ -265,7 +265,7 @@ public class ProjectileSpell<T extends Projectile> extends Spell {
         if(this.getTrueDisplayName().equals("Fire Ball")){
             return SpellInit.FIRE_BALL_II.get();
         }
-        else if(this.getTrueDisplayName().equals("Piercing Bolt")){
+        else if(this.getTrueDisplayName().equals("Bolt")){
             return SpellInit.PIERCING_BOLT_II.get();
         } else{
             return null;

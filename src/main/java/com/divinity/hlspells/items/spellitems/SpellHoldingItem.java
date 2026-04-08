@@ -45,6 +45,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.EnchantmentTableBlock;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.extensions.IForgeItem;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -58,7 +59,7 @@ import java.util.function.Predicate;
 
 public class SpellHoldingItem extends ProjectileWeaponItem {
 	private static final Logger LOGGER = LogUtils.getLogger();
-	private int currentCastTime = 0;
+	private double currentCastTime = 0;
 	private final boolean isSpellBook;
 	private boolean wasHolding;
 
@@ -135,9 +136,9 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 			ItemStack itemstack = player.getItemInHand(player.getUsedItemHand());
 
 			if (player.getItemBySlot(EquipmentSlot.HEAD).getItem() == ItemInit.WIZARD_HAT.get()) {
-				currentCastTime = currentCastTime + 3;
+				currentCastTime = currentCastTime + 2.3;
 			} else if (player.getItemBySlot(EquipmentSlot.HEAD).getItem() != ItemInit.WIZARD_HAT.get()) {
-				currentCastTime = currentCastTime + 2;
+				currentCastTime = currentCastTime + 1.3;
 			}
 
 
@@ -289,19 +290,36 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 							if (item.isGemAmethyst() && SpellUtils.getSpellByID(cap.getCurrentSpell()).getMarkerType() == SpellAttributes.Marker.COMBAT) {
 								player.getCooldowns().addCooldown(stack.getItem(), 30);
 								currentCastTime = 0;
+								stack.hurtAndBreak(1, player, (breakItem) -> {
+									breakItem.broadcastBreakEvent(entity.getUsedItemHand());
+								});
+								//player.getItemInHand(player.getUsedItemHand()).hurt(1, 1 , null);
+
 							} else if (!item.isGemAmethyst() && SpellUtils.getSpellByID(cap.getCurrentSpell()).getMarkerType() == SpellAttributes.Marker.UTILITY) {
 								player.getCooldowns().addCooldown(stack.getItem(), 30);
 								currentCastTime = 0;
+								stack.hurtAndBreak(1, player, (breakItem) -> {
+									breakItem.broadcastBreakEvent(entity.getUsedItemHand());
+								});
 							} else if (!item.isGemAmethyst() && SpellUtils.getSpellByID(cap.getCurrentSpell()).getMarkerType() == SpellAttributes.Marker.COMBAT) {
 								player.getCooldowns().addCooldown(stack.getItem(), 10);
 								currentCastTime = 0;
+								stack.hurtAndBreak(1, player, (breakItem) -> {
+									breakItem.broadcastBreakEvent(entity.getUsedItemHand());
+								});
 							} else if (item.isGemAmethyst() && SpellUtils.getSpellByID(cap.getCurrentSpell()).getMarkerType() == SpellAttributes.Marker.UTILITY) {
 								player.getCooldowns().addCooldown(stack.getItem(), 10);
 								currentCastTime = 0;
+								stack.hurtAndBreak(1, player, (breakItem) -> {
+									breakItem.broadcastBreakEvent(entity.getUsedItemHand());
+								});
 							}
 						} else if (this.isSpellBook || !this.isSpellBook) {
 							player.getCooldowns().addCooldown(stack.getItem(), 25);
 							currentCastTime = 0;
+							stack.hurtAndBreak(1, player, (breakItem) -> {
+								breakItem.broadcastBreakEvent(entity.getUsedItemHand());
+							});
 						}
 
 					});
@@ -368,7 +386,7 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 		if (nbt.contains("spellHolder")) {
 			nbt.remove("spellHolder");
 		}
-		nbt.putInt("currentCastTime", currentCastTime);
+		nbt.putDouble("currentCastTime", currentCastTime);
 		stack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP).ifPresent(iSpellHolder -> {
 			CompoundTag shareTag = iSpellHolder.serializeNBT();
 			nbt.put("spellHolder", shareTag);
@@ -459,7 +477,7 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 
 	@Override
 	public int getBarColor(ItemStack pStack) {
-		if (pStack.getTag().getInt("castBar") > 0) {
+		if (pStack.getTag().getDouble("castBar") > 0) {
 			return BAR_COLOR;
 		}
 		else {
@@ -470,7 +488,7 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 	}
 
 	public boolean isBarVisible(ItemStack pStack) {
-		if (pStack.getTag().getInt("castBar") > 0 || pStack.isDamaged()) {
+		if (pStack.getTag().getDouble("castBar") > 0 || pStack.isDamaged()) {
 			return true;
 		} else {
 			return false;
@@ -480,14 +498,15 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 
 
 	public int getBarWidth(ItemStack pStack) {
-		if (pStack.getItem() instanceof StaffItem item && pStack.getTag().getInt("castBar") > 0) {
+		if (pStack.getItem() instanceof StaffItem item && pStack.getTag().getDouble("castBar") > 0) {
 			return (int) Math.min(currentCastTime * item.getCastDelay() / 20, 13);
 
-		} else if (!this.isSpellBook && pStack.getTag().getInt("castBar") > 0) {
-			return (int) Math.min(currentCastTime * 0.35 * 20 / 25, 13);
-
-		} else if (pStack.getTag().getInt("castBar") > 0) {
-			return (int) Math.min(currentCastTime * 0.35 * 20 / 28, 13);
+		}
+//		else if (!this.isSpellBook && pStack.getTag().getDouble("castBar") > 0) {
+//			return (int) Math.min(currentCastTime * 0.42 * 20 / 25, 13);
+//		}
+		else if (pStack.getTag().getDouble("castBar") > 0) {
+			return (int) Math.min(currentCastTime * 0.28 * 20 / 20, 13);
 		}
 		return Math.round(13.0F - (float)pStack.getDamageValue() * 13.0F / (float)this.getMaxDamage(pStack));
 	}
@@ -495,24 +514,26 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 	private void addNbtToSpellItem(Player player) {
 		ItemStack spellItem = player.getItemInHand(InteractionHand.MAIN_HAND);
 		if (spellItem.getItem() instanceof SpellHoldingItem) {
-			spellItem.getOrCreateTag().putInt("castBar", 1);
+			spellItem.getOrCreateTag().putDouble("castBar", 1);
 		}
 	}
 	
 	private void resetNbtOnSpellItem(Player player) {
 		ItemStack spellItem = player.getItemInHand(InteractionHand.MAIN_HAND);
 		if (spellItem.getItem() instanceof SpellHoldingItem) {
-			spellItem.getOrCreateTag().putInt("castBar", 0);
+			spellItem.getOrCreateTag().putDouble("castBar", 0);
 		}
 	}
 	
 	private boolean castTimeCondition(Player player, ItemStack stack) {
 		if (stack.getItem() instanceof StaffItem item) {
-			return currentCastTime >= (item.getMaxCastTime() + 17);
-		} else if (!this.isSpellBook) {
-			return currentCastTime >= (43 + 9);
-		} else {
-			return currentCastTime >= (47 + 13);
+			return currentCastTime >= (item.getMaxCastTime() + 0.1);
+		}
+//		else if (!this.isSpellBook) {
+//			return currentCastTime >= (45 + 13);
+//		}
+		else {
+			return currentCastTime >= (50 + 0.2);
 		}
 		
 	}
