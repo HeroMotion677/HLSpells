@@ -34,6 +34,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.context.UseOnContext;
@@ -136,9 +137,9 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 			ItemStack itemstack = player.getItemInHand(player.getUsedItemHand());
 
 			if (player.getItemBySlot(EquipmentSlot.HEAD).getItem() == ItemInit.WIZARD_HAT.get()) {
-				currentCastTime = currentCastTime + 2.3;
+				currentCastTime = currentCastTime + 2.4;
 			} else if (player.getItemBySlot(EquipmentSlot.HEAD).getItem() != ItemInit.WIZARD_HAT.get()) {
-				currentCastTime = currentCastTime + 1.3;
+				currentCastTime = currentCastTime + 1.4;
 			}
 
 

@@ -49,7 +49,7 @@ public class ItemInit {
 
     public static final RegistryObject<BlockItem> ORB_ITEM = ITEMS.register("orb_of_enchanting", () -> new BlockItem(BlockInit.ORB_OF_ENCHANTING.get(), new Item.Properties()));
 
-    public static final RegistryObject<BlockItem> TENT_ITEM = ITEMS.register("tent", () -> new BlockItem(BlockInit.TENT.get(), new Item.Properties()));
+    public static final RegistryObject<BlockItem> ORANGE_TENT_ITEM = ITEMS.register("orange_tent", () -> new BlockItem(BlockInit.ORANGE_TENT.get(), new Item.Properties()));
 
     // Staffs
     public static final RegistryObject<Item> WOODEN_STAFF = ITEMS.register("wooden_lapis_staff", () ->
@@ -121,7 +121,7 @@ public class ItemInit {
         if(event.getTabKey() == CreativeModeTabs.FUNCTIONAL_BLOCKS){
             event.accept(ORB_ITEM);
             event.accept(ALTAR_ITEM);
-            event.accept(TENT_ITEM);
+            event.accept(ORANGE_TENT_ITEM);
         }
     }
 

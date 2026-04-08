@@ -46,8 +46,8 @@ public class BlockInit {
                     .requiresCorrectToolForDrops()));
     public static final RegistryObject<BlockEntityType<OrbOfEnchantingBE>> ORB_BE = BLOCK_ENTITIES.register("orb_of_enchanting", () -> BlockEntityType.Builder.of(OrbOfEnchantingBE::new, ORB_OF_ENCHANTING.get()).build(null));
 
-    public static final RegistryObject<Block> TENT = BLOCKS.register("tent",
-            ()-> new TentBlock(BlockBehaviour.Properties.copy(Blocks.GLASS).strength(0.5f)
+    public static final RegistryObject<Block> ORANGE_TENT = BLOCKS.register("orange_tent",
+            ()-> new TentBlock(BlockBehaviour.Properties.copy(Blocks.OAK_PRESSURE_PLATE).strength(1.0f)
                     .requiresCorrectToolForDrops()));
-    public static final RegistryObject<BlockEntityType<TentBE>> TENT_BE = BLOCK_ENTITIES.register("tent", () -> BlockEntityType.Builder.of(TentBE::new, TENT.get()).build(null));
+    public static final RegistryObject<BlockEntityType<TentBE>> ORANGE_TENT_BE = BLOCK_ENTITIES.register("orange_tent", () -> BlockEntityType.Builder.of(TentBE::new, ORANGE_TENT.get()).build(null));
 }

@@ -1,15 +1,20 @@
 package com.divinity.hlspells.world.blocks;
 
 import com.divinity.hlspells.capabilities.spellholdercap.SpellHolderProvider;
+import com.divinity.hlspells.items.spellitems.SpellHoldingItem;
+import com.divinity.hlspells.items.spellitems.StaffItem;
+import com.divinity.hlspells.setup.init.ItemInit;
 import com.divinity.hlspells.setup.init.SoundInit;
 import com.divinity.hlspells.world.blocks.blockentities.OrbOfEnchantingBE;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtUtils;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.BlockGetter;
@@ -24,6 +29,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.level.gameevent.EntityPositionSource;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;

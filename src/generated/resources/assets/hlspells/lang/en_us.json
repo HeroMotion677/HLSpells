@@ -1,4 +1,5 @@
 {
+  "block.hlspells.orange_tent": "Orange tent",
   "block.hlspells.altar_of_attunement": "Altar Of Attunement",
   "block.hlspells.frosted_ice": "Frosted Ice",
   "block.hlspells.orb_of_enchanting": "Orb Of Enchanting",
@@ -14,7 +15,7 @@
   "entity.hlspells.aqua_bolt": "Aqua Bolt",
   "entity.hlspells.chorus_bolt": "Chorus Bolt",
   "entity.hlspells.fireball": "Fireball",
-  "entity.hlspells.fireball2": "Fireball2",
+  "entity.hlspells.fireball2": "Fireball II",
   "entity.hlspells.flaming_bolt": "Flaming Bolt",
   "entity.hlspells.freezing_bolt": "Freezing Bolt",
   "entity.hlspells.invisible_targeting_entity": "Invisible Targeting Entity",

@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=south": { "model": "hlspells:block/orange_tent", "y" : 180 },
+    "facing=east": { "model": "hlspells:block/orange_tent", "y": 90 },
+    "facing=north": { "model": "hlspells:block/orange_tent" },
+    "facing=west": { "model": "hlspells:block/orange_tent", "y": 270 }
+  }
+}

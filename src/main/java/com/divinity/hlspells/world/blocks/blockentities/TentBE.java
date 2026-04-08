@@ -19,7 +19,7 @@ public class TentBE extends BlockEntity {
 
     private BlockPos bed;
     public TentBE(BlockPos pPos, BlockState pBlockState) {
-        super(BlockInit.TENT_BE.get(), pPos, pBlockState);
+        super(BlockInit.ORANGE_TENT_BE.get(), pPos, pBlockState);
     }
 
 
@@ -65,6 +65,6 @@ public class TentBE extends BlockEntity {
 
     @Override
     public BlockEntityType<?> getType() {
-        return BlockInit.TENT_BE.get();
+        return BlockInit.ORANGE_TENT_BE.get();
     }
 }
