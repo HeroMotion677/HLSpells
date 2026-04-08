@@ -55,18 +55,23 @@ public class TentBlock extends BaseEntityBlock {
         BlockEntity blockentity = pLevel.getBlockEntity(pPos);
         if (blockentity instanceof TentBE tent && pPlayer instanceof ServerPlayer sp) {
             // On the server, pPlayer is expected to be ServerPlayer.
-            sp.setRespawnPosition(pLevel.dimension(), tent.getBlockPos(), 0, true, true);
             tent.setPrevBed(sp.getRespawnPosition()); // can be null
+            sp.setRespawnPosition(pLevel.dimension(), tent.getBlockPos(), 0, true, true);
+
             return InteractionResult.SUCCESS;
         }
         return InteractionResult.PASS;
     }
     @Override
     public void playerWillDestroy(Level pLevel, BlockPos pPos, BlockState pState, Player pPlayer) {
-        if (!pLevel.isClientSide) {
-            BlockEntity blockentity = pLevel.getBlockEntity(pPos);
-            if (blockentity instanceof TentBE tent && pPlayer instanceof ServerPlayer serverPlayer) {
-                serverPlayer.setRespawnPosition(pLevel.dimension(), tent.getBed(), 0, true, false);
+        BlockEntity blockentity = pLevel.getBlockEntity(pPos);
+        if (blockentity instanceof TentBE tent) {
+            // Readable on both sides (client gets this via BE sync).
+            BlockPos bed = tent.getBed();
+
+            // Only the server can actually change the player's respawn point.
+            if (!pLevel.isClientSide && pPlayer instanceof ServerPlayer serverPlayer) {
+                serverPlayer.setRespawnPosition(pLevel.dimension(), bed, 0, true, false);
             }
         }
         super.playerWillDestroy(pLevel, pPos, pState, pPlayer);
