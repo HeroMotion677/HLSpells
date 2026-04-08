@@ -69,6 +69,7 @@ public class ModClientEventHandler {
             ItemBlockRenderTypes.setRenderLayer(BlockInit.ALTAR_OF_ATTUNEMENT_BLOCK.get(), RenderType.cutout());
             BlockEntityRenderers.register(BlockInit.ALTAR_BE.get(), ctx -> new AltarItemRenderer());
             ItemBlockRenderTypes.setRenderLayer(BlockInit.ORB_OF_ENCHANTING.get(), RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(BlockInit.TENT.get(), RenderType.cutout());
         }
 
   /*  AnimationStack animationStack = PlayerAnimationAccess.getPlayerAnimLayer(clientPlayer);
