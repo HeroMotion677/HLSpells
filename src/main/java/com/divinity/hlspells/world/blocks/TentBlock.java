@@ -57,8 +57,13 @@ public class TentBlock extends BaseEntityBlock {
         BlockEntity blockentity = pLevel.getBlockEntity(pPos);
         if (blockentity instanceof TentBE tent && pPlayer instanceof ServerPlayer sp) {
             // On the server, pPlayer is expected to be ServerPlayer.
-            tent.setPrevBed(sp.getRespawnPosition()); // can be null
-            sp.setRespawnPosition(pLevel.dimension(), tent.getBlockPos(), 0, true, true);
+            BlockPos tentpos = tent.getBlockPos();
+            BlockPos offsetpos = tentpos.offset(0, 1 ,0);
+            if(sp.getRespawnPosition() != offsetpos){
+                tent.setPrevBed(sp.getRespawnPosition()); // can be null
+            }
+
+            sp.setRespawnPosition(pLevel.dimension(), offsetpos, 0, true, true);
 
             return InteractionResult.SUCCESS;
         }
