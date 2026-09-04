@@ -23,7 +23,7 @@ public class RespirationSpell extends Spell {
     public SpellConsumer<Player> getAction() {
         return p -> {
             var players = Util.getEntitiesInRange(p, LivingEntity.class, 15, 15, 15);
-            p.getCapability(PlayerCapProvider.PLAYER_CAP).ifPresent(cap -> {
+            PlayerCapProvider.get(p).ifPresent(cap -> {
                 cap.setSpellTimer(cap.getSpellTimer() + 1);
                 for (LivingEntity player : players) {
 

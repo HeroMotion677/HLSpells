@@ -7,6 +7,7 @@ import net.minecraft.world.damagesource.DamageSources;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
@@ -41,7 +42,7 @@ public class WitherBreathEntity extends BaseBreathEntity {
                     }
                     livingentity1.addEffect(new MobEffectInstance(MobEffects.WITHER, 20 * 10, 1), this.getEffectSource());
                     level.sendParticles(ParticleTypes.SMOKE, this.getX(), this.getY(), this.getZ(), 3, 0.2D, 0.2D, 0.2D, 0.0D);
-                    if (livingentity != null) this.doEnchantDamageEffects(livingentity, entity);
+                    if (livingentity != null) EnchantmentHelper.doPostAttackEffects(level, entity, this.damageSources().mobProjectile(this, livingentity));
                     this.remove(RemovalReason.KILLED);
                 }
             }

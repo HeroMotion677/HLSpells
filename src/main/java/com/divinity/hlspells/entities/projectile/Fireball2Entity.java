@@ -8,6 +8,7 @@ import net.minecraft.world.entity.AreaEffectCloud;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.block.BaseFireBlock;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.core.particles.ParticleTypes;
@@ -43,10 +44,10 @@ public class Fireball2Entity extends BaseBoltEntity {
                 level.sendParticles(ParticleTypes.FLAME, this.getX() - this.random.nextInt(2),
                         this.getY(), this.getZ() - this.random.nextFloat(), 2, 0.2D, 0.2D, 0.2D, 0.0D);
             }
-            entity.setSecondsOnFire(5);
+            entity.igniteForSeconds(5);
             level.explode((Entity)null, this.getX(), this.getY(), this.getZ(),3, Level.ExplosionInteraction.BLOCK);
             level.sendParticles(ParticleTypes.CRIT, this.getX(), this.getY(), this.getZ(), 15, 0.2D, 0.2D, 0.2D, 0.0D);
-            if (livingentity != null) this.doEnchantDamageEffects(livingentity, entity);
+            if (livingentity != null) EnchantmentHelper.doPostAttackEffects(level, entity, this.damageSources().mobProjectile(this, livingentity));
             this.remove(RemovalReason.KILLED);
         }
     }

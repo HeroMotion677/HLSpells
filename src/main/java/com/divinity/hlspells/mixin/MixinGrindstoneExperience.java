@@ -15,7 +15,7 @@ public class MixinGrindstoneExperience {
     @Inject(method = "getExperienceFromItem(Lnet/minecraft/world/item/ItemStack;)I", at = @At(value = "RETURN"), cancellable = true)
     public void getExperienceFromItem(ItemStack stack, CallbackInfoReturnable<Integer> cir) {
         if (stack.getItem() instanceof SpellHoldingItem item && !item.isSpellBook()) {
-            int spellSize = stack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP).map(m -> m.getSpells().size()).orElse(0);
+            int spellSize = SpellHolderProvider.get(stack).map(m -> m.getSpells().size()).orElse(0);
             cir.setReturnValue(5 * spellSize);
         }
     }

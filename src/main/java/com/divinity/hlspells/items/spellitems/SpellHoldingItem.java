@@ -13,14 +13,13 @@ import com.divinity.hlspells.spell.SpellAttributes;
 import com.divinity.hlspells.spell.spells.*;
 import com.divinity.hlspells.util.SpellUtils;
 import com.divinity.hlspells.util.Util;
-import com.mojang.logging.LogUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtOps;
-import net.minecraft.nbt.NbtUtils;
+import net.minecraft.core.GlobalPos;
+import net.minecraft.core.Holder;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -36,30 +35,27 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.item.component.LodestoneTracker;
 import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.EnchantmentTableBlock;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.common.extensions.IForgeItem;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.fml.loading.FMLEnvironment;
+import net.minecraft.world.level.block.EnchantingTableBlock;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
+import java.util.Optional;
 import java.util.Objects;
 import java.util.Random;
 import java.util.function.Predicate;
 
 public class SpellHoldingItem extends ProjectileWeaponItem {
-	private static final Logger LOGGER = LogUtils.getLogger();
 	private double currentCastTime = 0;
 	private final boolean isSpellBook;
 	private boolean wasHolding;
@@ -72,8 +68,8 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 
 	@Override
 	@ParametersAreNonnullByDefault
-	public void appendHoverText(ItemStack stack, @Nullable Level pLevel, List<Component> text, TooltipFlag pFlag) {
-		stack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP).ifPresent(cap -> {
+	public void appendHoverText(ItemStack stack, TooltipContext pContext, List<Component> text, TooltipFlag pFlag) {
+		SpellHolderProvider.get(stack).ifPresent(cap -> {
 			List<String> spells = cap.getSpells();
 			if (isSpellBook) {
 				Spell spell = SpellUtils.getSpell(stack);
@@ -100,7 +96,7 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 	@NotNull
 	public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand) {
 		ItemStack itemstack = player.getItemInHand(hand);
-		var capability = itemstack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP);
+		var capability = SpellHolderProvider.get(itemstack);
 		this.wasHolding = true;
 		Spell spell = SpellUtils.getSpell(itemstack);
 		var spells = capability.map(ISpellHolder::getSpells).orElse(null);
@@ -151,7 +147,7 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 						GenerateParticles.generateParticleRune(fileLocation, livingEntity, spell.getRune());
 					} else {
 						Random pRandom = new Random();
-						for (BlockPos blockpos : EnchantmentTableBlock.BOOKSHELF_OFFSETS) {
+						for (BlockPos blockpos : EnchantingTableBlock.BOOKSHELF_OFFSETS) {
 							if (pRandom.nextInt(14) == 0) {
 								livingEntity.level()
 										.addParticle(ParticleTypes.ENCHANT,
@@ -172,7 +168,7 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 				}
 			}
 
-			var capability = itemstack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP);
+			var capability = SpellHolderProvider.get(itemstack);
 			if (spell.getSpellType() == SpellAttributes.Type.HELD) {
 				spell.execute(player, stack);
 
@@ -219,26 +215,28 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 	@Override
 	public InteractionResult useOn(UseOnContext pContext) {
 		Spell spell = SpellUtils.getSpell(pContext.getItemInHand());
-		if(spell instanceof RespawnSpell) {
+		if (spell instanceof RespawnSpell) {
 			BlockPos blockpos = pContext.getClickedPos();
 			Level level = pContext.getLevel();
 			if (!level.getBlockState(blockpos).is(Blocks.LODESTONE)) {
 				return super.useOn(pContext);
 			} else {
-				level.playSound((Player) null, blockpos, SoundEvents.LODESTONE_COMPASS_LOCK, SoundSource.PLAYERS, 1.0F, 1.0F);
+				level.playSound(null, blockpos, SoundEvents.LODESTONE_COMPASS_LOCK, SoundSource.PLAYERS, 1.0F, 1.0F);
 				Player player = pContext.getPlayer();
 				ItemStack itemstack = pContext.getItemInHand();
+				LodestoneTracker tracker = new LodestoneTracker(Optional.of(GlobalPos.of(level.dimension(), blockpos)), true);
 				boolean flag = !player.getAbilities().instabuild && itemstack.getCount() == 1;
 				if (flag) {
-					this.addLodestoneTags(level.dimension(), blockpos, itemstack.getOrCreateTag());
+					itemstack.set(DataComponents.LODESTONE_TRACKER, tracker);
 				} else {
-					CompoundTag compoundtag = itemstack.hasTag() ? itemstack.getTag().copy() : new CompoundTag();
-					itemstack.setTag(compoundtag);
+					ItemStack copy = itemstack.copyWithCount(1);
 					if (!player.getAbilities().instabuild) {
 						itemstack.shrink(1);
 					}
-
-					this.addLodestoneTags(level.dimension(), blockpos, compoundtag);
+					copy.set(DataComponents.LODESTONE_TRACKER, tracker);
+					if (!player.getInventory().add(copy)) {
+						player.drop(copy, false);
+					}
 				}
 
 				return InteractionResult.sidedSuccess(level.isClientSide);
@@ -247,19 +245,11 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 		return super.useOn(pContext);
 	}
 
-	private void addLodestoneTags(ResourceKey<Level> pLodestoneDimension, BlockPos pLodestonePos, CompoundTag pCompoundTag) {
-		pCompoundTag.put("LodestonePos", NbtUtils.writeBlockPos(pLodestonePos));
-		Level.RESOURCE_KEY_CODEC.encodeStart(NbtOps.INSTANCE, pLodestoneDimension).resultOrPartial(LOGGER::error).ifPresent((p_40731_) -> {
-			pCompoundTag.put("LodestoneDimension", p_40731_);
-		});
-		pCompoundTag.putBoolean("LodestoneTracked", true);
-	}
-
 	@Override
 	@ParametersAreNonnullByDefault
 	public void releaseUsing(ItemStack stack, Level world, LivingEntity entity, int power) {
 		if (entity instanceof Player player) {
-			var capability = stack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP);
+			var capability = SpellHolderProvider.get(stack);
 			capability.ifPresent(cap -> cap.setSpellSoundBuffer(0));
 			this.wasHolding = false;
 
@@ -291,36 +281,26 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 							if (item.isGemAmethyst() && SpellUtils.getSpellByID(cap.getCurrentSpell()).getMarkerType() == SpellAttributes.Marker.COMBAT) {
 								player.getCooldowns().addCooldown(stack.getItem(), 30);
 								currentCastTime = 0;
-								stack.hurtAndBreak(1, player, (breakItem) -> {
-									breakItem.broadcastBreakEvent(entity.getUsedItemHand());
-								});
+								stack.hurtAndBreak(1, player, EquipmentSlot.MAINHAND);
 								//player.getItemInHand(player.getUsedItemHand()).hurt(1, 1 , null);
 
 							} else if (!item.isGemAmethyst() && SpellUtils.getSpellByID(cap.getCurrentSpell()).getMarkerType() == SpellAttributes.Marker.UTILITY) {
 								player.getCooldowns().addCooldown(stack.getItem(), 30);
 								currentCastTime = 0;
-								stack.hurtAndBreak(1, player, (breakItem) -> {
-									breakItem.broadcastBreakEvent(entity.getUsedItemHand());
-								});
+								stack.hurtAndBreak(1, player, EquipmentSlot.MAINHAND);
 							} else if (!item.isGemAmethyst() && SpellUtils.getSpellByID(cap.getCurrentSpell()).getMarkerType() == SpellAttributes.Marker.COMBAT) {
 								player.getCooldowns().addCooldown(stack.getItem(), 10);
 								currentCastTime = 0;
-								stack.hurtAndBreak(1, player, (breakItem) -> {
-									breakItem.broadcastBreakEvent(entity.getUsedItemHand());
-								});
+								stack.hurtAndBreak(1, player, EquipmentSlot.MAINHAND);
 							} else if (item.isGemAmethyst() && SpellUtils.getSpellByID(cap.getCurrentSpell()).getMarkerType() == SpellAttributes.Marker.UTILITY) {
 								player.getCooldowns().addCooldown(stack.getItem(), 10);
 								currentCastTime = 0;
-								stack.hurtAndBreak(1, player, (breakItem) -> {
-									breakItem.broadcastBreakEvent(entity.getUsedItemHand());
-								});
+								stack.hurtAndBreak(1, player, EquipmentSlot.MAINHAND);
 							}
 						} else if (this.isSpellBook || !this.isSpellBook) {
 							player.getCooldowns().addCooldown(stack.getItem(), 25);
 							currentCastTime = 0;
-							stack.hurtAndBreak(1, player, (breakItem) -> {
-								breakItem.broadcastBreakEvent(entity.getUsedItemHand());
-							});
+							stack.hurtAndBreak(1, player, EquipmentSlot.MAINHAND);
 						}
 
 					});
@@ -337,37 +317,18 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 
 	@Override
 	public boolean isBookEnchantable(ItemStack stack, ItemStack book) {
-		if (EnchantedBookItem.getEnchantments(book).size() > 0) {
-			for (int i = 0; i < EnchantedBookItem.getEnchantments(book).size(); i++) {
-				CompoundTag tag = EnchantedBookItem.getEnchantments(book).getCompound(i);
-				ResourceLocation enchantment = EnchantmentHelper.getEnchantmentId(tag);
-				if (enchantment != null) {
-					switch (enchantment.toString()) {
-						case "minecraft:mending":
-							if (EnchantmentHelper.getItemEnchantmentLevel(Enchantments.MENDING, stack) >= 1) {
-								return !isSpellBook || stack.getItem() instanceof StaffItem;
-							}
-						case "minecraft:fire_aspect":
-							if (EnchantmentHelper.getItemEnchantmentLevel(Enchantments.FIRE_ASPECT, stack) >= 1) {
-								return !isSpellBook || stack.getItem() instanceof StaffItem;
-							}
-						case "minecraft:smite":
-							if (EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SMITE, stack) >= 1) {
-								return !isSpellBook || stack.getItem() instanceof StaffItem;
-							}
-						case "minecraft:unbreaking":
-							if (EnchantmentHelper.getItemEnchantmentLevel(Enchantments.UNBREAKING, stack) <= EnchantmentHelper.getEnchantmentLevel(tag)) {
-								if (EnchantmentHelper.getItemEnchantmentLevel(Enchantments.UNBREAKING, stack) != 3) {
-									return !isSpellBook || stack.getItem() instanceof StaffItem;
-								}
-							}
-						case "hlspells:soul_bond":
-							if (EnchantmentHelper.getItemEnchantmentLevel(EnchantmentInit.SOUL_BOND.get(), stack) >= 0) {
-								return !isSpellBook || stack.getItem() instanceof StaffItem;
-							}
-							break;
-					}
-				}
+		ItemEnchantments stored = book.getOrDefault(DataComponents.STORED_ENCHANTMENTS, ItemEnchantments.EMPTY);
+		for (Holder<Enchantment> enchantment : stored.keySet()) {
+			if (enchantment.is(Enchantments.MENDING) && EnchantmentInit.getLevel(Enchantments.MENDING, stack) >= 1
+					|| enchantment.is(Enchantments.FIRE_ASPECT) && EnchantmentInit.getLevel(Enchantments.FIRE_ASPECT, stack) >= 1
+					|| enchantment.is(Enchantments.SMITE) && EnchantmentInit.getLevel(Enchantments.SMITE, stack) >= 1
+					|| enchantment.is(EnchantmentInit.SOUL_BOND)) {
+				return !isSpellBook || stack.getItem() instanceof StaffItem;
+			}
+			if (enchantment.is(Enchantments.UNBREAKING)
+					&& EnchantmentInit.getLevel(Enchantments.UNBREAKING, stack) <= stored.getLevel(enchantment)
+					&& EnchantmentInit.getLevel(Enchantments.UNBREAKING, stack) != 3) {
+				return !isSpellBook || stack.getItem() instanceof StaffItem;
 			}
 		}
 		return false;
@@ -375,37 +336,8 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 
 	@Override
 	public boolean isFoil(ItemStack pStack) {
-		var spells = pStack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP).map(ISpellHolder::getSpells).orElse(null);
+		var spells = SpellHolderProvider.get(pStack).map(ISpellHolder::getSpells).orElse(null);
 		return isSpellBook && SpellUtils.getSpell(pStack) != SpellInit.EMPTY.get() || !isSpellBook && spells != null && !spells.isEmpty() || super.isFoil(pStack);
-	}
-
-	// Responsible for syncing capability to client side
-	@Nullable
-	@Override
-	public CompoundTag getShareTag(ItemStack stack) {
-		CompoundTag nbt = super.getShareTag(stack);
-		if (nbt.contains("spellHolder")) {
-			nbt.remove("spellHolder");
-		}
-		nbt.putDouble("currentCastTime", currentCastTime);
-		stack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP).ifPresent(iSpellHolder -> {
-			CompoundTag shareTag = iSpellHolder.serializeNBT();
-			nbt.put("spellHolder", shareTag);
-		});
-		return nbt;
-	}
-
-	@Override
-	public void readShareTag(ItemStack stack, @Nullable CompoundTag nbt) {
-		if (nbt == null)
-			return;
-		if (nbt.contains("spellHolder")) {
-			stack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP).ifPresent(iSpellHolder -> {
-				iSpellHolder.deserializeNBT(nbt.getCompound("spellHolder"));
-			});
-		}
-		currentCastTime = nbt.getInt("currentCastTime");
-		super.readShareTag(stack, nbt);
 	}
 
 	@Override
@@ -414,18 +346,17 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 		return NONE;
 	}
 
+	@Override
+	protected void shootProjectile(LivingEntity shooter, Projectile projectile, int index, float velocity, float inaccuracy, float angle, @Nullable LivingEntity target) {
+		projectile.shootFromRotation(shooter, shooter.getXRot(), shooter.getYRot() + angle, 0.0F, velocity, inaccuracy);
+	}
+
 	public static final Predicate<ItemStack> NONE = (p_43018_) -> p_43018_.is(Items.EXPERIENCE_BOTTLE);
 
 	@Override
 	@NotNull
 	public UseAnim getUseAnimation(@NotNull ItemStack pStack) {
 		return isSpellBook ? UseAnim.CROSSBOW : UseAnim.BLOCK;
-	}
-
-	@Override
-	@Nullable
-	public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag nbt) {
-		return new SpellHolderProvider();
 	}
 
 	@Override
@@ -439,7 +370,7 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 	}
 
 	@Override
-	public int getUseDuration(@NotNull ItemStack pStack) {
+	public int getUseDuration(@NotNull ItemStack pStack, @NotNull LivingEntity entity) {
 		return 72000;
 	}
 
@@ -450,7 +381,7 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 	}
 
 	@Override
-	public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
+	public boolean supportsEnchantment(ItemStack stack, Holder<Enchantment> enchantment) {
 		return false;
 	}
 
@@ -474,11 +405,15 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 		this.wasHolding = wasHolding;
 	}
 
+	private static boolean isCasting(ItemStack stack) {
+		return stack.getOrDefault(SpellHolderProvider.CAST_BAR.get(), false);
+	}
+
 	private static final int BAR_COLOR = Mth.color(0.4F, 1.0F, 0.8F);
 
 	@Override
 	public int getBarColor(ItemStack pStack) {
-		if (pStack.getTag().getDouble("castBar") > 0) {
+		if (isCasting(pStack)) {
 			return BAR_COLOR;
 		}
 		else {
@@ -489,7 +424,7 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 	}
 
 	public boolean isBarVisible(ItemStack pStack) {
-		if (pStack.getTag().getDouble("castBar") > 0 || pStack.isDamaged()) {
+		if (isCasting(pStack) || pStack.isDamaged()) {
 			return true;
 		} else {
 			return false;
@@ -499,14 +434,14 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 
 
 	public int getBarWidth(ItemStack pStack) {
-		if (pStack.getItem() instanceof StaffItem item && pStack.getTag().getDouble("castBar") > 0) {
+		if (pStack.getItem() instanceof StaffItem item && isCasting(pStack)) {
 			return (int) Math.min(currentCastTime * item.getCastDelay() / 20, 13);
 
 		}
-//		else if (!this.isSpellBook && pStack.getTag().getDouble("castBar") > 0) {
+//		else if (!this.isSpellBook && isCasting(pStack)) {
 //			return (int) Math.min(currentCastTime * 0.42 * 20 / 25, 13);
 //		}
-		else if (pStack.getTag().getDouble("castBar") > 0) {
+		else if (isCasting(pStack)) {
 			return (int) Math.min(currentCastTime * 0.28 * 20 / 20, 13);
 		}
 		return Math.round(13.0F - (float)pStack.getDamageValue() * 13.0F / (float)this.getMaxDamage(pStack));
@@ -515,14 +450,14 @@ public class SpellHoldingItem extends ProjectileWeaponItem {
 	private void addNbtToSpellItem(Player player) {
 		ItemStack spellItem = player.getItemInHand(InteractionHand.MAIN_HAND);
 		if (spellItem.getItem() instanceof SpellHoldingItem) {
-			spellItem.getOrCreateTag().putDouble("castBar", 1);
+			spellItem.set(SpellHolderProvider.CAST_BAR.get(), true);
 		}
 	}
-	
+
 	private void resetNbtOnSpellItem(Player player) {
 		ItemStack spellItem = player.getItemInHand(InteractionHand.MAIN_HAND);
 		if (spellItem.getItem() instanceof SpellHoldingItem) {
-			spellItem.getOrCreateTag().putDouble("castBar", 0);
+			spellItem.set(SpellHolderProvider.CAST_BAR.get(), false);
 		}
 	}
 	

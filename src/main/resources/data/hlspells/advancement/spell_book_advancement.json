@@ -1,0 +1,40 @@
+{
+  "parent": "hlspells:altar_advancement",
+  "criteria": {
+    "cast_spell": {
+      "conditions": {
+        "item": {
+          "items": [
+            "hlspells:wooden_lapis_staff",
+            "hlspells:wooden_amethyst_staff",
+            "hlspells:golden_lapis_staff",
+            "hlspells:golden_amethyst_staff",
+            "hlspells:netherite_lapis_staff",
+            "hlspells:netherite_amethyst_staff",
+            "hlspells:lapis_wand",
+            "hlspells:amethyst_wand",
+            "hlspells:spell_book"
+          ]
+        }
+      },
+      "trigger": "minecraft:using_item"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": "Cast a spell",
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "id": "hlspells:amethyst_wand"
+    },
+    "show_toast": true,
+    "title": "...We love casting spells"
+  },
+  "requirements": [
+    [
+      "cast_spell"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

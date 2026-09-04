@@ -14,7 +14,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.animal.Fox;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.FenceBlock;
-import net.minecraft.world.level.block.GlassBlock;
+import net.minecraft.world.level.block.TransparentBlock;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import org.jetbrains.annotations.NotNull;
@@ -42,7 +42,7 @@ public class ChorusBoltEntity extends BaseBoltEntity {
                     if (!livingLevel.isClientSide) {
                         this.doChorusTeleport(livingEntity, livingLevel);
                     }
-                    this.doEnchantDamageEffects(livingentity, entity);
+                    
                 }
             }
             this.remove(RemovalReason.KILLED);

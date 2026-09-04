@@ -1,34 +1,35 @@
 package com.divinity.hlspells.network.packets.clientbound;
 
+import com.divinity.hlspells.HLSpells;
 import com.divinity.hlspells.network.ClientAccess;
-import com.divinity.hlspells.network.IPacket;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.simple.SimpleChannel;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import java.util.UUID;
 
-public record SpellCluePacket(UUID player, String... spellClues) implements IPacket {
+public record SpellCluePacket(UUID player, String... spellClues) implements CustomPacketPayload {
+
+    public static final CustomPacketPayload.Type<SpellCluePacket> TYPE =
+            new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(HLSpells.MODID, "spell_clue"));
+
+    public static final StreamCodec<RegistryFriendlyByteBuf, SpellCluePacket> STREAM_CODEC = StreamCodec.of(
+            (buffer, packet) -> {
+                buffer.writeUUID(packet.player);
+                buffer.writeUtf(packet.spellClues[0]);
+                buffer.writeUtf(packet.spellClues[1]);
+                buffer.writeUtf(packet.spellClues[2]);
+            },
+            buffer -> new SpellCluePacket(buffer.readUUID(), buffer.readUtf(), buffer.readUtf(), buffer.readUtf()));
 
     @Override
-    public void encode(FriendlyByteBuf buffer) {
-        buffer.writeUUID(this.player);
-        buffer.writeUtf(this.spellClues[0]);
-        buffer.writeUtf(this.spellClues[1]);
-        buffer.writeUtf(this.spellClues[2]);
+    public Type<? extends CustomPacketPayload> type() {
+        return TYPE;
     }
 
-    public static SpellCluePacket decode(FriendlyByteBuf buffer) {
-        return new SpellCluePacket(buffer.readUUID(), buffer.readUtf(), buffer.readUtf(), buffer.readUtf());
-    }
-
-    @Override
-    public void handle(ServerPlayer player) {
-        ClientAccess.updateSpellClues(this.player, this.spellClues);
-    }
-
-    public static void register(SimpleChannel channel, int id) {
-        IPacket.register(channel, id, NetworkDirection.PLAY_TO_CLIENT, SpellCluePacket.class, SpellCluePacket::decode);
+    public static void handle(SpellCluePacket packet, IPayloadContext context) {
+        context.enqueueWork(() -> ClientAccess.updateSpellClues(packet.player, packet.spellClues));
     }
 }

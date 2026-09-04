@@ -2,6 +2,7 @@ package com.divinity.hlspells.world.blocks.blockentities.screen;
 
 import com.divinity.hlspells.HLSpells;
 import com.divinity.hlspells.network.NetworkManager;
+import net.neoforged.neoforge.network.PacketDistributor;
 import com.divinity.hlspells.network.packets.serverbound.TransferSpellsPacket;
 import com.divinity.hlspells.setup.init.SpellInit;
 import com.divinity.hlspells.world.blocks.blockentities.inventory.AltarOfAttunementMenu;
@@ -12,7 +13,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.screens.inventory.*;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.*;
@@ -23,7 +23,7 @@ import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraftforge.items.ItemStackHandler;
+import net.neoforged.neoforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
@@ -48,8 +48,8 @@ public class AltarOfAttunementScreen extends AbstractContainerScreen<AltarOfAttu
     @Override
     public void render(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
         if (this.minecraft != null && this.minecraft.player != null) {
-            pPartialTick = this.minecraft.getFrameTime();
-            this.renderBackground(pGuiGraphics);
+            pPartialTick = this.minecraft.getTimer().getGameTimeDeltaPartialTick(false);
+            this.renderBackground(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
             super.render(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
             this.renderTooltip(pGuiGraphics, pMouseX, pMouseY);
             boolean isCreative = this.minecraft.player.getAbilities().instabuild;
@@ -104,10 +104,11 @@ public class AltarOfAttunementScreen extends AbstractContainerScreen<AltarOfAttu
     @Override
     protected void init() {
         super.init();
-        this.addRenderableWidget(new ImageButton(this.leftPos + 19, this.topPos + 49, 11, 7, 93, 227, 7, GUI, onPress ->
-                NetworkManager.INSTANCE.sendToServer(new TransferSpellsPacket())) {
+        this.addRenderableWidget(new Button(this.leftPos + 19, this.topPos + 49, 11, 7, Component.empty(), onPress ->
+                PacketDistributor.sendToServer(new TransferSpellsPacket()), supplier -> Component.empty()) {
             @Override
             public void renderWidget(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
+                pGuiGraphics.blit(GUI, this.getX(), this.getY(), 93, this.isHovered ? 234 : 227, this.width, this.height);
                 if (this.isHovered) {
                     if (!AltarOfAttunementScreen.this.handler.getStackInSlot(0).isEmpty()) {
                         List<Component> list = new ArrayList<>();
@@ -116,7 +117,6 @@ public class AltarOfAttunementScreen extends AbstractContainerScreen<AltarOfAttu
                         pGuiGraphics.renderComponentTooltip(font, list, pMouseX, pMouseY);
                     }
                 }
-                super.renderWidget(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
                 this.setFocused(false);
             }
         });

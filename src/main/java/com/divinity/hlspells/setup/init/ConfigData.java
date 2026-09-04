@@ -1,22 +1,22 @@
 package com.divinity.hlspells.setup.init;
 
 import com.google.common.collect.Lists;
-import net.minecraftforge.common.ForgeConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ConfigData {
 
-    public final ForgeConfigSpec.BooleanValue spellsUseXP;
-    public final ForgeConfigSpec.BooleanValue lootOnlyMode;
-    public final ForgeConfigSpec.BooleanValue summonsAttackPlayers;
-    public final ForgeConfigSpec.ConfigValue<List<? extends String>> fireMobsList;
-    public final ForgeConfigSpec.ConfigValue<List<? extends String>> sapientMobsList;
-    public final ForgeConfigSpec.ConfigValue<List<? extends String>> lightningSpellList;
+    public final ModConfigSpec.BooleanValue spellsUseXP;
+    public final ModConfigSpec.BooleanValue lootOnlyMode;
+    public final ModConfigSpec.BooleanValue summonsAttackPlayers;
+    public final ModConfigSpec.ConfigValue<List<? extends String>> fireMobsList;
+    public final ModConfigSpec.ConfigValue<List<? extends String>> sapientMobsList;
+    public final ModConfigSpec.ConfigValue<List<? extends String>> lightningSpellList;
 
 
-    public ConfigData(ForgeConfigSpec.Builder builder) {
+    public ConfigData(ModConfigSpec.Builder builder) {
         builder.push("HLSpells Config");
         spellsUseXP = builder.comment("Should the spells use experience?").define("spellsUseXP", true);
         lootOnlyMode = builder.comment("Should the spells only be obtainable from loot?").define("lootOnlyMode", false);

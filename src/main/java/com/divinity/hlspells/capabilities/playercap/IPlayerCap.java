@@ -1,16 +1,17 @@
 package com.divinity.hlspells.capabilities.playercap;
 
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.core.Holder;
 import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nullable;
 import java.util.Map;
 
 public interface IPlayerCap {
 
-    @Nullable MobEffect getEffect();
+    @Nullable Holder<MobEffect> getEffect();
 
-    void setEffect(@Nullable MobEffect effect);
+    void setEffect(@Nullable Holder<MobEffect> effect);
 
     int getEffectDuration();
 

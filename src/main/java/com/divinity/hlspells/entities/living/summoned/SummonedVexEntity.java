@@ -27,7 +27,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.EnumSet;
@@ -53,9 +52,6 @@ public class SummonedVexEntity extends Vex implements Summonable {
         if (this.playerOwner != null) nbt.putUUID("Owner", this.playerOwner.getUUID());
         super.addAdditionalSaveData(nbt);
     }
-
-    @Override
-    public Packet<ClientGamePacketListener> getAddEntityPacket() { return NetworkHooks.getEntitySpawningPacket(this); }
 
     @Override
     public boolean isAlliedTo(@NotNull Entity entity) {

@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smithing_transform",
+  "base": "hlspells:lapis_wand",
+  "addition": "minecraft:amethyst_shard",
+  "template": "hlspells:gem_upgrade_template",
+  "result": {
+    "id": "hlspells:amethyst_wand"
+  }
+}

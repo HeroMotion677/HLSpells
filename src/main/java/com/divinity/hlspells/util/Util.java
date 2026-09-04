@@ -10,7 +10,10 @@ import com.divinity.hlspells.network.packets.clientbound.UpdateDimensionsPacket;
 import com.divinity.hlspells.setup.init.SoundInit;
 import com.google.common.collect.Lists;
 import net.minecraft.client.multiplayer.ClientLevel;
+import com.divinity.hlspells.HLSpells;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvent;
@@ -37,11 +40,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityProvider;
-import net.minecraftforge.common.capabilities.ICapabilitySerializable;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.network.PacketDistributor;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 import javax.annotation.Nullable;
 import java.util.Comparator;
@@ -52,8 +51,8 @@ import java.util.stream.Collectors;
 
 public final class Util {
 
-    public static final UUID speedUUID = UUID.fromString("05b61a62-ae84-492e-8536-f365b7143296");
-    public static final AttributeModifier speedModifier = new AttributeModifier(speedUUID, "Speed", 2.5, AttributeModifier.Operation.MULTIPLY_TOTAL);
+    public static final ResourceLocation SPEED_MODIFIER_ID = ResourceLocation.fromNamespaceAndPath(HLSpells.MODID, "speed");
+    public static final AttributeModifier speedModifier = new AttributeModifier(SPEED_MODIFIER_ID, 2.5, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
 
     private Util() {} // No instances of this class should be created
 
@@ -151,20 +150,20 @@ public final class Util {
      * Method to hide the client side call to show totem activation and/or particles
      */
     public static void displayActivation(Player player, Item item) {
-        NetworkManager.INSTANCE.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new TotemActivatedPacket(player.getUUID(), new ItemStack(item)));
+        PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new TotemActivatedPacket(player.getUUID(), new ItemStack(item)));
     }
 
     public static void updateDimensions(Player entity) {
         if (entity.level().isClientSide)
             return;
         entity.refreshDimensions();
-        NetworkManager.INSTANCE.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity), new UpdateDimensionsPacket(entity.getUUID()));
+        PacketDistributor.sendToPlayersTrackingEntityAndSelf(entity, new UpdateDimensionsPacket(entity.getUUID()));
     }
 
     public static void clearEffects(Player playerEntity) {
         AttributeInstance speedAttribute = playerEntity.getAttribute(Attributes.MOVEMENT_SPEED);
-        if (speedAttribute != null && speedAttribute.getModifier(speedUUID) != null) {
-            speedAttribute.removeModifier(speedModifier);
+        if (speedAttribute != null && speedAttribute.getModifier(SPEED_MODIFIER_ID) != null) {
+            speedAttribute.removeModifier(SPEED_MODIFIER_ID);
         }
 
         /* Check if the player has any one of these effects while they're not holding down a spell item, should prevent
@@ -177,8 +176,8 @@ public final class Util {
                 .forEach(p -> playerEntity.removeEffect(p.getEffect()));
 
         // Reapplies the old effect to the player (if applicable)
-        playerEntity.getCapability(PlayerCapProvider.PLAYER_CAP).ifPresent(cap -> {
-            MobEffect effect = cap.getEffect();
+        PlayerCapProvider.get(playerEntity).ifPresent(cap -> {
+            Holder<MobEffect> effect = cap.getEffect();
             if (effect != null) {
                 playerEntity.addEffect(new MobEffectInstance(effect, cap.getEffectDuration(), cap.getEffectAmplifier()));
                 cap.resetEffect();

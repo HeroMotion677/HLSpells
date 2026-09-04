@@ -6,6 +6,7 @@ import net.minecraft.world.level.ExplosionDamageCalculator;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.BaseFireBlock;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.core.particles.ParticleTypes;
@@ -42,9 +43,9 @@ public class FireballEntity extends BaseBoltEntity {
                         this.getY(), this.getZ() - this.random.nextFloat(), 20, 0.2D, 0.2D, 0.2D, 0.0D);
             }
             level.explode((Entity)null, this.getX(), this.getY(), this.getZ(),2, Level.ExplosionInteraction.BLOCK);
-            entity.setSecondsOnFire(5);
+            entity.igniteForSeconds(5);
             level.sendParticles(ParticleTypes.CRIT, this.getX(), this.getY(), this.getZ(), 15, 0.2D, 0.2D, 0.2D, 0.0D);
-            if (livingentity != null) this.doEnchantDamageEffects(livingentity, entity);
+            if (livingentity != null) EnchantmentHelper.doPostAttackEffects(level, entity, this.damageSources().mobProjectile(this, livingentity));
             this.remove(RemovalReason.KILLED);
 
         }

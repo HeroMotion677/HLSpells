@@ -6,6 +6,7 @@ import com.divinity.hlspells.spell.Spell;
 import com.divinity.hlspells.spell.SpellAttributes;
 import com.divinity.hlspells.spell.SpellConsumer;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.Holder;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.player.Player;
@@ -13,7 +14,7 @@ import net.minecraft.world.level.block.Blocks;
 
 import javax.annotation.Nullable;
 
-public class EffectSpell<T extends MobEffect> extends Spell {
+public class EffectSpell<T extends Holder<MobEffect>> extends Spell {
 
     private final T effect;
     private int duration;

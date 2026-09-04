@@ -1,78 +1,39 @@
 package com.divinity.hlspells.items.armor.material;
 
-
-import net.minecraft.world.entity.EquipmentSlot;
+import com.divinity.hlspells.HLSpells;
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.util.LazyLoadedValue;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
-import org.jetbrains.annotations.NotNull;
+import net.neoforged.neoforge.registries.DeferredHolder;
+import net.neoforged.neoforge.registries.DeferredRegister;
 
-import java.util.function.Supplier;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
 
-import static com.divinity.hlspells.HLSpells.MODID;
+public class WizardArmorMaterial {
 
-@SuppressWarnings("deprecation")
-public enum WizardArmorMaterial implements ArmorMaterial {
+    public static final DeferredRegister<ArmorMaterial> ARMOR_MATERIALS = DeferredRegister.create(Registries.ARMOR_MATERIAL, HLSpells.MODID);
 
-    WIZHAT("wizhat", 8, new int[]{0, 0, 0, 1}, 22, SoundEvents.ARMOR_EQUIP_LEATHER, 0F, 0.0F, () -> {
-        return Ingredient.of(Items.LEATHER);
+    public static final int DURABILITY_MULTIPLIER = 8;
+
+    public static final DeferredHolder<ArmorMaterial, ArmorMaterial> WIZHAT = ARMOR_MATERIALS.register("wizhat", () -> {
+        Map<ArmorItem.Type, Integer> defense = new EnumMap<>(ArmorItem.Type.class);
+        defense.put(ArmorItem.Type.HELMET, 1);
+        defense.put(ArmorItem.Type.CHESTPLATE, 0);
+        defense.put(ArmorItem.Type.LEGGINGS, 0);
+        defense.put(ArmorItem.Type.BOOTS, 0);
+        defense.put(ArmorItem.Type.BODY, 0);
+        return new ArmorMaterial(defense, 22, SoundEvents.ARMOR_EQUIP_LEATHER, () -> Ingredient.of(Items.LEATHER),
+                List.of(new ArmorMaterial.Layer(ResourceLocation.fromNamespaceAndPath(HLSpells.MODID, "wizard_hat"))), 0.0F, 0.0F);
     });
-    private static final int[] HEALTH_PER_SLOT = new int[]{2, 2, 2, 20};
-    private final String name;
-    private final int durabilityMultiplier;
-    private final int[] slotProtections;
-    private final int enchantmentValue;
-    private final SoundEvent sound;
-    private final float toughness;
-    private final float knockbackResistance;
-    private final LazyLoadedValue<Ingredient> repairIngredient;
 
-    WizardArmorMaterial(String name, int maxDamageFactor, int[] damageReductionAmount, int enchantability, SoundEvent sound, float toughness, float knockbackResistance, Supplier<Ingredient> repairMaterial) {
-        this.name = name;
-        this.durabilityMultiplier = maxDamageFactor;
-        this.slotProtections = damageReductionAmount;
-        this.enchantmentValue = enchantability;
-        this.sound = sound;
-        this.toughness = toughness;
-        this.knockbackResistance = knockbackResistance;
-        this.repairIngredient = new LazyLoadedValue<>(repairMaterial);
-    }
-
-    @Override @NotNull public SoundEvent getEquipSound() {
-        return this.sound;
-    }
-
-    @Override @NotNull public Ingredient getRepairIngredient() {
-        return this.repairIngredient.get();
-    }
-
-    @Override @NotNull public String getName() {
-        return MODID + ":" + this.name;
-    }
-
-    @Override
-    public int getDurabilityForType(ArmorItem.Type pType) {
-        return HEALTH_PER_SLOT[pType.getSlot().getIndex()] * this.durabilityMultiplier;
-    }
-
-    @Override
-    public int getDefenseForType(ArmorItem.Type pType) {
-        return this.slotProtections[pType.getSlot().getIndex()];
-    }
-
-    @Override public int getEnchantmentValue() {
-        return this.enchantmentValue;
-    }
-
-    @Override public float getToughness() {
-        return this.toughness;
-    }
-
-    @Override public float getKnockbackResistance() {
-        return this.knockbackResistance;
+    public static Holder<ArmorMaterial> wizardHat() {
+        return WIZHAT;
     }
 }

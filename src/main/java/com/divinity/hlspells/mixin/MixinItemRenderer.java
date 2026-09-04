@@ -29,11 +29,17 @@ import static com.mojang.math.Axis.ZP;
 @Mixin(ItemInHandRenderer.class)
 public abstract class MixinItemRenderer {
 
-    @Shadow protected abstract void applyItemArmTransform(PoseStack pMatrixStack, HumanoidArm pHand, float pEquippedProg);
+    @Shadow
+    private void applyItemArmTransform(PoseStack pMatrixStack, HumanoidArm pHand, float pEquippedProg) {
+        throw new AssertionError();
+    }
 
     @Shadow public abstract void renderItem(LivingEntity pLivingEntity, ItemStack pItemStack, ItemDisplayContext pTransformType, boolean pLeftHand, PoseStack pMatrixStack, MultiBufferSource pBuffer, int pCombinedLight);
 
-    @Shadow protected abstract void applyItemArmAttackTransform(PoseStack pMatrixStack, HumanoidArm pHand, float pSwingProgress);
+    @Shadow
+    private void applyItemArmAttackTransform(PoseStack pMatrixStack, HumanoidArm pHand, float pSwingProgress) {
+        throw new AssertionError();
+    }
 
     @Inject(method = "renderArmWithItem(Lnet/minecraft/client/player/AbstractClientPlayer;FFLnet/minecraft/world/InteractionHand;FLnet/minecraft/world/item/ItemStack;FLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V",
             at = @At(value = "HEAD"), cancellable = true)

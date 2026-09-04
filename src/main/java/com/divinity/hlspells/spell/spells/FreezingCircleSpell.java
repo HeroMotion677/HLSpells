@@ -8,7 +8,9 @@ import com.divinity.hlspells.util.Util;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
@@ -23,7 +25,7 @@ public class FreezingCircleSpell extends Spell {
     public SpellConsumer<Player> getAction() {
         return p -> {
                 var livingEntities = Util.getEntitiesInRange(p, LivingEntity.class, 6, -1, 6);
-                p.getCapability(PlayerCapProvider.PLAYER_CAP).ifPresent(cap -> {
+                PlayerCapProvider.get(p).ifPresent(cap -> {
                     cap.setSpellTimer(cap.getSpellTimer() + 1);
                     if (cap.getSpellTimer() % 10 == 0) {
                         doEnchantParticleInterior(p, p.level());
@@ -31,7 +33,9 @@ public class FreezingCircleSpell extends Spell {
                     }
                     livingEntities.stream().filter(e -> e != null && e != p).forEach(e -> {
                         if (livingEntities != null) {
-                            e.doEnchantDamageEffects(e, e);
+                            if (e.level() instanceof ServerLevel serverLevel) {
+                                EnchantmentHelper.doPostAttackEffects(serverLevel, e, e.damageSources().freeze());
+                            }
                             e.setTicksFrozen(350);
                         }
                     });

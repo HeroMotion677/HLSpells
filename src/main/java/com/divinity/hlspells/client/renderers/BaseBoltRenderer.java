@@ -45,10 +45,10 @@ public class BaseBoltRenderer<T extends Projectile> extends EntityRenderer<T> {
         stack.scale(-0.5F, -0.5F, 0.5F);
         this.model.setupAnim(entity, 0.0F, 0.0F, 0.0F, f, f1);
         VertexConsumer vertexConsumer = buffer.getBuffer(this.model.renderType(TEXTURE_LOCATION));
-        this.model.renderToBuffer(stack, vertexConsumer, v3, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+        this.model.renderToBuffer(stack, vertexConsumer, v3, OverlayTexture.NO_OVERLAY, 0xFFFFFFFF);
         stack.scale(1.5F, 1.5F, 1.5F);
         VertexConsumer vertexConsumerOther = buffer.getBuffer(RENDER_TYPE);
-        this.model.renderToBuffer(stack, vertexConsumerOther, v3, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 0.15F);
+        this.model.renderToBuffer(stack, vertexConsumerOther, v3, OverlayTexture.NO_OVERLAY, 0x26FFFFFF);
         stack.popPose();
         super.render(entity, v1, v2, stack, buffer, v3);
     }

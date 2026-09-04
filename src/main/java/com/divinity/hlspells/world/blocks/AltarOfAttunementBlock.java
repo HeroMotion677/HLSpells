@@ -23,7 +23,6 @@ import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -32,7 +31,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
 
 @SuppressWarnings("deprecation")
-public class AltarOfAttunementBlock extends EnchantmentTableBlock {
+public class AltarOfAttunementBlock extends EnchantingTableBlock {
 
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
 
@@ -65,11 +64,11 @@ public class AltarOfAttunementBlock extends EnchantmentTableBlock {
     @Override
     @ParametersAreNonnullByDefault
     @NotNull
-    public InteractionResult use(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
+    public InteractionResult useWithoutItem(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, BlockHitResult pHit) {
         if (pLevel.getBlockEntity(pPos) instanceof AltarOfAttunementBE blockEntity) {
             if (pLevel.isClientSide)
                 return InteractionResult.SUCCESS;
-            NetworkHooks.openScreen((ServerPlayer) pPlayer, blockEntity, pPos);
+            ((ServerPlayer) pPlayer).openMenu(blockEntity, pPos);
             if (pPlayer.containerMenu instanceof AltarOfAttunementMenu menu)
                 menu.slotsChanged(null);
             return InteractionResult.CONSUME;

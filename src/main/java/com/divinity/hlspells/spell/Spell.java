@@ -5,7 +5,6 @@ import com.divinity.hlspells.capabilities.playercap.PlayerCapProvider;
 import com.divinity.hlspells.setup.init.SoundInit;
 import com.divinity.hlspells.setup.init.SpellInit;
 import com.divinity.hlspells.util.SpellUtils;
-import com.sun.jna.platform.win32.Sspi;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -16,8 +15,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.RegistryObject;
 
 import javax.annotation.Nullable;
 import java.sql.Timestamp;
@@ -137,7 +134,7 @@ public abstract class Spell implements Cloneable {
     }
     public String getDescriptionId() {
         if (this.descriptionId == null) {
-            this.descriptionId = net.minecraft.Util.makeDescriptionId("spell", SpellInit.SPELLS_REGISTRY.get().getKey(this));
+            this.descriptionId = net.minecraft.Util.makeDescriptionId("spell", SpellInit.SPELLS_REGISTRY.getKey(this));
         }
         return this.descriptionId;
     }
@@ -206,7 +203,7 @@ public abstract class Spell implements Cloneable {
                             if (HLSpells.CONFIG.spellsUseXP.get())
                                 player.giveExperiencePoints(-SpellUtils.getXpReq(player, spell));
                         case HELD:
-                            player.getCapability(PlayerCapProvider.PLAYER_CAP).ifPresent(playerCap -> {
+                            PlayerCapProvider.get(player).ifPresent(playerCap -> {
                                 int spellXpTickCounter = playerCap.getSpellXpTickCounter();
                                 playerCap.setSpellXpTickCounter(spellXpTickCounter + 1);
                                 if (spellXpTickCounter == SpellUtils.getTickDelay(player, spell) && HLSpells.CONFIG.spellsUseXP.get()) {

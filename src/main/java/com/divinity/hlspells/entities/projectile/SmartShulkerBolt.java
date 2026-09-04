@@ -3,7 +3,9 @@ package com.divinity.hlspells.entities.projectile;
 import com.google.common.collect.Lists;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.world.damagesource.DamageSources;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.ShulkerBullet;
 import net.minecraft.network.protocol.Packet;
@@ -11,7 +13,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.network.NetworkHooks;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -85,8 +86,6 @@ public class SmartShulkerBolt extends ShulkerBullet {
         this.flightSteps = 7;
     }
 
-    @Override @Nonnull public Packet<ClientGamePacketListener> getAddEntityPacket() { return NetworkHooks.getEntitySpawningPacket(this); }
-
     @Override
     protected void onHitEntity(EntityHitResult result) {
         Entity entity = result.getEntity();
@@ -94,8 +93,8 @@ public class SmartShulkerBolt extends ShulkerBullet {
         LivingEntity livingentity = entity1 instanceof LivingEntity livingEntity ? livingEntity : null;
         if (result.getEntity() == this.getOwner()) return;
         boolean flag = entity.hurt(new DamageSources(this.level().registryAccess()).mobProjectile(this, livingentity), 15F);
-        if (flag) {
-            if (livingentity != null) this.doEnchantDamageEffects(livingentity, entity);
+        if (flag && this.level() instanceof ServerLevel serverLevel) {
+            if (livingentity != null) EnchantmentHelper.doPostAttackEffects(serverLevel, entity, this.damageSources().mobProjectile(this, livingentity));
             this.remove(RemovalReason.KILLED);
         }
     }

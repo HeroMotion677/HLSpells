@@ -43,8 +43,8 @@ public class BaseBoltModel<T extends Entity> extends HierarchicalModel<T> {
 
     @Override
     @ParametersAreNonnullByDefault
-    public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-        this.model.render(poseStack, buffer, packedLight, packedOverlay);
+    public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, int color) {
+        this.model.render(poseStack, buffer, packedLight, packedOverlay, color);
     }
 
     @Override @NotNull public ModelPart root() { return this.root; }

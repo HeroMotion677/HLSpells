@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smithing_transform",
+  "base": "hlspells:netherite_lapis_staff",
+  "addition": "minecraft:amethyst_shard",
+  "template": "hlspells:gem_upgrade_template",
+  "result": {
+    "id": "hlspells:netherite_amethyst_staff"
+  }
+}

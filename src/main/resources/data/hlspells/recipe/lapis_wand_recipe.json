@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "  #",
+    " / ",
+    "g  "
+  ],
+  "key": {
+    "#": "minecraft:lapis_lazuli",
+    "/": "minecraft:stick",
+    "g": "minecraft:gold_ingot"
+  },
+  "result": {
+    "count": 1,
+    "id": "hlspells:lapis_wand"
+  }
+}

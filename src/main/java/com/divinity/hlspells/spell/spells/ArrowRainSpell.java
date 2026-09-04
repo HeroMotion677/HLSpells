@@ -9,9 +9,9 @@ import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Arrow;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.RegistryObject;
 
 public class ArrowRainSpell extends Spell {
 
@@ -22,7 +22,7 @@ public class ArrowRainSpell extends Spell {
     @Override
     public SpellConsumer<Player> getAction() {
         return p -> {
-            p.getCapability(PlayerCapProvider.PLAYER_CAP).ifPresent(cap -> {
+            PlayerCapProvider.get(p).ifPresent(cap -> {
                 cap.setSpellTimer(cap.getSpellTimer() + 1);
                 if (p.level().isClientSide()) {
                     if (cap.getSpellTimer() % 6 == 0) {
@@ -45,7 +45,8 @@ public class ArrowRainSpell extends Spell {
     private static void doArrowSpawn(Player player, Level world) {
         Arrow arrowEntity = new Arrow(world,
                 player.getX() + (world.random.nextDouble() - 0.5D) * player.getBbWidth(),
-                player.getY() + 3.2, player.getZ() + (world.random.nextDouble() - 0.5D) * player.getBbWidth());
+                player.getY() + 3.2, player.getZ() + (world.random.nextDouble() - 0.5D) * player.getBbWidth(),
+                new ItemStack(Items.ARROW), null);
 
         arrowEntity.shootFromRotation(player, player.xRot, player.yRot, 1.0F, 1.3F, 1.0F);
         arrowEntity.setDeltaMovement(Mth.cos((float) Math.toRadians(player.yRot + 90)) + (world.random.nextFloat() - 0.5F) * player.getBbWidth(), -0.6, Mth.sin((float) Math.toRadians(player.yRot + 90)) + (world.random.nextFloat() - 0.5F) * player.getBbWidth());

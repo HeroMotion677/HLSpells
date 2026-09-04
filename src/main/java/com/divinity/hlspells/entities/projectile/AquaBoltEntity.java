@@ -1,6 +1,7 @@
 package com.divinity.hlspells.entities.projectile;
 
 import com.divinity.hlspells.HLSpells;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -8,6 +9,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageSources;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
@@ -15,7 +17,6 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.world.entity.Entity.RemovalReason;
@@ -35,7 +36,7 @@ public class AquaBoltEntity extends BaseBoltEntity {
         var fireMobsList = HLSpells.CONFIG.fireMobsList.get();
         boolean predicate = false;
         for (String id : fireMobsList) {
-            if (id.equals(ForgeRegistries.ENTITY_TYPES.getKey(entity.getType()) != null ? ForgeRegistries.ENTITY_TYPES.getKey(entity.getType()).toString() : "")) {
+            if (id.equals(BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType()) != null ? BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType()).toString() : "")) {
                 predicate = true;
                 break;
             }
@@ -44,7 +45,7 @@ public class AquaBoltEntity extends BaseBoltEntity {
         if (hasHurt && this.level() instanceof ServerLevel level) {
             level.sendParticles(ParticleTypes.BUBBLE_POP, this.getX() - this.random.nextInt(2), this.getY(), this.getZ() - this.random.nextFloat(), 12, 0.2D, 0.2D, 0.2D, 0.0D);
             entity.clearFire();
-            if (livingentity != null) this.doEnchantDamageEffects(livingentity, entity);
+            if (livingentity != null) EnchantmentHelper.doPostAttackEffects(level, entity, this.damageSources().mobProjectile(this, livingentity));
             this.remove(RemovalReason.KILLED);
         }
     }

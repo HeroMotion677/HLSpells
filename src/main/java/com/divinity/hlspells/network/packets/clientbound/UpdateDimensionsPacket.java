@@ -1,31 +1,31 @@
 package com.divinity.hlspells.network.packets.clientbound;
 
+import com.divinity.hlspells.HLSpells;
 import com.divinity.hlspells.network.ClientAccess;
-import com.divinity.hlspells.network.IPacket;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.simple.SimpleChannel;
+import net.minecraft.core.UUIDUtil;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import java.util.UUID;
 
-public record UpdateDimensionsPacket(UUID playerUUID) implements IPacket {
+public record UpdateDimensionsPacket(UUID playerUUID) implements CustomPacketPayload {
+
+    public static final CustomPacketPayload.Type<UpdateDimensionsPacket> TYPE =
+            new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(HLSpells.MODID, "update_dimensions"));
+
+    public static final StreamCodec<RegistryFriendlyByteBuf, UpdateDimensionsPacket> STREAM_CODEC = StreamCodec.composite(
+            UUIDUtil.STREAM_CODEC, UpdateDimensionsPacket::playerUUID,
+            UpdateDimensionsPacket::new);
 
     @Override
-    public void encode(FriendlyByteBuf packetBuf) {
-        packetBuf.writeUUID(playerUUID);
+    public Type<? extends CustomPacketPayload> type() {
+        return TYPE;
     }
 
-    public static UpdateDimensionsPacket decode(FriendlyByteBuf packetBuf) {
-        return new UpdateDimensionsPacket(packetBuf.readUUID());
-    }
-
-    @Override
-    public void handle(ServerPlayer player) {
-        ClientAccess.updateDimensions(playerUUID);
-    }
-
-    public static void register(SimpleChannel channel, int id) {
-        IPacket.register(channel, id, NetworkDirection.PLAY_TO_CLIENT, UpdateDimensionsPacket.class, UpdateDimensionsPacket::decode);
+    public static void handle(UpdateDimensionsPacket packet, IPayloadContext context) {
+        context.enqueueWork(() -> ClientAccess.updateDimensions(packet.playerUUID));
     }
 }

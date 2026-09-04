@@ -1,60 +1,43 @@
 package com.divinity.hlspells.capabilities.spellholdercap;
 
-import net.minecraft.core.Direction;
-import net.minecraft.nbt.CompoundTag;
+import com.divinity.hlspells.HLSpells;
+import com.divinity.hlspells.items.spellitems.SpellHoldingItem;
+import com.mojang.serialization.Codec;
+import net.minecraft.core.component.DataComponentType;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityManager;
-import net.minecraftforge.common.capabilities.CapabilityToken;
-import net.minecraftforge.common.capabilities.ICapabilitySerializable;
-import net.minecraftforge.common.util.LazyOptional;
+import net.neoforged.neoforge.registries.DeferredHolder;
+import net.neoforged.neoforge.registries.DeferredRegister;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Optional;
 
-@SuppressWarnings("all")
-public class SpellHolderProvider implements ICapabilitySerializable<CompoundTag> {
+public class SpellHolderProvider {
 
     public static final String CURRENT_SPELL_CYCLE_NBT = "currentSpellCycle";
     public static final String SPELL_NBT = "Spell ";
-    public static Capability<ISpellHolder> SPELL_HOLDER_CAP = CapabilityManager.get(new CapabilityToken<>(){});
-    private SpellHolder spellHolder = null;
-    private final LazyOptional<ISpellHolder> instance = LazyOptional.of(this::createSpellCap);
 
-    @Nonnull
-    @Override
-    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap) {
-        return cap == SPELL_HOLDER_CAP ? instance.cast() : LazyOptional.empty();
-    }
+    public static final DeferredRegister<DataComponentType<?>> COMPONENTS = DeferredRegister.create(Registries.DATA_COMPONENT_TYPE, HLSpells.MODID);
 
-    @Nonnull
-    @Override
-    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-        return getCapability(cap);
-    }
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<SpellHolderData>> SPELL_HOLDER_CAP =
+            COMPONENTS.register("spell_holder", () -> DataComponentType.<SpellHolderData>builder()
+                    .persistent(SpellHolderData.CODEC)
+                    .networkSynchronized(SpellHolderData.STREAM_CODEC)
+                    .build());
 
-    @Override
-    public CompoundTag serializeNBT() {
-        if (instance.isPresent()) {
-	        return instance.orElseThrow(RuntimeException::new).serializeNBT();
-        }
-        return new CompoundTag();
-    }
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Boolean>> CAST_BAR =
+            COMPONENTS.register("cast_bar", () -> DataComponentType.<Boolean>builder()
+                    .persistent(Codec.BOOL)
+                    .networkSynchronized(ByteBufCodecs.BOOL)
+                    .build());
 
-    @Override
-    public void deserializeNBT(CompoundTag nbt) {
-        if (instance.isPresent()) {
-            instance.orElseThrow(RuntimeException::new).deserializeNBT(nbt);
-        }
-    }
-
-    @Nonnull
-    private ISpellHolder createSpellCap() {
-        return spellHolder == null ? new SpellHolder() : spellHolder;
+    public static Optional<ISpellHolder> get(ItemStack stack) {
+        return stack.getItem() instanceof SpellHoldingItem ? Optional.of(new SpellHolder(stack)) : Optional.empty();
     }
 
     @Nullable
     public static ISpellHolder getSpellHolderUnwrap(ItemStack stack) {
-        return stack.getCapability(SPELL_HOLDER_CAP).orElse(null);
+        return get(stack).orElse(null);
     }
 }

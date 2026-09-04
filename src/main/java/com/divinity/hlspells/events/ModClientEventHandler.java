@@ -15,7 +15,6 @@ import com.divinity.hlspells.world.blocks.blockentities.screen.AltarOfAttunement
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
@@ -25,19 +24,19 @@ import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.*;
-import net.minecraftforge.client.settings.KeyConflictContext;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.client.event.*;
+import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
+import net.neoforged.neoforge.client.settings.KeyConflictContext;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import org.lwjgl.glfw.GLFW;
 
 
 
-@Mod.EventBusSubscriber(modid = HLSpells.MODID, value = Dist.CLIENT, bus = Bus.MOD)
+@EventBusSubscriber(modid = HLSpells.MODID, value = Dist.CLIENT, bus = EventBusSubscriber.Bus.MOD)
 public class ModClientEventHandler {
 
         public static final KeyMapping WAND_BINDING = new KeyMapping("Next Spell", KeyConflictContext.IN_GAME, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_G, "HLSpells");
@@ -54,7 +53,7 @@ public class ModClientEventHandler {
                 ItemInit.STAFFS.forEach(staff -> registerItemModel(staff.get(), ResourceLocation.parse("pull"), 3, 0.2F, 0.4F, 0.6F, 0.8F, 1F));
                 ItemProperties.register(ItemInit.TOTEM_OF_RETURNING.get(), ResourceLocation.parse("used"), (stack, world, living, integer) -> {
                     if (living instanceof Player) {
-                        var totemCap = stack.getCapability(TotemItemProvider.TOTEM_CAP);
+                        var totemCap = TotemItemProvider.get(stack);
                         if (totemCap.isPresent())
                             return totemCap.map(ITotemCap::getHasDied).orElse(false) ? 1 : 0;
                     }
@@ -65,7 +64,6 @@ public class ModClientEventHandler {
             if (HLSpells.isCurioLoaded) {
                 CuriosCompat.renderCuriosTotems(ItemInit.TOTEMS);
             }
-            MenuScreens.register(MenuTypeInit.ALTAR_CONTAINER.get(), AltarOfAttunementScreen::new);
             ItemBlockRenderTypes.setRenderLayer(BlockInit.ALTAR_OF_ATTUNEMENT_BLOCK.get(), RenderType.cutout());
             BlockEntityRenderers.register(BlockInit.ALTAR_BE.get(), ctx -> new AltarItemRenderer());
             ItemBlockRenderTypes.setRenderLayer(BlockInit.ORB_OF_ENCHANTING.get(), RenderType.cutout());
@@ -74,6 +72,11 @@ public class ModClientEventHandler {
 
   /*  AnimationStack animationStack = PlayerAnimationAccess.getPlayerAnimLayer(clientPlayer);
 animationStack.addAnimLayer(...);*/
+        @SubscribeEvent
+        public static void registerMenuScreens(RegisterMenuScreensEvent event) {
+            event.register(MenuTypeInit.ALTAR_CONTAINER.get(), AltarOfAttunementScreen::new);
+        }
+
         @SuppressWarnings("all")
         @SubscribeEvent
         @OnlyIn(Dist.CLIENT)
@@ -119,7 +122,7 @@ animationStack.addAnimLayer(...);*/
         private static void registerItemModel(Item item, ResourceLocation location, int useItemRemainTickOffset, float... values) {
             ItemProperties.register(item, location, (stack, world, living, seed) -> {
                 if (living instanceof Player && living.isUsingItem() && living.getUseItem() == stack) {
-                    int useDuration = item.getUseDuration(item.getDefaultInstance());
+                    int useDuration = item.getUseDuration(item.getDefaultInstance(), living);
                     int minUseAmount = useDuration - (useItemRemainTickOffset * (values.length - 1));
                     for (int i = 0; i < values.length; i++) {
                         if ((double) living.getUseItemRemainingTicks() < minUseAmount) return values[values.length - 1];
@@ -133,7 +136,7 @@ animationStack.addAnimLayer(...);*/
         }
 
         private static ResourceLocation getBoltLocation(String location) {
-            return new ResourceLocation(HLSpells.MODID, location);
+            return ResourceLocation.fromNamespaceAndPath(HLSpells.MODID, location);
         }
 
         @SubscribeEvent

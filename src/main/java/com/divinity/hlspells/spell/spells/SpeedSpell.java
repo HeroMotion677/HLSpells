@@ -8,8 +8,6 @@ import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.RegistryObject;
 
 public class SpeedSpell extends Spell {
 
@@ -21,7 +19,7 @@ public class SpeedSpell extends Spell {
     public SpellConsumer<Player> getAction() {
         return p -> {
             AttributeInstance speedAttribute = p.getAttribute(Attributes.MOVEMENT_SPEED);
-            if (speedAttribute != null && speedAttribute.getModifier(Util.speedUUID) == null) {
+            if (speedAttribute != null && speedAttribute.getModifier(Util.SPEED_MODIFIER_ID) == null) {
                 speedAttribute.addPermanentModifier(Util.speedModifier);
             }
             return true;

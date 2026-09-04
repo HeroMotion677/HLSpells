@@ -13,10 +13,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.RespawnAnchorBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
-import net.minecraftforge.common.util.BlockSnapshot;
-import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.neoforge.common.util.BlockSnapshot;
+import net.neoforged.neoforge.event.EventHooks;
 
 import javax.annotation.Nullable;
 
@@ -40,7 +38,7 @@ public class FrostPathII extends Spell {
                     BlockState mutableState = p.level().getBlockState(mutablePos);
                     if (mutableState.isAir()) {
                         BlockState state = p.level().getBlockState(blockpos);
-                        if (state.canBeReplaced() && blockstate.canSurvive(p.level(), blockpos) && p.level().isUnobstructed(blockstate, blockpos, CollisionContext.empty()) && !ForgeEventFactory.onBlockPlace(p, BlockSnapshot.create(p.level().dimension(), p.level(), blockpos), Direction.UP)) {
+                        if (state.canBeReplaced() && blockstate.canSurvive(p.level(), blockpos) && p.level().isUnobstructed(blockstate, blockpos, CollisionContext.empty()) && !EventHooks.onBlockPlace(p, BlockSnapshot.create(p.level().dimension(), p.level(), blockpos), Direction.UP)) {
                             used = true;
                             p.level().setBlockAndUpdate(blockpos, blockstate);
                             p.level().scheduleTick(blockpos, BlockInit.CUSTOM_FROSTED_ICE.get(), Mth.nextInt(p.getRandom(), 50, 120));

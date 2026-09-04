@@ -1,98 +1,23 @@
 package com.divinity.hlspells.capabilities.playercap;
 
-import com.divinity.hlspells.network.NetworkManager;
-import net.minecraft.nbt.*;
-import net.minecraft.core.Direction;
-import net.minecraft.world.effect.MobEffect;
-import net.minecraft.world.entity.monster.Phantom;
-import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.capabilities.*;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.network.PacketDistributor;
-import net.minecraftforge.network.simple.SimpleChannel;
+import com.divinity.hlspells.HLSpells;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.neoforged.neoforge.attachment.AttachmentType;
+import net.neoforged.neoforge.registries.DeferredRegister;
+import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import java.util.Optional;
+import java.util.function.Supplier;
 
-@SuppressWarnings("all")
-public class PlayerCapProvider implements ICapabilitySerializable<CompoundTag> {
+public class PlayerCapProvider {
 
-    public static Capability<IPlayerCap> PLAYER_CAP = CapabilityManager.get(new CapabilityToken<>(){});
-    private PlayerCap playerCap = null;
-    private final LazyOptional<IPlayerCap> instance = LazyOptional.of(this::createPlayerCap);
+    public static final DeferredRegister<AttachmentType<?>> ATTACHMENTS = DeferredRegister.create(NeoForgeRegistries.ATTACHMENT_TYPES, HLSpells.MODID);
 
-    @Nonnull
-    @Override
-    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap) {
-        return cap == PLAYER_CAP ? instance.cast() : LazyOptional.empty();
-    }
+    public static final Supplier<AttachmentType<PlayerCap>> PLAYER_CAP = ATTACHMENTS.register("player_cap",
+            () -> AttachmentType.serializable(PlayerCap::new).build());
 
-    @Nonnull
-    @Override
-    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-        return this.getCapability(cap);
-    }
-
-    @Override
-    public CompoundTag serializeNBT() {
-        CompoundTag tag = new CompoundTag();
-        if (instance.isPresent()) {
-            instance.ifPresent(cap -> {
-                if (cap.getEffect() != null) {
-                    tag.putInt("effect", MobEffect.getId(cap.getEffect()));
-                    tag.putInt("effectDuration", cap.getEffectDuration());
-                    tag.putInt("effectAmplifier", cap.getEffectAmplifier());
-                }
-                tag.putInt("soulBondItemsSize", cap.getSoulBondItems().size());
-                ListTag slotsNBT = new ListTag();
-                ListTag stacksNBT = new ListTag();
-                cap.getSoulBondItems().keySet().forEach(id -> slotsNBT.add(IntTag.valueOf(id)));
-                cap.getSoulBondItems().values().forEach(stack -> stacksNBT.add(stack.save(new CompoundTag())));
-                tag.put("slotIds", slotsNBT);
-                tag.put("stacks", stacksNBT);
-                tag.putInt("spellTimer", cap.getSpellTimer());
-                tag.putInt("spellXpTickCounter", cap.getSpellXpTickCounter());
-                tag.putInt("durabilityTickCounter", cap.getDurabilityTickCounter());
-                tag.putBoolean("phasingActive", cap.getPhasingActive());
-            });
-        }
-        return tag;
-    }
-
-    @Override
-    public void deserializeNBT(CompoundTag nbt) {
-        if (instance.isPresent()) {
-            instance.ifPresent(cap -> {
-                int effect = nbt.getInt("effect");
-                if (effect != 0) {
-                    cap.setEffect(MobEffect.byId(nbt.getInt("effect")));
-                    cap.setEffectDuration(nbt.getInt("effectDuration"));
-                    cap.setEffectAmplifier(nbt.getInt("effectAmplifier"));
-                }
-                int soulBondItemsSize = nbt.getInt("soulBondItemsSize");
-                ListTag slotsNBT = nbt.getList("slotIds", 0);
-                ListTag stacksNBT = nbt.getList("stacks", 0);
-                for (int i = 0; i < soulBondItemsSize; i++) {
-                    Tag slot = slotsNBT.get(i);
-                    Tag stack = stacksNBT.get(i);
-                    if (slot instanceof IntTag intTag && stack instanceof CompoundTag compoundTag) {
-                        cap.addSoulBondItem(intTag.getAsInt(), ItemStack.of(compoundTag));
-                    }
-                }
-                cap.setSpellTimer(nbt.getInt("spellTimer"));
-                cap.setSpellXpTickCounter(nbt.getInt("spellXpTickCounter"));
-                cap.setDurabilityTickCounter(nbt.getInt("durabilityTickCounter"));
-                cap.setPhasingActive(nbt.getBoolean("phasingActive"));
-            });
-        }
-    }
-
-    @Nonnull
-    private IPlayerCap createPlayerCap() {
-        return playerCap == null ? new PlayerCap() : playerCap;
-    }
-
-    public SimpleChannel getNetworkChannel() {
-        return NetworkManager.INSTANCE;
+    public static Optional<IPlayerCap> get(Entity entity) {
+        return entity instanceof Player player ? Optional.of(player.getData(PLAYER_CAP)) : Optional.empty();
     }
 }

@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smithing_transform",
+  "base": "hlspells:netherite_amethyst_staff",
+  "addition": "minecraft:lapis_lazuli",
+  "template": "hlspells:gem_upgrade_template",
+  "result": {
+    "id": "hlspells:netherite_lapis_staff"
+  }
+}

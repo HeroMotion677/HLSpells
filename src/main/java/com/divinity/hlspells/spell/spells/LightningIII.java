@@ -7,15 +7,13 @@ import com.divinity.hlspells.spell.Spell;
 import com.divinity.hlspells.spell.SpellAttributes;
 import com.divinity.hlspells.spell.SpellConsumer;
 import com.divinity.hlspells.util.Util;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
 
 import java.util.List;
 
@@ -32,7 +30,7 @@ public class LightningIII extends Spell {
                 List<? extends String> blacklistedMobs = HLSpells.CONFIG.lightningSpellList.get();
                 boolean predicate = false;
                 for (String id : blacklistedMobs) {
-                    if (id.equals(ForgeRegistries.ENTITY_TYPES.getKey(f.getType()) != null ? ForgeRegistries.ENTITY_TYPES.getKey(f.getType()).toString() : "")) {
+                    if (id.equals(BuiltInRegistries.ENTITY_TYPE.getKey(f.getType()) != null ? BuiltInRegistries.ENTITY_TYPE.getKey(f.getType()).toString() : "")) {
                         predicate = true;
                     }
                 }

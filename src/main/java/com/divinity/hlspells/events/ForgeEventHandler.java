@@ -19,67 +19,47 @@ import com.divinity.hlspells.util.Util;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.LootPool;
+import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootPoolEntryContainer;
-import net.minecraft.world.level.storage.loot.entries.LootTableReference;
+import net.minecraft.world.level.storage.loot.entries.NestedLootTable;
 import net.minecraft.world.level.storage.loot.providers.number.BinomialDistributionGenerator;
-import net.minecraftforge.event.AttachCapabilitiesEvent;
-import net.minecraftforge.event.LootTableLoadEvent;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.living.LivingDamageEvent;
-import net.minecraftforge.event.entity.living.LivingDeathEvent;
-import net.minecraftforge.event.entity.living.LivingDropsEvent;
-import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.LootTableLoadEvent;
+import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
+import net.neoforged.neoforge.event.entity.living.LivingDropsEvent;
+import net.neoforged.neoforge.event.entity.living.LivingEquipmentChangeEvent;
+import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import top.theillusivec4.curios.api.SlotResult;
+
 import java.util.Collection;
 import java.util.Iterator;
 
 import static com.divinity.hlspells.HLSpells.MODID;
 
-
-@Mod.EventBusSubscriber(modid = HLSpells.MODID, bus = Bus.FORGE)
+@EventBusSubscriber(modid = HLSpells.MODID, bus = EventBusSubscriber.Bus.GAME)
 public class ForgeEventHandler {
 
     public static boolean soulBond = false;
     public static boolean displayActivationOnDeath = false;
-
-    @SubscribeEvent
-    public static void onAttachEntityCaps(AttachCapabilitiesEvent<Entity> event) {
-        if (event.getObject() instanceof Player && !event.getObject().getCapability(PlayerCapProvider.PLAYER_CAP).isPresent()) {
-            event.addCapability(ResourceLocation.fromNamespaceAndPath(MODID, "playereffectcap"), new PlayerCapProvider());
-        }
-    }
-
-    @SubscribeEvent
-    public static void onAttachItemStackCaps(AttachCapabilitiesEvent<ItemStack> event) {
-        ItemStack item = event.getObject();
-        if (item.getItem() == ItemInit.TOTEM_OF_RETURNING.get() || item.getItem() == ItemInit.TOTEM_OF_KEEPING.get()) {
-            event.addCapability(ResourceLocation.fromNamespaceAndPath(MODID, "totemcap"), new TotemItemProvider());
-        }
-        if (HLSpells.isCurioLoaded) {
-            CuriosCompat.attachCapabilities(event);
-        }
-    }
 
     @SubscribeEvent
     public static void registerLoot(LootTableLoadEvent evt) {
@@ -103,16 +83,16 @@ public class ForgeEventHandler {
             soulBond = player.inventory.compartments
                     .stream()
                     .flatMap(Collection::stream) // Flatmap to reduce overhead
-                    .anyMatch(p -> EnchantmentHelper.getItemEnchantmentLevel(EnchantmentInit.SOUL_BOND.get(), p) > 0);
+                    .anyMatch(p -> EnchantmentInit.getLevel(EnchantmentInit.SOUL_BOND, p) > 0);
 
             ItemInit.TOTEMS.forEach(totem -> checkAllTotemSlots(player, event, totem.get(), HLSpells.isCurioLoaded));
 
             if (soulBond) {
-                player.getCapability(PlayerCapProvider.PLAYER_CAP).ifPresent(cap -> {
+                PlayerCapProvider.get(player).ifPresent(cap -> {
                     int size = player.inventory.compartments.stream().mapToInt(NonNullList::size).sum();
                     for (int i = 0; i < size; i++) {
                         ItemStack stack = player.inventory.getItem(i);
-                        if (EnchantmentHelper.getItemEnchantmentLevel(EnchantmentInit.SOUL_BOND.get(), stack) > 0)
+                        if (EnchantmentInit.getLevel(EnchantmentInit.SOUL_BOND, stack) > 0)
                             cap.addSoulBondItem(i, stack);
                     }
                 });
@@ -129,13 +109,13 @@ public class ForgeEventHandler {
                 ItemStack stack = itemEntityIterator.next().getItem();
                 // TOTEM OF KEEPING (Reloads player inventory even after dying and disables inventory from spilling)
                 if (stack.getItem() == ItemInit.TOTEM_OF_KEEPING.get() && !keepingTotem[0]) {
-                    stack.getCapability(TotemItemProvider.TOTEM_CAP).filter(ITotemCap::getHasDied).ifPresent(cap -> {
+                    TotemItemProvider.get(stack).filter(ITotemCap::getHasDied).ifPresent(cap -> {
                         InteractionHand hand = cap.getTotemInHand();
                         if (hand == InteractionHand.MAIN_HAND || hand == InteractionHand.OFF_HAND) {
                             player.inventory.load(cap.getInventoryNBT());
                             if (HLSpells.isCurioLoaded) {
                                 CuriosCompat.restoreCuriosInv(player, cap.getCuriosNBT());
-                                CuriosCompat.getItemInCuriosSlot(player, ItemInit.TOTEM_OF_KEEPING.get()).ifPresent(slotContext -> slotContext.stack().getCapability(TotemItemProvider.TOTEM_CAP).ifPresent(totemCap -> {
+                                CuriosCompat.getItemInCuriosSlot(player, ItemInit.TOTEM_OF_KEEPING.get()).ifPresent(slotContext -> TotemItemProvider.get(slotContext.stack()).ifPresent(totemCap -> {
                                     totemCap.setDiedTotemInCurios(true);
                                     totemCap.setCuriosSlot(cap.getCuriosSlot());
                                 }));
@@ -148,7 +128,7 @@ public class ForgeEventHandler {
                 }
                 // TOTEM OF RETURNING (Sets BlockPos to teleportToLocation to and sets the slot the totem should be in)
                 if (stack.getItem() == ItemInit.TOTEM_OF_RETURNING.get()) {
-                    stack.getCapability(TotemItemProvider.TOTEM_CAP).filter(ITotemCap::getHasDied).ifPresent(cap -> {
+                    TotemItemProvider.get(stack).filter(ITotemCap::getHasDied).ifPresent(cap -> {
                         InteractionHand hand = cap.getTotemInHand();
                         boolean returnInCurio = false;
                         if (HLSpells.isCurioLoaded && cap.diedTotemInCurios()) {
@@ -171,13 +151,13 @@ public class ForgeEventHandler {
                         }
                     });
                 }
-                if (EnchantmentHelper.getItemEnchantmentLevel(EnchantmentInit.SOUL_BOND.get(), stack) > 0 && !keepingTotem[0]) {
+                if (EnchantmentInit.getLevel(EnchantmentInit.SOUL_BOND, stack) > 0 && !keepingTotem[0]) {
                     itemEntityIterator.remove();
                 }
             }
             if (!keepingTotem[0]) {
                 // Present here to show the soul bond items on respawn screen.
-                player.getCapability(PlayerCapProvider.PLAYER_CAP).ifPresent(cap -> cap.getSoulBondItems().forEach((pIndex, pStack) -> {
+                PlayerCapProvider.get(player).ifPresent(cap -> cap.getSoulBondItems().forEach((pIndex, pStack) -> {
                     if (player.inventory.getItem(pIndex).isEmpty()) {
                         player.inventory.setItem(pIndex, pStack);
                     } else player.inventory.add(pStack);
@@ -198,14 +178,13 @@ public class ForgeEventHandler {
             Player current = event.getEntity();
             boolean keepingActivated = false;
             // TOTEM OF KEEPING (Restores the inventory)
-            original.reviveCaps(); // This is needed to re-validate original player's capabilities (only affects newer versions apparently)
             if (original.getMainHandItem().getItem() == ItemInit.TOTEM_OF_KEEPING.get()) {
                 int mainSlot = -1;
                 Inventory inv = original.inventory;
                 for (int i = 0; i < inv.items.size(); ++i) {
                     ItemStack stackInSlot = inv.items.get(i);
                     if (!stackInSlot.isEmpty() && original.getMainHandItem().getItem() == stackInSlot.getItem() &&
-                            ItemStack.isSameItemSameTags(original.getMainHandItem(), stackInSlot)) {
+                            ItemStack.isSameItemSameComponents(original.getMainHandItem(), stackInSlot)) {
                         mainSlot = i;
                     }
                 }
@@ -215,7 +194,7 @@ public class ForgeEventHandler {
                 original.inventory.offhand.get(0).shrink(1);
                 keepingActivated = true;
             } else if (HLSpells.isCurioLoaded && CuriosCompat.getItemInCuriosSlot(original, ItemInit.TOTEM_OF_KEEPING.get()).isPresent()) {
-                CuriosCompat.getItemInCuriosSlot(original, ItemInit.TOTEM_OF_KEEPING.get()).ifPresent(slotResult -> slotResult.stack().getCapability(TotemItemProvider.TOTEM_CAP).ifPresent(cap -> {
+                CuriosCompat.getItemInCuriosSlot(original, ItemInit.TOTEM_OF_KEEPING.get()).ifPresent(slotResult -> TotemItemProvider.get(slotResult.stack()).ifPresent(cap -> {
                     if (cap.diedTotemInCurios())
                         slotResult.stack().shrink(1);
                 }));
@@ -237,7 +216,7 @@ public class ForgeEventHandler {
             }
             // SOUL BOND
             if (!keepingActivated) {
-                original.getCapability(PlayerCapProvider.PLAYER_CAP).filter(p -> !p.getSoulBondItems().isEmpty()).ifPresent(cap -> {
+                PlayerCapProvider.get(original).filter(p -> !p.getSoulBondItems().isEmpty()).ifPresent(cap -> {
                     cap.getSoulBondItems().forEach((pIndex, pStack) -> {
                         if (current.inventory.getItem(pIndex).isEmpty()) {
                             current.inventory.setItem(pIndex, pStack);
@@ -246,16 +225,15 @@ public class ForgeEventHandler {
                     cap.getSoulBondItems().clear();
                 });
             }
-            original.invalidateCaps();
         }
     }
 
     @SubscribeEvent
-    public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
-        if (!event.player.level().isClientSide()) {
-            if (event.phase == TickEvent.Phase.END && displayActivationOnDeath) {
+    public static void onPlayerTick(PlayerTickEvent.Post event) {
+        if (!event.getEntity().level().isClientSide()) {
+            if (displayActivationOnDeath) {
                 displayActivationOnDeath = false;
-                Util.displayActivation(event.player, ItemInit.TOTEM_OF_KEEPING.get());
+                Util.displayActivation(event.getEntity(), ItemInit.TOTEM_OF_KEEPING.get());
             }
         }
     }
@@ -270,7 +248,7 @@ public class ForgeEventHandler {
                 for (InteractionHand hand : InteractionHand.values()) {
                     ItemStack stack = player.getItemInHand(hand);
                     if (stack.getItem() == ItemInit.TOTEM_OF_RETURNING.get()) {
-                        stack.getCapability(TotemItemProvider.TOTEM_CAP).filter(ITotemCap::getHasDied).ifPresent(cap -> {
+                        TotemItemProvider.get(stack).filter(ITotemCap::getHasDied).ifPresent(cap -> {
                             BlockPos pos = cap.getBlockPos();
                             Util.displayActivation(player, ItemInit.TOTEM_OF_RETURNING.get());
                             world.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.TOTEM_USE, SoundSource.PLAYERS, 0.3F, 0.3F);
@@ -294,13 +272,13 @@ public class ForgeEventHandler {
                 ItemStack next = event.getTo();
                 ItemStack previous = event.getFrom();
                 if (next.getItem() instanceof SpellHoldingItem item && !item.isSpellBook()) {
-                    next.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP).filter(cap -> !cap.getSpells().isEmpty()).ifPresent(cap -> {
+                    SpellHolderProvider.get(next).filter(cap -> !cap.getSpells().isEmpty()).ifPresent(cap -> {
                         Spell spell = SpellUtils.getSpellByID(cap.getCurrentSpell());
                         player.displayClientMessage(Component.literal(spell.getTrueDisplayName()).withStyle(ChatFormatting.AQUA), true);
                     });
                 }
                 if (previous.getItem() instanceof SpellHoldingItem item) {
-                    previous.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP).filter(cap -> !cap.getSpells().isEmpty()).ifPresent(cap -> {
+                    SpellHolderProvider.get(previous).filter(cap -> !cap.getSpells().isEmpty()).ifPresent(cap -> {
                         cap.setSpellSoundBuffer(0);
                         Spell spell = SpellUtils.getSpellByID(cap.getCurrentSpell());
                         if (spell.getSpellType() == SpellAttributes.Type.HELD && item.isWasHolding() && !player.isUsingItem()) {
@@ -312,29 +290,19 @@ public class ForgeEventHandler {
             }
         }
     }
+
     @SubscribeEvent
-    public static void SpellCap(TickEvent.PlayerTickEvent event) {
-        if (!event.player.level().isClientSide()) {
-            if (event.phase == TickEvent.Phase.END && displayActivationOnDeath) {
-                displayActivationOnDeath = false;
-                Util.displayActivation(event.player, ItemInit.TOTEM_OF_KEEPING.get());
-            }
-        }
-    }
-    @SubscribeEvent
-    public static void clearEffectsAfterUse(TickEvent.PlayerTickEvent event) {
-        Player player = event.player;
+    public static void clearEffectsAfterUse(PlayerTickEvent.Post event) {
+        Player player = event.getEntity();
         if (player != null && !player.level().isClientSide()) {
-            if (event.phase == TickEvent.Phase.END) {
-                if (!(player.getUseItem().getItem() instanceof SpellHoldingItem)) {
-                    Util.clearEffects(player);
-                }
+            if (!(player.getUseItem().getItem() instanceof SpellHoldingItem)) {
+                Util.clearEffects(player);
             }
         }
     }
 
     @SubscribeEvent
-    public static void preventPhasingSuffocation(LivingDamageEvent event) {
+    public static void preventPhasingSuffocation(LivingIncomingDamageEvent event) {
         if (event.getEntity() instanceof Player player) {
             if (player.isUsingItem()) {
                 if (SpellUtils.getSpell(player.getUseItem()) instanceof Phasing spell && spell.canUseSpell()) {
@@ -347,7 +315,7 @@ public class ForgeEventHandler {
     }
 
     @SubscribeEvent
-    public static void preventPhasingIISuffocation(LivingDamageEvent event) {
+    public static void preventPhasingIISuffocation(LivingIncomingDamageEvent event) {
         if (event.getEntity() instanceof Player player) {
             if (player.isUsingItem()) {
                 if (SpellUtils.getSpell(player.getUseItem()) instanceof PhasingII spell && spell.canUseSpell()) {
@@ -360,12 +328,13 @@ public class ForgeEventHandler {
     }
 
     public static LootPool getInjectPool(String entryName) {
-        return LootPool.lootPool().add(getInjectEntry(entryName)).setBonusRolls(BinomialDistributionGenerator.binomial(0, 1)).name("inject").build();
+        return LootPool.lootPool().add(getInjectEntry(entryName)).setBonusRolls(BinomialDistributionGenerator.binomial(0, 1)).build();
     }
 
     private static LootPoolEntryContainer.Builder<?> getInjectEntry(String name) {
-        ResourceLocation table = ResourceLocation.fromNamespaceAndPath(HLSpells.MODID, "inject/" + name);
-        return LootTableReference.lootTableReference(table).setWeight(1);
+        ResourceKey<LootTable> table = ResourceKey.create(Registries.LOOT_TABLE,
+                ResourceLocation.fromNamespaceAndPath(HLSpells.MODID, "inject/" + name));
+        return NestedLootTable.lootTableReference(table).setWeight(1);
     }
 
     private static boolean isSameTotem(ItemStack itemToCompare, ItemStack other) {
@@ -423,6 +392,4 @@ public class ForgeEventHandler {
             }
         }
     }
-
-    }
-
+}

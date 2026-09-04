@@ -4,6 +4,7 @@ import com.divinity.hlspells.spell.Spell;
 import com.divinity.hlspells.spell.SpellAttributes;
 import com.divinity.hlspells.spell.SpellConsumer;
 import net.minecraft.core.particles.SimpleParticleType;
+import net.minecraft.core.Holder;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -11,8 +12,6 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.RegistryObject;
 
 public class TorpedoSpell extends Spell {
 
@@ -23,7 +22,7 @@ public class TorpedoSpell extends Spell {
     @Override
     public SpellConsumer<Player> getAction() {
         return p -> {
-            int i = p.getUseItem().getUseDuration();
+            int i = p.getUseItem().getUseDuration(p);
             if (p.onGround()) {
                 if (i >= 10 && p.onGround()) {
                     int j = 5;
@@ -38,12 +37,12 @@ public class TorpedoSpell extends Spell {
                     f2 *= f5 / f4;
                     f3 *= f5 / f4;
                     p.push(f1, f2, f3);
-                    p.startAutoSpinAttack(20);
+                    p.startAutoSpinAttack(20, 8.0F, p.getUseItem());
                     if (p.onGround()) {
                         p.move(MoverType.SELF, new Vec3(0.0D, 1.1999999F, 0.0D));
                     }
-                    SoundEvent soundevent = SoundEvents.TRIDENT_RIPTIDE_1;
-                    p.level().playSound(null, p, soundevent, SoundSource.PLAYERS, 1.0F, 1.0F);
+                    Holder<SoundEvent> soundevent = SoundEvents.TRIDENT_RIPTIDE_1;
+                    p.level().playSound(null, p.getX(), p.getY(), p.getZ(), soundevent.value(), SoundSource.PLAYERS, 1.0F, 1.0F);
                 }
 
                 return true;

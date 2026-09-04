@@ -14,8 +14,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.RegistryObject;
 
 public class AbsorbingSpell extends Spell {
 
@@ -32,7 +30,7 @@ public class AbsorbingSpell extends Spell {
                 FluidState fluidState = p.level().getFluidState(blockPos);
                 if (fluidState.is(FluidTags.WATER)) {
                     used = true;
-                    if (blockState.getBlock() instanceof SimpleWaterloggedBlock block && !block.canPlaceLiquid(p.level(), blockPos, blockState, Fluids.WATER)) {
+                    if (blockState.getBlock() instanceof SimpleWaterloggedBlock block && !block.canPlaceLiquid(p, p.level(), blockPos, blockState, Fluids.WATER)) {
                         p.level().setBlock(blockPos, blockState.setValue(BlockStateProperties.WATERLOGGED, Boolean.FALSE), 3);
                     }
                     else p.level().setBlock(blockPos, Blocks.AIR.defaultBlockState(), 3);

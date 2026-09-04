@@ -2,6 +2,7 @@ package com.divinity.hlspells.world.blocks.blockentities;
 
 import com.divinity.hlspells.setup.init.BlockInit;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -17,13 +18,13 @@ public class OrbOfEnchantingBE extends BlockEntity {
         super(BlockInit.ORB_BE.get(), pPos, pBlockState);
     }
 
-    public void load(CompoundTag pTag) {
-        super.load(pTag);
+    public void loadAdditional(CompoundTag pTag, HolderLookup.Provider provider) {
+        super.loadAdditional(pTag, provider);
         this.xp = pTag.getInt("xp");
     }
 
-    protected void saveAdditional(CompoundTag pTag) {
-        super.saveAdditional(pTag);
+    protected void saveAdditional(CompoundTag pTag, HolderLookup.Provider provider) {
+        super.saveAdditional(pTag, provider);
         if (!(this.getXP() == 0)) {
             pTag.putInt("xp", this.getXP());
         }

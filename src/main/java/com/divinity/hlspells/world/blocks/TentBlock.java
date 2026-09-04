@@ -28,6 +28,7 @@ import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
@@ -37,7 +38,14 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 public class TentBlock extends BaseEntityBlock {
 
+    public static final MapCodec<TentBlock> CODEC = simpleCodec(TentBlock::new);
+
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
+
+    @Override
+    protected MapCodec<? extends BaseEntityBlock> codec() {
+        return CODEC;
+    }
 
     public TentBlock(Properties properties) {
         super(properties);
@@ -47,7 +55,7 @@ public class TentBlock extends BaseEntityBlock {
     @Override
     @ParametersAreNonnullByDefault
     @NotNull
-    public InteractionResult use(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
+    public InteractionResult useWithoutItem(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, BlockHitResult pHit) {
         if (pLevel.isClientSide) {
             // Real work must happen on the server; the client only needs to know the interaction succeeded.
             return InteractionResult.sidedSuccess(true);
@@ -70,7 +78,7 @@ public class TentBlock extends BaseEntityBlock {
         return InteractionResult.PASS;
     }
     @Override
-    public void playerWillDestroy(Level pLevel, BlockPos pPos, BlockState pState, Player pPlayer) {
+    public BlockState playerWillDestroy(Level pLevel, BlockPos pPos, BlockState pState, Player pPlayer) {
         BlockEntity blockentity = pLevel.getBlockEntity(pPos);
         if (blockentity instanceof TentBE tent) {
             // Readable on both sides (client gets this via BE sync).
@@ -81,7 +89,7 @@ public class TentBlock extends BaseEntityBlock {
                 serverPlayer.setRespawnPosition(pLevel.dimension(), bed, 0, true, false);
             }
         }
-        super.playerWillDestroy(pLevel, pPos, pState, pPlayer);
+        return super.playerWillDestroy(pLevel, pPos, pState, pPlayer);
     }
 
     @Override

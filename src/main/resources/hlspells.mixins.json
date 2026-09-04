@@ -1,0 +1,23 @@
+{
+  "required": true,
+  "package": "com.divinity.hlspells.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "minVersion": "0.8",
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "mixins": [
+    "BlockBehaviourInvoker",
+    "MixinGrindstoneContainer",
+    "MixinGrindstoneContainerConstructor",
+    "MixinGrindstoneExperience",
+    "MixinItemRenderer",
+    "MixinPhasing",
+    "MixinPose",
+    "MixinSmithingRecipe"
+  ],
+  "client": [
+    "MixinHumanoidArmorLayer",
+    "MixinIllusions"
+  ]
+}

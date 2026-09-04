@@ -12,6 +12,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.Unit;
 import net.minecraft.world.entity.*;
+import net.minecraft.core.Holder;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
@@ -21,8 +22,6 @@ import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TieredItem;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.RegistryObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,7 +36,7 @@ public class SummonSpell<T extends Entity & Summonable> extends Spell {
 
     // Generic attribute increase factor per spell level
     private double attributeIncrease;
-    private final Map<Attribute, Double> attributeMap;
+    private final Map<Holder<Attribute>, Double> attributeMap;
 
     public SummonSpell(EntityType<T> summoned, SpellAttributes.Type type, SpellAttributes.Rarity rarity, SpellAttributes.Tier tier, SpellAttributes.Marker marker, String displayName, int xpCost, boolean treasureOnly, int maxSpellLevel, SimpleParticleType rune) {
         super(type, rarity, tier, marker, displayName, xpCost, treasureOnly, maxSpellLevel, rune);
@@ -63,7 +62,7 @@ public class SummonSpell<T extends Entity & Summonable> extends Spell {
                     if (p.level() instanceof ServerLevel level) {
                         this.items.stream().filter(item -> item instanceof ArmorItem || item instanceof TieredItem).forEach(item -> mob.setItemSlot(this.getSlotForItem(new ItemStack(item)), new ItemStack(item)));
                         this.doAttributeModification(mob);
-                        mob.finalizeSpawn(level, level.getCurrentDifficultyAt(blockPos), MobSpawnType.MOB_SUMMONED, null, null);
+                        mob.finalizeSpawn(level, level.getCurrentDifficultyAt(blockPos), MobSpawnType.MOB_SUMMONED, null);
                         level.addFreshEntityWithPassengers(mob);
                     }
                     else return false;
@@ -100,7 +99,7 @@ public class SummonSpell<T extends Entity & Summonable> extends Spell {
     /**
      * @param attributeMap Takes in a map of Attribute (A) -> Double (D) to modify X amount of attributes on the summons by D factor per level
      */
-    public SummonSpell<T> attributeLevelIncreaseFactorSpecific(Map<Attribute, Double> attributeMap) {
+    public SummonSpell<T> attributeLevelIncreaseFactorSpecific(Map<Holder<Attribute>, Double> attributeMap) {
         this.attributeMap.putAll(attributeMap);
         return this;
     }

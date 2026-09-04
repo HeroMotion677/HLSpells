@@ -34,7 +34,7 @@ public abstract class MixinPhasing {
     @Inject(method = "getVisualShape(Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/phys/shapes/CollisionContext;)Lnet/minecraft/world/phys/shapes/VoxelShape;", at = @At("HEAD"), cancellable = true)
     public void getVisualShape(BlockGetter pLevel, BlockPos pPos, CollisionContext pContext, CallbackInfoReturnable<VoxelShape> cir) {
         BlockState state = this.asState();
-        VoxelShape visualShape = this.getBlock().getVisualShape(state, pLevel, pPos, pContext);
+        VoxelShape visualShape = ((BlockBehaviourInvoker) this.getBlock()).invokeGetVisualShape(state, pLevel, pPos, pContext);
         cir.setReturnValue(visualShape.isEmpty() ? visualShape : state.getCollisionShape(pLevel, pPos, pContext));
     }
 

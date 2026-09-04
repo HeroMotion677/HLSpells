@@ -13,8 +13,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.event.entity.living.LivingDeathEvent;
-import net.minecraftforge.eventbus.api.Event;
+import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
+import net.neoforged.bus.api.Event;
 
 public class KeepingTotem extends Item implements ITotem {
 
@@ -36,7 +36,7 @@ public class KeepingTotem extends Item implements ITotem {
     public void performAction(Event event, Player player, Level world, ItemStack heldItem, InteractionHand hand, boolean isCurios) {
         if (event instanceof LivingDeathEvent) {
             if (!isCurios) {
-                heldItem.getCapability(TotemItemProvider.TOTEM_CAP).ifPresent(cap -> {
+                TotemItemProvider.get(heldItem).ifPresent(cap -> {
                     cap.hasDied(true);
                     if (hand == InteractionHand.MAIN_HAND) cap.setTotemInHand(InteractionHand.MAIN_HAND);
                     else if (hand == InteractionHand.OFF_HAND) cap.setTotemInHand(InteractionHand.OFF_HAND);
@@ -48,7 +48,7 @@ public class KeepingTotem extends Item implements ITotem {
             else {
                 CuriosCompat.getItemInCuriosSlot(player, ItemInit.TOTEM_OF_KEEPING.get()).ifPresent(map -> {
                     ItemStack stack = map.stack();
-                    stack.getCapability(TotemItemProvider.TOTEM_CAP).ifPresent(cap -> {
+                    TotemItemProvider.get(stack).ifPresent(cap -> {
                         cap.hasDied(true);
                         cap.setTotemInHand(InteractionHand.MAIN_HAND);
                         cap.setInventoryNBT(player.inventory.save(new ListTag()));

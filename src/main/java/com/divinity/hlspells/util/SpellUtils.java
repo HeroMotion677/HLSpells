@@ -13,9 +13,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.event.entity.living.LivingDropsEvent;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.neoforge.event.entity.living.LivingDropsEvent;
 
 import javax.annotation.Nonnull;
 import java.nio.charset.StandardCharsets;
@@ -30,7 +28,7 @@ public final class SpellUtils {
      * Returns the current active spell if not found return empty
      */
     public static Spell getSpell(ItemStack stack) {
-        String id = stack.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP).map(ISpellHolder::getCurrentSpell).orElse(null);
+        String id = SpellHolderProvider.get(stack).map(ISpellHolder::getCurrentSpell).orElse(null);
         if (id != null){
             return getSpellByID(id);
         }
@@ -38,7 +36,7 @@ public final class SpellUtils {
     }
 
     public static Spell getSpellByID(@Nonnull String id) {
-        Spell spell = SpellInit.SPELLS_REGISTRY.get().getValue(ResourceLocation.parse(id));
+        Spell spell = SpellInit.SPELLS_REGISTRY.get(ResourceLocation.parse(id));
         if (spell != null) return spell;
         else return SpellInit.EMPTY.get();
     }
@@ -48,11 +46,11 @@ public final class SpellUtils {
         if (item != ItemStack.EMPTY) {
             List<String> existingSpells = SpellHolderProvider.getSpellHolderUnwrap(item).getSpells();
             Spell currentSpell = getSpell(item);
-            String currentSpellName = SpellInit.SPELLS_REGISTRY.get().getKey(currentSpell).toString();
-            String otherSpellName = SpellInit.SPELLS_REGISTRY.get().getKey(spell).toString();
+            String currentSpellName = SpellInit.SPELLS_REGISTRY.getKey(currentSpell).toString();
+            String otherSpellName = SpellInit.SPELLS_REGISTRY.getKey(spell).toString();
             boolean canUpgrade = currentSpell.getUpgrade() != null &&
                   currentSpellName.equals(otherSpellName);
-            if (!existingSpells.contains(SpellInit.SPELLS_REGISTRY.get().getKey(spell).toString())) {
+            if (!existingSpells.contains(SpellInit.SPELLS_REGISTRY.getKey(spell).toString())) {
                 if (currentSpell.getUpgradeableSpellPath() != null && currentSpell.getUpgradeableSpellPath() == spell.getUpgradeableSpellPath()) {
                     return false;
                 }

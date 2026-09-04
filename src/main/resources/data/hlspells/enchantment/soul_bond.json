@@ -1,0 +1,24 @@
+{
+  "description": {
+    "translate": "enchantment.hlspells.soul_bond"
+  },
+  "supported_items": "#minecraft:enchantable/durability",
+  "weight": 1,
+  "max_level": 1,
+  "min_cost": {
+    "base": 25,
+    "per_level_above_first": 25
+  },
+  "max_cost": {
+    "base": 75,
+    "per_level_above_first": 25
+  },
+  "anvil_cost": 8,
+  "slots": [
+    "mainhand"
+  ],
+  "exclusive_set": [
+    "minecraft:vanishing_curse",
+    "minecraft:binding_curse"
+  ]
+}

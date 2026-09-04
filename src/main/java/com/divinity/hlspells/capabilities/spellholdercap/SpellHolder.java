@@ -3,59 +3,66 @@ package com.divinity.hlspells.capabilities.spellholdercap;
 import com.divinity.hlspells.setup.init.SpellInit;
 import com.divinity.hlspells.spell.Spell;
 import com.divinity.hlspells.util.SpellUtils;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static com.divinity.hlspells.capabilities.spellholdercap.SpellHolderProvider.CURRENT_SPELL_CYCLE_NBT;
-import static com.divinity.hlspells.capabilities.spellholdercap.SpellHolderProvider.SPELL_NBT;
-
 public class SpellHolder implements ISpellHolder {
 
-    private final List<String> spells;
-    private int currentSpellCycle;
-    private int spellSoundBuffer;
+    private final ItemStack stack;
 
-    public SpellHolder() {
-        spells = new ArrayList<>();
-        currentSpellCycle = 0;
-        spellSoundBuffer = 0;
+    public SpellHolder(ItemStack stack) {
+        this.stack = stack;
+    }
+
+    private SpellHolderData data() {
+        return stack.getOrDefault(SpellHolderProvider.SPELL_HOLDER_CAP.get(), SpellHolderData.EMPTY);
+    }
+
+    private void setSpells(List<String> spells) {
+        SpellHolderData data = data();
+        stack.set(SpellHolderProvider.SPELL_HOLDER_CAP.get(), new SpellHolderData(List.copyOf(spells), data.currentSpellCycle(), data.spellSoundBuffer()));
     }
 
     @Override
     public @NotNull List<String> getSpells() {
-        return this.spells;
+        return data().spells();
     }
 
     @Override
     public void addSpell(String spell) {
-        if (this.spells.contains(spell)) {
-            Spell spells = SpellUtils.getSpellByID(spell);
-            Spell upgrade = spells.getUpgrade();
+        List<String> spells = new ArrayList<>(getSpells());
+        if (spells.contains(spell)) {
+            Spell existing = SpellUtils.getSpellByID(spell);
+            Spell upgrade = existing.getUpgrade();
             if (upgrade != null) {
-                this.spells.remove(spell);
-                this.spells.add(SpellInit.SPELLS_REGISTRY.get().getKey(upgrade).toString());
+                spells.remove(spell);
+                spells.add(SpellInit.SPELLS_REGISTRY.getKey(upgrade).toString());
+                setSpells(spells);
             }
         }
-        else if (!this.spells.contains(spell)) {
-            this.spells.add(spell);
+        else {
+            spells.add(spell);
+            setSpells(spells);
         }
     }
 
     @Override
     public void removeSpell(String spell) {
-        this.spells.remove(spell);
-        if (!(this.currentSpellCycle < spells.size())) {
-            this.setCurrentSpellCycle(this.getSpells().size() - 1);
+        List<String> spells = new ArrayList<>(getSpells());
+        spells.remove(spell);
+        setSpells(spells);
+        if (!(getCurrentSpellCycle() < spells.size())) {
+            this.setCurrentSpellCycle(spells.size() - 1);
         }
     }
 
     @Override
     public int getCurrentSpellCycle() {
-        return this.currentSpellCycle;
+        return data().currentSpellCycle();
     }
 
     @Override
@@ -65,48 +72,29 @@ public class SpellHolder implements ISpellHolder {
 
     @Override
     public void setCurrentSpellCycle(int currentSpellCycle) {
-        this.currentSpellCycle = currentSpellCycle;
-        this.cycleSpellCheck();
+        if (currentSpellCycle < 0 || currentSpellCycle > this.getSpells().size() - 1) {
+            currentSpellCycle = 0;
+        }
+        SpellHolderData data = data();
+        stack.set(SpellHolderProvider.SPELL_HOLDER_CAP.get(), new SpellHolderData(data.spells(), currentSpellCycle, data.spellSoundBuffer()));
     }
 
     @Override
     @NotNull
     public String getCurrentSpell() {
-        return getCurrentSpellCycle() < spells.size() ? spells.get(getCurrentSpellCycle()) : Objects.requireNonNull(SpellInit.SPELLS_REGISTRY.get().getKey(SpellInit.EMPTY.get()).toString());
+        List<String> spells = getSpells();
+        return getCurrentSpellCycle() < spells.size() ? spells.get(getCurrentSpellCycle())
+                : Objects.requireNonNull(SpellInit.SPELLS_REGISTRY.getKey(SpellInit.EMPTY.get())).toString();
     }
 
     @Override
     public int getSpellSoundBuffer() {
-        return this.spellSoundBuffer;
+        return data().spellSoundBuffer();
     }
 
     @Override
     public void setSpellSoundBuffer(int spellSoundBuffer) {
-        this.spellSoundBuffer = spellSoundBuffer;
+        SpellHolderData data = data();
+        stack.set(SpellHolderProvider.SPELL_HOLDER_CAP.get(), new SpellHolderData(data.spells(), data.currentSpellCycle(), spellSoundBuffer));
     }
-
-    private void cycleSpellCheck() {
-        if (this.currentSpellCycle < 0 || this.currentSpellCycle > this.getSpells().size() - 1) {
-            this.currentSpellCycle = 0;
-        }
-    }
-	
-	@Override
-	public CompoundTag serializeNBT() {
-		CompoundTag tag = new CompoundTag();
-		tag.putInt("spellsSize", getSpells().size());
-		for (int i = 0; i < getSpells().size(); i++) {
-			tag.putString(SPELL_NBT + i, getSpells().get(i));
-		}
-		tag.putInt(CURRENT_SPELL_CYCLE_NBT, getCurrentSpellCycle());
-		return tag;
-	}
-	
-	@Override
-	public void deserializeNBT(CompoundTag nbt) {
-		for (int i = 0; i < nbt.getInt("spellsSize"); i++) {
-			addSpell(nbt.getString(SPELL_NBT + i));
-		}
-		setCurrentSpellCycle(nbt.getInt(CURRENT_SPELL_CYCLE_NBT));
-	}
 }

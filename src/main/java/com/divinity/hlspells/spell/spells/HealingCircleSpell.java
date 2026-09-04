@@ -11,8 +11,6 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.RegistryObject;
 
 import java.util.List;
 
@@ -26,7 +24,7 @@ public class HealingCircleSpell extends Spell {
     public SpellConsumer<Player> getAction() {
         return p -> {
             var livingEntities = Util.getEntitiesInRange(p, LivingEntity.class, 6, 6, 6);
-            p.getCapability(PlayerCapProvider.PLAYER_CAP).ifPresent(cap -> {
+            PlayerCapProvider.get(p).ifPresent(cap -> {
                 cap.setSpellTimer(cap.getSpellTimer() + 1);
                 if (cap.getSpellTimer() % 10 == 0) {
                     doEnchantParticleInterior(p, p.level());

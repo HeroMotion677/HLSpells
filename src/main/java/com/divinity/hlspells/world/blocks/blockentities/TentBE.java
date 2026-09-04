@@ -2,6 +2,7 @@ package com.divinity.hlspells.world.blocks.blockentities;
 
 import com.divinity.hlspells.setup.init.BlockInit;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.protocol.Packet;
@@ -23,21 +24,17 @@ public class TentBE extends BlockEntity {
     }
 
 
-    protected void saveAdditional(CompoundTag pTag) {
-        super.saveAdditional(pTag);
+    protected void saveAdditional(CompoundTag pTag, HolderLookup.Provider provider) {
+        super.saveAdditional(pTag, provider);
         if (bed != null) {
             pTag.put("bed", NbtUtils.writeBlockPos(bed));
         }
     }
 
     @Override
-    public void load(CompoundTag pTag) {
-        super.load(pTag);
-        if (pTag.contains("bed")) {
-            bed = NbtUtils.readBlockPos(pTag.getCompound("bed"));
-        } else {
-            bed = null;
-        }
+    public void loadAdditional(CompoundTag pTag, HolderLookup.Provider provider) {
+        super.loadAdditional(pTag, provider);
+        bed = NbtUtils.readBlockPos(pTag, "bed").orElse(null);
     }
 
     public void setPrevBed(BlockPos bed){
@@ -53,8 +50,8 @@ public class TentBE extends BlockEntity {
     }
 
     @Override
-    public CompoundTag getUpdateTag() {
-        return this.saveWithoutMetadata();
+    public CompoundTag getUpdateTag(HolderLookup.Provider provider) {
+        return this.saveWithoutMetadata(provider);
     }
 
     @Nullable

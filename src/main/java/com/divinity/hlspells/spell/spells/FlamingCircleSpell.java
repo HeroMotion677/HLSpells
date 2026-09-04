@@ -12,8 +12,6 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.RegistryObject;
 
 import java.util.List;
 
@@ -30,7 +28,7 @@ public class FlamingCircleSpell extends Spell {
             setTime();
             if(time.getTime() <= currentTime+1000) {
                 var livingEntities = Util.getEntitiesInRange(p, LivingEntity.class, 6, -1, 6);
-                p.getCapability(PlayerCapProvider.PLAYER_CAP).ifPresent(cap -> {
+                PlayerCapProvider.get(p).ifPresent(cap -> {
                     cap.setSpellTimer(cap.getSpellTimer() + 1);
                     if (cap.getSpellTimer() % 10 == 0) {
                         doEnchantParticleInterior(p, p.level());
@@ -38,7 +36,7 @@ public class FlamingCircleSpell extends Spell {
                     }
                     livingEntities.stream().filter(e -> e != null && e != p).forEach(e -> {
                         e.setLastHurtByPlayer(p);
-                        e.setSecondsOnFire(1);
+                        e.igniteForSeconds(1);
                     });
 
                 });

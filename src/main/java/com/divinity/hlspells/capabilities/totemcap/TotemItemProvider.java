@@ -1,84 +1,27 @@
 package com.divinity.hlspells.capabilities.totemcap;
 
-import net.minecraft.core.Direction;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtUtils;
-import net.minecraft.world.InteractionHand;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityManager;
-import net.minecraftforge.common.capabilities.CapabilityToken;
-import net.minecraftforge.common.capabilities.ICapabilitySerializable;
-import net.minecraftforge.common.util.LazyOptional;
+import com.divinity.hlspells.HLSpells;
+import com.divinity.hlspells.setup.init.ItemInit;
+import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.world.item.ItemStack;
+import net.neoforged.neoforge.registries.DeferredHolder;
+import net.neoforged.neoforge.registries.DeferredRegister;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import java.util.Optional;
 
-@SuppressWarnings("all")
-public class TotemItemProvider implements ICapabilitySerializable<CompoundTag> {
+public class TotemItemProvider {
 
-    public static Capability<ITotemCap> TOTEM_CAP = CapabilityManager.get(new CapabilityToken<>(){});
-    private TotemCap totemCap = null;
-    private final LazyOptional<ITotemCap> instance = LazyOptional.of(this::createTotemCap);
+    public static final DeferredRegister<DataComponentType<?>> COMPONENTS = DeferredRegister.create(Registries.DATA_COMPONENT_TYPE, HLSpells.MODID);
 
-    @Nonnull
-    @Override
-    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap) {
-        return cap == TOTEM_CAP ? instance.cast() : LazyOptional.empty();
-    }
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<TotemData>> TOTEM_CAP =
+            COMPONENTS.register("totem_data", () -> DataComponentType.<TotemData>builder()
+                    .persistent(TotemData.CODEC)
+                    .networkSynchronized(TotemData.STREAM_CODEC)
+                    .build());
 
-    @Nonnull
-    @Override
-    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-        return getCapability(cap);
-    }
-
-    @Override
-    public CompoundTag serializeNBT() {
-        CompoundTag tag = new CompoundTag();
-        if (instance.isPresent()) {
-            instance.ifPresent(cap -> {
-                tag.put("blockPos", NbtUtils.writeBlockPos(cap.getBlockPos()));
-                tag.putBoolean("hasDied", cap.getHasDied());
-                int hand = 0;
-                InteractionHand totemInHand = cap.getTotemInHand();
-                if (totemInHand == InteractionHand.MAIN_HAND) {
-                    hand = 1;
-                }
-                else if (totemInHand == InteractionHand.OFF_HAND) {
-                    hand = 2;
-                }
-                tag.putInt("hand", hand);
-                tag.put("playerInv", cap.getInventoryNBT());
-                tag.put("curiosInv", cap.getCuriosNBT());
-                tag.putInt("curiosSlot", cap.getCuriosSlot());
-                tag.putBoolean("curiosDied", cap.diedTotemInCurios());
-            });
-        }
-        return tag;
-    }
-
-    @Override
-    public void deserializeNBT(CompoundTag nbt) {
-        if (instance.isPresent()) {
-            instance.ifPresent(cap -> {
-                cap.setBlockPos(NbtUtils.readBlockPos(nbt.getCompound("blockPos")));
-                cap.hasDied(nbt.getBoolean("hasDied"));
-                int hand = nbt.getInt("hand");
-                switch (hand) {
-                    case 1: cap.setTotemInHand(InteractionHand.MAIN_HAND);
-                    case 2: cap.setTotemInHand(InteractionHand.OFF_HAND);
-                    default: cap.setTotemInHand(null);
-                }
-                cap.setInventoryNBT(nbt.getList("playerInv", 0));
-                cap.setCuriosNBT(nbt.getList("curiosInv", 0));
-                cap.setCuriosSlot(nbt.getInt("curiosSlot"));
-                cap.setDiedTotemInCurios(nbt.getBoolean("curiosDied"));
-            });
-        }
-    }
-
-    @Nonnull
-    private ITotemCap createTotemCap() {
-        return totemCap == null ? new TotemCap() : totemCap;
+    public static Optional<ITotemCap> get(ItemStack stack) {
+        return stack.is(ItemInit.TOTEM_OF_RETURNING.get()) || stack.is(ItemInit.TOTEM_OF_KEEPING.get())
+                ? Optional.of(new TotemCap(stack)) : Optional.empty();
     }
 }

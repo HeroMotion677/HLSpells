@@ -18,6 +18,6 @@ public class JEIPlugin implements IModPlugin {
     @Override
     public void registerItemSubtypes(ISubtypeRegistration registration) {
         registration.registerSubtypeInterpreter(ItemInit.SPELL_BOOK.get(), (ingredient, context) ->
-                ingredient.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP).map(ISpellHolder::getCurrentSpell).orElse(""));
+                SpellHolderProvider.get(ingredient).map(ISpellHolder::getCurrentSpell).orElse(""));
     }
 }

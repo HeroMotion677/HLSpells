@@ -2,69 +2,57 @@ package com.divinity.hlspells.items.spellitems;
 
 import com.divinity.hlspells.setup.init.EnchantmentInit;
 import com.divinity.hlspells.setup.init.ItemInit;
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Sets;
-import net.minecraft.core.NonNullList;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.sounds.SoundEvents;
+import net.minecraft.core.Holder;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.util.LazyLoadedValue;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.item.*;
-
-import javax.annotation.ParametersAreNonnullByDefault;
-
-import net.minecraft.world.item.Item.Properties;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Set;
 import java.util.function.Supplier;
 
 public class StaffItem extends SpellHoldingItem {
 
-    private final Multimap<Attribute, AttributeModifier> defaultModifiers;
+    private static final Set<ResourceKey<Enchantment>> ALLOWED_ENCHANTMENTS = Set.of(
+            Enchantments.UNBREAKING, Enchantments.MENDING, Enchantments.SMITE, Enchantments.FIRE_ASPECT, EnchantmentInit.SOUL_BOND);
+
     private final boolean isGemAmethyst;
     private final double castDelay;
-
     private final double maxCastTime;
+    private final Supplier<Ingredient> repairIngredient;
 
     public StaffItem(Properties properties, double damage, double attackSpeed, boolean canRepair, double castDelay, boolean isGemAmethyst, boolean isFireResistant, double maxCastTime, Supplier<Ingredient> repairIngredient) {
-        super(properties, false);
+        super(properties.attributes(ItemAttributeModifiers.builder()
+                .add(Attributes.ATTACK_DAMAGE, new AttributeModifier(BASE_ATTACK_DAMAGE_ID, damage, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND)
+                .add(Attributes.ATTACK_SPEED, new AttributeModifier(BASE_ATTACK_SPEED_ID, attackSpeed, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND)
+                .build()), false);
         this.castDelay = castDelay;
         this.isGemAmethyst = isGemAmethyst;
         this.maxCastTime = maxCastTime;
         this.repairIngredient = repairIngredient;
-
-
-        ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
-        builder.put(Attributes.ATTACK_DAMAGE, new AttributeModifier(BASE_ATTACK_DAMAGE_UUID, "Weapon modifier", damage, AttributeModifier.Operation.ADDITION));
-        builder.put(Attributes.ATTACK_SPEED, new AttributeModifier(BASE_ATTACK_SPEED_UUID, "Weapon modifier", attackSpeed, AttributeModifier.Operation.ADDITION));
-        this.defaultModifiers = builder.build();
     }
 
+    @Override
     public int getEnchantmentValue() {
         return 4;
     }
 
-
-    private final Supplier<Ingredient> repairIngredient;
-
     public Ingredient getRepairIngredient() {
-
         return this.repairIngredient.get();
     }
 
+    @Override
     public boolean isValidRepairItem(ItemStack pToRepair, ItemStack pRepair) {
-
         if (pToRepair.getItem() == ItemInit.GOLDEN_STAFF.get() || pToRepair.getItem() == ItemInit.GOLDEN_STAFF_AMETHYST.get())
             return pRepair.is(Items.GOLD_INGOT);
 
@@ -78,57 +66,19 @@ public class StaffItem extends SpellHoldingItem {
     }
 
     @Override
-    public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlot slot, ItemStack stack) {
-        return slot == EquipmentSlot.MAINHAND ? this.defaultModifiers : super.getAttributeModifiers(slot, stack);
-    }
-
-    @Override
-   /* public boolean isBookEnchantable(ItemStack stack, ItemStack book) {
-
-        if (EnchantedBookItem.getEnchantments(book).size() > 0) {
-            for (int i = 0; i < EnchantedBookItem.getEnchantments(book).size(); i++) {
-                CompoundTag tag = EnchantedBookItem.getEnchantments(book).getCompound(i);
-                ResourceLocation enchantment = EnchantmentHelper.getEnchantmentId(tag);
-                if (enchantment != null) {
-                    switch (enchantment.toString()) {
-                        case "minecraft:mending":
-                            if (EnchantmentHelper.getItemEnchantmentLevel(Enchantments.MENDING, stack) <= EnchantmentHelper.getEnchantmentLevel(tag)) {
-                                if (EnchantmentHelper.getItemEnchantmentLevel(Enchantments.MENDING, stack) >= 1) {
-                                    return stack.getItem() instanceof StaffItem;
-                                }
-                            }
-                                case "minecraft:unbreaking":
-                                    if (EnchantmentHelper.getItemEnchantmentLevel(Enchantments.UNBREAKING, stack) <= EnchantmentHelper.getEnchantmentLevel(tag)) {
-                                        if (EnchantmentHelper.getItemEnchantmentLevel(Enchantments.UNBREAKING, stack) != 3) {
-                                            return stack.getItem() instanceof StaffItem;
-                                        }
-                                    }
-                                case "hlspells:soul_bond":
-                                    if (EnchantmentHelper.getItemEnchantmentLevel(EnchantmentInit.SOUL_BOND.get(), stack) <= EnchantmentHelper.getEnchantmentLevel(tag)) {
-
-                                        if (EnchantmentHelper.getItemEnchantmentLevel(EnchantmentInit.SOUL_BOND.get(), stack) >= 0) {
-                                            return stack.getItem() instanceof StaffItem;
-                                        }
-                                    }
-                                    break;
-                            }
-                    }
-                    }
+    public boolean supportsEnchantment(ItemStack stack, Holder<Enchantment> enchantment) {
+        for (ResourceKey<Enchantment> allowed : ALLOWED_ENCHANTMENTS) {
+            if (enchantment.is(allowed)) {
+                return true;
             }
-
-        return false;
-    }*/
-    public boolean canApplyAtEnchantingTable(ItemStack stack, net.minecraft.world.item.enchantment.Enchantment enchantment) {
-        Set<Enchantment> ALLOWED_ENCHANTMENTS = Sets.newHashSet(Enchantments.UNBREAKING, Enchantments.MENDING, Enchantments.SMITE, Enchantments.FIRE_ASPECT, EnchantmentInit.SOUL_BOND.get());
-        if (ALLOWED_ENCHANTMENTS.contains(enchantment)) {
-            return true;
         }
-        return enchantment.category.canEnchant(stack.getItem());
+        return enchantment.value().isSupportedItem(stack);
     }
+
     @Override
     @ParametersAreNonnullByDefault
     public boolean hurtEnemy(ItemStack pStack, LivingEntity pTarget, LivingEntity pAttacker) {
-        pStack.hurtAndBreak(1, pAttacker, livingEntity -> livingEntity.broadcastBreakEvent(EquipmentSlot.MAINHAND));
+        pStack.hurtAndBreak(1, pAttacker, EquipmentSlot.MAINHAND);
         return true;
     }
 
@@ -143,6 +93,4 @@ public class StaffItem extends SpellHoldingItem {
     public boolean isGemAmethyst() {
         return isGemAmethyst;
     }
-
-
 }

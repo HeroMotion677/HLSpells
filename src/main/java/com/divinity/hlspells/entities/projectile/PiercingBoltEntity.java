@@ -11,6 +11,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageSources;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
@@ -47,10 +48,10 @@ public class PiercingBoltEntity extends BaseBoltEntity {
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        entityData.define(IS_SPECIAL, false);
-        entityData.define(PIERCED_ENEMIES, 0);
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(IS_SPECIAL, false);
+        builder.define(PIERCED_ENEMIES, 0);
     }
 
     @Override
@@ -77,7 +78,7 @@ public class PiercingBoltEntity extends BaseBoltEntity {
         boolean flag = entity.hurt(entity.damageSources().magic(), 20.0F);
         if (flag && this.level() instanceof ServerLevel level) {
             level.sendParticles(ParticleTypes.CRIT, this.getX(), this.getY(), this.getZ(), 2, 0.2D, 0.2D, 0.2D, 0.0D);
-            if (livingentity != null) this.doEnchantDamageEffects(livingentity, entity);
+            if (livingentity != null) EnchantmentHelper.doPostAttackEffects(level, entity, this.damageSources().mobProjectile(this, livingentity));
             if (this.isSpecial) {
                 if (entityData.get(PIERCED_ENEMIES) != 5) {
                     entityData.set(PIERCED_ENEMIES, entityData.get(PIERCED_ENEMIES) + 1);

@@ -33,6 +33,7 @@ import net.minecraft.world.level.gameevent.EntityPositionSource;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
@@ -44,7 +45,14 @@ import org.jetbrains.annotations.Nullable;
 
 public class OrbOfEnchantingBlock extends BaseEntityBlock {
 
+    public static final MapCodec<OrbOfEnchantingBlock> CODEC = simpleCodec(OrbOfEnchantingBlock::new);
+
     public static final IntegerProperty LEVEL = BlockStateProperties.LEVEL_COMPOSTER;
+
+    @Override
+    protected MapCodec<? extends BaseEntityBlock> codec() {
+        return CODEC;
+    }
     final double MAX_XP = 1400;
     public OrbOfEnchantingBlock(Properties p_49795_) {
 
@@ -55,7 +63,7 @@ public class OrbOfEnchantingBlock extends BaseEntityBlock {
     @Override
     @ParametersAreNonnullByDefault
     @NotNull
-    public InteractionResult use(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
+    public InteractionResult useWithoutItem(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, BlockHitResult pHit) {
         BlockEntity blockentity = pLevel.getBlockEntity(pPos);
         if(blockentity instanceof OrbOfEnchantingBE) {
             OrbOfEnchantingBE orb = (OrbOfEnchantingBE) blockentity;

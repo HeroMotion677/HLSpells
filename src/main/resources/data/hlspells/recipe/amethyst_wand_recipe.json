@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "  #",
+    " / ",
+    "g  "
+  ],
+  "key": {
+    "#": "minecraft:amethyst_shard",
+    "/": "minecraft:stick",
+    "g": "minecraft:gold_ingot"
+  },
+  "result": {
+    "count": 1,
+    "id": "hlspells:amethyst_wand"
+  }
+}

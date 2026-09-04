@@ -25,7 +25,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 
 public class SummonedWitherSkeletonEntity extends WitherSkeleton implements Summonable {
@@ -68,11 +67,6 @@ public class SummonedWitherSkeletonEntity extends WitherSkeleton implements Summ
     @Override protected SoundEvent getDeathSound() { return SoundEvents.WITHER_SKELETON_DEATH; }
 
     @Override protected @NotNull SoundEvent getStepSound() { return SoundEvents.WITHER_SKELETON_STEP; }
-
-    @Override
-    public Packet<ClientGamePacketListener> getAddEntityPacket() {
-        return NetworkHooks.getEntitySpawningPacket(this);
-    }
 
     @Override
     public boolean isAlliedTo(@NotNull Entity entity) {

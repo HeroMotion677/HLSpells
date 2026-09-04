@@ -14,7 +14,6 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.projectile.Arrow;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class BaseBreathEntity extends Arrow {
@@ -57,15 +56,12 @@ public abstract class BaseBreathEntity extends Arrow {
 
     @Override
     public boolean hurt(@NotNull DamageSource source, float amount) {
-        if (this.level() instanceof ServerLevel level && source.isIndirect() && this.isAlive()) {
+        if (this.level() instanceof ServerLevel level && !source.isDirect() && this.isAlive()) {
             this.remove(RemovalReason.KILLED);
             return true;
         }
         return false;
     }
-
-    @Override
-    public Packet<ClientGamePacketListener> getAddEntityPacket() { return NetworkHooks.getEntitySpawningPacket(this); }
 
     @Override public boolean isNoGravity() { return true; }
 

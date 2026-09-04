@@ -46,7 +46,7 @@ public class FireballRenderer<T extends Projectile> extends EntityRenderer<T> {
         //
         this.model.setupAnim(entity, 0.0F, 0.0F, 0.0F, f, f1); // Needed
         VertexConsumer vertexConsumer = buffer.getBuffer(this.model.renderType(TEXTURE_LOCATION)); // Needed
-        this.model.renderToBuffer(stack, vertexConsumer, v3, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+        this.model.renderToBuffer(stack, vertexConsumer, v3, OverlayTexture.NO_OVERLAY, 0xFFFFFFFF);
         stack.scale(5F, 5F, 5F);
 
         stack.popPose(); // Needed

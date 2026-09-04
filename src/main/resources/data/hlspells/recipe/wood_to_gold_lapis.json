@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smithing_transform",
+  "base": "hlspells:wooden_lapis_staff",
+  "addition": "minecraft:gold_ingot",
+  "template": "hlspells:gold_upgrade_template",
+  "result": {
+    "id": "hlspells:golden_lapis_staff"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "###",
+    "#E#",
+    " _ "
+  ],
+  "key": {
+    "#": "minecraft:lime_stained_glass",
+    "E": "minecraft:experience_bottle",
+    "_": "minecraft:polished_deepslate_slab"
+  },
+  "result": {
+    "count": 1,
+    "id": "hlspells:orb_of_enchanting"
+  }
+}

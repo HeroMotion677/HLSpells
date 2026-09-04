@@ -1,33 +1,33 @@
 package com.divinity.hlspells.network.packets.clientbound;
 
+import com.divinity.hlspells.HLSpells;
 import com.divinity.hlspells.network.ClientAccess;
-import com.divinity.hlspells.network.IPacket;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.core.UUIDUtil;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.simple.SimpleChannel;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import java.util.UUID;
 
-public record TotemActivatedPacket(UUID player, ItemStack stack) implements IPacket {
+public record TotemActivatedPacket(UUID player, ItemStack stack) implements CustomPacketPayload {
+
+    public static final CustomPacketPayload.Type<TotemActivatedPacket> TYPE =
+            new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(HLSpells.MODID, "totem_activated"));
+
+    public static final StreamCodec<RegistryFriendlyByteBuf, TotemActivatedPacket> STREAM_CODEC = StreamCodec.composite(
+            UUIDUtil.STREAM_CODEC, TotemActivatedPacket::player,
+            ItemStack.OPTIONAL_STREAM_CODEC, TotemActivatedPacket::stack,
+            TotemActivatedPacket::new);
 
     @Override
-    public void encode(FriendlyByteBuf buffer) {
-        buffer.writeUUID(this.player);
-        buffer.writeItemStack(this.stack, true);
+    public Type<? extends CustomPacketPayload> type() {
+        return TYPE;
     }
 
-    public static TotemActivatedPacket decode(FriendlyByteBuf buffer) {
-        return new TotemActivatedPacket(buffer.readUUID(), buffer.readItem());
-    }
-
-    @Override
-    public void handle(ServerPlayer player) {
-        ClientAccess.syncTotemActivation(this.player, this.stack);
-    }
-
-    public static void register(SimpleChannel channel, int id) {
-        IPacket.register(channel, id, NetworkDirection.PLAY_TO_CLIENT, TotemActivatedPacket.class, TotemActivatedPacket::decode);
+    public static void handle(TotemActivatedPacket packet, IPayloadContext context) {
+        context.enqueueWork(() -> ClientAccess.syncTotemActivation(packet.player, packet.stack));
     }
 }

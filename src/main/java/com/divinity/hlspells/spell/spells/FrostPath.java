@@ -17,11 +17,8 @@ import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.shapes.CollisionContext;
-import net.minecraftforge.client.model.obj.ObjMaterialLibrary;
-import net.minecraftforge.common.util.BlockSnapshot;
-import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.neoforge.common.util.BlockSnapshot;
+import net.neoforged.neoforge.event.EventHooks;
 
 import javax.annotation.Nullable;
 
@@ -47,7 +44,7 @@ public class FrostPath extends Spell {
                         if (blockstate1.isAir()) {
                             BlockState blockstate2 = p.level().getBlockState(blockpos);
                             boolean isFull = blockstate2.getBlock() == Blocks.WATER && blockstate2.getValue(LiquidBlock.LEVEL) == 0;
-                            if (blockstate2.equals(Fluids.WATER) && isFull && blockstate.canSurvive(p.level(), blockpos) && p.level().isUnobstructed(blockstate, blockpos, CollisionContext.empty()) && !ForgeEventFactory.onBlockPlace(p, BlockSnapshot.create(p.level().dimension(), p.level(), blockpos), Direction.UP)) {
+                            if (blockstate2.equals(Fluids.WATER) && isFull && blockstate.canSurvive(p.level(), blockpos) && p.level().isUnobstructed(blockstate, blockpos, CollisionContext.empty()) && !EventHooks.onBlockPlace(p, BlockSnapshot.create(p.level().dimension(), p.level(), blockpos), Direction.UP)) {
                                 used = true;
                                 p.level().setBlockAndUpdate(blockpos, blockstate);
                                 p.level().scheduleTick(blockpos, Blocks.FROSTED_ICE, Mth.nextInt(p.getRandom(), 60, 120));
@@ -82,7 +79,7 @@ public class FrostPath extends Spell {
 
                             BlockState blockstate2 = p.level().getBlockState(blockpos);
                             boolean isFull = blockstate2.getBlock() == Blocks.WATER && blockstate2.getValue(LiquidBlock.LEVEL) == 0;
-                            if (blockstate2 == FrostedIceBlock.meltsInto() && blockstate.canSurvive(p.level(), blockpos) && p.level().isUnobstructed(blockstate, blockpos, CollisionContext.empty()) && !net.minecraftforge.event.ForgeEventFactory.onBlockPlace(p, net.minecraftforge.common.util.BlockSnapshot.create(p.level().dimension(), p.level(), blockpos), net.minecraft.core.Direction.UP)) {
+                            if (blockstate2 == FrostedIceBlock.meltsInto() && blockstate.canSurvive(p.level(), blockpos) && p.level().isUnobstructed(blockstate, blockpos, CollisionContext.empty()) && !EventHooks.onBlockPlace(p, BlockSnapshot.create(p.level().dimension(), p.level(), blockpos), Direction.UP)) {
                                 used = true;
                                 p.level().setBlockAndUpdate(blockpos, blockstate);
                                 p.level().scheduleTick(blockpos, Blocks.FROSTED_ICE, Mth.nextInt(p.getRandom(), 60, 120));

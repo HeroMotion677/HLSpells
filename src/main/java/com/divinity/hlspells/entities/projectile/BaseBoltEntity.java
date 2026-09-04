@@ -13,7 +13,6 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.projectile.Arrow;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class BaseBoltEntity extends Arrow {
@@ -53,7 +52,7 @@ public abstract class BaseBoltEntity extends Arrow {
 
     @Override
     public boolean hurt(@NotNull DamageSource source, float amount) {
-        if (this.level() instanceof ServerLevel level && source.isIndirect() && this.isAlive()) {
+        if (this.level() instanceof ServerLevel level && !source.isDirect() && this.isAlive()) {
             this.playSound(SoundEvents.SHULKER_BULLET_HURT, 1.0F, 1.0F);
             level.sendParticles(ParticleTypes.CRIT, this.getX(), this.getY(), this.getZ(), 15, 0.2D, 0.2D, 0.2D, 0.0D);
             this.remove(RemovalReason.KILLED);
@@ -61,9 +60,6 @@ public abstract class BaseBoltEntity extends Arrow {
         }
         return false;
     }
-
-    @Override
-    public Packet<ClientGamePacketListener> getAddEntityPacket() { return NetworkHooks.getEntitySpawningPacket(this); }
 
     @Override public boolean isNoGravity() { return true; }
 

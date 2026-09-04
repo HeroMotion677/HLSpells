@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "#N#",
+    "#G#",
+    "###"
+  ],
+  "key": {
+    "#": "minecraft:diamond",
+    "N": "hlspells:gold_upgrade_template",
+    "G": "minecraft:gold_block"
+  },
+  "result": {
+    "count": 2,
+    "id": "hlspells:gold_upgrade_template"
+  }
+}

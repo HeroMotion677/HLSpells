@@ -3,6 +3,7 @@ package com.divinity.hlspells.entities.projectile;
 import net.minecraft.world.damagesource.DamageSources;
 import net.minecraft.world.level.block.BaseFireBlock;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.core.particles.ParticleTypes;
@@ -35,9 +36,9 @@ public class FlamingBoltEntity extends BaseBoltEntity {
                 level.sendParticles(ParticleTypes.CAMPFIRE_COSY_SMOKE, this.getX() - this.random.nextInt(2),
                         this.getY(), this.getZ() - this.random.nextFloat(), 2, 0.2D, 0.2D, 0.2D, 0.1D);
             }
-            entity.setSecondsOnFire(5);
+            entity.igniteForSeconds(5);
             level.sendParticles(ParticleTypes.SMOKE, this.getX(), this.getY(), this.getZ(), 15, 0.2D, 0.2D, 0.2D, 0.0D);
-            if (livingentity != null) this.doEnchantDamageEffects(livingentity, entity);
+            if (livingentity != null) EnchantmentHelper.doPostAttackEffects(level, entity, this.damageSources().mobProjectile(this, livingentity));
             this.remove(RemovalReason.KILLED);
         }
     }

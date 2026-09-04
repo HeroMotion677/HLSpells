@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smithing_transform",
+  "base": "hlspells:golden_amethyst_staff",
+  "addition": "minecraft:lapis_lazuli",
+  "template": "hlspells:gem_upgrade_template",
+  "result": {
+    "id": "hlspells:golden_lapis_staff"
+  }
+}

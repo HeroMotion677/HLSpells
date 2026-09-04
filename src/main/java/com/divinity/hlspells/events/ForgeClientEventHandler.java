@@ -4,6 +4,7 @@ import com.divinity.hlspells.HLSpells;
 import com.divinity.hlspells.capabilities.spellholdercap.SpellHolderProvider;
 import com.divinity.hlspells.items.spellitems.SpellHoldingItem;
 import com.divinity.hlspells.network.NetworkManager;
+import net.neoforged.neoforge.network.PacketDistributor;
 import com.divinity.hlspells.network.packets.serverbound.WandInputPacket;
 import com.divinity.hlspells.setup.init.SpellInit;
 import com.divinity.hlspells.spell.Spell;
@@ -20,20 +21,19 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.MovementInputUpdateEvent;
-import net.minecraftforge.client.event.RenderBlockScreenEffectEvent;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.neoforge.client.event.MovementInputUpdateEvent;
+import net.neoforged.neoforge.client.event.RenderBlockScreenEffectEvent;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
 import java.util.HashMap;
 import java.util.Map;
 
 import static com.divinity.hlspells.events.ModClientEventHandler.WAND_BINDING;
 
 
-@Mod.EventBusSubscriber(modid = HLSpells.MODID, value = Dist.CLIENT, bus = Bus.FORGE)
+@EventBusSubscriber(modid = HLSpells.MODID, value = Dist.CLIENT, bus = EventBusSubscriber.Bus.GAME)
 public class ForgeClientEventHandler {
 
     public static final Map<Item, HumanoidModel<LivingEntity>> hatArmorModel = new HashMap<>();
@@ -48,16 +48,16 @@ public class ForgeClientEventHandler {
             }
         }
         @SubscribeEvent
-        public static void onClientTick(TickEvent.ClientTickEvent event) {
-            if (event.phase == TickEvent.Phase.END) {
+        public static void onClientTick(ClientTickEvent.Post event) {
+            {
                 LocalPlayer player = Minecraft.getInstance().player;
                 if (WAND_BINDING.consumeClick()) {
                     if (player != null && !player.isUsingItem()) {
-                        NetworkManager.INSTANCE.sendToServer(new WandInputPacket(WAND_BINDING.getKey().getValue()));
+                        PacketDistributor.sendToServer(new WandInputPacket(WAND_BINDING.getKey().getValue()));
                         for (InteractionHand hand : InteractionHand.values()) {
                             ItemStack carriedItem = player.getItemInHand(hand);
                             if (carriedItem.getItem() instanceof SpellHoldingItem item /*&& !item.isSpellBook()*/) {
-                                carriedItem.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP).ifPresent(cap -> {
+                                SpellHolderProvider.get(carriedItem).ifPresent(cap -> {
                                     if (!cap.getSpells().isEmpty()) {
                                         cap.incrementCurrentSpellCycle();
                                         Spell spell = SpellUtils.getSpellByID(cap.getCurrentSpell());

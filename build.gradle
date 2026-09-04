@@ -1,195 +1,133 @@
-buildscript {
-    repositories {
-        maven {
-            url = 'https://repo.spongepowered.org/repository/maven-public/'
-        }
-        mavenCentral()
-    }
-    dependencies {
-        classpath group: "net.minecraftforge.gradle", name: "ForgeGradle", version: "6.+", changing: true
-        classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
-    }
-}
-
-plugins{
-    id 'net.minecraftforge.gradle' version '6.+'
-    id 'org.parchmentmc.librarian.forgegradle' version '1.+'
-    id 'eclipse'
+plugins {
+    id 'java-library'
     id 'maven-publish'
+    id 'net.neoforged.moddev' version '2.0.78'
+    id 'idea'
 }
 
-apply plugin: 'org.spongepowered.mixin'
+version = mod_version
+group = mod_group_id
+
+base {
+    archivesName = mod_id
+}
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
 repositories {
-    // JEI
     maven {
-        // location of the maven that hosts JEI files since January 2023
         name = "Jared's maven"
         url = "https://maven.blamejared.com/"
     }
-    /*maven {
-        name = "KosmX's maven"
-        url = "https://maven.kosmx.dev/"
-    }*/
     maven {
         name = "Curios maven"
         url = "https://maven.theillusivec4.top/"
     }
-    maven {
-        name = "Modding Legacy Maven"
-        url = "https://maven.moddinglegacy.com/artifactory/modding-legacy/"
-    }
-    maven { url = 'https://repo.spongepowered.org/maven' }
-    //PlayerAnim
+}
 
-
-    version = project.mod_version
-    group = 'com.divinity'
-    archivesBaseName = project.mod_id
-
-    java.toolchain.languageVersion = JavaLanguageVersion.of(17)
-
-    jarJar.enable()
-
-    compileJava {
-        [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
-    }
-
-    sourceSets {
-        main {
-            resources {
-                srcDirs += 'src/generated/resources'
-                exclude '.cache'
-            }
-        }
-        datagen {
-            compileClasspath += main.compileClasspath
-            runtimeClasspath += main.runtimeClasspath
-            compileClasspath += main.output
-            runtimeClasspath += main.output
+sourceSets {
+    main {
+        resources {
+            srcDir 'src/generated/resources'
+            exclude '**/.cache'
         }
     }
+}
 
-    println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
-    minecraft {
-        mappings channel: 'parchment', version: '2023.09.03-1.20.1'
-        accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
-        runs {
-            all {
-                def srgToMcpFile = project.tasks.createSrgToMcp.outputs.files[0].path
+neoForge {
+    version = project.neo_version
 
-                property 'net.minecraftforge.gradle.GradleStart.srg.srg-mcp', srgToMcpFile
-                property 'mixin.env.remapRefMap', 'true'
-                property 'mixin.env.refMapRemappingFile', srgToMcpFile
-            }
-            client {
-                workingDirectory project.file('run/client')
-                arg "-mixin.config=hlspells.mixin.json"
-                property 'forge.logging.console.level', 'debug'
-                //Player Anim
-          /*      property 'mixin.env.remapRefMap', 'true'
-                property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"*/
-            }
+    parchment {
+        mappingsVersion = project.parchment_mappings_version
+        minecraftVersion = project.parchment_minecraft_version
+    }
 
-            server {
-                workingDirectory project.file('run/server')
-                arg "-mixin.config=hlspells.mixin.json"
-                property 'forge.logging.console.level', 'debug'
-                //Player Anim
-              /*  property 'mixin.env.remapRefMap', 'true'
-                property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"*/
-            }
-            data {
-                workingDirectory project.file('run/data')
-                jvmArg '-Dterminal.ansi=true'
+    accessTransformers = project.files('src/main/resources/META-INF/accesstransformer.cfg')
 
-                property 'forge.logging.console.level', 'debug'
-                args '--mod', 'hlspells', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
-                ideaModule project.name + ".datagen"
+    runs {
+        client {
+            client()
+            gameDirectory = project.file('run/client')
+        }
 
-                mods {
-                    hlspells {
-                        source sourceSets.main
-                        source sourceSets.datagen
-                    }
-                }
-            }
+        server {
+            server()
+            gameDirectory = project.file('run/server')
+            programArgument '--nogui'
+        }
+
+        data {
+            data()
+            gameDirectory = project.file('run/data')
+            programArguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
+        }
+
+        configureEach {
+            systemProperty 'forge.logging.markers', 'REGISTRIES'
+            logLevel = org.slf4j.event.Level.DEBUG
         }
     }
 
-    java {
-        withSourcesJar()
-    }
-
-    mixin {
-        add sourceSets.main, "hlspells.refmap.json"
-    }
-
-    dependencies {
-        implementation 'org.jetbrains:annotations:23.0.0'
-        minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
-
-
-
-        // Compile against the API but do not include it at runtime
-        compileOnly fg.deobf("mezz.jei:jei-${jei_mc_version}-common-api:${jei_version}")
-        compileOnly fg.deobf("mezz.jei:jei-${jei_mc_version}-forge-api:${jei_version}")
-        compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}:api")
-        compileOnly fg.deobf("com.legacy:lucent:${lucent_version}")
-
-
-        // At runtime, use the full mod jar
-        runtimeOnly fg.deobf("mezz.jei:jei-${jei_mc_version}-forge:${jei_version}")
-        runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
-        runtimeOnly fg.deobf("com.legacy:lucent:${lucent_version}")
-
-
-/*        implementation fg.deobf("dev.kosmx.player-anim:player-animation-lib-forge:1.0.2-rc1+1.20")*/
-
-        // Processes mixin annotations
-        annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
-    }
-
-    jar {
-        manifest {
-            attributes([
-                    "Specification-Title"     : "hlspells",
-                    "Specification-Vendor"    : "hlspellssareus",
-                    "Specification-Version"   : "1", // We are version 1 of ourselves
-                    "Implementation-Title"    : project.name,
-                    "Implementation-Version"  : project.mod_version,
-                    "Implementation-Vendor"   : "hlspellssareus",
-                    "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
-                    "MixinConfigs"            : "hlspells.mixin.json",
-                    "FMLModType"              : "GAMELIBRARY"
-            ])
+    mods {
+        "${mod_id}" {
+            sourceSet(sourceSets.main)
         }
-        rename 'mixin.refmap.json', 'hlspells.refmap.json'
     }
+}
 
-    tasks.jarJar {
-        archiveClassifier = ''
-    }
+dependencies {
+    compileOnly 'org.jetbrains:annotations:24.1.0'
 
-    reobf {
-        jarJar {}
-    }
+    compileOnly "mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"
+    compileOnly "mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}"
+    runtimeOnly "mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}"
 
-    jar.finalizedBy('reobfJar')
+    compileOnly "top.theillusivec4.curios:curios-neoforge:${curios_version}:api"
+    runtimeOnly "top.theillusivec4.curios:curios-neoforge:${curios_version}"
+}
 
-    tasks.named('jarJar').configure {
-        dependsOn 'reobfJar'
-    }
+var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {
+    var replaceProperties = [
+            minecraft_version      : minecraft_version,
+            minecraft_version_range: minecraft_version_range,
+            neo_version            : neo_version,
+            neo_version_range      : neo_version_range,
+            loader_version_range   : loader_version_range,
+            mod_id                 : mod_id,
+            mod_name               : mod_name,
+            mod_license            : mod_license,
+            mod_version            : mod_version,
+            mod_authors            : mod_authors,
+            mod_description        : mod_description,
+    ]
+    inputs.properties replaceProperties
+    expand replaceProperties
+    from "src/main/templates"
+    into "build/generated/sources/modMetadata"
+}
+sourceSets.main.resources.srcDir generateModMetadata
+neoForge.ideSyncTask generateModMetadata
 
-    publishing {
-        publications {
-            mavenJava(MavenPublication) {
-                artifact tasks.jarJar
-            }
+publishing {
+    publications {
+        register('mavenJava', MavenPublication) {
+            from components.java
         }
-        repositories {
-            maven { url "file://${project.projectDir}/mcmodsrepo" }
-
+    }
+    repositories {
+        maven {
+            url "file://${project.projectDir}/mcmodsrepo"
         }
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+idea {
+    module {
+        downloadSources = true
+        downloadJavadoc = true
     }
 }

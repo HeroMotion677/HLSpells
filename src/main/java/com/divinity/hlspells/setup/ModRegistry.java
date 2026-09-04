@@ -1,37 +1,38 @@
 package com.divinity.hlspells.setup;
 
+import com.divinity.hlspells.capabilities.playercap.PlayerCapProvider;
+import com.divinity.hlspells.capabilities.spellholdercap.SpellHolderProvider;
+import com.divinity.hlspells.capabilities.totemcap.TotemItemProvider;
+import com.divinity.hlspells.items.armor.material.WizardArmorMaterial;
+import com.divinity.hlspells.setup.init.BlockInit;
+import com.divinity.hlspells.setup.init.EntityInit;
+import com.divinity.hlspells.setup.init.ItemInit;
+import com.divinity.hlspells.setup.init.LootInit;
+import com.divinity.hlspells.setup.init.MenuTypeInit;
 import com.divinity.hlspells.setup.init.ParticlesInit;
-import com.divinity.hlspells.setup.init.*;
-import net.minecraft.world.item.CreativeModeTabs;
-import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-
-import java.lang.annotation.ElementType;
+import com.divinity.hlspells.setup.init.SoundInit;
+import com.divinity.hlspells.setup.init.SpellInit;
+import com.divinity.hlspells.setup.init.VillagerInit;
+import net.neoforged.bus.api.IEventBus;
 
 public class ModRegistry {
-    @SuppressWarnings("deprecation")
 
-    public static void init() {
-
-        final IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
+    public static void init(IEventBus bus) {
         ParticlesInit.PARTICLE_TYPES.register(bus);
         EntityInit.ENTITIES.register(bus);
-        EnchantmentInit.ENCHANTMENTS.register(bus);
         ItemInit.ITEMS.register(bus);
-        bus.addListener(ItemInit::addCreative);
+        WizardArmorMaterial.ARMOR_MATERIALS.register(bus);
         LootInit.LOOT_MODIFIER_SERIALIZERS.register(bus);
+        LootInit.LOOT_FUNCTIONS.register(bus);
         SpellInit.SPELLS.register(bus);
-        bus.addListener(SpellInit::addCreative);
         BlockInit.BLOCKS.register(bus);
         BlockInit.BLOCK_ENTITIES.register(bus);
         MenuTypeInit.MENUS.register(bus);
         VillagerInit.POI.register(bus);
         SoundInit.SOUNDS.register(bus);
         VillagerInit.PROFESSIONS.register(bus);
+        PlayerCapProvider.ATTACHMENTS.register(bus);
+        SpellHolderProvider.COMPONENTS.register(bus);
+        TotemItemProvider.COMPONENTS.register(bus);
     }
-
-
-
 }

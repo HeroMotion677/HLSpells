@@ -29,11 +29,10 @@ import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.SlotItemHandler;
-import net.minecraftforge.items.wrapper.InvWrapper;
-import net.minecraftforge.network.PacketDistributor;
+import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.items.SlotItemHandler;
+import net.neoforged.neoforge.items.wrapper.InvWrapper;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -67,7 +66,7 @@ public class AltarOfAttunementMenu extends AbstractContainerMenu implements Cont
         IItemHandler playerInv = new InvWrapper(playerInventory);
         this.playerEntity = player;
         if (blockEntity != null) {
-            blockEntity.getCapability(ForgeCapabilities.ITEM_HANDLER).ifPresent(handler -> {
+            IItemHandler handler = this.blockEntity.itemHandler;
                 this.addSlot(new SlotItemHandler(handler, 0, 17, 25) {
                     @Override public boolean mayPlace(@NotNull ItemStack pStack) { return pStack.getItem() instanceof SpellHoldingItem; }
                     @Override public int getMaxStackSize() {
@@ -87,7 +86,6 @@ public class AltarOfAttunementMenu extends AbstractContainerMenu implements Cont
                     @Override public boolean mayPlace(@NotNull ItemStack pStack) { return pStack.getItem() instanceof SpellHoldingItem; }
                     @Override public int getMaxStackSize() { return 1; }
                 });
-            });
         }
         this.spellsList = Lists.newArrayList(new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
         this.topSpellSlot = Lists.newArrayList();
@@ -120,7 +118,7 @@ public class AltarOfAttunementMenu extends AbstractContainerMenu implements Cont
         ItemStack materialSlot = blockEntity.itemHandler.getStackInSlot(2);
         ItemStack spellItemSlot = blockEntity.itemHandler.getStackInSlot(3);
         if (spellItemSlot.getItem() instanceof SpellHoldingItem && !materialSlot.isEmpty()) {
-            spellItemSlot.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP).ifPresent(spellHolder -> {
+            SpellHolderProvider.get(spellItemSlot).ifPresent(spellHolder -> {
                 if (spellHolder.getSpells().isEmpty()) {
                     this.levelAccess.execute((level, pos) -> {
                         for (int i = 0; i < costs.length; ++i) {
@@ -142,7 +140,7 @@ public class AltarOfAttunementMenu extends AbstractContainerMenu implements Cont
         }
         else resetSpellSlotsAndSync();
         if (this.playerEntity instanceof ServerPlayer player) {
-            NetworkManager.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), new SpellCluePacket(player.getUUID(), this.spellClues));
+            PacketDistributor.sendToPlayer(player, new SpellCluePacket(player.getUUID(), this.spellClues));
         }
     }
 
@@ -173,11 +171,11 @@ public class AltarOfAttunementMenu extends AbstractContainerMenu implements Cont
             else {
                 this.levelAccess.execute((level, blockPos) -> {
                     Spell spell = pId == 0 ? topSpellSlot.get(0) : pId == 1 ? middleSpellSlot.get(0) : pId == 2 ? bottomSpellSlot.get(0) : null;
-                    if (spellItemSlot.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP).isPresent() && spell != null) {
+                    if (SpellHolderProvider.get(spellItemSlot).isPresent() && spell != null) {
                         pPlayer.onEnchantmentPerformed(spellItemSlot, i);
-                        spellItemSlot.getCapability(SpellHolderProvider.SPELL_HOLDER_CAP).ifPresent(spellHolder -> {
-                            if (SpellInit.SPELLS_REGISTRY.get().getKey(spell) != null) {
-                                spellHolder.addSpell(SpellInit.SPELLS_REGISTRY.get().getKey(spell).toString());
+                        SpellHolderProvider.get(spellItemSlot).ifPresent(spellHolder -> {
+                            if (SpellInit.SPELLS_REGISTRY.getKey(spell) != null) {
+                                spellHolder.addSpell(SpellInit.SPELLS_REGISTRY.getKey(spell).toString());
                             }
                         });
                         if (!pPlayer.getAbilities().instabuild) {
@@ -247,7 +245,7 @@ public class AltarOfAttunementMenu extends AbstractContainerMenu implements Cont
 
     private List<Spell> getSpellResultForSlot(Random pRandom, SpellAttributes.Marker spellMarker, SpellAttributes.Tier spellTier) {
         List<Spell> list = Lists.newArrayList();
-        for(Spell spell : SpellInit.SPELLS_REGISTRY.get()) {
+        for(Spell spell : SpellInit.SPELLS_REGISTRY) {
             if (!spell.isTreasureOnly() && spell.getSpellRarity() != SpellAttributes.Rarity.NONE) {
                 if (spell.getMarkerType() == spellMarker) {
                     if (spell.getSpellTier() == spellTier) {
